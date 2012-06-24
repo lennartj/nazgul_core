@@ -1,0 +1,21 @@
+#
+# Standard hgignore file for Java and Maven development
+#
+# Use glob (shell) syntax
+syntax: glob
+.git/
+target/
+.DS_Store
+#
+# Ignore settings files for development environments.
+# Settings should originate in the Maven configuration,
+# and generated for the corresponding IDEs.
+#
+.idea/
+*.iws
+*.ipr
+*.iml
+.project/
+.metadata/
+.settings/
+.classpath/
