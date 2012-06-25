@@ -13,16 +13,16 @@
     # Section 1:  Project information
     ################################################
     -->
-    <groupId>se.jguru.nazgul.core</groupId>
-    <artifactId>nazgul-core-core-reactor</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    
     <parent>
         <groupId>se.jguru.nazgul.tools.poms</groupId>
         <artifactId>nazgul-reactor</artifactId>
         <version>1.0.0</version>
     </parent>
+
+    <groupId>se.jguru.nazgul.core.xmlbinding</groupId>
+    <artifactId>nazgul-core-xmlbinding-reactor</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
     <!--
     ################################################
@@ -30,10 +30,6 @@
     ################################################
     -->
     <modules>
-        <module>algorithms</module>
-        <module>reflection</module>
-    	<!-- module>cluster</module>
-        <module>parser</module>
-        <module>xmlbinding</module -->
+        <module>xmlbinding-api</module>
     </modules>
 </project>
