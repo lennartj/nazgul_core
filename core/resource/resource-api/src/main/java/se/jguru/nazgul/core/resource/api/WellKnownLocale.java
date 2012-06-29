@@ -20,6 +20,16 @@ public enum WellKnownLocale {
     SWEDISH("sv", "SE"),
 
     /**
+     * Norwegian locale.
+     */
+    NORWEGIAN("no", "NO"),
+
+    /**
+     * Plain/international english locale.
+     */
+    ENGLISH("en", "EN"),
+
+    /**
      * American english locale.
      */
     US("en", "US"),

@@ -31,5 +31,6 @@
     -->
     <modules>
         <module>resource-api</module>
+        <module>resource-impl-resourcebundle</module>
     </modules>
 </project>
