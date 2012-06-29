@@ -141,7 +141,7 @@ public class DependencyData implements Comparable<DependencyData> {
 
                     if (aLine.contains(VERSION_LINE_TOKEN)) {
 
-                        // com.teliasonera.agora.core.common.reflection/foundation-reflection-api/version = 4.0.1-SNAPSHOT
+                        // some.group.name/artifactId/version = [version]
                         StringTokenizer tok = new StringTokenizer(aLine, DELIMITER, false);
                         if (tok.countTokens() != 3) {
                             throw new IllegalStateException("Malformed dependency row [" + aLine + "].");
