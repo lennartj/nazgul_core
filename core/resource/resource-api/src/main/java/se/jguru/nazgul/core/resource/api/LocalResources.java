@@ -16,11 +16,6 @@ import java.util.Locale;
 public interface LocalResources {
 
     /**
-     * Swedish Locale.
-     */
-    public static final Locale SWEDISH = new Locale("sv", "se");
-
-    /**
      * Retrieves a localized String from the underlying local resources, using the default Locale and
      * no static Key=Value substitution.
      *

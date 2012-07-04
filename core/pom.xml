@@ -34,7 +34,7 @@
         <module>reflection</module>
         <module>resource</module>
         <module>parser</module>
-    	<!-- module>cluster</module>
-        <module>xmlbinding</module -->
+        <module>xmlbinding</module>
+    	<!-- module>cluster</module -->
     </modules>
 </project>
