@@ -2,18 +2,31 @@
  * Copyright (c) jGuru Europe AB.
  * All rights reserved.
  */
-package se.jguru.nazgul.core.reflection.api.conversion;
+package se.jguru.nazgul.core.reflection.api.conversion.helpers;
+
+import se.jguru.nazgul.core.reflection.api.conversion.AbstractTypeConverter;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class FallbackTypeConverter extends AbstractTypeConverter<String, StringBuffer> {
+public class ExtraParametrizedTypeConverter<T> extends AbstractTypeConverter<String, Short> {
+
+    // Internal state
+    private T anotherParameterType;
 
     /**
      * Default constructor, extracting type information for convenience generic type methods.
      */
-    public FallbackTypeConverter() {
-        super(String.class, StringBuffer.class);
+    public ExtraParametrizedTypeConverter() {
+    }
+
+    /**
+     * Example of a compound constructor.
+     */
+    public ExtraParametrizedTypeConverter(T someParameter) throws NullPointerException {
+        super(String.class, Short.class);
+
+        anotherParameterType = someParameter;
     }
 
     /**
@@ -25,6 +38,12 @@ public class FallbackTypeConverter extends AbstractTypeConverter<String, StringB
      */
     @Override
     protected boolean isConvertible(String nonNullInstance) {
+        try {
+            convert(nonNullInstance);
+        } catch (Exception e) {
+            return false;
+        }
+
         return true;
     }
 
@@ -35,7 +54,11 @@ public class FallbackTypeConverter extends AbstractTypeConverter<String, StringB
      * @return The converted instance of type {@code To}.
      */
     @Override
-    public StringBuffer convert(String instance) {
-        return new StringBuffer(instance);
+    public Short convert(String instance) {
+        return Short.decode(instance);
+    }
+
+    public T getAnotherParameterType() {
+        return anotherParameterType;
     }
 }

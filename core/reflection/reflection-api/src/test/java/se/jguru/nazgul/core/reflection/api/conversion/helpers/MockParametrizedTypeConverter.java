@@ -2,30 +2,14 @@
  * Copyright (c) jGuru Europe AB.
  * All rights reserved.
  */
-package se.jguru.nazgul.core.reflection.api.conversion;
+package se.jguru.nazgul.core.reflection.api.conversion.helpers;
+
+import se.jguru.nazgul.core.reflection.api.conversion.AbstractTypeConverter;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class ExtraParametrizedTypeConverter<T> extends AbstractTypeConverter<String, Short> {
-
-    // Internal state
-    private T anotherParameterType;
-
-    /**
-     * Default constructor, extracting type information for convenience generic type methods.
-     */
-    public ExtraParametrizedTypeConverter() {
-    }
-
-    /**
-     * Example of a compound constructor.
-     */
-    public ExtraParametrizedTypeConverter(T someParameter) throws NullPointerException {
-        super(String.class, Short.class);
-
-        anotherParameterType = someParameter;
-    }
+public class MockParametrizedTypeConverter extends AbstractTypeConverter<String, Integer> {
 
     /**
      * Validates if this TypeConverter is able to convert the provided instance.
@@ -35,7 +19,8 @@ public class ExtraParametrizedTypeConverter<T> extends AbstractTypeConverter<Str
      *         package the provided instance for transport and {@code false} otherwise.
      */
     @Override
-    protected boolean isConvertible(String nonNullInstance) {
+    protected boolean isConvertible(final String nonNullInstance) {
+
         try {
             convert(nonNullInstance);
         } catch (Exception e) {
@@ -52,11 +37,7 @@ public class ExtraParametrizedTypeConverter<T> extends AbstractTypeConverter<Str
      * @return The converted instance of type {@code To}.
      */
     @Override
-    public Short convert(String instance) {
-        return Short.decode(instance);
-    }
-
-    public T getAnotherParameterType() {
-        return anotherParameterType;
+    public Integer convert(final String instance) {
+        return Integer.parseInt(instance);
     }
 }

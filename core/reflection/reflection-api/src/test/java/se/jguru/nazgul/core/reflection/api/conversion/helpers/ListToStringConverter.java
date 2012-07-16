@@ -2,12 +2,16 @@
  * Copyright (c) jGuru Europe AB.
  * All rights reserved.
  */
-package se.jguru.nazgul.core.reflection.api.conversion;
+package se.jguru.nazgul.core.reflection.api.conversion.helpers;
+
+import se.jguru.nazgul.core.reflection.api.conversion.AbstractTypeConverter;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class MockParametrizedTypeConverter extends AbstractTypeConverter<String, Integer> {
+public class ListToStringConverter extends AbstractTypeConverter<List, String> {
 
     /**
      * Validates if this TypeConverter is able to convert the provided instance.
@@ -17,14 +21,7 @@ public class MockParametrizedTypeConverter extends AbstractTypeConverter<String,
      *         package the provided instance for transport and {@code false} otherwise.
      */
     @Override
-    protected boolean isConvertible(final String nonNullInstance) {
-
-        try {
-            convert(nonNullInstance);
-        } catch (Exception e) {
-            return false;
-        }
-
+    protected boolean isConvertible(List nonNullInstance) {
         return true;
     }
 
@@ -35,7 +32,7 @@ public class MockParametrizedTypeConverter extends AbstractTypeConverter<String,
      * @return The converted instance of type {@code To}.
      */
     @Override
-    public Integer convert(final String instance) {
-        return Integer.parseInt(instance);
+    public String convert(List instance) {
+        return instance.toString();
     }
 }

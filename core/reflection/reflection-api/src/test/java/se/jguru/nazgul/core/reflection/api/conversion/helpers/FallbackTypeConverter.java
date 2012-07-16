@@ -2,12 +2,21 @@
  * Copyright (c) jGuru Europe AB.
  * All rights reserved.
  */
-package se.jguru.nazgul.core.reflection.api.conversion;
+package se.jguru.nazgul.core.reflection.api.conversion.helpers;
+
+import se.jguru.nazgul.core.reflection.api.conversion.AbstractTypeConverter;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class SemiTypeConverter<T extends Number> extends AbstractTypeConverter<String, T> {
+public class FallbackTypeConverter extends AbstractTypeConverter<String, StringBuffer> {
+
+    /**
+     * Default constructor, extracting type information for convenience generic type methods.
+     */
+    public FallbackTypeConverter() {
+        super(String.class, StringBuffer.class);
+    }
 
     /**
      * Validates if this TypeConverter is able to convert the provided instance.
@@ -18,7 +27,7 @@ public class SemiTypeConverter<T extends Number> extends AbstractTypeConverter<S
      */
     @Override
     protected boolean isConvertible(String nonNullInstance) {
-        return false;
+        return true;
     }
 
     /**
@@ -28,7 +37,7 @@ public class SemiTypeConverter<T extends Number> extends AbstractTypeConverter<S
      * @return The converted instance of type {@code To}.
      */
     @Override
-    public T convert(String instance) {
-        return null;
+    public StringBuffer convert(String instance) {
+        return new StringBuffer(instance);
     }
 }
