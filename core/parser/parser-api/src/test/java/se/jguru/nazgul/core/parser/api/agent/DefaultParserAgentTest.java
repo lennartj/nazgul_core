@@ -55,12 +55,12 @@ public class DefaultParserAgentTest {
         // Assemble
         String key = null;
         String value = null;
-        for(String current : new TreeSet<String>(System.getenv().keySet())) {
+        for (String current : new TreeSet<String>(System.getenv().keySet())) {
 
             key = current;
             value = System.getenv(current);
 
-            if(key != null && !key.equals("") && value != null && !value.equals("")) {
+            if (key != null && !key.equals("") && value != null && !value.equals("")) {
                 break;
             }
         }
@@ -98,6 +98,7 @@ public class DefaultParserAgentTest {
 
     @Test
     public void validateDefaultParserAgent() {
+
         // Assemble
         final String text = "This is a text where we have one token ${sysprop:user.dir}. :)";
         final DefaultTokenParser unitUnderTest = new DefaultTokenParser();

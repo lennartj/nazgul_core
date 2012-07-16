@@ -25,6 +25,7 @@ public interface TypeConverterRegistry {
      * @param desiredType The type to which the source object should be converted.
      * @param <To>        The resulting type.
      * @param <From>      The source type.
+     * @param <C>         The exact return type, subtype of To.
      * @return The converted object.
      * @throws IllegalArgumentException if the conversion failed.
      */

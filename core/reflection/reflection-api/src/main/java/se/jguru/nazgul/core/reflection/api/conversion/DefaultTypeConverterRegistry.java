@@ -84,13 +84,10 @@ public class DefaultTypeConverterRegistry implements TypeConverterRegistry {
      * @throws IllegalArgumentException if the conversion failed.
      */
     @Override
-    public <From, To, C extends To> C convert(From source, Class<To> desiredType) throws IllegalArgumentException {
+    public <From, To, C extends To> C convert(final From source, final Class<To> desiredType)
+            throws IllegalArgumentException {
 
         // Check sanity
-        if (source == null) {
-            return null;
-        }
-
         Validate.notNull(desiredType, "Cannot handle null desiredType argument for non-null source.");
         final Class<From> fromType = (Class<From>) source.getClass();
 
