@@ -67,23 +67,14 @@ public class DefaultTypeConverterRegistryTest {
         Assert.assertEquals(toConvert.toString(), result);
     }
 
-    @Test
-    public void validateTypeConversionUsingFuzzyConverterFromMatching() {
+    @Test(expected = IllegalArgumentException.class)
+    public void validateExceptionOnAddingAlreadyRegisteredTypeConverter() {
 
         // Assemble
+        final DefaultTypeConverterRegistry unitUnderTest = new DefaultTypeConverterRegistry();
 
-        // Act
-
-        // Assert
-    }
-
-    @Test
-    public void validateTypeConversionUsingFuzzyConverterToMatching() {
-
-        // Assemble
-
-        // Act
-
-        // Assert
+        // Act & Assert
+        unitUnderTest.addTypeConverter(new ListToStringConverter());
+        unitUnderTest.addTypeConverter(new ListToStringConverter());
     }
 }
