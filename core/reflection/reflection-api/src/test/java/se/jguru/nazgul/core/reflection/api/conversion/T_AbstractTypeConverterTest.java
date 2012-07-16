@@ -6,8 +6,12 @@ package se.jguru.nazgul.core.reflection.api.conversion;
 
 import junit.framework.Assert;
 import org.junit.Test;
+import se.jguru.nazgul.core.reflection.api.conversion.helpers.ExtraParametrizedTypeConverter;
+import se.jguru.nazgul.core.reflection.api.conversion.helpers.FallbackTypeConverter;
+import se.jguru.nazgul.core.reflection.api.conversion.helpers.MockParametrizedTypeConverter;
+import se.jguru.nazgul.core.reflection.api.conversion.helpers.SemiTypeConverter;
+import se.jguru.nazgul.core.reflection.api.conversion.helpers.StringGenericSubtype;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 

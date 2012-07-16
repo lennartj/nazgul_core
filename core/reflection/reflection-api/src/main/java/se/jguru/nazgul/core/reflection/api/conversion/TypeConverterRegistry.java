@@ -28,5 +28,5 @@ public interface TypeConverterRegistry {
      * @return The converted object.
      * @throws IllegalArgumentException if the conversion failed.
      */
-    <To, From> To convert(From source, Class<To> desiredType) throws IllegalArgumentException;
+    <From, To, C extends To> C convert(From source, Class<To> desiredType) throws IllegalArgumentException;
 }
