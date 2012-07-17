@@ -25,7 +25,7 @@ public enum WellKnownNamespace {
     /**
      * The URI of Models, created from the foundation framework principles.
      */
-    FOUNDATION(XmlBinder.FOUNDATION_NAMESPACE, "foundation");
+    FOUNDATION(XmlBinder.CORE_NAMESPACE, "foundation");
 
     // Internal state
     private String nameSpaceUrl;

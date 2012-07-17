@@ -31,6 +31,14 @@
     ################################################
     -->
     <dependencies>
+        <!-- Internal dependencies -->
+        <dependency>
+            <groupId>se.jguru.nazgul.core.reflection.api</groupId>
+            <artifactId>nazgul-core-reflection-api</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <!-- External dependencies -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
