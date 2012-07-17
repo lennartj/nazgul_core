@@ -4,7 +4,10 @@
  */
 package se.jguru.nazgul.core.xmlbinding.api;
 
+import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException;
+
 import java.io.Reader;
+import java.util.List;
 
 /**
  * Specification for XmlBinding, implying conversion of Java object graphs to XML formatted strings and vice versa.
@@ -14,9 +17,9 @@ import java.io.Reader;
 public interface XmlBinder {
 
     /**
-     * Foundation XSD namespace URI.
+     * Nazgul core XSD namespace URI.
      */
-    String FOUNDATION_NAMESPACE = "http://www.jguru.se/nazgul/foundation";
+    String CORE_NAMESPACE = "http://www.jguru.se/nazgul/core";
 
     /**
      * XSD instance namespace URI.
@@ -29,42 +32,39 @@ public interface XmlBinder {
     String XSD_NAMESPACE = "http://www.w3.org/2001/XMLSchema";
 
     /**
-     * Converts the provided source java object to an XML formatted String, written to a Reader.
+     * Converts the provided source java object to an XML formatted String.
      *
-     * @param source A java object graph which should be converted to XML form.
-     * @param <R>    The reader result type.
-     * @param <S>    The java object graph type.
-     * @return A Reader wrapping the XML acquired from marshaling the provided source object graph.
+     * @param javaObjectGraph The Java Object Graph which should be converted to an XML formatted String.
+     * @return The XML document as a String.
+     * @throws IllegalArgumentException If the conversion could not be completed successfully.
+     * @throws InternalStateValidationException
+     *                                  if the Java Object Graph contained Validatable objects
+     *                                  that did not pass validation.
      */
-    <R extends Reader, S> R toXml(S source);
+    // String toXml(T javaObjectGraph) throws IllegalArgumentException, InternalStateValidationException;
 
     /**
-     * Re-creates a java object graph from the XML in the provided reader.
+     * Converts the provided source java objects to an XML formatted String.
+     * Order between the provided objects is preserved in the resulting XML.
      *
-     * @param xmlReader The reader from which the XML data should be read.
-     * @param <R>       The Reader type.
-     * @param <S>       The java object graph type.
-     * @return A resurrected java object graph.
+     * @param toConvert The java objects to convert to an XML formatted String.
+     * @return An XML representation of the provided javaObjects.
+     * @throws IllegalArgumentException
+     * @throws InternalStateValidationException
+     *
      */
-    <S extends Reader, R> R fromXml(S xmlReader);
+    String toXml(Object... toConvert) throws IllegalArgumentException, InternalStateValidationException;
 
     /**
-     * Convenience method returning a String instead of a Reader.
-     * Converts the provided source java object to an XML formatted String, written to a Reader.
+     * Reads the XML formatted string from the provided transportReader, and resurrects the object graph
+     * found within the transportReader.
      *
-     * @param source A java object graph which should be converted to XML form.
-     * @param <S>    The java object graph type.
-     * @return An XML formatted string, acquired from marshaling the provided source object graph.
+     * @param transportReader The Reader holding a single XML-formatted String being converted by the toXml method
+     *                        in an XmlBinder of the same internal implementation as this one.
+     * @return A fully unmarshalled List holding clones of the original objects written to the stream.
+     * @throws IllegalArgumentException If the object graph could not be properly resurrected.
+     * @throws InternalStateValidationException
+     *                                  if any object resurrected was a Validatable which did not pass validation.
      */
-    <S> String toXml(S source);
-
-    /**
-     * Convenience method using a String instead of a Reader.
-     * Re-creates a java object graph from the provided XML formatted String.
-     *
-     * @param xmlFormattedString The XML formatted string which should be converted to a java object graph.
-     * @param <R>                The resulting type of the java object graph.
-     * @return A re-created java object graph.
-     */
-    <R> R fromXml(String xmlFormattedString);
+    List<Object> fromXml(Reader transportReader) throws IllegalArgumentException, InternalStateValidationException;
 }
