@@ -14,7 +14,7 @@ import java.util.List;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public interface XmlBinder {
+public interface XmlBinder<T> {
 
     /**
      * Nazgul core XSD namespace URI.
@@ -41,7 +41,7 @@ public interface XmlBinder {
      *                                  if the Java Object Graph contained Validatable objects
      *                                  that did not pass validation.
      */
-    // String toXml(T javaObjectGraph) throws IllegalArgumentException, InternalStateValidationException;
+    // String convertToXml(T javaObjectGraph) throws IllegalArgumentException, InternalStateValidationException;
 
     /**
      * Converts the provided source java objects to an XML formatted String.
@@ -49,22 +49,38 @@ public interface XmlBinder {
      *
      * @param toConvert The java objects to convert to an XML formatted String.
      * @return An XML representation of the provided javaObjects.
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException If the conversion could not be completed successfully.
      * @throws InternalStateValidationException
-     *
+     *                                  if the Java Object Graph contained Validatable objects
+     *                                  that did not pass validation.
      */
-    String toXml(Object... toConvert) throws IllegalArgumentException, InternalStateValidationException;
+    String convertToXml(T... toConvert) throws IllegalArgumentException, InternalStateValidationException;
 
     /**
      * Reads the XML formatted string from the provided transportReader, and resurrects the object graph
      * found within the transportReader.
      *
-     * @param transportReader The Reader holding a single XML-formatted String being converted by the toXml method
-     *                        in an XmlBinder of the same internal implementation as this one.
+     * @param transportReader The Reader holding a single XML-formatted String being converted by the convertToXml
+     *                        method in an XmlBinder of the same internal implementation as this one.
      * @return A fully unmarshalled List holding clones of the original objects written to the stream.
      * @throws IllegalArgumentException If the object graph could not be properly resurrected.
      * @throws InternalStateValidationException
      *                                  if any object resurrected was a Validatable which did not pass validation.
      */
-    List<Object> fromXml(Reader transportReader) throws IllegalArgumentException, InternalStateValidationException;
+    List<T> convertFromXml(Reader transportReader) throws IllegalArgumentException, InternalStateValidationException;
+
+    /**
+     * Convenience {@code convertFromXml} method which acquires a single object instance.
+     * Reads the XML formatted string from the provided transportReader, and resurrects the object
+     * found within the transportReader.
+     *
+     * @param transportReader The Reader holding a single XML-formatted String being converted by the
+     *                        convertToXml method in an XmlBinder of the same internal implementation type as this one.
+     * @return A fully unmarshalled instance clone of the original object written to the stream.
+     * @throws IllegalArgumentException If the object graph could not be properly resurrected.
+     * @throws InternalStateValidationException
+     *                                  if any object resurrected was a Validatable which did not pass validation.
+     */
+    <S> S convertInstanceFromXml(Reader transportReader) throws IllegalArgumentException,
+            InternalStateValidationException;
 }
