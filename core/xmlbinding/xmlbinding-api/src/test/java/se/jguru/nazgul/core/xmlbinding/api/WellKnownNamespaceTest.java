@@ -15,7 +15,6 @@ public class WellKnownNamespaceTest {
     // Shared state
     private WellKnownNamespace[] allNamespaces = WellKnownNamespace.values();
 
-
     @Test
     public void validateNamespaceDataIsNeitherNullNorEmpty() {
 

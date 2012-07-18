@@ -23,9 +23,9 @@ public enum WellKnownNamespace {
     XS(XmlBinder.XSD_NAMESPACE, "xs"),
 
     /**
-     * The URI of Models, created from the foundation framework principles.
+     * The URI of Models, created from the Nazgul core framework principles.
      */
-    FOUNDATION(XmlBinder.CORE_NAMESPACE, "foundation");
+    CORE(XmlBinder.CORE_NAMESPACE, "core");
 
     // Internal state
     private String nameSpaceUrl;
