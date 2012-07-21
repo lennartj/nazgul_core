@@ -15,20 +15,35 @@ import java.util.Set;
  * <p/>
  * The intention for this NamespacePrefixResolver is to inform the XML binder instance
  * of the relation between the namespace URI and prefix - illustrated below by the mapping
- * of the Nazul core namespace to the elements ParentElement and ChildElement. This is not
- * done by default by some XmlBinder implementations, so we provide this NamespacePrefixResolver
- * specification to facilitate XmlBinding for such implementations.
+ * of the {@code http://foo/bar} namespace to the elements ParentElement and ChildElement.
+ * Some XmlBinder implementations [notably JAXB] have rather sketchy implementations of
+ * these mechanics, so we provide this NamespacePrefixResolver specification to provide
+ * a unified specification for relating XML namespace URLs to Prefixes.
+ * <p/>
+ * Example (desired output):
  * <p/>
  * <pre>
  *     &lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;
- *         &lt;core:ParentElement xmlns:xs="http://www.w3.org/2001/XMLSchema"
- *         xmlns:core="http://www.jguru.se/nazgul/core"
+ *     &lt;foobar:ParentElement xmlns:xs="http://www.w3.org/2001/XMLSchema"
+ *         <strong>xmlns:foobar="http://foo/bar"</strong>
  *         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
  *
- *         &lt;core:ChildElement ... /&gt;
+ *         &lt;foobar:ChildElement ... /&gt;
  *
  *         ...
- *     &lt;/core:ParentElement&gt;
+ *     &lt;/foobar:ParentElement&gt;
+ * </pre>
+ * <p/>
+ * The corresponding code to relate the {@code http://foo/bar} URI to the {@code foobar}
+ * prefix is shown below:
+ * <p/>
+ * <pre>
+ *     // Acquire the NamespacePrefixResolver in use by the XmlBinder
+ *     XmlBinder binder = ...
+ *     NamespacePrefixResolver resolver = binder.getNamespacePrefixResolver();
+ *
+ *     // Relate the URI to the desired prefix.
+ *     resolver.put("http://foo/bar", "foobar");
  * </pre>
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
