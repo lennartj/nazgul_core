@@ -32,16 +32,13 @@ public interface XmlBinder<T> {
     String XSD_NAMESPACE = "http://www.w3.org/2001/XMLSchema";
 
     /**
-     * Converts the provided source java object to an XML formatted String.
+     * Retrieves the NamespacePrefixResolver instance in use by this XmlBinder.
      *
-     * @param javaObjectGraph The Java Object Graph which should be converted to an XML formatted String.
-     * @return The XML document as a String.
-     * @throws IllegalArgumentException If the conversion could not be completed successfully.
-     * @throws InternalStateValidationException
-     *                                  if the Java Object Graph contained Validatable objects
-     *                                  that did not pass validation.
+     * @return the NamespacePrefixResolver instance in use by this XmlBinder,
+     *         or {@code null} should no NamespacePrefixResolver be used by this
+     *         XmlBinder.
      */
-    // String convertToXml(T javaObjectGraph) throws IllegalArgumentException, InternalStateValidationException;
+    NamespacePrefixResolver getNamespacePrefixResolver();
 
     /**
      * Converts the provided source java objects to an XML formatted String.

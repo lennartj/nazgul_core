@@ -18,6 +18,7 @@ import java.util.TreeMap;
  * Implemented for runtime lookup speed rather than minimal memory footprint.
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
+ * @see NamespacePrefixResolver
  */
 public class DefaultNamespacePrefixResolver implements NamespacePrefixResolver {
 
@@ -27,7 +28,7 @@ public class DefaultNamespacePrefixResolver implements NamespacePrefixResolver {
     private SortedMap<String, String> prefix2UrlMap = new TreeMap<String, String>();
 
     /**
-     * Default constructor, mapping in all WellKnownNamespace pairs.
+     * Default constructor, mapping in all URI to Prefix pairs defined within the WellKnownNamespace enum.
      */
     public DefaultNamespacePrefixResolver() {
 
