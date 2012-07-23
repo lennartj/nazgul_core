@@ -28,7 +28,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -125,9 +128,10 @@ public abstract class JaxbUtils {
         }
 
         // Load all relevant classes
-        transporter.getClassInformation().add(EntityTransporter.class.getName());
-        List<Class> loadedClasses = (List<Class>) CollectionAlgorithms.transform(
-                transporter.getClassInformation(), THREADLOCAL_TRANSFORMER);
+        Set<Class<?>> loadedClasses = new HashSet<Class<?>>();
+        for(Object current : transporter.getClassInformation()) {
+            loadedClasses.add(THREADLOCAL_TRANSFORMER.transform((String) current));
+        }
 
         try {
 
@@ -185,7 +189,7 @@ public abstract class JaxbUtils {
         StreamSource[] schemaSources = new StreamSource[schemaSnippets.size()];
         for (int i = 0; i < schemaSources.length; i++) {
             ByteArrayOutputStream tmp = schemaSnippets.get(i);
-            // Schema printout: System.out.append("Generated schema: " + new String(tmp.toByteArray()));
+            // log.info("Generated schema: " + new String(tmp.toByteArray()));
             schemaSources[i] = new StreamSource(new ByteArrayInputStream(tmp.toByteArray()), "");
         }
 
@@ -218,7 +222,8 @@ public abstract class JaxbUtils {
      *         cached JAXBContext. The JAXBContext value might be {@code null}, indicating that a
      *         cached JAXBContext was not found.
      */
-    private static Tuple<SortedClassNameSetKey, JAXBContext> getCachedJaxbContext(final List<String> classInformation) {
+    private static Tuple<SortedClassNameSetKey, JAXBContext> getCachedJaxbContext(
+            final SortedSet<String> classInformation) {
 
         // Create a sorted clone.
         final SortedSet<String> copy = new TreeSet<String>(classInformation);

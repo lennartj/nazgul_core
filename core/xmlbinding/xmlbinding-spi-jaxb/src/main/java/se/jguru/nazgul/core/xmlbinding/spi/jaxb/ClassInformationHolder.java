@@ -4,7 +4,7 @@
  */
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb;
 
-import java.util.List;
+import java.util.SortedSet;
 
 /**
  * Specification for a type holding class information in String form.
@@ -16,5 +16,5 @@ public interface ClassInformationHolder {
     /**
      * @return The fully qualified class names of all classes held within this ClassInformationHolder.
      */
-    List<String> getClassInformation();
+    SortedSet<String> getClassInformation();
 }

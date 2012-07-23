@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <core:entityTransporter xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="http://www.jguru.se/nazgul/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <entityClasses>
-        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Person</entityClass>
         <entityClass>java.lang.String</entityClass>
-        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedString</entityClass>
-        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedNull</entityClass>
+        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Person</entityClass>
         <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter</entityClass>
+        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedNull</entityClass>
+        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedString</entityClass>
     </entityClasses>
     <items>
         <item xsi:type="core:person" age="44">

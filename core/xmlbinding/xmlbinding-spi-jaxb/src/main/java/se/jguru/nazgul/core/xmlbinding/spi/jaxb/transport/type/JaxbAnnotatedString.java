@@ -8,9 +8,11 @@ import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Transport type representing a {@code String} value.
@@ -29,10 +31,17 @@ public class JaxbAnnotatedString extends AbstractJaxbAnnotatedTransportType {
     // Internal state
     private String value;
 
+    @XmlTransient
+    private SortedSet<String> classInformation;
+
     /**
      * JAXB-friendly constructor.
      */
     public JaxbAnnotatedString() {
+
+        SortedSet<String> classinfo = new TreeSet<String>();
+        classinfo.add(String.class.getName());
+        classInformation = Collections.unmodifiableSortedSet(classinfo);
     }
 
     /**
@@ -58,8 +67,8 @@ public class JaxbAnnotatedString extends AbstractJaxbAnnotatedTransportType {
      * {@inheritDoc}
      */
     @Override
-    public List<String> getClassInformation() {
-        return Arrays.asList(String.class.getName());
+    public final SortedSet<String> getClassInformation() {
+        return classInformation;
     }
 
     /**
