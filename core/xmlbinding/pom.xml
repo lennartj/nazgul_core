@@ -22,6 +22,7 @@
     <groupId>se.jguru.nazgul.core.xmlbinding</groupId>
     <artifactId>nazgul-core-xmlbinding-reactor</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+    <name>${project.groupId}.${project.artifactId}</name>
     <packaging>pom</packaging>
 
     <!--
@@ -31,7 +32,6 @@
     -->
     <modules>
         <module>xmlbinding-api</module>
-       <!-- <module>xmlbinding-spi-jaxb</module>
-    	-->
+        <module>xmlbinding-spi-jaxb</module>
     </modules>
 </project>

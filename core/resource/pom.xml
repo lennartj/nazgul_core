@@ -22,6 +22,7 @@
     <groupId>se.jguru.nazgul.core.resource</groupId>
     <artifactId>nazgul-core-resource-reactor</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+    <name>${project.groupId}.${project.artifactId}</name>
     <packaging>pom</packaging>
 
     <!--
