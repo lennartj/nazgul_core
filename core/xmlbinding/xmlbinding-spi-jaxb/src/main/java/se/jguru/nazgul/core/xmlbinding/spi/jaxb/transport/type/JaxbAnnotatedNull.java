@@ -11,7 +11,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.util.Collections;
-import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Transport type representing a {@code null} value.
@@ -30,6 +31,10 @@ public class JaxbAnnotatedNull extends AbstractJaxbAnnotatedTransportType {
     @XmlTransient
     private static final JaxbAnnotatedNull instance = new JaxbAnnotatedNull();
 
+    @XmlTransient
+    private static final SortedSet<String> EMPTY_SORTED_SET = Collections.unmodifiableSortedSet(
+            new TreeSet<String>());
+
     /**
      * JAXB-friendly constructor.
      */
@@ -47,8 +52,8 @@ public class JaxbAnnotatedNull extends AbstractJaxbAnnotatedTransportType {
      * {@inheritDoc}
      */
     @Override
-    public List<String> getClassInformation() {
-        return Collections.emptyList();
+    public SortedSet<String> getClassInformation() {
+        return EMPTY_SORTED_SET;
     }
 
     /**

@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import java.util.Date;
 import java.util.List;
+import java.util.SortedSet;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -23,12 +24,13 @@ public class JaxbAnnotatedStringTest {
 
         // Act
         final JaxbAnnotatedString unitUnderTest = new JaxbAnnotatedString(value);
-        final List<String> classInformation = unitUnderTest.getClassInformation();
+        final SortedSet<String> classInformation = unitUnderTest.getClassInformation();
 
         // Assert
         Assert.assertEquals(value, unitUnderTest.getValue());
         Assert.assertEquals(1, classInformation.size());
-        Assert.assertEquals(String.class.getName(), classInformation.get(0));
+
+        Assert.assertTrue(classInformation.contains(String.class.getName()));
     }
 
     @Test

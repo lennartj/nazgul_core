@@ -7,7 +7,6 @@ package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport;
 import org.apache.commons.lang3.Validate;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.ClassInformationHolder;
-import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.TransportTypeConverter;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -19,6 +18,8 @@ import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Entity holder used to convert and transport object instances over network connections.
@@ -35,7 +36,7 @@ public class EntityTransporter<T> implements ClassInformationHolder, Serializabl
      */
     @XmlElementWrapper(name = "entityClasses", nillable = false, required = true)
     @XmlElement(name = "entityClass")
-    private List<String> entityClasses = new ArrayList<String>();
+    private SortedSet<String> entityClasses = new TreeSet<String>();
 
     /**
      * The list of entities persisted.
@@ -51,6 +52,7 @@ public class EntityTransporter<T> implements ClassInformationHolder, Serializabl
      * JAXB-friendly constructor.
      */
     public EntityTransporter() {
+        entityClasses.add(EntityTransporter.class.getName());
     }
 
     /**
@@ -59,6 +61,7 @@ public class EntityTransporter<T> implements ClassInformationHolder, Serializabl
      * @param object An object that should be added to this EntityWrapper.
      */
     public EntityTransporter(final T object) {
+        this();
         addItem(object);
     }
 
@@ -66,7 +69,7 @@ public class EntityTransporter<T> implements ClassInformationHolder, Serializabl
      * @return The fully qualified class names of all classes held within this ClassInformationHolder.
      */
     @Override
-    public List<String> getClassInformation() {
+    public SortedSet<String> getClassInformation() {
         return entityClasses;
     }
 

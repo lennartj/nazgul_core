@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import java.util.Date;
 import java.util.List;
+import java.util.SortedSet;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -22,7 +23,7 @@ public class JaxbAnnotatedNullTest {
         final JaxbAnnotatedNull unitUnderTest = JaxbAnnotatedNull.getInstance();
 
         // Act
-        final List<String> classInformation = unitUnderTest.getClassInformation();
+        final SortedSet<String> classInformation = unitUnderTest.getClassInformation();
 
         // Assert
         Assert.assertEquals(0, classInformation.size());

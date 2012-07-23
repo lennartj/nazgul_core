@@ -9,6 +9,7 @@ import org.junit.Test;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Person;
 
 import java.util.List;
+import java.util.SortedSet;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -24,12 +25,14 @@ public class EntityTransporterTest {
         // Act
         final EntityTransporter<Person> unitUnderTest = new EntityTransporter<Person>(toSerialize);
         final List<Person> items = unitUnderTest.getItems();
-        final List<String> classInformation = unitUnderTest.getClassInformation();
+        final SortedSet<String> classInformation = unitUnderTest.getClassInformation();
 
         // Assert
         Assert.assertEquals(1, items.size());
-        Assert.assertEquals(1, classInformation.size());
-        Assert.assertEquals(Person.class.getName(), classInformation.get(0));
+        Assert.assertEquals(2, classInformation.size());
+
+        Assert.assertTrue(classInformation.contains(EntityTransporter.class.getName()));
+        Assert.assertTrue(classInformation.contains(Person.class.getName()));
     }
 
     @Test(expected = NullPointerException.class)
