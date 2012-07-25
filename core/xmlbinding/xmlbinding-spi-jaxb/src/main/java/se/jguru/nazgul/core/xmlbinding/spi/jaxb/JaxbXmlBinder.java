@@ -5,6 +5,7 @@
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb;
 
 import org.apache.commons.lang3.Validate;
+import org.xml.sax.ErrorHandler;
 import se.jguru.nazgul.core.xmlbinding.api.NamespacePrefixResolver;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbNamespacePrefixResolver;
@@ -17,6 +18,11 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.util.JAXBSource;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.Validator;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -85,7 +91,7 @@ public class JaxbXmlBinder implements XmlBinder<Object> {
     /**
      * @return The TypeConverterRegistry in use by this JaxbXmlBinder.
     public final TypeConverterRegistry getTypeConverterRegistry() {
-        return typeConverterRegistry;
+    return typeConverterRegistry;
     }
      */
 
@@ -101,7 +107,7 @@ public class JaxbXmlBinder implements XmlBinder<Object> {
      *                                  that did not pass validation.
      */
     @Override
-    public String convertToXml(Object... toConvert) throws IllegalArgumentException, InternalStateValidationException {
+    public String marshal(Object... toConvert) throws IllegalArgumentException, InternalStateValidationException {
 
         // Create an EntityTransporter holding all given objects.
         final EntityTransporter<Object> transporter = new EntityTransporter<Object>();
@@ -128,7 +134,7 @@ public class JaxbXmlBinder implements XmlBinder<Object> {
      * Reads the XML formatted string from the provided transportReader, and resurrects the object graph
      * found within the transportReader.
      *
-     * @param transportReader The Reader holding a single XML-formatted String being converted by the convertToXml method
+     * @param transportReader The Reader holding a single XML-formatted String being converted by the marshal method
      *                        in an XmlBinder of the same internal implementation as this one.
      * @return A fully unmarshalled List holding clones of the original objects written to the stream.
      * @throws IllegalArgumentException If the object graph could not be properly resurrected.
@@ -136,8 +142,10 @@ public class JaxbXmlBinder implements XmlBinder<Object> {
      *                                  if any object resurrected was a Validatable which did not pass validation.
      */
     @Override
-    public List<Object> convertFromXml(Reader transportReader)
+    public List<Object> unmarshal(final Reader transportReader)
             throws IllegalArgumentException, InternalStateValidationException {
+
+        Validate.notNull(transportReader, "Cannot handle null transportReader argument.");
 
         // Read the stream content.
         final String content = readFully(transportReader);
@@ -145,16 +153,22 @@ public class JaxbXmlBinder implements XmlBinder<Object> {
         try {
 
             // Find all classes within the provided transporter
-            final Unmarshaller unmarshaller = initialTransportContext.createUnmarshaller();
+            Unmarshaller unmarshaller = initialTransportContext.createUnmarshaller();
             final EntityTransporter transporter = (EntityTransporter) unmarshaller.unmarshal(new StringReader(content));
 
             // Now we know all classes inside the EntityTransporter.
-            // Perform full unmarshalling.
             final JAXBContext ctx = JaxbUtils.getJaxbContext(transporter);
+            unmarshaller = ctx.createUnmarshaller();
+
+            // Generate and assign the Schema to enable XSD validation.
+            final Schema schema = JaxbUtils.generateTransientXSD(ctx, namespacePrefixResolver);
+            unmarshaller.setSchema(schema);
+            final Validator validator = schema.newValidator();
+            validator.setResourceResolver(namespacePrefixResolver);
 
             @SuppressWarnings("unchecked")
             final EntityTransporter<Object> toReturn = (EntityTransporter<Object>)
-                    ctx.createUnmarshaller().unmarshal(new StringReader(content));
+                    unmarshaller.unmarshal(new StringReader(content));
 
             // If the instances are validatable, perform validation.
             validate(toReturn);
@@ -168,29 +182,29 @@ public class JaxbXmlBinder implements XmlBinder<Object> {
     }
 
     /**
-     * Convenience {@code convertFromXml} method which acquires a single object instance. Reads the XML formatted string
+     * Convenience {@code unmarshal} method which acquires a single object instance. Reads the XML formatted string
      * from the provided transportReader, and resurrects the object found within the transportReader.
      *
      * @param transportReader The Reader holding a single XML-formatted String being converted by the
-     *                        convertToXml method in an XmlBinder of the same internal implementation type as this one.
+     *                        marshal method in an XmlBinder of the same internal implementation type as this one.
      * @return A fully unmarshalled instance clone of the original object written to the stream.
      * @throws IllegalArgumentException If the object graph could not be properly resurrected.
      * @throws se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException
      *                                  if any object resurrected was a Validatable which did not pass validation.
      */
     @Override
-    public <S> S convertInstanceFromXml(Reader transportReader)
+    public <S> S unmarshalInstance(Reader transportReader)
             throws IllegalArgumentException, InternalStateValidationException {
 
         // Convert
-        final List<Object> objects = convertFromXml(transportReader);
+        final List<Object> objects = unmarshal(transportReader);
 
         // Sane result?
         S toReturn = null;
-        if(objects.size() > 0) {
+        if (objects.size() > 0) {
             toReturn = (S) objects.get(0);
         }
-        if(objects.size() > 1) {
+        if (objects.size() > 1) {
             throw new IllegalArgumentException("Expected to return one object, but resurrected ["
                     + objects.size() + "] objects.");
         }
@@ -235,12 +249,9 @@ public class JaxbXmlBinder implements XmlBinder<Object> {
      */
     private void validate(final EntityTransporter toValidate) throws InternalStateValidationException {
 
-        final List items = toValidate.getItems();
-        if (items != null) {
-            for (Object current : items) {
-                if (current instanceof Validatable) {
-                    ((Validatable) current).validateInternalState();
-                }
+        for (Object current : toValidate.getItems()) {
+            if (current instanceof Validatable) {
+                ((Validatable) current).validateInternalState();
             }
         }
     }

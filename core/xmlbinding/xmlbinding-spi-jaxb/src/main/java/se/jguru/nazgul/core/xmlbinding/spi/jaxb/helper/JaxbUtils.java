@@ -8,7 +8,6 @@ import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 import org.apache.commons.lang3.Validate;
 import org.w3c.dom.ls.LSResourceResolver;
 import org.xml.sax.SAXException;
-import se.jguru.nazgul.core.algorithms.api.CollectionAlgorithms;
 import se.jguru.nazgul.core.algorithms.api.predicate.Tuple;
 import se.jguru.nazgul.core.algorithms.api.predicate.common.ClassnameToClassTransformer;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter;
@@ -23,12 +22,10 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -198,11 +195,7 @@ public abstract class JaxbUtils {
             // All done.
             final SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
             schemaFactory.setResourceResolver(resourceResolver);
-            final Schema schema = DEFAULT_SCHEMA_FACTORY.newSchema(schemaSources);
-            final Validator validator = schema.newValidator();
-            validator.setResourceResolver(resourceResolver);
-
-            return schema;
+            return DEFAULT_SCHEMA_FACTORY.newSchema(schemaSources);
 
         } catch (final SAXException e) {
             throw new IllegalArgumentException("Could not create Schema from snippets.", e);

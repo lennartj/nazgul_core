@@ -55,4 +55,29 @@ public class NullConverterTest {
         Assert.assertTrue(result3);
         Assert.assertNull(revived);
     }
+
+    @Test
+    public void validateComparisonAndEquality() {
+
+        // Assemble
+        final NullConverter unitUnderTest = new NullConverter();
+
+        // Act
+        final int result1 = unitUnderTest.compareTo(unitUnderTest);
+        final int result2 = unitUnderTest.compareTo(null);
+        final int result3 = unitUnderTest.compareTo("foobar");
+
+        final boolean result4 = unitUnderTest.equals(unitUnderTest);
+        final boolean result5 = unitUnderTest.equals(null);
+        final boolean result6 = unitUnderTest.equals("foobar");
+
+        // Assert
+        Assert.assertTrue(result4);
+        Assert.assertFalse(result5);
+        Assert.assertFalse(result6);
+
+        Assert.assertEquals(0, result1);
+        Assert.assertFalse(result2 == 0);
+        Assert.assertFalse(result3 == 0);
+    }
 }

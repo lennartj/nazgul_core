@@ -41,4 +41,19 @@ public class Person {
     public int getAge() {
         return age;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+
+        if(obj != null && obj instanceof Person) {
+            Person that = (Person) obj;
+
+            return this.name.equals(that.name) && this.age == that.age;
+        }
+
+        return false;
+    }
 }

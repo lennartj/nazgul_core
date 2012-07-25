@@ -6,13 +6,19 @@ package se.jguru.nazgul.core.xmlbinding.spi.jaxb;
 
 import junit.framework.Assert;
 import org.junit.Test;
+import se.jguru.nazgul.core.xmlbinding.api.NamespacePrefixResolver;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbNamespacePrefixResolver;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Account;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Person;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.regex.Pattern;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -30,33 +36,129 @@ public class JaxbXmlBinderTest {
     }
 
     @Test
-    public void validateXmlConversion() {
+    public void validateMarshallingToXml() {
 
         // Assemble
         final Person person1 = new Person("Lennart", 44);
         final Person person2 = new Person("Malin", 478);
-        final String expected = readFully("data/xml/xmlConversion.xml");
+        final String expected = readFully("data/xml/simpleMarshalling.xml");
 
         // Act
-        final String result = unitUnderTest.convertToXml(person1, person2);
+        final String result = unitUnderTest.marshal(person1, person2);
 
         // Assert
         Assert.assertEquals(expected.replaceAll("\\s", ""), result.replaceAll("\\s", ""));
     }
 
     @Test
-    public void validateXmlConversionWithTypeConversion() {
+    public void validateMarshallingWithTypeConversion() {
 
         // Assemble
         final Person person1 = new Person("Lennart", 44);
         final Person person2 = new Person("Malin", 478);
-        final String expected = readFully("data/xml/conversionWithTypeConversion.xml");
+        final String expected = readFully("data/xml/marshallingWithTypeConversion.xml");
 
         // Act
-        final String result = unitUnderTest.convertToXml(person1, "FooBar!", null, person2);
+        final String result = unitUnderTest.marshal(person1, "FooBar!", null, person2);
 
         // Assert
         Assert.assertEquals(expected, result);
+    }
+
+    @Test
+    public void validateUnmarshallingFromXml() {
+
+        // Assemble
+        final List<Object> expected = new ArrayList<Object>();
+        expected.add(new Person("Lennart", 44));
+        expected.add("FooBar!");
+        expected.add(null);
+        expected.add(new Person("Malin", 478));
+
+        final String data = "data/xml/marshallingWithTypeConversion.xml";
+        final Reader input = new BufferedReader(new InputStreamReader(
+                getClass().getClassLoader().getResourceAsStream(data)));
+
+        // Act
+        final List<Object> result = unitUnderTest.unmarshal(input);
+
+        // Assert
+        Assert.assertNotNull(result);
+        Assert.assertEquals(expected.size(), result.size());
+        for(int i = 0; i < expected.size(); i++) {
+            Assert.assertEquals(expected.get(i), result.get(i));
+        }
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void validateExceptionOnNullReader() {
+
+        // Act & Assert
+        unitUnderTest.unmarshal(null);
+    }
+
+    @Test
+    public void validateDefaultNamespacePrefixResolver() {
+
+        // Act
+        final NamespacePrefixResolver resolver = unitUnderTest.getNamespacePrefixResolver();
+
+        // Assert
+        Assert.assertNotNull(resolver);
+        Assert.assertTrue(resolver instanceof JaxbNamespacePrefixResolver);
+    }
+
+    @Test
+    public void validateUnmarshallingSingleInstance() {
+
+        // Assemble
+        final String data = "data/xml/simpleUnmarshalling.xml";
+        final Reader input = new BufferedReader(new InputStreamReader(
+                getClass().getClassLoader().getResourceAsStream(data)));
+
+        // Act
+        final Account result = unitUnderTest.unmarshalInstance(input);
+
+        // Assert
+        Assert.assertNotNull(result);
+        Assert.assertEquals("SavingsAccount", result.getName());
+        Assert.assertEquals(42.42, result.getBalance());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void validateExceptionOnUnmarshallingInstanceYieldingMoreThanOneInstance() {
+
+        // Assemble
+        final String data = "data/xml/unmarshallingWithTypeConversion.xml";
+        final Reader input = new BufferedReader(new InputStreamReader(
+                getClass().getClassLoader().getResourceAsStream(data)));
+
+        // Act & Assert
+        unitUnderTest.unmarshalInstance(input);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void validateExceptionOnUnmarshallingANonEntityTransporterInstance() {
+
+        // Assemble
+        final String data = "data/xml/notAnEntityTransporter.xml";
+        final Reader input = new BufferedReader(new InputStreamReader(
+                getClass().getClassLoader().getResourceAsStream(data)));
+
+        // Act & Assert
+        unitUnderTest.unmarshalInstance(input);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void validateExceptionOnUnmarshallingIncorrectlyFormedXmlData() {
+
+        // Assemble
+        final String data = "data/xml/incorrectXmlData.xml";
+        final Reader input = new BufferedReader(new InputStreamReader(
+                getClass().getClassLoader().getResourceAsStream(data)));
+
+        // Act & Assert
+        unitUnderTest.unmarshal(input);
     }
 
     //

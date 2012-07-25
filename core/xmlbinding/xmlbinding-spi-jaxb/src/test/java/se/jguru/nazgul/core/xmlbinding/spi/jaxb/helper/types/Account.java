@@ -5,6 +5,8 @@
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types;
 
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
+import se.jguru.nazgul.tools.validation.api.Validatable;
+import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -17,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"name", "balance"})
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Account {
+public class Account implements Validatable {
 
     // Internal state
     @XmlElement(nillable = false, required = true)
@@ -40,5 +42,24 @@ public class Account {
 
     public double getBalance() {
         return balance;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validateInternalState() throws InternalStateValidationException {
+
+        InternalStateValidationException.create()
+                .notTrue(balance < 0, "Negative Balance")
+                .endExpressionAndValidate();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return getName() + "Account: " + getBalance();
     }
 }
