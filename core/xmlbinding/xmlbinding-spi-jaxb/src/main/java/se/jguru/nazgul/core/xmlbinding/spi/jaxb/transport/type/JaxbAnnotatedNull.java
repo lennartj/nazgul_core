@@ -69,7 +69,7 @@ public class JaxbAnnotatedNull extends AbstractJaxbAnnotatedTransportType {
      */
     @Override
     public boolean equals(final Object obj) {
-        return obj instanceof JaxbAnnotatedNull || compareTo(obj) == 0;
+        return compareTo(obj) == 0;
     }
 
     /**

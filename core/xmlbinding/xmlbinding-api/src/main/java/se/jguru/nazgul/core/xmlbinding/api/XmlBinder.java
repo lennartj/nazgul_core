@@ -41,7 +41,7 @@ public interface XmlBinder<T> {
     NamespacePrefixResolver getNamespacePrefixResolver();
 
     /**
-     * Converts the provided source java objects to an XML formatted String.
+     * Converts/marshals the provided source java objects to an XML formatted String.
      * Order between the provided objects is preserved in the resulting XML.
      *
      * @param toConvert The java objects to convert to an XML formatted String.
@@ -51,33 +51,33 @@ public interface XmlBinder<T> {
      *                                  if the Java Object Graph contained Validatable objects
      *                                  that did not pass validation.
      */
-    String convertToXml(T... toConvert) throws IllegalArgumentException, InternalStateValidationException;
+    String marshal(T... toConvert) throws IllegalArgumentException, InternalStateValidationException;
 
     /**
-     * Reads the XML formatted string from the provided transportReader, and resurrects the object graph
+     * Unmarshals the XML formatted string from the provided transportReader into a Java object graph
      * found within the transportReader.
      *
-     * @param transportReader The Reader holding a single XML-formatted String being converted by the convertToXml
+     * @param transportReader The Reader holding a single XML-formatted String being converted by the marshal
      *                        method in an XmlBinder of the same internal implementation as this one.
      * @return A fully unmarshalled List holding clones of the original objects written to the stream.
      * @throws IllegalArgumentException If the object graph could not be properly resurrected.
      * @throws InternalStateValidationException
      *                                  if any object resurrected was a Validatable which did not pass validation.
      */
-    List<T> convertFromXml(Reader transportReader) throws IllegalArgumentException, InternalStateValidationException;
+    List<T> unmarshal(Reader transportReader) throws IllegalArgumentException, InternalStateValidationException;
 
     /**
-     * Convenience {@code convertFromXml} method which acquires a single object instance.
+     * Convenience {@code unmarshal} method which unmarshals a single object instance from XML to java.
      * Reads the XML formatted string from the provided transportReader, and resurrects the object
      * found within the transportReader.
      *
      * @param transportReader The Reader holding a single XML-formatted String being converted by the
-     *                        convertToXml method in an XmlBinder of the same internal implementation type as this one.
+     *                        marshal method in an XmlBinder of the same internal implementation type as this one.
      * @return A fully unmarshalled instance clone of the original object written to the stream.
      * @throws IllegalArgumentException If the object graph could not be properly resurrected.
      * @throws InternalStateValidationException
      *                                  if any object resurrected was a Validatable which did not pass validation.
      */
-    <S> S convertInstanceFromXml(Reader transportReader) throws IllegalArgumentException,
+    <S> S unmarshalInstance(Reader transportReader) throws IllegalArgumentException,
             InternalStateValidationException;
 }
