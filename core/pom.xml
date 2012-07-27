@@ -31,11 +31,11 @@
     ################################################
     -->
     <modules>
+        <module>poms</module>
         <module>algorithms</module>
         <module>reflection</module>
         <module>resource</module>
         <module>parser</module>
         <module>xmlbinding</module>
-    	<!-- module>cluster</module -->
     </modules>
 </project>
