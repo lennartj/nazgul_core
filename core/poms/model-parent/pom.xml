@@ -21,7 +21,7 @@
     </parent>
 
     <groupId>se.jguru.nazgul.core.poms.model-parent</groupId>
-    <artifactId>nazgul-core-poms-model-parent</artifactId>
+    <artifactId>nazgul-core-model-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>${project.groupId}.${project.artifactId}</name>
     <packaging>pom</packaging>

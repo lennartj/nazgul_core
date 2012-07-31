@@ -17,6 +17,7 @@
         <groupId>se.jguru.nazgul.tools.poms</groupId>
         <artifactId>nazgul-parent</artifactId>
         <version>1.0.0</version>
+        <relativePath/>
     </parent>
 
     <groupId>se.jguru.nazgul.core.xmlbinding.spi.jaxb</groupId>
@@ -109,6 +110,51 @@
                         </regexes>
                     </check>
                 </configuration>
+            </plugin>
+
+            <!--
+                Enforce not importing incorrect projects.
+            -->
+            <plugin>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.1</version>
+                <executions>
+                    <execution>
+                        <id>enforce-imports</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>[3.0.4,)</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>${jdk.version}</version>
+                                </requireJavaVersion>
+                                <requireUpperBoundDeps/>
+
+                                <!--
+                                    Check import rules for all non-test and non-application packaged projects.
+                                    The Rule itself skips checking WARs, EARs, and POMs projects.
+                                -->
+                                <restrictImplDependencies
+                                        implementation="se.jguru.nazgul.tools.codestyle.enforcer.rules.RestrictImplDependencies">
+                                    <includedGroupIdPrefixes>se.jguru.nazgul</includedGroupIdPrefixes>
+                                    <excludedGroupIdPrefixes>se.jguru.nazgul.tools</excludedGroupIdPrefixes>
+                                    <ignoreEvaluatingArtifactsWithGroupIdPrefixes>com.sun.xml.bind</ignoreEvaluatingArtifactsWithGroupIdPrefixes>
+                                </restrictImplDependencies>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>se.jguru.nazgul.tools.codestyle</groupId>
+                        <artifactId>nazgul-codestyle</artifactId>
+                        <version>${nazgul-codestyle.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
