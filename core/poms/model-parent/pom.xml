@@ -38,6 +38,11 @@
             <artifactId>nazgul-core-reflection-api</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>se.jguru.nazgul.core.xmlbinding.api</groupId>
+            <artifactId>nazgul-core-xmlbinding-api</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
 
         <!-- External dependencies -->
         <dependency>
@@ -111,14 +116,6 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jaxb2-maven-plugin</artifactId>
                 <version>1.4</version>
-                <executions>
-                    <execution>
-                        <id>schemagen</id>
-                        <goals>
-                            <goal>schemagen</goal>
-                        </goals>
-                    </execution>
-                </executions>
                 <configuration>
                     <includes>
                         <include>**/*.java</include>
