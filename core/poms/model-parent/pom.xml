@@ -58,6 +58,18 @@
     ################################################
     -->
     <build>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>${project.build.directory}/jaxb2/transformed</directory>
+                <includes>
+                    <include>**/*.xsd</include>
+                </includes>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
@@ -124,28 +136,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>copyGeneratedXSDs</id>
-            <activation>
-                <file>
-                    <exists>${project.build.directory}/jaxb2/work/schema1.xsd</exists>
-                </file>
-            </activation>
-            <build>
-                <resources>
-                    <resource>
-                        <directory>${project.basedir}/src/main/resources</directory>
-                    </resource>
-                    <resource>
-                        <directory>${project.build.directory}/jaxb2/transformed</directory>
-                        <includes>
-                            <include>**/*.xsd</include>
-                        </includes>
-                    </resource>
-                </resources>
-            </build>
-        </profile>
-    </profiles>
 </project>
