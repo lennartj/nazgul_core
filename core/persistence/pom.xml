@@ -32,7 +32,7 @@
     -->
     <modules>
         <module>persistence-model</module>
-        <!-- module>persistence-api</module>
-        <module>persistence-impl-openjpa</module -->
+        <module>persistence-api</module>
+        <!-- module>persistence-impl-openjpa</module -->
     </modules>
 </project>
