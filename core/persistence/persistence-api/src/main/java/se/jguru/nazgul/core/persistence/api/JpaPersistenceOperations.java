@@ -176,7 +176,7 @@ public class JpaPersistenceOperations implements PersistenceOperations {
         List<T> toReturn = (List<T>) namedQuery.getResultList();
         for (T current : toReturn) {
 
-            // Validate each AgoraEntity.
+            // Validate each NazgulEntity.
             try {
                 this.validateInternalState(current);
             } catch (InternalStateValidationException e) {
