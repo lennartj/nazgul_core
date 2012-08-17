@@ -152,6 +152,28 @@ public class JpaPersistenceOperationsTest {
         Assert.assertEquals(entity, result.get(0));
     }
 
+    @Test
+    public void validateCorrectEncodingOfNonAsciiChars() throws Exception {
+
+        // Assemble
+        final String testChars = "åäöÅÄÖ";
+
+        // Act
+        unitUnderTest.create(new MockNazgulEntity(testChars));
+
+        trans.commit();
+        trans.begin();
+
+        final List<NazgulEntity> result = unitUnderTest.fireNamedQuery("getMockEntityByName", testChars);
+
+        trans.commit();
+
+        // Assert
+        Assert.assertNotNull(result);
+        Assert.assertEquals(1, result.size());
+        Assert.assertEquals(testChars, ((MockNazgulEntity) result.get(0)).getValue());
+    }
+
     //
     // Private helpers
     //
