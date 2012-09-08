@@ -69,7 +69,7 @@ public class DependencyDataTest {
 
         final DependencyData localDependencyData = map.get(artifactId);
         Assert.assertNotNull(localDependencyData);
-        Assert.assertEquals("se.jguru.nazgul.tools.validation", localDependencyData.getGroupId());
+        Assert.assertEquals("se.jguru.nazgul.tools.validation.api", localDependencyData.getGroupId());
     }
 
     @Test
