@@ -32,5 +32,6 @@
     -->
     <modules>
         <module>cache-api</module>
+        <module>cache-impl-hazelcast</module>
     </modules>
 </project>
