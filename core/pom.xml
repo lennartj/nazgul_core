@@ -41,4 +41,8 @@
         <module>clustering</module>
         <module>cache</module>
     </modules>
+
+    <scm>
+        <developerConnection>scm:hg:file://${basedir}/../</developerConnection>
+    </scm>
 </project>

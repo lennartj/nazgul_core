@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) jGuru Europe AB.
+  ~ All rights reserved.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <!--
+        Define a PropertyHolder instance.
+    -->
+    <bean id="propertyHolderSource"
+          class="se.jguru.nazgul.core.cache.impl.hazelcast.clients.PropertyHolder"/>
+
+    <!--
+        Extract some values from the PropertyHolder into separate beans.
+    -->
+    <bean id="members" factory-bean="propertyHolderSource" factory-method="getCacheMembers"/>
+    <bean id="cluster" factory-bean="propertyHolderSource" factory-method="getCacheClusterId"/>
+    <bean id="listenerIp" factory-bean="propertyHolderSource" factory-method="getLocalListeningIp"/>
+    <bean id="listenerPort" factory-bean="propertyHolderSource" factory-method="getLocalListeningPort"/>
+
+</beans>

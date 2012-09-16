@@ -1,0 +1,233 @@
+<!--
+  ~ Copyright (c) jGuru Europe AB.
+  ~ All rights reserved.
+  -->
+
+<hazelcast>
+    <!-- group>
+        <name>unittest-cache-group</name>
+        <password>unittest-pass</password>
+    </group>
+    <network>
+        <port auto-increment="true">5701</port>
+        <join>
+            <multicast enabled="false">
+                <multicast-group>224.2.2.3</multicast-group>
+                <multicast-port>54327</multicast-port>
+            </multicast>
+            <tcp-ip enabled="true">
+                <hostname>127.0.0.1</hostname>
+            </tcp-ip>
+        </join>
+    </network -->
+
+    <!--
+        Define the boundaries for the Executor service, which is the
+        in-cache command pattern execution thread pool.
+    -->
+    <executor-service>
+        <core-pool-size>16</core-pool-size>
+        <max-pool-size>64</max-pool-size>
+        <keep-alive-seconds>60</keep-alive-seconds>
+    </executor-service>
+
+    <!--
+        Default queue definition - boundaryless without eviction.
+    -->
+    <queue name="default">
+        <!--
+            Definition:         Max QueueSize.
+            Permitted range:    [0, Integer.MAX_VALUE]
+            Special values:     The value 0 is subtituted for Integer.MAX_VALUE.
+
+            When a JVM's local queue size reaches the maximum, all put/offer operations will
+            get blocked until the queue size of the JVM goes down below the maximum.
+        -->
+        <max-size-per-jvm>0</max-size-per-jvm>
+
+        <!--
+            Definition:         Max number of seconds for each item to stay in the queue.
+            Permitted range:    [0, Integer.MAX_VALUE]
+            Special values:     The value 0 means infinite (i.e. eviction will not be done).
+
+            Items that are not consumed in <time-to-live-seconds> will
+            automatically get evicted from the queue.
+        -->
+        <time-to-live-seconds>0</time-to-live-seconds>
+    </queue>
+
+    <!--
+        Default (distributed) map definition - 1 backup, boundaryless without eviction.
+    -->
+    <map name="default">
+        <!--
+            Definition:         Number of backups.
+            Permitted range:    [0, 3]
+            Special values:     The value 0 means no backup.
+
+            Number of backups (extra copies) of the instances within each distributed map.
+            If 1 is set as the backup-count for example, then all entries of the map will
+            be copied to 1 other JVM for fail-safety.
+        -->
+        <backup-count>1</backup-count>
+
+        <!--
+            Definition:         Eviction policy, implying how cache eviction is done.
+            Permitted values:   {NONE, LRU, LFU}
+
+            Value explanation:
+                NONE    :=      No eviction.
+                LRU     :=      Least Recently Used.
+                LFU     :=      Least Frequently Used.
+        -->
+        <eviction-policy>NONE</eviction-policy>
+
+        <!--
+            Definition:         Max mapSize.
+            Permitted range:    [0, Integer.MAX_VALUE]
+            Special values:     The value 0 is subtituted for Integer.MAX_VALUE.
+
+            When max size is reached, map is evicted based on the policy defined.
+        -->
+        <max-size>0</max-size>
+
+        <!--
+            Definition:         The percentage of the map that will be evicted when the max-size is reached.
+            Permitted values:   [0, 100]
+
+            Any integer between 0 and 100. If 25 is set for example, 25% of the entries will get evicted.
+        -->
+        <eviction-percentage>25</eviction-percentage>
+
+        <!--
+            Definition:         While recovering from split-brain (network partitioning), map entries in the
+                                small cluster will merge into the bigger cluster based on the policy set here.
+                                When an entry merge into the cluster, there might an existing entry with the
+                                same key already. Values of these entries might be different for that same key.
+                                Which value should be set for the key? Conflict is resolved by
+                                the policy set here. Default policy is hz.ADD_NEW_ENTRY
+            Permitted values:   {hz.NO_MERGE, hz.ADD_NEW_ENTRY, hz.HIGHER_HITS, hz.LATEST_UPDATE}
+
+            Value explanation:
+                hz.NO_MERGE         := No entry will merge.
+                hz.ADD_NEW_ENTRY    := Entry will be added if the merging entry's key doesn't exist in the cluster.
+                hz.HIGHER_HITS      := Entry with the higher hits wins.
+                hz.LATEST_UPDATE    := Entry with the latest update wins.
+        -->
+        <merge-policy>hz.ADD_NEW_ENTRY</merge-policy>
+    </map>
+
+    <!--
+        Default (distributed) map definition - 1 backup, boundaryless without eviction.
+    -->
+    <map name="clusterWide_commonCacheMap">
+        <!--
+            Definition:         Number of backups.
+            Permitted range:    [0, 3]
+            Special values:     The value 0 means no backup.
+
+            Number of backups (extra copies) of the instances within each distributed map.
+            If 1 is set as the backup-count for example, then all entries of the map will
+            be copied to 1 other JVM for fail-safety.
+        -->
+        <backup-count>1</backup-count>
+
+        <!--
+            Definition:         Eviction policy, implying how cache eviction is done.
+            Permitted values:   {NONE, LRU, LFU}
+
+            Value explanation:
+                NONE    :=      No eviction.
+                LRU     :=      Least Recently Used.
+                LFU     :=      Least Frequently Used.
+        -->
+        <eviction-policy>NONE</eviction-policy>
+
+        <!--
+            Definition:         Max mapSize.
+            Permitted range:    [0, Integer.MAX_VALUE]
+            Special values:     The value 0 is subtituted for Integer.MAX_VALUE.
+
+            When max size is reached, map is evicted based on the policy defined.
+        -->
+        <max-size>0</max-size>
+
+        <!--
+            Definition:         The percentage of the map that will be evicted when the max-size is reached.
+            Permitted values:   [0, 100]
+
+            Any integer between 0 and 100. If 25 is set for example, 25% of the entries will get evicted.
+        -->
+        <eviction-percentage>25</eviction-percentage>
+
+        <!--
+            Definition:         While recovering from split-brain (network partitioning), map entries in the
+                                small cluster will merge into the bigger cluster based on the policy set here.
+                                When an entry merge into the cluster, there might an existing entry with the
+                                same key already. Values of these entries might be different for that same key.
+                                Which value should be set for the key? Conflict is resolved by
+                                the policy set here. Default policy is hz.ADD_NEW_ENTRY
+            Permitted values:   {hz.NO_MERGE, hz.ADD_NEW_ENTRY, hz.HIGHER_HITS, hz.LATEST_UPDATE}
+
+            Value explanation:
+                hz.NO_MERGE         := No entry will merge.
+                hz.ADD_NEW_ENTRY    := Entry will be added if the merging entry's key doesn't exist in the cluster.
+                hz.HIGHER_HITS      := Entry with the higher hits wins.
+                hz.LATEST_UPDATE    := Entry with the latest update wins.
+        -->
+        <merge-policy>hz.ADD_NEW_ENTRY</merge-policy>
+    </map>
+
+    <map name="default">
+        <near-cache>
+
+            <!--
+                Definition:         Max number of seconds for each item to stay in the near cache.
+                Permitted range:    [0, Integer.MAX_VALUE]
+                Special values:     The value 0 means infinite (i.e. eviction will not be done).
+
+                Items that are not consumed in <time-to-live-seconds> will
+                automatically get evicted from the near cache.
+            -->
+            <time-to-live-seconds>0</time-to-live-seconds>
+
+            <!--
+                Definition:         Max number of seconds each entry can stay in the near cache as untouched (not-read).
+                Permitted range:    [0, Integer.MAX_VALUE]
+                Special values:     The value 0 means infinite (i.e. eviction will not be done).
+
+                Entries that are not read (touched) more than <max-idle-seconds> value
+                will get removed from the near cache.
+            -->
+            <max-idle-seconds>60</max-idle-seconds>
+
+            <!--
+                Definition:         Eviction policy, implying how cache eviction is done.
+                                    Regardless of the eviction policy used, <time-to-live-seconds> will still apply.
+                Permitted values:   {NONE, LRU, LFU}
+
+                Value explanation:
+                    NONE    :=      No eviction.
+                    LRU     :=      Least Recently Used.
+                    LFU     :=      Least Frequently Used.
+            -->
+            <eviction-policy>LRU</eviction-policy>
+
+            <!--
+                Definition:         Max mapSize.
+                Permitted range:    [0, Integer.MAX_VALUE]
+                Special values:     The value 0 is subtituted for Integer.MAX_VALUE.
+
+                When max size is reached, map is evicted based on the policy defined.
+            -->
+            <max-size>5000</max-size>
+
+            <!--
+                Definition:         Should the cached entries get evicted if the entries are changed (updated or removed).
+                Permitted range:    [true, false]
+            -->
+            <invalidate-on-change>true</invalidate-on-change>
+        </near-cache>
+    </map>
+
+</hazelcast>

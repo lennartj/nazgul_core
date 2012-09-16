@@ -96,4 +96,8 @@
             </plugin>
         </plugins>
     </build>
+
+    <scm>
+        <developerConnection>scm:hg:file://${basedir}/../../../</developerConnection>
+    </scm>
 </project>

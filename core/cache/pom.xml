@@ -34,4 +34,8 @@
         <module>cache-api</module>
         <module>cache-impl-hazelcast</module>
     </modules>
+
+    <scm>
+        <developerConnection>scm:hg:file://${basedir}/../../</developerConnection>
+    </scm>
 </project>
