@@ -34,4 +34,8 @@
         <module>xmlbinding-api</module>
         <module>xmlbinding-spi-jaxb</module>
     </modules>
+
+    <scm>
+        <developerConnection>scm:hg:file://${basedir}/../../</developerConnection>
+    </scm>
 </project>

@@ -33,4 +33,8 @@
     <modules>
         <module>model-parent</module>
     </modules>
+
+    <scm>
+        <developerConnection>scm:hg:file://${basedir}/../../</developerConnection>
+    </scm>
 </project>

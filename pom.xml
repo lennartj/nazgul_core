@@ -18,7 +18,7 @@
     <version>1.0.0-SNAPSHOT</version>
     <name>${project.groupId}.${project.artifactId}</name>
     <packaging>pom</packaging>
-    
+
     <parent>
         <groupId>se.jguru.nazgul.tools.poms</groupId>
         <artifactId>nazgul-reactor</artifactId>
@@ -31,6 +31,28 @@
     ################################################
     -->
     <modules>
-    	<module>core</module>
+        <module>core</module>
     </modules>
+
+    <!--
+    ################################################
+    # Section 3:  External systems
+    ################################################
+    -->
+    <scm>
+        <developerConnection>scm:hg:file://${basedir}/</developerConnection>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>jGuru_Artifactory</id>
+            <name>jGuru_Artifactory-releases</name>
+            <url>http://www.jguru.se/artifactory/libs-releases-local</url>
+        </repository>
+        <snapshotRepository>
+            <id>jGuru_Artifactory</id>
+            <name>jGuru_Artifactory-snapshots</name>
+            <url>http://www.jguru.se/artifactory/libs-snapshots-local</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>

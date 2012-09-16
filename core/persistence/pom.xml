@@ -35,4 +35,8 @@
         <module>persistence-api</module>
         <!-- module>persistence-spi-jpa</module -->
     </modules>
+
+    <scm>
+        <developerConnection>scm:hg:file://${basedir}/../../</developerConnection>
+    </scm>
 </project>
