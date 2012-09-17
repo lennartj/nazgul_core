@@ -5,6 +5,7 @@
 
 package se.jguru.nazgul.core.cache.impl.hazelcast;
 
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
@@ -19,7 +20,7 @@ public class LocalhostIpResolver {
         try {
             final InetAddress[] allByName = InetAddress.getAllByName(InetAddress.getLocalHost().getHostName());
             for(InetAddress current : allByName) {
-                if(!current.isLoopbackAddress()) {
+                if(!current.isLoopbackAddress() && (current instanceof Inet4Address)) {
                     return current;
                 }
             }
@@ -27,7 +28,8 @@ public class LocalhostIpResolver {
             e.printStackTrace();
         }
 
-        return null;
+        throw new IllegalStateException("Currently, an IPv4 address is required "
+                + "to build the HazelcastCache implementation module.");
     }
 
     public static String getLocalHostAddress() {
@@ -45,4 +47,15 @@ public class LocalhostIpResolver {
 
         return builder.toString();
     }
+
+    /*
+    public static void main(String[] args) throws Exception {
+
+        final InetAddress[] allByName = InetAddress.getAllByName(InetAddress.getLocalHost().getHostName());
+
+        for(InetAddress current : allByName) {
+            System.out.println("Got: " + current + ", v4: " + (current instanceof Inet4Address));
+        }
+    }
+    */
 }
