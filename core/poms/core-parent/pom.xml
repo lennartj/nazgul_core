@@ -30,20 +30,16 @@
     # Section 2:  Dependency (management) settings
     ################################################
     -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-jms_1.1_spec</artifactId>
+                <version>1.1.1</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
-        <!-- Internal dependencies -->
-        <dependency>
-            <groupId>se.jguru.nazgul.core.reflection.api</groupId>
-            <artifactId>nazgul-core-reflection-api</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>se.jguru.nazgul.core.xmlbinding.api</groupId>
-            <artifactId>nazgul-core-xmlbinding-api</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-        <!-- External dependencies -->
         <dependency>
             <groupId>org.apache.openjpa</groupId>
             <artifactId>openjpa</artifactId>

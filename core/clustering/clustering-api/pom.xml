@@ -14,9 +14,10 @@
     ################################################
     -->
     <parent>
-        <groupId>se.jguru.nazgul.tools.poms</groupId>
-        <artifactId>nazgul-parent</artifactId>
-        <version>1.0.0</version>
+        <groupId>se.jguru.nazgul.core.poms.core-parent</groupId>
+        <artifactId>nazgul-core-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../../poms/core-parent</relativePath>
     </parent>
 
     <groupId>se.jguru.nazgul.core.clustering.api</groupId>

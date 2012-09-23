@@ -40,6 +40,7 @@
         <module>persistence</module>
         <module>clustering</module>
         <module>cache</module>
+        <module>messaging</module>
     </modules>
 
     <scm>
