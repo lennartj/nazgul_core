@@ -14,14 +14,14 @@
     ################################################
     -->
     <parent>
-        <groupId>se.jguru.nazgul.core.poms.core-parent</groupId>
-        <artifactId>nazgul-core-parent</artifactId>
+        <groupId>se.jguru.nazgul.core.poms.model-parent</groupId>
+        <artifactId>nazgul-core-model-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
-        <relativePath>../../poms/core-parent</relativePath>
+        <relativePath>../../poms/model-parent/pom.xml</relativePath>
     </parent>
 
-    <groupId>se.jguru.nazgul.core.persistence.api</groupId>
-    <artifactId>nazgul-core-persistence-api</artifactId>
+    <groupId>se.jguru.nazgul.core.messaging.model</groupId>
+    <artifactId>nazgul-core-messaging-model</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>${project.groupId}.${project.artifactId}</name>
     <packaging>bundle</packaging>
@@ -32,14 +32,18 @@
     ################################################
     -->
     <dependencies>
-        <!-- Internal dependencies -->
+        <!-- Internal dependencies. -->
         <dependency>
             <groupId>se.jguru.nazgul.core.persistence.model</groupId>
             <artifactId>nazgul-core-persistence-model</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
-        <!-- External dependencies -->
+        <!-- External dependencies. -->
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jms_1.1_spec</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -49,9 +53,17 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jpa_2.0_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.openjpa</groupId>
             <artifactId>openjpa</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -61,11 +73,6 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -82,7 +89,7 @@
                 <artifactId>openjpa-maven-plugin</artifactId>
                 <version>${openjpa.version}</version>
                 <executions>
-                    <!-- execution>
+                    <execution>
                         <id>enhancer</id>
                         <phase>process-classes</phase>
                         <goals>
@@ -92,7 +99,7 @@
                             <includes>**/*.class</includes>
                             <persistenceXmlFile>${basedir}/src/main/weaving/openjpa/persistence-model-persistence.xml</persistenceXmlFile>
                         </configuration>
-                    </execution -->
+                    </execution>
                     <execution>
                         <id>test-enchancer</id>
                         <phase>process-test-classes</phase>
@@ -101,7 +108,7 @@
                         </goals>
                         <configuration>
                             <includes>**/*.class</includes>
-                            <persistenceXmlFile>${basedir}/src/test/resources/testdata/JpaOperationsPersistence.xml</persistenceXmlFile>
+                            <persistenceXmlFile>${basedir}/src/test/weaving/openjpa/persistence-model-test-persistence.xml</persistenceXmlFile>
                         </configuration>
                     </execution>
                 </executions>
@@ -116,6 +123,32 @@
                         <Export-Package>{local-packages}</Export-Package>
                     </instructions>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generateXsd</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>schemagen</goal>
+                        </goals>
+                        <configuration>
+                            <transformSchemas>
+                                <transformSchema>
+                                    <uri>http://www.jguru.se/nazgul/core</uri>
+                                    <toPrefix>core</toPrefix>
+                                    <toFile>core_messaging_model.xsd</toFile>
+                                </transformSchema>
+                            </transformSchemas>
+                            <includes>
+                                <include>se/jguru/nazgul/**/*.java</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

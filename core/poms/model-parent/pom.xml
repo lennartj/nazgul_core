@@ -13,10 +13,10 @@
     ################################################
     -->
     <parent>
-        <groupId>se.jguru.nazgul.tools.poms</groupId>
-        <artifactId>nazgul-parent</artifactId>
-        <version>1.0.0</version>
-        <relativePath/>
+        <groupId>se.jguru.nazgul.core.poms.core-parent</groupId>
+        <artifactId>nazgul-core-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../core-parent</relativePath>
     </parent>
 
     <groupId>se.jguru.nazgul.core.poms.model-parent</groupId>
