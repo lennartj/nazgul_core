@@ -6,8 +6,6 @@
 package se.jguru.nazgul.core.algorithms.api.tree;
 
 import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -42,22 +40,28 @@ public class EnumMapPath<E extends Enum<E>, KeyType extends Serializable & Compa
 
         // Check sanity
         Validate.notNull(enumType, "Cannot handle null enumType argument.");
-        Validate.notNull(segments, "Cannot handle null segments argument.");
+        Validate.notEmpty(segments, "Cannot handle null or empty segments argument.");
 
         final E[] enumConstants = enumType.getEnumConstants();
         Validate.isTrue(enumConstants.length > 0, "Cannot create an EnumMapPath from an Enum with no constants.");
 
-        // Create a full internal enum map.
+        // Assign internal state
         this.enumType = enumType;
-        this.segments = new EnumMap<E, KeyType>(enumType);
-        for (E current : enumConstants) {
-            this.segments.put(current, null);
-        }
-
-        // Assign our internal state
+        this.segments = TreeAlgorithms.getEmptyEnumMap(enumType);
         this.enumConstants = enumType.getEnumConstants();
+
         for (E current : segments.keySet()) {
             this.segments.put(current, segments.get(current));
+        }
+
+        // Check sanity
+        boolean noNullsFound = true;
+        for(E current : this.segments.keySet()) {
+            if(this.segments.get(current) == null) {
+                noNullsFound = false;
+            } else {
+                Validate.isTrue(noNullsFound, "Paths cannot contain null elements. Got: " + this.segments);
+            }
         }
     }
 
@@ -111,8 +115,8 @@ public class EnumMapPath<E extends Enum<E>, KeyType extends Serializable & Compa
         }
 
         // Perform a deep clone on the segments map.
-        final EnumMap<E, KeyType> clone = new EnumMap<E, KeyType>(enumType);
-        for(E current : segments.keySet()) {
+        final EnumMap<E, KeyType> clone = TreeAlgorithms.getEmptyEnumMap(enumType);
+        for (E current : segments.keySet()) {
 
             final KeyType keyType = segments.get(current);
             final KeyType toPut = keyType == null ? null : (KeyType) deepClone(keyType);
@@ -159,7 +163,7 @@ public class EnumMapPath<E extends Enum<E>, KeyType extends Serializable & Compa
      */
     @Override
     public Iterator<KeyType> iterator() {
-        return segments.values().iterator();
+        return new SemanticPathSegmentIterator();
     }
 
     /**
@@ -220,18 +224,27 @@ public class EnumMapPath<E extends Enum<E>, KeyType extends Serializable & Compa
     }
 
     /**
-     *
+     * Iterator usable for EnumMapPath instances.
+     * Not a thread-safe implementation.
      */
     class SemanticPathSegmentIterator implements Iterator<KeyType> {
 
         // Internal state
+        private final E[] constants = EnumMapPath.this.enumConstants;
+        private E cursor;
 
         /**
          * {@inheritDoc}
          */
         @Override
         public boolean hasNext() {
-            return false;
+
+            // Don't run out of constants
+            boolean withinBounds = cursor != constants[constants.length - 1];
+
+            // ... and paths should be continuous.
+            final int currentOrdinal = cursor == null ? -1 : cursor.ordinal();
+            return withinBounds && segments.get(constants[currentOrdinal + 1]) != null;
         }
 
         /**
@@ -239,7 +252,13 @@ public class EnumMapPath<E extends Enum<E>, KeyType extends Serializable & Compa
          */
         @Override
         public KeyType next() {
-            return null;
+
+            // Step the cursor
+            final int currentOrdinal = cursor == null ? -1 : cursor.ordinal();
+            cursor = constants[currentOrdinal + 1];
+
+            // All done.
+            return segments.get(cursor);
         }
 
         /**

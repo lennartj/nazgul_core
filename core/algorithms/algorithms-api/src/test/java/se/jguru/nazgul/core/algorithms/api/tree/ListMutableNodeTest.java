@@ -177,8 +177,8 @@ public class ListMutableNodeTest {
         Assert.assertEquals("child1", child2Path.get(1));
         Assert.assertEquals("child2", child2Path.get(2));
 
-        Assert.assertEquals("ListPath { key }", rootPath.toString());
-        Assert.assertEquals("ListPath { key/child1 }", child1Path.toString());
-        Assert.assertEquals("ListPath { key/child1/child2 }", child2Path.toString());
+        Assert.assertEquals("{ key }", rootPath.toString());
+        Assert.assertEquals("{ key/child1 }", child1Path.toString());
+        Assert.assertEquals("{ key/child1/child2 }", child2Path.toString());
     }
 }

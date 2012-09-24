@@ -7,6 +7,10 @@ package se.jguru.nazgul.core.algorithms.api.tree;
 
 import junit.framework.Assert;
 import org.junit.Test;
+import se.jguru.nazgul.core.algorithms.api.tree.helpers.Adjustment;
+import se.jguru.nazgul.core.algorithms.api.tree.helpers.AdjustmentStringNode;
+import se.jguru.nazgul.core.algorithms.api.tree.helpers.ProcessPath;
+import se.jguru.nazgul.core.algorithms.api.tree.helpers.ProcessPathStringNode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,11 +25,6 @@ import java.util.TreeSet;
  */
 public class EnumMapPathTest {
 
-    enum Adjustment {
-        LEFT,
-        CENTER,
-        RIGHT
-    }
 
     @Test(expected = NullPointerException.class)
     public void validateExceptionOnNullSegments() {
@@ -48,16 +47,14 @@ public class EnumMapPathTest {
     public void validateKeyPadding() {
 
         // Assemble
-        final EnumMap<Adjustment, String> segments = new EnumMap<Adjustment, String>(Adjustment.class);
-        final EnumMapPath<Adjustment, String> unitUnderTest =
-                new EnumMapPath<Adjustment, String>(segments, Adjustment.class);
+        final AdjustmentStringNode unitUnderTest = AdjustmentStringNode.create(Arrays.asList("Left"));
 
         // Act
         final int size = unitUnderTest.size();
         final int maxSize = unitUnderTest.getMaxSize();
 
         // Assert
-        Assert.assertEquals(0, size);
+        Assert.assertEquals(1, size);
         Assert.assertEquals(Adjustment.values().length, maxSize);
     }
 
@@ -65,13 +62,8 @@ public class EnumMapPathTest {
     public void validateSizeAndIteration() {
 
         // Assemble
-        final EnumMap<Adjustment, String> segments = new EnumMap<Adjustment, String>(Adjustment.class);
-        segments.put(Adjustment.LEFT, "Left");
-        segments.put(Adjustment.CENTER, "Center");
-        segments.put(Adjustment.RIGHT, "Right");
-
-        final EnumMapPath<Adjustment, String> unitUnderTest =
-                new EnumMapPath<Adjustment, String>(segments, Adjustment.class);
+        final AdjustmentStringNode unitUnderTest = AdjustmentStringNode.create(
+                Arrays.asList("Left", "Center", "Right"));
 
         // Act
         final List<String> iterated = new ArrayList<String>();
@@ -91,12 +83,7 @@ public class EnumMapPathTest {
     public void validateExceptionOnTooBigIndex() {
 
         // Assemble
-        final EnumMap<Adjustment, String> segments = new EnumMap<Adjustment, String>(Adjustment.class);
-        segments.put(Adjustment.LEFT, "Left");
-        segments.put(Adjustment.CENTER, "Center");
-
-        final EnumMapPath<Adjustment, String> unitUnderTest =
-                new EnumMapPath<Adjustment, String>(segments, Adjustment.class);
+        final AdjustmentStringNode unitUnderTest = AdjustmentStringNode.create(Arrays.asList("Left", "Center"));
 
         // Act & Assert
         unitUnderTest.get(3);
@@ -106,12 +93,7 @@ public class EnumMapPathTest {
     public void validateExceptionOnNegativeIndex() {
 
         // Assemble
-        final EnumMap<Adjustment, String> segments = new EnumMap<Adjustment, String>(Adjustment.class);
-        segments.put(Adjustment.LEFT, "Left");
-        segments.put(Adjustment.CENTER, "Center");
-
-        final EnumMapPath<Adjustment, String> unitUnderTest =
-                new EnumMapPath<Adjustment, String>(segments, Adjustment.class);
+        final AdjustmentStringNode unitUnderTest = AdjustmentStringNode.create(Arrays.asList("Left", "Center"));
 
         // Act & Assert
         unitUnderTest.get(-2);
@@ -121,13 +103,8 @@ public class EnumMapPathTest {
     public void validateExceptionAppendingSegmentToFullPath() {
 
         // Assemble
-        final EnumMap<Adjustment, String> segments = new EnumMap<Adjustment, String>(Adjustment.class);
-        segments.put(Adjustment.LEFT, "Left");
-        segments.put(Adjustment.CENTER, "Center");
-        segments.put(Adjustment.RIGHT, "Right");
-
-        final EnumMapPath<Adjustment, String> unitUnderTest =
-                new EnumMapPath<Adjustment, String>(segments, Adjustment.class);
+        final AdjustmentStringNode unitUnderTest = AdjustmentStringNode.create(
+                Arrays.asList("Left", "Center", "Right"));
 
         // Act & Assert
         unitUnderTest.append("FooBar");
@@ -137,12 +114,7 @@ public class EnumMapPathTest {
     public void validateAppendingSegmentToPath() {
 
         // Assemble
-        final EnumMap<Adjustment, String> segments = new EnumMap<Adjustment, String>(Adjustment.class);
-        segments.put(Adjustment.LEFT, "Left");
-        segments.put(Adjustment.CENTER, "Center");
-
-        final EnumMapPath<Adjustment, String> unitUnderTest =
-                new EnumMapPath<Adjustment, String>(segments, Adjustment.class);
+        final AdjustmentStringNode unitUnderTest = AdjustmentStringNode.create(Arrays.asList("Left", "Center"));
 
         // Act
         final EnumMapPath<Adjustment, String> three = unitUnderTest.append("Right");
@@ -152,6 +124,14 @@ public class EnumMapPathTest {
         Assert.assertEquals(2, unitUnderTest.size());
         Assert.assertEquals(3, three.size());
 
+        Assert.assertEquals("Left", unitUnderTest.get(Adjustment.LEFT));
+        Assert.assertEquals("Center", unitUnderTest.get(Adjustment.CENTER));
+        Assert.assertEquals(null, unitUnderTest.get(Adjustment.RIGHT));
+
+        Assert.assertEquals("Left", three.get(Adjustment.LEFT));
+        Assert.assertEquals("Center", three.get(Adjustment.CENTER));
+        Assert.assertEquals("Right", three.get(Adjustment.RIGHT));
+
         Assert.assertEquals("Right", three.get(2));
     }
 
@@ -159,13 +139,19 @@ public class EnumMapPathTest {
     public void validateComparison() {
 
         // Assemble
-        final EnumMapPath<Adjustment, String> unitUnderTest1 = getEMP(Arrays.asList("Left", "Center"));
-        final EnumMapPath<Adjustment, String> unitUnderTest2 = getEMP(Arrays.asList("Left", "Center", "Right"));
-        final EnumMapPath<Adjustment, String> unitUnderTest3 = getEMP(Arrays.asList("Left"));
-        final EnumMapPath<Adjustment, String> unitUnderTest4 = getEMP(Arrays.asList("Apa"));
+        final AdjustmentStringNode unitUnderTest1 = AdjustmentStringNode.create(Arrays.asList("Left", "Center"));
+        final AdjustmentStringNode unitUnderTest2 = AdjustmentStringNode.create(
+                Arrays.asList("Left", "Center", "Right"));
+        final AdjustmentStringNode unitUnderTest3 = AdjustmentStringNode.create(Arrays.asList("Left"));
+        final AdjustmentStringNode unitUnderTest4 = AdjustmentStringNode.create(Arrays.asList("Apa"));
 
         // Act
         final SortedSet<EnumMapPath<Adjustment, String>> sortedSet = new TreeSet<EnumMapPath<Adjustment, String>>();
+        sortedSet.add(unitUnderTest1);
+        sortedSet.add(unitUnderTest2);
+        sortedSet.add(unitUnderTest3);
+        sortedSet.add(unitUnderTest4);
+
         final List<EnumMapPath<Adjustment, String>> sortedList = new ArrayList<EnumMapPath<Adjustment, String>>();
         for(EnumMapPath<Adjustment, String> current : sortedSet) {
             sortedList.add(current);
@@ -179,26 +165,33 @@ public class EnumMapPathTest {
         Assert.assertSame(unitUnderTest2, sortedList.get(3));
     }
 
-    //
-    // Private helpers
-    //
+    @Test(expected = IllegalArgumentException.class)
+    public void validateExceptionOnNullsWithinPath() {
 
-    private EnumMapPath<Adjustment, String> getEMP(final List<String> values) {
+        // Assemble
+        final EnumMap<ProcessPath, String> segments = TreeAlgorithms.getEmptyEnumMap(ProcessPath.class);
+        segments.put(ProcessPath.NODE, "Something");
 
-        final EnumMap<Adjustment, String> segments = new EnumMap<Adjustment, String>(Adjustment.class);
-        Iterator<String> it = values.iterator();
-        for (Adjustment current : segments.keySet()) {
+        // Act & Assert
+        new ProcessPathStringNode(segments);
+    }
 
-            // Get the next value pair
-            if (!it.hasNext()) {
-                break;
-            }
+    @Test
+    public void validateToString() {
 
-            final String nextValue = it.next();
-            segments.put(current, nextValue);
-        }
+        // Assemble
+        final String expected =
+                "EnumMapPath { \n" +
+                "  LEFT=Foo\n" +
+                "  CENTER=Bar\n" +
+                "  RIGHT=Baz }";
+        final AdjustmentStringNode unitUnderTest = AdjustmentStringNode.create(Arrays.asList("Foo", "Bar", "Baz"));
 
-        // All Done.
-        return new EnumMapPath<Adjustment, String>(segments, Adjustment.class);
+        // Act
+        final String debugString = unitUnderTest.toString();
+
+        // Assert
+        Assert.assertNotNull(debugString);
+        Assert.assertEquals(expected, debugString);
     }
 }
