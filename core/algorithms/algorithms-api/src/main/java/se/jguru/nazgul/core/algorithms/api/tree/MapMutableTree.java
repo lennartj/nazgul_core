@@ -5,7 +5,7 @@
 
 package se.jguru.nazgul.core.algorithms.api.tree;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import se.jguru.nazgul.core.algorithms.api.predicate.Filter;
 
 import java.io.Serializable;
