@@ -3,9 +3,10 @@
  * All rights reserved.
  */
 
-package se.jguru.nazgul.core.algorithms.api.trees;
+package se.jguru.nazgul.core.algorithms.api.trees.common;
 
 import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.trees.Path;
 
 import java.io.Serializable;
 import java.util.ArrayList;

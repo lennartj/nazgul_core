@@ -2,9 +2,9 @@
  * Copyright (c) jGuru Europe AB
  * All rights reserved.
  */
-package se.jguru.nazgul.core.algorithms.api.trees.helpers;
+package se.jguru.nazgul.core.algorithms.api.trees.common.helpers;
 
-import se.jguru.nazgul.core.algorithms.api.trees.ListMutableNode;
+import se.jguru.nazgul.core.algorithms.api.trees.common.ListMutableNode;
 import se.jguru.nazgul.core.algorithms.api.trees.MutableNode;
 import se.jguru.nazgul.core.algorithms.api.trees.Node;
 import se.jguru.nazgul.core.algorithms.api.trees.Path;

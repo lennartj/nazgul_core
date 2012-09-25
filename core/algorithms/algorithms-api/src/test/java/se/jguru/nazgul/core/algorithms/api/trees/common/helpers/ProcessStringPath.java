@@ -2,9 +2,9 @@
  * Copyright (c) jGuru Europe AB
  * All rights reserved.
  */
-package se.jguru.nazgul.core.algorithms.api.trees.helpers;
+package se.jguru.nazgul.core.algorithms.api.trees.common.helpers;
 
-import se.jguru.nazgul.core.algorithms.api.trees.EnumMapPath;
+import se.jguru.nazgul.core.algorithms.api.trees.common.EnumMapPath;
 import se.jguru.nazgul.core.algorithms.api.trees.Path;
 import se.jguru.nazgul.core.algorithms.api.trees.TreeAlgorithms;
 
