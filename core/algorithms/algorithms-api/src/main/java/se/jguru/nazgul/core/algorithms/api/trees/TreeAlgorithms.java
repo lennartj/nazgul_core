@@ -5,10 +5,7 @@
 
 package se.jguru.nazgul.core.algorithms.api.trees;
 
-import org.apache.commons.lang3.Validate;
-
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.EnumMap;
 
 /**
