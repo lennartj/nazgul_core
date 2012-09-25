@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class AdjustmentStringNode extends EnumMapPath<Adjustment, String> {
+public class AdjustmentPath extends EnumMapPath<Adjustment, String> {
 
     /**
      * Creates a new EnumMapPath with the provided segment definitions
@@ -22,7 +22,7 @@ public class AdjustmentStringNode extends EnumMapPath<Adjustment, String> {
      *
      * @param segments The segments within this path.
      */
-    public AdjustmentStringNode(final EnumMap<Adjustment, String> segments) {
+    public AdjustmentPath(final EnumMap<Adjustment, String> segments) {
         super(segments, Adjustment.class);
     }
 
@@ -32,7 +32,7 @@ public class AdjustmentStringNode extends EnumMapPath<Adjustment, String> {
      * @param segmentValues The values in the ordinal order.
      * @return The fully created AdjustmentStringNode.
      */
-    public static AdjustmentStringNode create(final List<String> segmentValues) {
+    public static AdjustmentPath create(final List<String> segmentValues) {
 
         final EnumMap<Adjustment, String> segmentMap = TreeAlgorithms.getEmptyEnumMap(Adjustment.class);
 
@@ -46,6 +46,6 @@ public class AdjustmentStringNode extends EnumMapPath<Adjustment, String> {
         }
 
         // All done.
-        return new AdjustmentStringNode(segmentMap);
+        return new AdjustmentPath(segmentMap);
     }
 }
