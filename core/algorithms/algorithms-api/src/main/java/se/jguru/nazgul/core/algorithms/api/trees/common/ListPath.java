@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * Non-semantic Path implementation using List as internal storage of KeyType segments.
- *
+ * <p/>
  * {@inheritDoc}
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB

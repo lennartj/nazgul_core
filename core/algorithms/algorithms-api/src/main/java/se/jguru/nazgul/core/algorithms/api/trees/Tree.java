@@ -12,13 +12,12 @@ import java.io.Serializable;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public interface Tree<T extends Serializable, KeyType extends Serializable & Comparable<KeyType>> {
+public interface Tree<VauleType extends Serializable, KeyType extends Serializable & Comparable<KeyType>> {
 
     /**
-     * @param <X> The Node (or subtype thereof, such as {@code MutableNode}) returned.
      * @return The root node of this tree.
      */
-    <X extends Node<T, KeyType>> X getRoot();
+    MutableNode<VauleType, KeyType> getRoot();
 
     /**
      * Retrieves the Node at the provided path.
@@ -27,5 +26,5 @@ public interface Tree<T extends Serializable, KeyType extends Serializable & Com
      * @param path The path to the node which should be acquired.
      * @return The Node at the provided path, or {@code null} if no node was found.
      */
-    <X extends Node<T, KeyType>> X get(Path<KeyType> path);
+    <X extends Node<VauleType, KeyType>> X get(Path<KeyType> path);
 }
