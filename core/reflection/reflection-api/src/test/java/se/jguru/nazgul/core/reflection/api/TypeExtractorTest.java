@@ -7,7 +7,7 @@ package se.jguru.nazgul.core.reflection.api;
 
 import org.junit.Assert;
 import org.junit.Test;
-import se.jguru.nazgul.core.algorithms.api.predicate.Filter;
+import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
 import se.jguru.nazgul.core.reflection.api.annotation.AnnotatedImplementation;
 import se.jguru.nazgul.core.reflection.api.annotation.AnnotatedImplementationSubclass;
 import se.jguru.nazgul.core.reflection.api.annotation.AnnotatedSpecification;

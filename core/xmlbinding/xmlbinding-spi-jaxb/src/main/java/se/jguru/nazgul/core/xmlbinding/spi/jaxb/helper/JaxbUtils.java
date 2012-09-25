@@ -8,8 +8,8 @@ import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 import org.apache.commons.lang3.Validate;
 import org.w3c.dom.ls.LSResourceResolver;
 import org.xml.sax.SAXException;
-import se.jguru.nazgul.core.algorithms.api.predicate.Tuple;
-import se.jguru.nazgul.core.algorithms.api.predicate.common.ClassnameToClassTransformer;
+import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
+import se.jguru.nazgul.core.algorithms.api.collections.predicate.common.ClassnameToClassTransformer;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter;
 
 import javax.xml.XMLConstants;
