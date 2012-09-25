@@ -8,8 +8,8 @@ import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.jguru.nazgul.core.algorithms.api.CollectionAlgorithms;
-import se.jguru.nazgul.core.algorithms.api.predicate.Filter;
+import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
+import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

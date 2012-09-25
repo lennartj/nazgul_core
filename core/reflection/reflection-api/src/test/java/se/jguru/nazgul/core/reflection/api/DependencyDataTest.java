@@ -7,9 +7,9 @@ package se.jguru.nazgul.core.reflection.api;
 
 import org.junit.Assert;
 import org.junit.Test;
-import se.jguru.nazgul.core.algorithms.api.CollectionAlgorithms;
-import se.jguru.nazgul.core.algorithms.api.predicate.Transformer;
-import se.jguru.nazgul.core.algorithms.api.predicate.Tuple;
+import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
+import se.jguru.nazgul.core.algorithms.api.collections.predicate.Transformer;
+import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
 
 import java.util.List;
 import java.util.Map;
