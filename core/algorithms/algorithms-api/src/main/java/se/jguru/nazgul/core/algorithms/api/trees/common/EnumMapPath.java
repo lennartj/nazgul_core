@@ -3,9 +3,12 @@
  * All rights reserved.
  */
 
-package se.jguru.nazgul.core.algorithms.api.trees;
+package se.jguru.nazgul.core.algorithms.api.trees.common;
 
 import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.trees.Path;
+import se.jguru.nazgul.core.algorithms.api.trees.SemanticPath;
+import se.jguru.nazgul.core.algorithms.api.trees.TreeAlgorithms;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

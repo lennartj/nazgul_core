@@ -3,14 +3,15 @@
  * All rights reserved.
  */
 
-package se.jguru.nazgul.core.algorithms.api.trees;
+package se.jguru.nazgul.core.algorithms.api.trees.common;
 
 import junit.framework.Assert;
 import org.junit.Test;
-import se.jguru.nazgul.core.algorithms.api.trees.helpers.Adjustment;
-import se.jguru.nazgul.core.algorithms.api.trees.helpers.AdjustmentPath;
-import se.jguru.nazgul.core.algorithms.api.trees.helpers.ProcessPathSegments;
-import se.jguru.nazgul.core.algorithms.api.trees.helpers.ProcessStringPath;
+import se.jguru.nazgul.core.algorithms.api.trees.TreeAlgorithms;
+import se.jguru.nazgul.core.algorithms.api.trees.common.helpers.Adjustment;
+import se.jguru.nazgul.core.algorithms.api.trees.common.helpers.AdjustmentPath;
+import se.jguru.nazgul.core.algorithms.api.trees.common.helpers.ProcessPathSegments;
+import se.jguru.nazgul.core.algorithms.api.trees.common.helpers.ProcessStringPath;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,14 +25,14 @@ import java.util.TreeSet;
  */
 public class EnumMapPathTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void validateExceptionOnNullSegments() {
 
         // Act & Assert
         new EnumMapPath<Adjustment, String>(null, Adjustment.class);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void validateExceptionOnNullEnumType() {
 
         // Assemble

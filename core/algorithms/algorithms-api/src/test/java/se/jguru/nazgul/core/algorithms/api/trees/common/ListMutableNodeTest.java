@@ -3,12 +3,14 @@
  * All rights reserved.
  */
 
-package se.jguru.nazgul.core.algorithms.api.trees;
+package se.jguru.nazgul.core.algorithms.api.trees.common;
 
 import junit.framework.Assert;
 import org.junit.Test;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
-import se.jguru.nazgul.core.algorithms.api.trees.helpers.StringStringNode;
+import se.jguru.nazgul.core.algorithms.api.trees.Node;
+import se.jguru.nazgul.core.algorithms.api.trees.Path;
+import se.jguru.nazgul.core.algorithms.api.trees.common.helpers.StringStringNode;
 
 import java.util.ArrayList;
 import java.util.List;

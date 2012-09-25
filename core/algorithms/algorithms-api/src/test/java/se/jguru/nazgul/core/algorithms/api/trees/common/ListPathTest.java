@@ -3,10 +3,11 @@
  * All rights reserved.
  */
 
-package se.jguru.nazgul.core.algorithms.api.trees;
+package se.jguru.nazgul.core.algorithms.api.trees.common;
 
 import junit.framework.Assert;
 import org.junit.Test;
+import se.jguru.nazgul.core.algorithms.api.trees.common.ListPath;
 
 import java.util.ArrayList;
 import java.util.Arrays;
