@@ -39,6 +39,7 @@ public class JaxbAnnotatedNull extends AbstractJaxbAnnotatedTransportType {
      * JAXB-friendly constructor.
      */
     public JaxbAnnotatedNull() {
+        classInformation = EMPTY_SORTED_SET;
     }
 
     /**
@@ -46,14 +47,6 @@ public class JaxbAnnotatedNull extends AbstractJaxbAnnotatedTransportType {
      */
     public static JaxbAnnotatedNull getInstance() {
         return instance;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public SortedSet<String> getClassInformation() {
-        return EMPTY_SORTED_SET;
     }
 
     /**
