@@ -49,6 +49,7 @@ public class JaxbAnnotatedListPath<T extends Serializable & Comparable<T>>
     @Override
     public int compareTo(Object that) {
 
+        /*
         if (that instanceof JaxbAnnotatedString) {
             return getValue().compareTo(((JaxbAnnotatedString) that).getValue());
         }
@@ -56,6 +57,7 @@ public class JaxbAnnotatedListPath<T extends Serializable & Comparable<T>>
         if (that instanceof String) {
             return getValue().compareTo((String) that);
         }
+        */
 
         throw new ClassCastException("Cannot compare JaxbAnnotatedStrings to [" + that.getClass().getName() + "]");
     }
