@@ -19,8 +19,8 @@
         <version>1.0.0</version>
     </parent>
 
-    <groupId>se.jguru.nazgul.core.algorithms</groupId>
-    <artifactId>nazgul-core-algorithms-reactor</artifactId>
+    <groupId>se.jguru.nazgul.core.algorithms.tree</groupId>
+    <artifactId>nazgul-core-tree-reactor</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>${project.groupId}.${project.artifactId}</name>
     <packaging>pom</packaging>
@@ -31,11 +31,10 @@
     ################################################
     -->
     <modules>
-        <module>algorithms-api</module>
-        <module>tree</module>
+        <module>tree-model</module>
     </modules>
 
     <scm>
-        <developerConnection>scm:hg:file://${basedir}/../../</developerConnection>
+        <developerConnection>scm:hg:file://${basedir}/../../../</developerConnection>
     </scm>
 </project>
