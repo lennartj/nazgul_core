@@ -38,7 +38,7 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
 
     // Internal state
     private HazelcastInstance cacheInstance;
-    private static final int messageWaitMillis = 100;
+    private static final int MESSAGE_WAIT_MILLIS = 100;
 
     /**
      * Creates a new AbstractHazelcastInstanceWrapper instance wrapping the provided HazelcastInstance
@@ -298,7 +298,7 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
         // messages interacting with the same distributed Instance
         // without too much of a race condition ...
         try {
-            Thread.sleep(messageWaitMillis);
+            Thread.sleep(MESSAGE_WAIT_MILLIS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

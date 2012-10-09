@@ -29,9 +29,9 @@ public class DependencyData implements Comparable<DependencyData> {
     private static final String DEPENDENCY_RESOURCE = "META-INF/maven/dependencies.properties";
 
     // Internal state
-    private String groupId;
-    private String artifactId;
-    private String version;
+    private final String groupId;
+    private final String artifactId;
+    private final String version;
 
     /**
      * Creates DependencyData from the provided Maven GAV.
