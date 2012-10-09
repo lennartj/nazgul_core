@@ -5,6 +5,8 @@
 
 package se.jguru.nazgul.core.algorithms.api.trees;
 
+import org.apache.commons.lang3.Validate;
+
 import java.io.Serializable;
 import java.util.EnumMap;
 
@@ -25,6 +27,8 @@ public abstract class TreeAlgorithms {
      */
     public static <K extends Enum<K>, V extends Serializable & Comparable<V>> EnumMap<K, V>
     getEmptyEnumMap(final Class<K> keyType) {
+
+        Validate.notNull(keyType, "Cannot handle null keyType argument.");
 
         EnumMap<K, V> toReturn = new EnumMap<K, V>(keyType);
 
