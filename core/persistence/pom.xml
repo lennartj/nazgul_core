@@ -33,7 +33,6 @@
     <modules>
         <module>persistence-model</module>
         <module>persistence-api</module>
-        <!-- module>persistence-spi-jpa</module -->
     </modules>
 
     <scm>

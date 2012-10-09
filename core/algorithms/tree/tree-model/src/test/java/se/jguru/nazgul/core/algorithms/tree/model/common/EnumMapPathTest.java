@@ -201,6 +201,38 @@ public class EnumMapPathTest {
     }
 
     @Test
+    public void validateMarshalling() {
+
+        // Assemble
+        final String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+                "<core:entityTransporter xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:core=\"http://www.jguru.se/nazgul/core\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
+                "    <entityClasses>\n" +
+                "        <entityClass>se.jguru.nazgul.core.algorithms.tree.model.common.helpers.AdjustmentPath</entityClass>\n" +
+                "        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter</entityClass>\n" +
+                "    </entityClasses>\n" +
+                "    <items>\n" +
+                "        <item xsi:type=\"core:adjustmentPath\" enumType=\"se.jguru.nazgul.core.algorithms.tree.model.common.helpers.Adjustment\" version=\"0\">\n" +
+                "            <mapPathSegments enumType=\"se.jguru.nazgul.core.algorithms.tree.model.common.helpers.Adjustment\">\n" +
+                "                <values xsi:type=\"xs:string\">Left</values>\n" +
+                "                <values xsi:type=\"xs:string\">Center</values>\n" +
+                "                <values xsi:nil=\"true\"/>\n" +
+                "            </mapPathSegments>\n" +
+                "        </item>\n" +
+                "    </items>\n" +
+                "</core:entityTransporter>\n";
+
+        final AdjustmentPath toMarshal = AdjustmentPath.create(Arrays.asList("Left", "Center"));
+        final JaxbXmlBinder binder = new JaxbXmlBinder();
+
+        // Act
+        final String result = binder.marshal(toMarshal);
+
+        // Assert
+        Assert.assertNotNull(result);
+        Assert.assertEquals(expected, result);
+    }
+
+    @Test
     public void validateUnmarshalling() {
 
         // Assemble

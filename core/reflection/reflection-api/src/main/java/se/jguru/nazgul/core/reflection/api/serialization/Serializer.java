@@ -5,7 +5,7 @@
 
 package se.jguru.nazgul.core.reflection.api.serialization;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

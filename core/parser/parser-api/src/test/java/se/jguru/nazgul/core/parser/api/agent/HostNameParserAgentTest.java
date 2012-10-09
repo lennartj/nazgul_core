@@ -14,10 +14,10 @@ import java.net.InetAddress;
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 public class HostNameParserAgentTest {
-    
+
     @Test
     public void validateHostNameParserAgentSubtitutions() throws Exception {
-        
+
         // Assemble
         final InetAddress localhost = InetAddress.getLocalHost();
         final String canonicalName = localhost.getCanonicalHostName();

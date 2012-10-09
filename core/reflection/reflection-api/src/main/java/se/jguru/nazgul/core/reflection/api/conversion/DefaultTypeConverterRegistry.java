@@ -46,9 +46,7 @@ public class DefaultTypeConverterRegistry implements TypeConverterRegistry {
     }
 
     /**
-     * Adds the provided TypeConverter to this TypeConverterRegistry.
-     *
-     * @param toAdd The TypeConverter to add.
+     * {@inheritDoc}
      */
     @Override
     public void addTypeConverter(final TypeConverter toAdd) {
@@ -74,14 +72,7 @@ public class DefaultTypeConverterRegistry implements TypeConverterRegistry {
     }
 
     /**
-     * Converts the provided source object to the desired type.
-     *
-     * @param source      The object to convert.
-     * @param desiredType The type to which the source object should be converted.
-     * @param <To>        The resulting type.
-     * @param <From>      The source type.
-     * @return The converted object.
-     * @throws IllegalArgumentException if the conversion failed.
+     * {@inheritDoc}
      */
     @Override
     public <From, To, C extends To> C convert(final From source, final Class<To> desiredType)

@@ -21,6 +21,8 @@ import java.util.EnumMap;
 import java.util.List;
 
 /**
+ * JAXB-compliant transport type for an {@code EnumMap}.
+ *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 @XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"enumType", "values"})
@@ -65,15 +67,17 @@ public class JaxbAnnotatedEnumMap<E extends Enum<E>> implements Serializable {
     /**
      * @return A re-created EnumMap holding the values supplied.
      */
-    public EnumMap<E, ?> getEnumMap() {
+    public EnumMap getEnumMap() {
 
-        EnumMap toReturn = TreeAlgorithms.getEmptyEnumMap(enumType);
+        EnumMap toReturn = new EnumMap<E, Serializable>(enumType);
         final E[] enumValues = enumType.getEnumConstants();
 
         for (int i = 0; i < enumValues.length; i++) {
             Object currentValue = i < values.size() ? values.get(i) : null;
             if(currentValue != null) {
                 toReturn.put(enumValues[i], currentValue);
+            } else {
+                toReturn.put(enumValues[i], null);
             }
         }
 

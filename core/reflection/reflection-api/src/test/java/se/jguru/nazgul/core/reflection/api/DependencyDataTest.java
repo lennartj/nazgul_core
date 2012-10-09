@@ -87,4 +87,16 @@ public class DependencyDataTest {
         Assert.assertEquals(info1.toString().compareTo(info2.toString()), result1);
         Assert.assertEquals(Integer.MIN_VALUE, result2);
     }
+
+    @Test
+    public void validateStandardParsing() {
+
+        // Act
+        final List<DependencyData> dependencyDatas = DependencyData.parseDefaultPlacedDependencyPropertiesFile();
+
+        // Assert
+        Assert.assertNotNull(dependencyDatas);
+        Assert.assertTrue(dependencyDatas.size() > 0);
+        Assert.assertNotNull(dependencyDatas.get(0).toDependencyDataString());
+    }
 }
