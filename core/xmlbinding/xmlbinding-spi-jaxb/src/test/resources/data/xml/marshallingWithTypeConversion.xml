@@ -12,7 +12,7 @@
             <name>Lennart</name>
         </item>
         <item xsi:type="core:jaxbAnnotatedString">
-            <value xsi:type="xs:string">FooBar!</value>
+            <transportForm>FooBar!</transportForm>
         </item>
         <item xsi:type="core:jaxbAnnotatedNull"/>
         <item xsi:type="core:person" age="478">

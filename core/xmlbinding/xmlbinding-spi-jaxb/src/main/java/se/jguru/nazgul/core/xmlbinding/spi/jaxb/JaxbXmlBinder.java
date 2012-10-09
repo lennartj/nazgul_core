@@ -5,7 +5,6 @@
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb;
 
 import org.apache.commons.lang3.Validate;
-import org.xml.sax.ErrorHandler;
 import se.jguru.nazgul.core.xmlbinding.api.NamespacePrefixResolver;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbNamespacePrefixResolver;
@@ -18,9 +17,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.util.JAXBSource;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.Validator;
 import java.io.BufferedReader;
