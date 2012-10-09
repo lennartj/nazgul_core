@@ -4,7 +4,6 @@
  */
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper;
 
-import com.sun.org.apache.xerces.internal.dom.DOMInputImpl;
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;

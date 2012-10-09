@@ -8,10 +8,8 @@ import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.Collections;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 /**
  * Transport type representing a {@code String} value.
@@ -28,37 +26,37 @@ public class JaxbAnnotatedString extends AbstractJaxbAnnotatedTransportType<Stri
     public static final long serialVersionUID = 7085076030003L;
 
     // Internal state
-    // private String value;
+    @XmlElement(nillable = false, required = true)
+    private String transportForm;
 
     /**
-     * JAXB-friendly constructor.
+     * {@inheritDoc}
      */
     public JaxbAnnotatedString() {
-
-        SortedSet<String> classinfo = new TreeSet<String>();
-        classinfo.add(String.class.getName());
-        classInformation = Collections.unmodifiableSortedSet(classinfo);
     }
 
     /**
-     * Compound constructor.
-     *
-     * @param value The String value.
+     * {@inheritDoc}
      */
     public JaxbAnnotatedString(final String value) {
-        this();
+        super(value);
 
         // Assign internal state
-        this.value = value;
+        this.transportForm = value;
     }
 
     /**
-     * @return The String value.
-
-    public String getValue() {
-        return value;
-    }
+     * @return The contained value.
      */
+    @Override
+    public String getValue() {
+
+        if(super.value == null) {
+            super.value = transportForm;
+        }
+
+        return super.getValue();
+    }
 
     /**
      * {@inheritDoc}
@@ -83,13 +81,5 @@ public class JaxbAnnotatedString extends AbstractJaxbAnnotatedTransportType<Stri
     @Override
     public boolean equals(final Object obj) {
         return obj != null && (obj instanceof JaxbAnnotatedString || obj instanceof String) && this.compareTo(obj) == 0;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return value.hashCode();
     }
 }

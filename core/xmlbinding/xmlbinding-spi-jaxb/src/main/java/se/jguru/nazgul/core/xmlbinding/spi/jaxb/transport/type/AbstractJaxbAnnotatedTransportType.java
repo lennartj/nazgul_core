@@ -4,7 +4,8 @@
  */
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type;
 
-import org.apache.commons.lang.Validate;
+import com.google.common.reflect.TypeToken;
+import org.apache.commons.lang3.Validate;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.ClassInformationHolder;
 
@@ -24,7 +25,7 @@ import java.util.TreeSet;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-@XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"value"})
+@XmlType(namespace = XmlBinder.CORE_NAMESPACE)
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractJaxbAnnotatedTransportType<T>
         implements ClassInformationHolder, Serializable, Comparable {
@@ -35,15 +36,42 @@ public abstract class AbstractJaxbAnnotatedTransportType<T>
     public static final long serialVersionUID = 7085076030001L;
 
     // Internal state
+    @XmlTransient
     protected T value;
 
     @XmlTransient
     protected SortedSet<String> classInformation;
 
     /**
-     * JAXB-friendly constructor. <strong>This is for framework use only.</strong>
+     * JAXB-friendly constructor.
+     * <strong>This is for framework use only.</strong>
      */
     public AbstractJaxbAnnotatedTransportType() {
+
+        // Get the class of the generic parameter
+        TypeToken<T> parameterTypeToken = new TypeToken<T>(getClass()) {
+        };
+        Class<T> transportTypeClass = (Class<T>) parameterTypeToken.getType();
+
+        // Add default values to the classInformation Set.
+        TreeSet<String> classinfo = new TreeSet<String>();
+        classinfo.add(transportTypeClass.getName());
+        classInformation = Collections.unmodifiableSortedSet(classinfo);
+    }
+
+    /**
+     * Compound default constructor, wrapping the provided value within itself.
+     *
+     * @param value The original type value to wrap.
+     */
+    public AbstractJaxbAnnotatedTransportType(T value) {
+        this();
+
+        // Check sanity
+        Validate.notNull(value, "Cannot handle null value argument.");
+
+        // Assign internal state
+        this.value = value;
     }
 
     /**
@@ -82,5 +110,13 @@ public abstract class AbstractJaxbAnnotatedTransportType<T>
      */
     public T getValue() {
         return value;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return value.hashCode();
     }
 }

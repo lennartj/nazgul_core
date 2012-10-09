@@ -5,12 +5,15 @@
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type;
 
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.ClassInformationHolder;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import java.io.Serializable;
 import java.util.Collections;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
@@ -20,7 +23,7 @@ import java.util.TreeSet;
  */
 @XmlType(namespace = XmlBinder.CORE_NAMESPACE)
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxbAnnotatedNull extends AbstractJaxbAnnotatedTransportType {
+public class JaxbAnnotatedNull implements ClassInformationHolder, Serializable, Comparable {
 
     /**
      * Transport types require a serialVersionUID.
@@ -30,11 +33,14 @@ public class JaxbAnnotatedNull extends AbstractJaxbAnnotatedTransportType {
     @XmlTransient
     private static final JaxbAnnotatedNull instance = new JaxbAnnotatedNull();
 
+    @XmlTransient
+    private static final SortedSet<String> classInfo = Collections.unmodifiableSortedSet(new TreeSet<String>());
+
     /**
      * JAXB-friendly constructor.
      */
     public JaxbAnnotatedNull() {
-        this.classInformation = Collections.unmodifiableSortedSet(new TreeSet<String>());
+        super();
     }
 
     /**
@@ -42,6 +48,14 @@ public class JaxbAnnotatedNull extends AbstractJaxbAnnotatedTransportType {
      */
     public static JaxbAnnotatedNull getInstance() {
         return instance;
+    }
+
+    /**
+     * @return The fully qualified class names of all classes held within this ClassInformationHolder.
+     */
+    @Override
+    public SortedSet<String> getClassInformation() {
+        return classInfo;
     }
 
     /**

@@ -4,9 +4,12 @@
  */
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type;
 
+import com.google.common.reflect.TypeToken;
 import junit.framework.Assert;
 import org.junit.Test;
 
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
@@ -47,5 +50,23 @@ public class JaxbAnnotatedNullTest {
         Assert.assertTrue(result1);
         Assert.assertTrue(result2);
         Assert.assertFalse(result3);
+    }
+
+    @Test
+    public void validateTypeTokenUsage() {
+
+        // Assemble
+
+        // Act
+        final Foo<String, ArrayList> foo = new Foo<String, ArrayList>(){};
+
+        // Assert
+        Assert.assertEquals(String.class.getName(), ((Class) foo.typeA.getType()).getName());
+        Assert.assertEquals(ArrayList.class.getName(), "" + foo.typeB);
+    }
+
+    class Foo<A, B> {
+        TypeToken<A> typeA = new TypeToken<A>(getClass()) {};
+        TypeToken<B> typeB = new TypeToken<B>(getClass()) {};
     }
 }

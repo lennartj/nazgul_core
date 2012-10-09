@@ -4,8 +4,6 @@
  */
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport;
 
-import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.TransportTypeConverter;
-
 /**
  * TransportType converter registry specification, used as a generic TransportType conversion service.
  *

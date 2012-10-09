@@ -52,13 +52,4 @@ public class StringConverter extends AbstractConditionalTransportTypeConverter
     public String reviveAfterTransport(final JaxbAnnotatedString toConvert) {
         return toConvert.getValue();
     }
-
-    /**
-     * {@inheritDoc}
-
-    @Override
-    public int compareTo(final Object that) {
-        return that != null && that instanceof StringConverter ? 0 : -1;
-    }
-     */
 }

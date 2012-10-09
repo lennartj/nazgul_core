@@ -53,6 +53,10 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
@@ -135,14 +139,11 @@
                                 <requireUpperBoundDeps/>
 
                                 <!--
-                                    Check import rules for all non-test and non-application packaged projects.
-                                    The Rule itself skips checking WARs, EARs, and POMs projects.
+                                    We need to import the xml binding implementation.
                                 -->
-                                <restrictImplDependencies
-                                        implementation="se.jguru.nazgul.tools.codestyle.enforcer.rules.RestrictImplDependencies">
-                                    <includedGroupIdPrefixes>se.jguru.nazgul</includedGroupIdPrefixes>
-                                    <excludedGroupIdPrefixes>se.jguru.nazgul.tools</excludedGroupIdPrefixes>
-                                    <ignoreEvaluatingArtifactsWithGroupIdPrefixes>com.sun.xml.bind</ignoreEvaluatingArtifactsWithGroupIdPrefixes>
+                                <restrictImplDependencies implementation="se.jguru.nazgul.tools.codestyle.enforcer.rules.RestrictImplDependencies">
+                                    <includedGroupIdPatterns>^se\\.jguru\\.nazgul\\..*</includedGroupIdPatterns>
+                                    <excludedGroupIdPatterns>^se\\.jguru\\.nazgul\\..*\\.generated\\..*,^se\\.jguru\\.nazgul\\.tools\\.codestyle\\..*,^com\\.sun\\.xml\\.bind\\..*</excludedGroupIdPatterns>
                                 </restrictImplDependencies>
                             </rules>
                         </configuration>
