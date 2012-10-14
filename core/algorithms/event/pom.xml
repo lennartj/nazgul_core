@@ -19,8 +19,8 @@
         <version>1.0.0</version>
     </parent>
 
-    <groupId>se.jguru.nazgul.core.algorithms</groupId>
-    <artifactId>nazgul-core-algorithms-reactor</artifactId>
+    <groupId>se.jguru.nazgul.core.algorithms.event</groupId>
+    <artifactId>nazgul-core-event-reactor</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>${project.groupId}.${project.artifactId}</name>
     <packaging>pom</packaging>
@@ -31,12 +31,10 @@
     ################################################
     -->
     <modules>
-        <module>algorithms-api</module>
-        <module>tree</module>
-        <module>event</module>
+        <module>event-api</module>
     </modules>
 
     <scm>
-        <developerConnection>scm:hg:file://${basedir}/../../</developerConnection>
+        <developerConnection>scm:hg:file://${basedir}/../../../</developerConnection>
     </scm>
 </project>
