@@ -41,6 +41,7 @@
         <module>clustering</module>
         <module>cache</module>
         <module>messaging</module>
+        <module>osgi</module>
     </modules>
 
     <scm>
