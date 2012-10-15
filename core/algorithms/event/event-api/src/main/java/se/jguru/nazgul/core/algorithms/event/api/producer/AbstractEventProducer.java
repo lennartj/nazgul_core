@@ -15,10 +15,13 @@ import se.jguru.nazgul.core.clustering.api.IdGenerator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
+ * Abstract implementation of the EventProducer interface, sporting Clusterable behaviour.
+ * That is - this AbstractEventProducer implementation is intended for use within a cluster.
+ *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 public class AbstractEventProducer<T extends EventConsumer> extends AbstractClusterable implements EventProducer<T> {
@@ -28,7 +31,7 @@ public class AbstractEventProducer<T extends EventConsumer> extends AbstractClus
 
     // Internal state
     private Class<T> tClass;
-    private Map<String, T> consumers;
+    private ConcurrentMap<String, T> consumers;
 
     /**
      * Creates a new AbstractEventProducer with the provided IdGenerator and EventConsumer type.
@@ -45,7 +48,7 @@ public class AbstractEventProducer<T extends EventConsumer> extends AbstractClus
 
         // Assign internal state
         this.tClass = tClass;
-        this.consumers = new TreeMap<String, T>();
+        this.consumers = new ConcurrentHashMap<String, T>();
     }
 
     /**
