@@ -4,7 +4,7 @@
  */
 package se.jguru.nazgul.core.algorithms.event.api.producer;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.algorithms.event.api.consumer.EventConsumer;
@@ -120,12 +120,12 @@ public class AbstractEventProducer<T extends EventConsumer> extends AbstractClus
      * @param consumerID The unique identifier of the EventConsumer to remove.
      */
     @Override
-    public final void removeConsumer(final String consumerID) {
+    public final boolean removeConsumer(final String consumerID) {
 
         // Check sanity
         if (consumerID == null || consumerID.equals("")) {
             log.warn("Ignoring removing EventConsumer with null or empty ID.");
-            return;
+            return false;
         }
 
         // Does the listener exist locally?
@@ -134,12 +134,12 @@ public class AbstractEventProducer<T extends EventConsumer> extends AbstractClus
 
             // Delegate to de-register the EventConsumer from its EventProducers.
             removeConsumerFromEventProducers(removed);
-            return;
+            return true;
         }
 
         // Send a removeListener event message to the other cluster EventProducers,
         // to remove the EventConsumer from any of them.
-        onRemoveNonRegisteredConsumer(getId(), consumerID);
+        return onRemoveNonRegisteredConsumer(getId(), consumerID);
     }
 
     /**
@@ -221,9 +221,12 @@ public class AbstractEventProducer<T extends EventConsumer> extends AbstractClus
      *
      * @param senderID        The ID of this AbstractEventProducer.
      * @param eventConsumerID The ID of the EventConsumer to remove.
+     * @return {@code true} if the EventConsumer with the given ID was removed, and
+     *         {@code false} otherwise.
      */
-    protected void onRemoveNonRegisteredConsumer(final String senderID, final String eventConsumerID) {
+    protected boolean onRemoveNonRegisteredConsumer(final String senderID, final String eventConsumerID) {
         // Do nothing
+        return false;
     }
 
     /**

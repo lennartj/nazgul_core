@@ -4,33 +4,36 @@
  */
 package se.jguru.nazgul.core.algorithms.event.api.consumer;
 
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.clustering.api.AbstractClusterable;
+import se.jguru.nazgul.core.clustering.api.ConstantIdGenerator;
+import se.jguru.nazgul.core.clustering.api.IdGenerator;
+import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlType;
 
 /**
- * Abstract implementation of the EventConsumer interface, using Strings for identifiers.
+ * Abstract implementation of the EventConsumer interface.
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public abstract class AbstractEventConsumer<E extends SimpleEventConsumer<E>> implements SimpleEventConsumer<E> {
-
-    // Internal state
-    private String id;
+@XmlType(namespace = XmlBinder.CORE_NAMESPACE)
+@XmlAccessorType(XmlAccessType.FIELD)
+public abstract class AbstractEventConsumer<E extends EventConsumer<E>>
+        extends AbstractClusterable implements EventConsumer<E> {
 
     /**
-     * Creates a new AbstractEventConsumer instance, using the provided identifier.
-     * @param id The non-null identifier of this AbstractEventConsumer instance.
+     * {@inheritDoc}
      */
-    public AbstractEventConsumer(final String id) {
-
-        Validate.notEmpty(id, "Cannot handle null or empty id argument.");
-        this.id = id;
+    protected AbstractEventConsumer(final String id) {
+        this(new ConstantIdGenerator(id));
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public final String getID() {
-        return id;
+    protected AbstractEventConsumer(final IdGenerator idGenerator) {
+        super(idGenerator);
     }
 }
