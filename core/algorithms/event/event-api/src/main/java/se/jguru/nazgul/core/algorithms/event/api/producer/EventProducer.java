@@ -13,7 +13,7 @@ import java.util.List;
  * EventProducer/EventGenerator specification, which produces a single
  * type of event intended for a single type of EventConsumer.
  *
- * @param <T>       The type of EventConsumer which can be registered to this EventProducer.
+ * @param <T> The type of EventConsumer which can be registered to this EventProducer.
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 public interface EventProducer<T extends EventConsumer> extends Clusterable {
@@ -42,8 +42,10 @@ public interface EventProducer<T extends EventConsumer> extends Clusterable {
      * Removes the EventConsumer with the given consumerID from this EventProducer.
      *
      * @param consumerID The unique identifier of the EventConsumer to remove.
+     * @return {@code true} if the EventConsumer with the given ID was properly removed,
+     *         and {@code false} otherwise.
      */
-    void removeConsumer(String consumerID);
+    boolean removeConsumer(String consumerID);
 
     /**
      * Acquires the registered EventConsumer with the provided consumerID.
