@@ -11,12 +11,12 @@ import se.jguru.nazgul.core.algorithms.event.api.consumer.MockEventConsumer;
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class MockEventCallback implements ConsumerEventCallback<MockEventConsumer> {
+public class MockEventConsumerCallback implements EventConsumerCallback<MockEventConsumer> {
 
     // Internal state
     private MockEvent event;
 
-    public MockEventCallback(MockEvent event) {
+    public MockEventConsumerCallback(MockEvent event) {
         this.event = event;
     }
 

@@ -130,8 +130,8 @@ public class T_AbstractEventProducerTest {
         final MockEvent event2 = new MockEvent("event2");
 
         // Act
-        unitUnderTest.notifyConsumers(new MockEventCallback(event1));
-        unitUnderTest.notifyConsumers(new MockEventCallback(event2));
+        unitUnderTest.notifyConsumers(new MockEventConsumerCallback(event1));
+        unitUnderTest.notifyConsumers(new MockEventConsumerCallback(event2));
 
         // Assert
         final List<String> callTrace = consumer.callTrace;

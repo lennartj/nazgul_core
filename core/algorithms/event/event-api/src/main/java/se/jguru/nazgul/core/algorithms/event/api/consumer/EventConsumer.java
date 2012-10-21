@@ -13,6 +13,7 @@ import java.util.EventListener;
  * EventConsumer instances should function correctly in a clustered environment, and must also
  * be Comparable to enforce a natural ordering and comparison between instances.
  *
+ * @param <E> The exact subtype of EventConsumer in effect
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  * @see EventListener
  */

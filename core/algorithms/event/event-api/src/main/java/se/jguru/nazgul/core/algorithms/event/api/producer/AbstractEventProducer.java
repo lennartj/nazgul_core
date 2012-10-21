@@ -11,7 +11,12 @@ import se.jguru.nazgul.core.algorithms.event.api.consumer.EventConsumer;
 import se.jguru.nazgul.core.clustering.api.AbstractClusterable;
 import se.jguru.nazgul.core.clustering.api.ConstantIdGenerator;
 import se.jguru.nazgul.core.clustering.api.IdGenerator;
+import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,30 +29,34 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class AbstractEventProducer<T extends EventConsumer> extends AbstractClusterable implements EventProducer<T> {
+@XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"tClass", "consumers"})
+@XmlAccessorType(XmlAccessType.FIELD)
+public abstract class AbstractEventProducer<T extends EventConsumer>
+        extends AbstractClusterable implements EventProducer<T> {
 
     // Our log
     private static final Logger log = LoggerFactory.getLogger(AbstractEventProducer.class);
 
     // Internal state
+    @XmlAttribute(required = true)
     private Class<T> tClass;
     private ConcurrentMap<String, T> consumers;
 
     /**
      * Creates a new AbstractEventProducer with the provided IdGenerator and EventConsumer type.
      *
-     * @param idGenerator The ID generator used to acquire a cluster-unique identifier for
-     *                    this AbstractEventProducer instance.
-     * @param tClass      The type of EventConsumer handled by this AbstractEventProducer.
+     * @param idGenerator        The ID generator used to acquire a cluster-unique identifier for
+     *                           this AbstractEventProducer instance.
+     * @param eventConsumerClass The type of EventConsumer handled by this AbstractEventProducer.
      */
-    public AbstractEventProducer(final IdGenerator idGenerator, final Class<T> tClass) {
+    public AbstractEventProducer(final IdGenerator idGenerator, final Class<T> eventConsumerClass) {
         super(idGenerator);
 
         // Check sanity
-        Validate.notNull(tClass, "Cannot handle null tClass argument.");
+        Validate.notNull(eventConsumerClass, "Cannot handle null eventConsumerClass argument.");
 
         // Assign internal state
-        this.tClass = tClass;
+        this.tClass = eventConsumerClass;
         this.consumers = new ConcurrentHashMap<String, T>();
     }
 
@@ -55,11 +64,11 @@ public class AbstractEventProducer<T extends EventConsumer> extends AbstractClus
      * Creates a new AbstractIdentifiable and assigns the provided
      * cluster-unique ID to this AbstractClusterable instance.
      *
-     * @param clusterUniqueID A cluster-unique Identifier.
-     * @param tClass          The type of EventConsumer handled by this AbstractEventProducer.
+     * @param clusterUniqueID    A cluster-unique Identifier.
+     * @param eventConsumerClass The type of EventConsumer handled by this AbstractEventProducer.
      */
-    public AbstractEventProducer(final String clusterUniqueID, final Class<T> tClass) {
-        this(new ConstantIdGenerator(clusterUniqueID), tClass);
+    public AbstractEventProducer(final String clusterUniqueID, final Class<T> eventConsumerClass) {
+        this(new ConstantIdGenerator(clusterUniqueID), eventConsumerClass);
     }
 
     /**
@@ -243,17 +252,17 @@ public class AbstractEventProducer<T extends EventConsumer> extends AbstractClus
      * {@inheritDoc}
      */
     @Override
-    public final void notifyConsumers(final ConsumerEventCallback<T> callback) {
+    public final void notifyConsumers(final EventConsumerCallback<T> consumerCallback) {
 
         // Check sanity
-        Validate.notNull(callback, "Cannot handle null callback argument.");
+        Validate.notNull(consumerCallback, "Cannot handle null callback argument.");
 
         // Perform notification
         for (final String current : getConsumerIDs()) {
             final T listener = getConsumer(current);
 
             try {
-                callback.onEvent(listener);
+                consumerCallback.onEvent(listener);
             } catch (final Exception exception) {
                 onExceptionDuringConsumerNotification(listener, exception);
             }

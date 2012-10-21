@@ -59,7 +59,7 @@ public interface EventProducer<T extends EventConsumer> extends Clusterable {
      * Perform a callback/notification to all registered EventConsumers using
      * the provided ConsumerEventCallback instance.
      *
-     * @param callback an EventConsumer callback method, which cannot be  {@code null}.
+     * @param consumerCallback an EventConsumer callback method, which cannot be  {@code null}.
      */
-    void notifyConsumers(final ConsumerEventCallback<T> callback);
+    void notifyConsumers(final EventConsumerCallback<T> consumerCallback);
 }

@@ -13,6 +13,7 @@ import org.osgi.framework.Constants;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -117,6 +118,7 @@ public class MockServiceReferenceTest {
 
         // Act
         final List<String> propertyKeys = Arrays.asList(unitUnderTest.getPropertyKeys());
+        final Dictionary regProps = unitUnderTest.getRegistrationProperties();
 
         // Assert
         Assert.assertEquals(3 + registrationPropertiesOriginalSize, propertyKeys.size());
@@ -125,5 +127,6 @@ public class MockServiceReferenceTest {
         Assert.assertNotNull(unitUnderTest.getProperty(Constants.SERVICE_ID));
         Assert.assertNotNull(unitUnderTest.getProperty(Constants.SERVICE_RANKING));
         Assert.assertSame(bundle, unitUnderTest.getBundle());
+        Assert.assertNotNull(regProps);
     }
 }
