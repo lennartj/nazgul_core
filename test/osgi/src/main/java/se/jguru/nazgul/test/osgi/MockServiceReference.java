@@ -73,6 +73,13 @@ public class MockServiceReference implements ServiceReference {
     }
 
     /**
+     * @return The active registration properties.
+     */
+    public Dictionary getRegistrationProperties() {
+        return registrationProperties;
+    }
+
+    /**
      * Assigns the serviceID of this MockServiceReference.
      *
      * @param serviceID the serviceID to assign.

@@ -14,7 +14,7 @@ import java.io.Serializable;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public interface ConsumerEventCallback<T extends EventConsumer> extends Serializable {
+public interface EventConsumerCallback<T extends EventConsumer> extends Serializable {
 
     /**
      * Performs a callback on the provided EventConsumer [subclass] instance.
