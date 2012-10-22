@@ -13,8 +13,8 @@
     # Section 1:  Project information
     ################################################
     -->
-    <groupId>se.jguru.nazgul.core.test</groupId>
-    <artifactId>nazgul-core-test-reactor</artifactId>
+    <groupId>se.jguru.nazgul.core.test.bundles.hello</groupId>
+    <artifactId>nazgul-core-test-hello-reactor</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>${project.groupId}.${project.artifactId}</name>
     <packaging>pom</packaging>
@@ -31,11 +31,12 @@
     ################################################
     -->
     <modules>
-        <module>osgi</module>
-        <module>bundles</module>
+        <module>hello-api</module>
+        <module>hello-impl-plain</module>
+        <module>hello-impl-blueprint</module>
     </modules>
 
     <scm>
-        <developerConnection>scm:hg:file://${basedir}/../</developerConnection>
+        <developerConnection>scm:hg:file://${basedir}/../../</developerConnection>
     </scm>
 </project>
