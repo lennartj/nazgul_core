@@ -32,7 +32,7 @@
     -->
     <modules>
         <module>launcher-api</module>
-        <!-- module>launcher-impl-felix</module -->
+        <module>launcher-impl-felix</module>
     </modules>
 
     <scm>
