@@ -25,6 +25,19 @@
     <name>${project.groupId}.${project.artifactId}</name>
     <packaging>pom</packaging>
 
+    <properties>
+        <osgi.version>4.3.0</osgi.version>
+        <felix.version>4.0.3</felix.version>
+        <felix.fileinstall.version>3.2.6</felix.fileinstall.version>
+        <felix.fileinstall.version>3.2.6</felix.fileinstall.version>
+        <felix.gogoruntime.version>0.10.0</felix.gogoruntime.version>
+        <felix.configadmin.version>1.4.0</felix.configadmin.version>
+        <felix.dependencymanager.version>3.0.0</felix.dependencymanager.version>
+        <felix.deploymentadmin.version>0.9.0</felix.deploymentadmin.version>
+        <aries.blueprintcore.version>1.0.1</aries.blueprintcore.version>
+        <aries.blueprint.version>1.0.0</aries.blueprint.version>
+    </properties>
+
     <!--
     ################################################
     # Section 2:  Dependency (management) settings
@@ -40,19 +53,19 @@
             <dependency>
                 <groupId>org.osgi</groupId>
                 <artifactId>org.osgi.core</artifactId>
-                <version>4.3.0</version>
+                <version>${osgi.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>
                 <artifactId>org.osgi.compendium</artifactId>
-                <version>4.3.0</version>
+                <version>${osgi.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.main</artifactId>
-                <version>4.0.3</version>
+                <version>${felix.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.aries.blueprint</groupId>
