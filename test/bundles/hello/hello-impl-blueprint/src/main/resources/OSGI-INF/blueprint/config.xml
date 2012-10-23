@@ -20,4 +20,15 @@
         </bean>
     </service>
 
+    <!--
+        Add a blueprint-style service listener.
+    -->
+    <reference id="HelloServiceListener" interface="se.jguru.nazgul.core.test.bundles.hello.api.Hello">
+        <reference-listener
+                bind-method="onServiceAppeared"
+                unbind-method="onServiceDisappeared">
+            <bean class="se.jguru.nazgul.core.test.bundles.hello.impl.blueprint.eventecho.HelloServiceListener"/>
+        </reference-listener>
+    </reference>
+
 </blueprint>

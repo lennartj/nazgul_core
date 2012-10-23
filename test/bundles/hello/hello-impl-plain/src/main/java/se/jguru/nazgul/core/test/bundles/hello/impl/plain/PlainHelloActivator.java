@@ -52,21 +52,6 @@ public class PlainHelloActivator implements BundleActivator {
         helloServices.add(registerService(context, "Malin"));
     }
 
-    private ServiceRegistration<Hello> registerService(final BundleContext context, final String name) {
-
-        // Define serviceRegistration properties
-        Hashtable<String, String> serviceProperties = new Hashtable<String, String>();
-        serviceProperties.put("name", name);
-
-        // Register the service
-        final ServiceRegistration<Hello> serviceRegistration = context.registerService(
-                Hello.class, new PlainHello(name), serviceProperties);
-
-        // Log somewhat and return
-        log.debug("Bound '" + name + "' HelloService");
-        return serviceRegistration;
-    }
-
     /**
      * Called when this bundle is stopped so the Framework can perform the
      * bundle-specific activities necessary to stop the bundle. In general, this
@@ -97,5 +82,24 @@ public class PlainHelloActivator implements BundleActivator {
                 log.error("Could not unregister HelloService", e);
             }
         }
+    }
+
+    //
+    // Private helpers
+    //
+
+    private ServiceRegistration<Hello> registerService(final BundleContext context, final String name) {
+
+        // Define serviceRegistration properties
+        Hashtable<String, String> serviceProperties = new Hashtable<String, String>();
+        serviceProperties.put("name", name);
+
+        // Register the service
+        final ServiceRegistration<Hello> serviceRegistration = context.registerService(
+                Hello.class, new PlainHello(name), serviceProperties);
+
+        // Log somewhat and return
+        log.debug("Bound '" + name + "' HelloService");
+        return serviceRegistration;
     }
 }

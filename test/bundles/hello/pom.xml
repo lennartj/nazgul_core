@@ -32,8 +32,8 @@
     -->
     <modules>
         <module>hello-api</module>
-        <module>hello-impl-plain</module>
         <module>hello-impl-blueprint</module>
+        <module>hello-impl-plain</module>
     </modules>
 
     <scm>
