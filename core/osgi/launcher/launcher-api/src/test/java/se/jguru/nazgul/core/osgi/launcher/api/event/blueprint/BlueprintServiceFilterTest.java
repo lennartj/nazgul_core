@@ -68,8 +68,10 @@ public class BlueprintServiceFilterTest {
         // Assemble
         final BlueprintServiceFilter unitUnderTest = new BlueprintServiceFilter();
         final MockServiceReference altServiceReference = new MockServiceReference(bundle, Date.class.getName());
+        altServiceReference.getRegistrationProperties().put(BlueprintServiceFilter.BLUEPRINT_NAME_KEY, "someName");
 
         // Act & Assert
         Assert.assertFalse(unitUnderTest.accept(serviceReference));
+        Assert.assertTrue(unitUnderTest.accept(altServiceReference));
     }
 }

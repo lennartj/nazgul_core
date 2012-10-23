@@ -42,7 +42,7 @@ public class BlueprintServiceEventAdapter extends AbstractEventConsumer<Blueprin
      * @param delegate The BlueprintServiceListener delegate to which all relevant events are forwarded.
      */
     public BlueprintServiceEventAdapter(final BlueprintServiceListener delegate) {
-        this(delegate, null);
+        this(delegate, new BlueprintServiceFilter());
     }
 
     /**

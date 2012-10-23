@@ -29,14 +29,14 @@ public interface OsgiFrameworkListener<T extends EventConsumer<T>, S> extends Ev
     /**
      * Event callback method invoked before an OSGi service was removed from the underlying OSGI framework.
      *
-     * @param container A reference to the service to be removed.
+     * @param serviceObject A reference to the service to be removed.
      */
-    void beforeServiceRemoved(S container);
+    void beforeServiceRemoved(S serviceObject);
 
     /**
      * Event callback method invoked when an OSGi service was modified within the underlying OSGI framework.
      *
-     * @param container A reference to the modified service.
+     * @param serviceObject A reference to the modified service.
      */
-    void onServiceModified(S container);
+    void onServiceModified(S serviceObject);
 }

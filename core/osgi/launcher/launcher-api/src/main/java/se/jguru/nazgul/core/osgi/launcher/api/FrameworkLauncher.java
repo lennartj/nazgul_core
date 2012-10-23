@@ -61,7 +61,7 @@ public interface FrameworkLauncher {
      * @throws IllegalArgumentException if the configuration was deemed inappropriate for
      *                                  initializing the underlying container.
      */
-    void initialize(final Map<String, Object> configuration) throws IllegalStateException;
+    void initialize(final Map<String, String> configuration) throws IllegalStateException;
 
     /**
      * Starts the embedded OSGi container.

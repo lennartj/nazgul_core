@@ -43,7 +43,7 @@ public class MockFrameworkLauncher extends AbstractFrameworkLauncher<BlueprintSe
      *                                  initializing the underlying container.
      */
     @Override
-    protected Framework createFramework(final Map<String, Object> configuration) throws IllegalArgumentException {
+    protected Framework createFramework(final Map<String, String> configuration) throws IllegalArgumentException {
         return fw;
     }
 

@@ -66,7 +66,7 @@ public abstract class AbstractFrameworkLauncher<T extends OsgiFrameworkListener>
      * {@inheritDoc}
      */
     @Override
-    public void initialize(final Map<String, Object> configuration) throws IllegalStateException {
+    public void initialize(final Map<String, String> configuration) throws IllegalStateException {
 
         // Check sanity
         Validate.notNull(configuration, "Cannot handle null configuration Map.");
@@ -83,7 +83,7 @@ public abstract class AbstractFrameworkLauncher<T extends OsgiFrameworkListener>
      * @throws IllegalArgumentException if the configuration was deemed inappropriate for
      *                                  initializing the underlying container.
      */
-    protected abstract Framework createFramework(final Map<String, Object> configuration)
+    protected abstract Framework createFramework(final Map<String, String> configuration)
             throws IllegalArgumentException;
 
     /**
