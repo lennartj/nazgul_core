@@ -6,7 +6,6 @@
 package se.jguru.nazgul.core.osgi.launcher.api.event.blueprint;
 
 import org.osgi.service.blueprint.container.BlueprintContainer;
-import se.jguru.nazgul.core.algorithms.event.api.consumer.EventConsumer;
 import se.jguru.nazgul.core.osgi.launcher.api.event.OsgiFrameworkListener;
 
 /**
@@ -14,17 +13,16 @@ import se.jguru.nazgul.core.osgi.launcher.api.event.OsgiFrameworkListener;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public interface BlueprintServiceListener<T extends EventConsumer<T>>
-        extends OsgiFrameworkListener<T, BlueprintContainer> {
+public interface BlueprintServiceListener extends OsgiFrameworkListener<BlueprintServiceListener, BlueprintContainer> {
 
     /**
      * Event callback method invoked after a BlueprintContainer service
      * was added to the underlying OSGI Framework.
      *
-     * @param serviceObject The BlueprintContainer instance just added.
+     * @param container The BlueprintContainer instance just added.
      */
     @Override
-    void afterServiceAdded(BlueprintContainer serviceObject);
+    void afterServiceAdded(BlueprintContainer container);
 
     /**
      * Event callback method invoked before a BlueprintContainer service
