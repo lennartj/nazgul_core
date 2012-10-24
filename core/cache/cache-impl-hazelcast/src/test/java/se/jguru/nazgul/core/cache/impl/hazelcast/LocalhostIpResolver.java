@@ -7,11 +7,14 @@ package se.jguru.nazgul.core.cache.impl.hazelcast;
 
 import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
+import se.jguru.nazgul.core.algorithms.api.collections.predicate.Transformer;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Arrays;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -20,42 +23,60 @@ import java.util.List;
 public class LocalhostIpResolver {
 
     // Internal state
-    private static final Filter<InetAddress> ipv4LoopbackAddressFilter = new Filter<InetAddress>() {
+    private static final Filter<InterfaceAddress> ipv4LoopbackAddressFilter = new Filter<InterfaceAddress>() {
         @Override
-        public boolean accept(final InetAddress candidate) {
-            return candidate instanceof Inet4Address && candidate.isLoopbackAddress();
+        public boolean accept(final InterfaceAddress candidate) {
+            return candidate != null
+                    && candidate.getAddress() instanceof Inet4Address
+                    && candidate.getAddress().isLoopbackAddress();
         }
     };
-    private static final Filter<InetAddress> ipv4NonLoopbackAddressFilter = new Filter<InetAddress>() {
+    private static final Filter<InterfaceAddress> ipv4NonLoopbackAddressFilter = new Filter<InterfaceAddress>() {
         @Override
-        public boolean accept(final InetAddress candidate) {
-            return candidate instanceof Inet4Address && !candidate.isLoopbackAddress();
+        public boolean accept(final InterfaceAddress candidate) {
+            return candidate != null
+                    && candidate.getAddress() instanceof Inet4Address
+                    && !candidate.getAddress().isLoopbackAddress();
+        }
+    };
+    private static final Transformer<InterfaceAddress, InetAddress> addressTransformer
+            = new Transformer<InterfaceAddress, InetAddress>() {
+        @Override
+        public InetAddress transform(InterfaceAddress input) {
+            return input.getAddress();
         }
     };
 
     public static InetAddress getLocalhostNonLoopbackAddress() {
 
         try {
-            final List<InetAddress> allByName = Arrays.asList(
-                    InetAddress.getAllByName(InetAddress.getLocalHost().getHostName()));
+            final List<InetAddress> ipv4NonLoopbackAddresses = new ArrayList<InetAddress>();
+            final List<InetAddress> ipv4LoopbackAddresses = new ArrayList<InetAddress>();
 
-            // Get all loopback adresses
-            final List<InetAddress> ipV4LoopbackAddresses = CollectionAlgorithms.filter(
-                    allByName, ipv4LoopbackAddressFilter);
+            for (NetworkInterface current : Collections.list(NetworkInterface.getNetworkInterfaces())) {
 
-            // Get all non-loopback adresses
-            final List<InetAddress> ipv4NonLoopbackAddressAddresses = CollectionAlgorithms.filter(
-                    allByName, ipv4NonLoopbackAddressFilter);
+                // Find all non-loopback addresses
+                final List<InterfaceAddress> nonLoopbackAddresses = CollectionAlgorithms.filter(
+                        current.getInterfaceAddresses(), ipv4NonLoopbackAddressFilter);
+                ipv4NonLoopbackAddresses.addAll(
+                        CollectionAlgorithms.transform(nonLoopbackAddresses, addressTransformer));
 
-            if(ipv4NonLoopbackAddressAddresses.size() > 0) {
-                return ipv4NonLoopbackAddressAddresses.get(0);
+                // Find all loopback addresses
+                final List<InterfaceAddress> loopbackAddresses = CollectionAlgorithms.filter(
+                        current.getInterfaceAddresses(), ipv4LoopbackAddressFilter);
+                ipv4LoopbackAddresses.addAll(
+                        CollectionAlgorithms.transform(loopbackAddresses, addressTransformer));
             }
 
-            if(ipV4LoopbackAddresses.size() > 0) {
-                return ipV4LoopbackAddresses.get(0);
+            if (ipv4NonLoopbackAddresses.size() > 0) {
+                return ipv4NonLoopbackAddresses.get(0);
             }
 
-        } catch (UnknownHostException e) {
+            if (ipv4LoopbackAddresses.size() > 0) {
+                return ipv4LoopbackAddresses.get(0);
+            }
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -70,7 +91,7 @@ public class LocalhostIpResolver {
     public static String getClusterIpAddresses(final List<String> ports) {
 
         StringBuilder builder = new StringBuilder();
-        for(String current : ports) {
+        for (String current : ports) {
             builder.append(getLocalHostAddress()).append(":").append(current).append(",");
         }
 
@@ -82,13 +103,26 @@ public class LocalhostIpResolver {
 
     public static void main(String[] args) throws Exception {
 
+        for (NetworkInterface current : Collections.list(NetworkInterface.getNetworkInterfaces())) {
+            System.out.println("[" + current.getName() + "] .... ");
+
+            for (InterfaceAddress address : current.getInterfaceAddresses()) {
+                final InetAddress inetAddress = address.getAddress();
+                final String msg = inetAddress.isLoopbackAddress() ? "[LoopBack]" : "";
+                if (inetAddress instanceof Inet4Address) {
+
+                    System.out.println(" .... " + inetAddress.getHostAddress() + " " + msg);
+                }
+            }
+        }
+
+        /*
         final InetAddress[] allByName = InetAddress.getAllByName(InetAddress.getLocalHost().getHostName());
 
         for(InetAddress current : allByName) {
             System.out.println("Got: " + current + ", v4: " + (current instanceof Inet4Address)
                     + ", Loopback: " + current.isLoopbackAddress());
         }
-
-        System.out.println("Got2: " + LocalhostIpResolver.getLocalhostNonLoopbackAddress());
+        */
     }
 }
