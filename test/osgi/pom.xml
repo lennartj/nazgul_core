@@ -21,7 +21,7 @@
     </parent>
 
     <groupId>se.jguru.nazgul.test.osgi</groupId>
-    <artifactId>nazgul-core-test-osgi</artifactId>
+    <artifactId>nazgul-core-osgi-test</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>${project.groupId}.${project.artifactId}</name>
     <packaging>bundle</packaging>
@@ -129,6 +129,6 @@
     </build>
 
     <scm>
-        <developerConnection>scm:hg:file://${basedir}/../../../</developerConnection>
+        <developerConnection>scm:hg:file://${basedir}/../../</developerConnection>
     </scm>
 </project>

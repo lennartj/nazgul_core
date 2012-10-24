@@ -36,6 +36,6 @@
     </modules>
 
     <scm>
-        <developerConnection>scm:hg:file://${basedir}/../</developerConnection>
+        <developerConnection>scm:hg:file://${basedir}/../../</developerConnection>
     </scm>
 </project>
