@@ -21,6 +21,7 @@
     <properties>
         <java.version>1.6</java.version>
         <osgi.version>4.3.0</osgi.version>
+        <test.bundles.version>1.0.1-SNAPSHOT</test.bundles.version>
 
         <!-- Code style properties -->
         <cobertura.haltOnFailure>false</cobertura.haltOnFailure>
