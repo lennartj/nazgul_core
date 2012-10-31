@@ -31,7 +31,6 @@
     -->
     <modules>
         <module>osgi</module>
-        <module>bundles</module>
     </modules>
 
     <scm>
