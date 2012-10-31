@@ -4,7 +4,8 @@
   ~ All rights reserved.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <!--
@@ -26,7 +27,7 @@
     <packaging>bundle</packaging>
 
     <properties>
-        <test.bundles.version>1.0.1-SNAPSHOT</test.bundles.version>
+        <test.bundles.version>1.0.0</test.bundles.version>
     </properties>
 
     <!--
@@ -48,14 +49,14 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>se.jguru.nazgul.core.test.bundles.hello.impl.plain</groupId>
-            <artifactId>nazgul-core-test-hello-impl-plain</artifactId>
+            <groupId>se.jguru.nazgul.test.bundles.hello.impl.plain</groupId>
+            <artifactId>nazgul-test-hello-impl-plain</artifactId>
             <version>${test.bundles.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>se.jguru.nazgul.core.test.bundles.hello.impl.blueprint</groupId>
-            <artifactId>nazgul-core-test-hello-impl-blueprint</artifactId>
+            <groupId>se.jguru.nazgul.test.bundles.hello.impl.blueprint</groupId>
+            <artifactId>nazgul-test-hello-impl-blueprint</artifactId>
             <version>${test.bundles.version}</version>
             <scope>test</scope>
         </dependency>
@@ -184,20 +185,20 @@
                                     <destFileName>openjpa.jar</destFileName>
                                 </artifactItem>
                                 <artifactItem>
-                                    <groupId>se.jguru.nazgul.core.test.bundles.hello.api</groupId>
-                                    <artifactId>nazgul-core-test-hello-api</artifactId>
+                                    <groupId>se.jguru.nazgul.test.bundles.hello.api</groupId>
+                                    <artifactId>nazgul-test-hello-api</artifactId>
                                     <version>${test.bundles.version}</version>
                                     <outputDirectory>target/downloadedBundles</outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
-                                    <groupId>se.jguru.nazgul.core.test.bundles.hello.impl.blueprint</groupId>
-                                    <artifactId>nazgul-core-test-hello-impl-blueprint</artifactId>
+                                    <groupId>se.jguru.nazgul.test.bundles.hello.impl.blueprint</groupId>
+                                    <artifactId>nazgul-test-hello-impl-blueprint</artifactId>
                                     <version>${test.bundles.version}</version>
                                     <outputDirectory>target/downloadedBundles</outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
-                                    <groupId>se.jguru.nazgul.core.test.bundles.hello.impl.plain</groupId>
-                                    <artifactId>nazgul-core-test-hello-impl-plain</artifactId>
+                                    <groupId>se.jguru.nazgul.test.bundles.hello.impl.plain</groupId>
+                                    <artifactId>nazgul-test-hello-impl-plain</artifactId>
                                     <version>${test.bundles.version}</version>
                                     <outputDirectory>target/downloadedBundles</outputDirectory>
                                 </artifactItem>
@@ -295,6 +296,6 @@
 
     <scm>
         <developerConnection>scm:hg:file://${basedir}/../../../</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 </project>
