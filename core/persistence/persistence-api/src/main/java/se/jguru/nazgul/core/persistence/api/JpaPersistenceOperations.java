@@ -41,7 +41,8 @@ public class JpaPersistenceOperations implements PersistenceOperations {
      * Creates the provided entity and persists it within a JPA-aware database.
      *
      * @param entity The entity to persist.
-     * @throws se.jguru.nazgul.core.persistence.api.PersistenceOperationException if the entity could not be created.
+     * @throws se.jguru.nazgul.core.persistence.api.PersistenceOperationException
+     *          if the entity could not be created.
      */
     @Override
     public final <T extends NazgulEntity> void create(final T entity) throws PersistenceOperationException {
@@ -64,8 +65,7 @@ public class JpaPersistenceOperations implements PersistenceOperations {
      * entity within a JPA-aware entity.
      *
      * @param entity The entity to update / merge.
-     * @throws PersistenceOperationException
-     *          if the entity could not be updated.
+     * @throws PersistenceOperationException if the entity could not be updated.
      */
     @Override
     public final <T extends NazgulEntity> T update(final T entity) throws PersistenceOperationException {
@@ -82,8 +82,7 @@ public class JpaPersistenceOperations implements PersistenceOperations {
      * Replaces the state of the provided NazgulEntity with the database current state.
      *
      * @param entity The entity to refresh.
-     * @throws PersistenceOperationException
-     *          if the entity could not be refreshed.
+     * @throws PersistenceOperationException if the entity could not be refreshed.
      */
     @Override
     public final <T extends NazgulEntity> void refresh(final T entity) throws PersistenceOperationException {
@@ -106,8 +105,7 @@ public class JpaPersistenceOperations implements PersistenceOperations {
      * Deletes the persistent state of the provided entity from a JPA-aware database.
      *
      * @param entity The entity to delete.
-     * @throws PersistenceOperationException
-     *          if the entity could not be deleted.
+     * @throws PersistenceOperationException if the entity could not be deleted.
      */
     @Override
     public final <T extends NazgulEntity> void delete(final T entity) throws PersistenceOperationException {
@@ -138,8 +136,7 @@ public class JpaPersistenceOperations implements PersistenceOperations {
      * @param primaryKey The primary key used to acquire the Entity.
      * @param <T>        The type of Entity expected.
      * @return The Entity of type T with the provided primaryKey.
-     * @throws PersistenceOperationException
-     *          if a JPA-related exception occurred while performing the operation.
+     * @throws PersistenceOperationException if a JPA-related exception occurred while performing the operation.
      */
     @Override
     public <T extends NazgulEntity> T findByPrimaryKey(final Class<T> entityType,
@@ -160,8 +157,7 @@ public class JpaPersistenceOperations implements PersistenceOperations {
      * @param parameters The parameters for the NamedQuery.
      * @param <T>        The type of Entity expected.
      * @return The List of resulting Entities.
-     * @throws PersistenceOperationException
-     *          if a JPA-related exception occurred while performing the operation.
+     * @throws PersistenceOperationException if a JPA-related exception occurred while performing the operation.
      */
     @Override
     public <T extends NazgulEntity> List<T> fireNamedQuery(final String query,

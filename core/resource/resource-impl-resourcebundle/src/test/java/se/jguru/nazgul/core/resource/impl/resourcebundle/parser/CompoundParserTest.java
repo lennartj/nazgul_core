@@ -13,10 +13,10 @@ import java.net.InetAddress;
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 public class CompoundParserTest {
-    
+
     @Test
     public void validateDefaultTokenParsersUsingNullFactory() throws Exception {
-        
+
         // Assemble
         final InetAddress localhost = InetAddress.getLocalHost();
         final String canonicalName = localhost.getCanonicalHostName();
@@ -28,7 +28,7 @@ public class CompoundParserTest {
                 "${host:canonicalName}, ${host:address} and ${host:name}... and such.";
 
         final CompoundParser unitUnderTest = CompoundParser.create(null);
-        
+
         // Act
         final String result = unitUnderTest.substituteTokens(text);
 

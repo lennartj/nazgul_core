@@ -15,7 +15,6 @@ import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.converter.helper.FooCo
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.converter.helper.JaxbAnnotatedFoo;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedNull;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

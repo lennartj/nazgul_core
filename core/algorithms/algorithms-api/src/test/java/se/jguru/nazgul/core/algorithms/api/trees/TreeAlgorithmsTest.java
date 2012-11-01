@@ -8,7 +8,6 @@ package se.jguru.nazgul.core.algorithms.api.trees;
 import junit.framework.Assert;
 import org.junit.Test;
 
-import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.Iterator;
 
@@ -35,7 +34,7 @@ public class TreeAlgorithmsTest {
         final Iterator<Adjustment> it = emptyEnumMap.keySet().iterator();
 
         // Assert
-        for(Adjustment current : Adjustment.values()) {
+        for (Adjustment current : Adjustment.values()) {
             Assert.assertEquals(current, it.next());
         }
     }

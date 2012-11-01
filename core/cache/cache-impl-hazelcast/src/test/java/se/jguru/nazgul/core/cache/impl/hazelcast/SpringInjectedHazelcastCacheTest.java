@@ -16,7 +16,6 @@ import se.jguru.nazgul.core.cache.api.Cache;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
-import java.util.Arrays;
 
 import static junit.framework.Assert.assertEquals;
 

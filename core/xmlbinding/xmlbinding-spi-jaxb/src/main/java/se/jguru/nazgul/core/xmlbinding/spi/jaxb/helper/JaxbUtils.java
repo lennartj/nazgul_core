@@ -126,7 +126,7 @@ public abstract class JaxbUtils {
 
         // Load all relevant classes
         Set<Class<?>> loadedClasses = new HashSet<Class<?>>();
-        for(Object current : transporter.getClassInformation()) {
+        for (Object current : transporter.getClassInformation()) {
             loadedClasses.add(THREADLOCAL_TRANSFORMER.transform((String) current));
         }
 

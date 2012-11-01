@@ -7,7 +7,6 @@ package se.jguru.nazgul.core.algorithms.api.collections;
 
 import org.junit.Assert;
 import org.junit.Test;
-import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
 
 import java.lang.reflect.Method;
 import java.util.AbstractList;
@@ -24,16 +23,16 @@ import java.util.TreeSet;
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 public class CollectionAlgorithmsInternalTest {
-    
+
     @Test
     public void validateCloningEmptyCollectionsFromASourceType() {
-        
+
         // Act
         final LinkedList linkedList = cloneEmptyFromType(LinkedList.class);
         final HashSet hashSet = cloneEmptyFromType(HashSet.class);
         final TreeSet treeSet = cloneEmptyFromType(TreeSet.class);
         final ArrayList arrayList = cloneEmptyFromType(ArrayList.class);
-        
+
         final List aList = cloneEmptyFromType(List.class);
         final Set aSet = cloneEmptyFromType(Set.class);
 
@@ -92,7 +91,7 @@ public class CollectionAlgorithmsInternalTest {
         final CollectionWithoutDefaultConstructor willNotWork
                 = cloneEmptyFromType(CollectionWithoutDefaultConstructor.class);
     }
-    
+
     private <T, C extends Collection<T>> C cloneEmptyFromType(final Class<C> type) {
 
         try {
@@ -103,5 +102,5 @@ public class CollectionAlgorithmsInternalTest {
         } catch (Exception e) {
             throw new IllegalArgumentException("Could not invoke method", e);
         }
-    } 
+    }
 }

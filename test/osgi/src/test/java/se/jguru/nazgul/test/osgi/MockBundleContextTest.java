@@ -194,7 +194,7 @@ public class MockBundleContextTest {
                 ServiceEvent.MODIFIED,
                 ServiceEvent.UNREGISTERING);
 
-        for(int i = 0; i < serviceEventTrace1.size(); i++) {
+        for (int i = 0; i < serviceEventTrace1.size(); i++) {
             Assert.assertEquals((int) serviceEventTrace1.get(i), callTrace1.get(i).getType());
         }
 

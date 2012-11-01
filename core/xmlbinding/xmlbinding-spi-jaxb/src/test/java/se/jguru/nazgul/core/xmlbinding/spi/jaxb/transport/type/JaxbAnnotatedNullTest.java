@@ -8,10 +8,8 @@ import com.google.common.reflect.TypeToken;
 import junit.framework.Assert;
 import org.junit.Test;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.SortedSet;
 
 /**
@@ -58,7 +56,8 @@ public class JaxbAnnotatedNullTest {
         // Assemble
 
         // Act
-        final Foo<String, ArrayList> foo = new Foo<String, ArrayList>(){};
+        final Foo<String, ArrayList> foo = new Foo<String, ArrayList>() {
+        };
 
         // Assert
         Assert.assertEquals(String.class.getName(), ((Class) foo.typeA.getType()).getName());
@@ -66,7 +65,9 @@ public class JaxbAnnotatedNullTest {
     }
 
     class Foo<A, B> {
-        TypeToken<A> typeA = new TypeToken<A>(getClass()) {};
-        TypeToken<B> typeB = new TypeToken<B>(getClass()) {};
+        TypeToken<A> typeA = new TypeToken<A>(getClass()) {
+        };
+        TypeToken<B> typeB = new TypeToken<B>(getClass()) {
+        };
     }
 }

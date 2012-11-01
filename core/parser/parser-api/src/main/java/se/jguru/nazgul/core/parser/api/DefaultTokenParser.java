@@ -32,7 +32,7 @@ public class DefaultTokenParser implements TokenParser {
 
         Validate.notNull(parserAgent, "Cannot handle null parserAgent.");
 
-        if(!parseAgents.contains(parserAgent)) {
+        if (!parseAgents.contains(parserAgent)) {
             parseAgents.add(parserAgent);
         }
     }

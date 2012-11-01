@@ -27,7 +27,7 @@ public class DistributedCacheTest {
 
         // Assert
         Assert.assertEquals(values.length, expectedTypes.size());
-        for(int i = 0; i < values.length; i++) {
+        for (int i = 0; i < values.length; i++) {
             Assert.assertEquals(expectedTypes.get(i), values[i].toString());
         }
     }

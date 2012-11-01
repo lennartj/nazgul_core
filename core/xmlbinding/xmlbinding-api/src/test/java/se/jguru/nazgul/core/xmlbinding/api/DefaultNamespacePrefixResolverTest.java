@@ -33,7 +33,7 @@ public class DefaultNamespacePrefixResolverTest {
         Assert.assertEquals(allNamespaces.length, registeredNamespaceURIs.size());
         Assert.assertEquals(allNamespaces.length, registeredPrefixes.size());
 
-        for(WellKnownNamespace current : allNamespaces) {
+        for (WellKnownNamespace current : allNamespaces) {
 
             final String currentNamespace = current.getNameSpaceUrl();
             final String currentPrefix = current.getXsdPrefix();
@@ -97,8 +97,8 @@ public class DefaultNamespacePrefixResolverTest {
 
     private String getWellKnownXmlNamespace(final String xmlPrefix) {
 
-        for(WellKnownNamespace current : allNamespaces) {
-            if(current.getXsdPrefix().equals(xmlPrefix)) {
+        for (WellKnownNamespace current : allNamespaces) {
+            if (current.getXsdPrefix().equals(xmlPrefix)) {
                 return current.getNameSpaceUrl();
             }
         }

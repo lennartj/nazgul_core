@@ -48,7 +48,7 @@ public class Person {
     @Override
     public boolean equals(final Object obj) {
 
-        if(obj != null && obj instanceof Person) {
+        if (obj != null && obj instanceof Person) {
             Person that = (Person) obj;
 
             return this.name.equals(that.name) && this.age == that.age;

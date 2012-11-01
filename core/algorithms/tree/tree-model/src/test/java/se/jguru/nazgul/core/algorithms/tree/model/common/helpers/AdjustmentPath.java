@@ -8,9 +8,6 @@ import se.jguru.nazgul.core.algorithms.api.trees.TreeAlgorithms;
 import se.jguru.nazgul.core.algorithms.tree.model.common.EnumMapPath;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
-import javax.persistence.Entity;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;

@@ -27,7 +27,7 @@ public class Utf8ResourceBundleTest {
 
         // Act
         final Enumeration<String> keys = bundle.getKeys();
-        while(keys.hasMoreElements()) {
+        while (keys.hasMoreElements()) {
             bundleKeys.add(keys.nextElement());
         }
 

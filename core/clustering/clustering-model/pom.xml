@@ -16,13 +16,13 @@
     <parent>
         <groupId>se.jguru.nazgul.core.poms.model-parent</groupId>
         <artifactId>nazgul-core-model-parent</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.1-SNAPSHOT</version>
         <relativePath>../../poms/model-parent/pom.xml</relativePath>
     </parent>
 
     <groupId>se.jguru.nazgul.core.clustering.model</groupId>
     <artifactId>nazgul-core-clustering-model</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>${project.groupId}.${project.artifactId}</name>
     <packaging>bundle</packaging>
 
@@ -36,7 +36,7 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.persistence.model</groupId>
             <artifactId>nazgul-core-persistence-model</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
 
         <!-- External dependencies. -->
@@ -97,7 +97,8 @@
                         </goals>
                         <configuration>
                             <includes>**/*.class</includes>
-                            <persistenceXmlFile>${basedir}/src/main/weaving/openjpa/persistence-model-persistence.xml</persistenceXmlFile>
+                            <persistenceXmlFile>${basedir}/src/main/weaving/openjpa/persistence-model-persistence.xml
+                            </persistenceXmlFile>
                         </configuration>
                     </execution>
                     <execution>
@@ -108,7 +109,9 @@
                         </goals>
                         <configuration>
                             <includes>**/*.class</includes>
-                            <persistenceXmlFile>${basedir}/src/test/weaving/openjpa/persistence-model-test-persistence.xml</persistenceXmlFile>
+                            <persistenceXmlFile>
+                                ${basedir}/src/test/weaving/openjpa/persistence-model-test-persistence.xml
+                            </persistenceXmlFile>
                         </configuration>
                     </execution>
                 </executions>

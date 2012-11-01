@@ -15,7 +15,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
 
 /**
  * Transport type representing a {@code DateTime} value.
@@ -63,7 +62,7 @@ public class JaxbAnnotatedDateTime extends AbstractJaxbAnnotatedTransportType<Da
     @Override
     public DateTime getValue() {
 
-        if(value == null) {
+        if (value == null) {
             value = DATE_TIME_FORMATTER.parseDateTime(transportForm);
         }
 

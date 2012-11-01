@@ -5,9 +5,6 @@
 package se.jguru.nazgul.core.cache.impl.hazelcast;
 
 import com.hazelcast.core.EntryEvent;
-import com.hazelcast.core.Instance;
-import com.hazelcast.core.InstanceEvent;
-import com.hazelcast.core.Member;
 import org.junit.Assert;
 import org.junit.Test;
 import se.jguru.nazgul.core.cache.api.CacheListener;
@@ -46,7 +43,7 @@ public class HazelcastCacheListenerAdapterTest {
 
         // Assert
         Assert.assertSame(cacheListener, unitUnderTest.getCacheListener());
-        final TreeMap<Integer,DebugCacheListener.EventInfo> map = cacheListener.eventId2KeyValueMap;
+        final TreeMap<Integer, DebugCacheListener.EventInfo> map = cacheListener.eventId2KeyValueMap;
 
         // {1=put:key:value, 2=remove:key:value, 3=update:key:value, 4=autonomousEvict:key:value}
         Assert.assertEquals("put:key:value", map.get(1).toString());

@@ -19,7 +19,7 @@ public class WellKnownNamespaceTest {
     public void validateNamespaceDataIsNeitherNullNorEmpty() {
 
         // Assert
-        for(WellKnownNamespace current : allNamespaces) {
+        for (WellKnownNamespace current : allNamespaces) {
 
             // Validate that the namespaceURL is not null or empty
             Assert.assertNotNull(current.getNameSpaceUrl());

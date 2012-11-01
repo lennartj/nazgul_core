@@ -158,7 +158,7 @@ public class EnumMapPathTest {
         sortedSet.add(unitUnderTest4);
 
         final List<EnumMapPath<Adjustment, String>> sortedList = new ArrayList<EnumMapPath<Adjustment, String>>();
-        for(EnumMapPath<Adjustment, String> current : sortedSet) {
+        for (EnumMapPath<Adjustment, String> current : sortedSet) {
             sortedList.add(current);
         }
 

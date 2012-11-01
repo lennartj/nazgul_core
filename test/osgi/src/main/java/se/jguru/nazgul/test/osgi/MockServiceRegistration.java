@@ -106,7 +106,7 @@ public class MockServiceRegistration<S> implements ServiceRegistration<S> {
      */
     @Override
     public void setProperties(final Dictionary<String, ?> properties) {
-        for(Enumeration en = properties.keys(); en.hasMoreElements();) {
+        for (Enumeration en = properties.keys(); en.hasMoreElements(); ) {
             final Object currentKey = en.nextElement();
             registrationProperties.put(currentKey, properties.get(currentKey));
         }

@@ -150,12 +150,12 @@ public class DefaultNamespacePrefixResolver implements NamespacePrefixResolver {
         final String presentNamespaceUri = prefix2UrlMap.get(xmlPrefix);
 
         // We already know that xmlNamespaceUri is not null.
-        if(presentPrefix != null && !presentPrefix.equals(xmlPrefix)) {
+        if (presentPrefix != null && !presentPrefix.equals(xmlPrefix)) {
             throw new IllegalArgumentException("URI [" + xmlNamespaceUri + "] already present with prefix ["
                     + xmlPrefix + "]. Aborting put operation.");
         }
 
-        if(presentNamespaceUri != null && !presentNamespaceUri.equals(xmlNamespaceUri)) {
+        if (presentNamespaceUri != null && !presentNamespaceUri.equals(xmlNamespaceUri)) {
             throw new IllegalArgumentException("URI [" + xmlPrefix + "] already present with namespace URI ["
                     + presentNamespaceUri + "]. Aborting put operation.");
         }

@@ -41,7 +41,7 @@ public class TracingBundleListener implements BundleListener {
     public TracingBundleListener(final int countDownValue, final String id) {
 
         this.id = id;
-        if(countDownValue > 0) {
+        if (countDownValue > 0) {
             onEventLatch = new CountDownLatch(countDownValue);
         }
     }
@@ -56,7 +56,7 @@ public class TracingBundleListener implements BundleListener {
 
         callTrace.add(event);
 
-        if(onEventLatch != null) {
+        if (onEventLatch != null) {
             onEventLatch.countDown();
         }
     }

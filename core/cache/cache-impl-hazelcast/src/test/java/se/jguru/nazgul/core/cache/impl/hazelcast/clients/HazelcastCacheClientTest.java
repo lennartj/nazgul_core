@@ -11,8 +11,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import se.jguru.nazgul.core.cache.impl.hazelcast.AbstractHazelcastCacheTest;
 import se.jguru.nazgul.core.cache.impl.hazelcast.DebugCacheListener;
-import se.jguru.nazgul.core.cache.impl.hazelcast.clients.HazelcastCacheClient;
-import se.jguru.nazgul.core.cache.impl.hazelcast.clients.HazelcastCacheMember;
 
 import java.io.Serializable;
 import java.net.InetSocketAddress;

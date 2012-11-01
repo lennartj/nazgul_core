@@ -44,7 +44,7 @@ public class PatternMatchFilterTest {
 
         // Assert
         Assert.assertEquals(3, result.size());
-        for(String current : result) {
+        for (String current : result) {
             Assert.assertTrue(data.contains(current));
         }
     }

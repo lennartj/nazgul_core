@@ -67,9 +67,9 @@ public class HazelcastCacheMember extends AbstractHazelcastInstanceWrapper {
      *                                  clusterMembers argument was not correctly formatted.
      */
     public static HazelcastCacheMember create(final String clusterID,
-                                        final String localIp,
-                                        final int localPort,
-                                        final String clusterMembers)
+                                              final String localIp,
+                                              final int localPort,
+                                              final String clusterMembers)
             throws IllegalArgumentException {
         return create(clusterID, localIp, localPort, clusterMembers, MAIN_CONFIGURATION_FILE);
     }
@@ -93,10 +93,10 @@ public class HazelcastCacheMember extends AbstractHazelcastInstanceWrapper {
      *                                  clusterMembers argument was not correctly formatted.
      */
     public static HazelcastCacheMember create(final String clusterID,
-                                        final String localIp,
-                                        final int localPort,
-                                        final String clusterMembers,
-                                        final String configurationFile) {
+                                              final String localIp,
+                                              final int localPort,
+                                              final String clusterMembers,
+                                              final String configurationFile) {
 
         Validate.notEmpty(localIp, "Local IP can not be null");
 
@@ -122,10 +122,10 @@ public class HazelcastCacheMember extends AbstractHazelcastInstanceWrapper {
      *                                  clusterMembers argument was not correctly formatted.
      */
     public static HazelcastCacheMember create(final String clusterID,
-                                        final List<String> localInterfaces,
-                                        final int localPort,
-                                        final String clusterMembers,
-                                        final String configurationFile)
+                                              final List<String> localInterfaces,
+                                              final int localPort,
+                                              final String clusterMembers,
+                                              final String configurationFile)
             throws IllegalArgumentException {
 
         // Check sanity

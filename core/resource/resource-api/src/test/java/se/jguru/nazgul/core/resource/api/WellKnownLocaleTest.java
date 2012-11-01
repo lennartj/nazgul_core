@@ -39,7 +39,7 @@ public class WellKnownLocaleTest {
     public void validateCorrectLocales() {
 
         // Act & Assert
-        for(WellKnownLocale current : WellKnownLocale.values()) {
+        for (WellKnownLocale current : WellKnownLocale.values()) {
             Assert.assertEquals(localeMap.get(current), current.getLocale());
         }
     }

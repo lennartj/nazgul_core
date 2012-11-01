@@ -96,7 +96,7 @@ public class ListPathTest {
 
         // Act
         final List<ListPath<String>> sortedList = new ArrayList<ListPath<String>>();
-        for(ListPath<String> current : sortedSet) {
+        for (ListPath<String> current : sortedSet) {
             sortedList.add(current);
         }
 

@@ -17,7 +17,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import se.jguru.nazgul.core.cache.impl.hazelcast.LocalhostIpResolver;
-import se.jguru.nazgul.core.cache.impl.hazelcast.clients.PropertyHolder;
 
 import javax.inject.Inject;
 import java.net.URL;

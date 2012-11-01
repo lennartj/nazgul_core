@@ -68,7 +68,7 @@ public abstract class Utf8ResourceBundle {
         protected Object handleGetObject(final String key) {
 
             String value = innerBundle.getString(key);
-            if(value == null) {
+            if (value == null) {
                 return null;
             }
 
