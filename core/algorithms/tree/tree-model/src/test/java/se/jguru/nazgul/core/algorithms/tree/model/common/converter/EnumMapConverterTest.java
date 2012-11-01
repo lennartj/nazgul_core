@@ -24,7 +24,7 @@ public class EnumMapConverterTest {
 
         // Act
         final JaxbAnnotatedEnumMap marshalledResult = unitUnderTest.marshal(null);
-        final EnumMap<Adjustment,String> unmarshalledResult = unitUnderTest.unmarshal(null);
+        final EnumMap<Adjustment, String> unmarshalledResult = unitUnderTest.unmarshal(null);
 
         // Assert
         Assert.assertNull(marshalledResult);

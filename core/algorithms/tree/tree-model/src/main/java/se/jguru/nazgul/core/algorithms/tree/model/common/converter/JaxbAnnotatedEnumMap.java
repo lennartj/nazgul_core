@@ -6,7 +6,6 @@
 package se.jguru.nazgul.core.algorithms.tree.model.common.converter;
 
 import org.apache.commons.lang3.Validate;
-import se.jguru.nazgul.core.algorithms.api.trees.TreeAlgorithms;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 
 import javax.persistence.Access;
@@ -74,7 +73,7 @@ public class JaxbAnnotatedEnumMap<E extends Enum<E>> implements Serializable {
 
         for (int i = 0; i < enumValues.length; i++) {
             Object currentValue = i < values.size() ? values.get(i) : null;
-            if(currentValue != null) {
+            if (currentValue != null) {
                 toReturn.put(enumValues[i], currentValue);
             } else {
                 toReturn.put(enumValues[i], null);

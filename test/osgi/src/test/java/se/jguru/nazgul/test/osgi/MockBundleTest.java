@@ -71,13 +71,13 @@ public class MockBundleTest {
                 Constants.BUNDLE_SYMBOLICNAME);
 
         // Act
-        final Dictionary<String,String> standardHeaders = MockBundle.getStandardHeaders(osgiStringVersion);
+        final Dictionary<String, String> standardHeaders = MockBundle.getStandardHeaders(osgiStringVersion);
         final Dictionary<String, String> headers = unitUnderTest.getHeaders("ignored");
 
         // Assert
         Assert.assertNotNull(standardHeaders);
         Assert.assertEquals(expectedProperties.size(), standardHeaders.size());
-        for(String current : expectedProperties) {
+        for (String current : expectedProperties) {
             Assert.assertNotNull(standardHeaders.get(current));
         }
         Assert.assertEquals(standardHeaders, headers);
@@ -87,7 +87,7 @@ public class MockBundleTest {
     public void validateRemovingBundleHeader() {
 
         // Assemble
-        final Dictionary<String,String> standardHeaders = MockBundle.getStandardHeaders(osgiStringVersion);
+        final Dictionary<String, String> standardHeaders = MockBundle.getStandardHeaders(osgiStringVersion);
 
         // Act
         unitUnderTest.removeHeader(Constants.BUNDLE_DESCRIPTION);

@@ -1186,7 +1186,7 @@ public class MockBundle implements Bundle, Serializable {
      */
     @Override
     public <A> A adapt(final Class<A> type) {
-        if(type != null && type.isAssignableFrom(this.getClass())) {
+        if (type != null && type.isAssignableFrom(this.getClass())) {
             return (A) this;
         }
         return null;

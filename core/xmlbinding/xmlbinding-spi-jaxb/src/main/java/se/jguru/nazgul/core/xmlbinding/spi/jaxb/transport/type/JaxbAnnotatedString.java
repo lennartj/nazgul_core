@@ -51,7 +51,7 @@ public class JaxbAnnotatedString extends AbstractJaxbAnnotatedTransportType<Stri
     @Override
     public String getValue() {
 
-        if(super.value == null) {
+        if (super.value == null) {
             super.value = transportForm;
         }
 

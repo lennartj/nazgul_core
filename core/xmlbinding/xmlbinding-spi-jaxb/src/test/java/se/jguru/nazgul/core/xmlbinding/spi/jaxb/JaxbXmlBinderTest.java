@@ -10,7 +10,6 @@ import se.jguru.nazgul.core.xmlbinding.api.NamespacePrefixResolver;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbNamespacePrefixResolver;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Account;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Person;
-import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -85,7 +84,7 @@ public class JaxbXmlBinderTest {
         // Assert
         Assert.assertNotNull(result);
         Assert.assertEquals(expected.size(), result.size());
-        for(int i = 0; i < expected.size(); i++) {
+        for (int i = 0; i < expected.size(); i++) {
             Assert.assertEquals(expected.get(i), result.get(i));
         }
     }

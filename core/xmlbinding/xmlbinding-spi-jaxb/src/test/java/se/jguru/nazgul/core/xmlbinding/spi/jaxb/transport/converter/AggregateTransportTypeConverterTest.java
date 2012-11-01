@@ -6,10 +6,8 @@ package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.converter;
 
 import junit.framework.Assert;
 import org.junit.Test;
-import se.jguru.nazgul.core.reflection.api.conversion.AbstractTypeConverter;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.converter.helper.StringBufferToStringConverter;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.converter.helper.StringToStringBufferConverter;
-import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedNull;
 
 import java.util.Date;
 

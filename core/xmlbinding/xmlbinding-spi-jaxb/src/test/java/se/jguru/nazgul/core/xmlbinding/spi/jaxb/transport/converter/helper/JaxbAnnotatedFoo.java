@@ -5,7 +5,6 @@
 
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.converter.helper;
 
-import org.joda.time.DateTime;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.AbstractJaxbAnnotatedTransportType;
 
@@ -66,7 +65,7 @@ public class JaxbAnnotatedFoo extends AbstractJaxbAnnotatedTransportType<Foo> {
     @Override
     public Foo getValue() {
 
-        if(super.value == null) {
+        if (super.value == null) {
             super.value = new Foo(transportForm);
         }
 
@@ -93,7 +92,6 @@ public class JaxbAnnotatedFoo extends AbstractJaxbAnnotatedTransportType<Foo> {
 
         throw new ClassCastException("Cannot compare JaxbAnnotatedFoos to [" + that.getClass().getName() + "]");
     }
-
 
 
     /**

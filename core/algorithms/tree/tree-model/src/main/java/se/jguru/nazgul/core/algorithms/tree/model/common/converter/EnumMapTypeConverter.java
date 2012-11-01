@@ -25,7 +25,7 @@ public class EnumMapTypeConverter<E extends Enum<E>, KeyType extends Serializabl
     public EnumMap<E, KeyType> unmarshal(final JaxbAnnotatedEnumMap value) throws Exception {
 
         EnumMap<E, KeyType> toReturn = null;
-        if(value != null) {
+        if (value != null) {
             toReturn = value.getEnumMap();
         }
 
@@ -40,9 +40,9 @@ public class EnumMapTypeConverter<E extends Enum<E>, KeyType extends Serializabl
 
         JaxbAnnotatedEnumMap toReturn = null;
 
-        if(value != null) {
+        if (value != null) {
             final Iterator<E> it = value.keySet().iterator();
-            if(it.hasNext()){
+            if (it.hasNext()) {
                 toReturn = new JaxbAnnotatedEnumMap(value, it.next().getDeclaringClass());
             }
         }

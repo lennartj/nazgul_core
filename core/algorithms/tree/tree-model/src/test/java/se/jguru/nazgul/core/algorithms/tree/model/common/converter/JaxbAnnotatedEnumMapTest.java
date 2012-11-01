@@ -6,17 +6,12 @@
 package se.jguru.nazgul.core.algorithms.tree.model.common.converter;
 
 import junit.framework.Assert;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import se.jguru.nazgul.core.algorithms.tree.model.common.helpers.Adjustment;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.JaxbXmlBinder;
-import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter;
-import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedDateTime;
 
-import java.util.Date;
 import java.util.EnumMap;
-import java.util.SortedSet;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB

@@ -30,7 +30,7 @@ import java.util.TreeSet;
 /**
  * This testcase is *very important* in that it tracks how the currently used release of
  * AbstractHazelcastInstanceWrapper behaves internally for certain actions.
- * 
+ *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 public class HazelcastCacheStrangeInternalBehaviourTest extends AbstractHazelcastCacheTest {
@@ -194,7 +194,7 @@ public class HazelcastCacheStrangeInternalBehaviourTest extends AbstractHazelcas
         final Set<String> valueFromMember2 = referenceFromMember2.get(key);
 
         // Assert
-        final String[] expected = { value, "baz" };
+        final String[] expected = {value, "baz"};
         for (final String current : expected) {
             Assert.assertTrue(valueFromMember2.contains(current));
         }

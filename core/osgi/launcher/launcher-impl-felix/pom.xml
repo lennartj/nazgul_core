@@ -26,10 +26,6 @@
     <name>${project.groupId}.${project.artifactId}</name>
     <packaging>bundle</packaging>
 
-    <properties>
-        <test.bundles.version>1.0.0</test.bundles.version>
-    </properties>
-
     <!--
     ################################################
     # Section 2:  Dependency (management) settings
@@ -40,12 +36,12 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.osgi.launcher.api</groupId>
             <artifactId>nazgul-core-osgi-launcher-api</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.test.osgi</groupId>
             <artifactId>nazgul-core-osgi-test</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.1-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         <dependency>

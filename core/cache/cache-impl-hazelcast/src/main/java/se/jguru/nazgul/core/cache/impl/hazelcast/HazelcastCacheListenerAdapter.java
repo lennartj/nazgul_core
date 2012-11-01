@@ -39,10 +39,8 @@ public class HazelcastCacheListenerAdapter implements InstanceListener, ItemList
     /**
      * Creates a new HazelcastCacheListenerAdapter for a Cache instance.
      *
-     * @param listener
-     *            A cacheListener to which we the events of this HazelcastCacheListenerAdapter will be delegated.
-     * @throws IllegalArgumentException
-     *             if the listener argument is null.
+     * @param listener A cacheListener to which we the events of this HazelcastCacheListenerAdapter will be delegated.
+     * @throws IllegalArgumentException if the listener argument is null.
      */
     public HazelcastCacheListenerAdapter(final CacheListener listener) throws IllegalArgumentException {
 
@@ -92,8 +90,7 @@ public class HazelcastCacheListenerAdapter implements InstanceListener, ItemList
     /**
      * Invoked when an entry is added.
      *
-     * @param entryEvent
-     *            entry event
+     * @param entryEvent entry event
      */
     @Override
     public void entryAdded(final EntryEvent entryEvent) {
@@ -106,8 +103,7 @@ public class HazelcastCacheListenerAdapter implements InstanceListener, ItemList
     /**
      * Invoked when an entry is removed.
      *
-     * @param entryEvent
-     *            entry event
+     * @param entryEvent entry event
      */
     @Override
     public void entryRemoved(final EntryEvent entryEvent) {
@@ -120,8 +116,7 @@ public class HazelcastCacheListenerAdapter implements InstanceListener, ItemList
     /**
      * Invoked when an entry is updated.
      *
-     * @param entryEvent
-     *            entry event
+     * @param entryEvent entry event
      */
     @Override
     public void entryUpdated(final EntryEvent entryEvent) {
@@ -135,8 +130,7 @@ public class HazelcastCacheListenerAdapter implements InstanceListener, ItemList
     /**
      * Invoked when an entry is evicted.
      *
-     * @param entryEvent
-     *            entry event
+     * @param entryEvent entry event
      */
     @Override
     public void entryEvicted(final EntryEvent entryEvent) {
@@ -177,8 +171,7 @@ public class HazelcastCacheListenerAdapter implements InstanceListener, ItemList
     /**
      * Invoked when a Hazelcast cacheInstance is created (i.e. joins the cluster).
      *
-     * @param event
-     *            The event holding cacheInstance creation data.
+     * @param event The event holding cacheInstance creation data.
      */
     @Override
     public void instanceCreated(final InstanceEvent event) {
@@ -192,8 +185,7 @@ public class HazelcastCacheListenerAdapter implements InstanceListener, ItemList
     /**
      * Invoked when a Hazelcast cacheInstance is destroyed (i.e. removed from the cluster).
      *
-     * @param event
-     *            The event holding cacheInstance creation data.
+     * @param event The event holding cacheInstance creation data.
      */
     @Override
     public void instanceDestroyed(final InstanceEvent event) {
@@ -228,10 +220,8 @@ public class HazelcastCacheListenerAdapter implements InstanceListener, ItemList
     /**
      * Internal logger method.
      *
-     * @param entryEvent
-     *            The EntryEvent from Hazelcast.
-     * @param action
-     *            The EntryEvent action, such as "Added".
+     * @param entryEvent The EntryEvent from Hazelcast.
+     * @param action     The EntryEvent action, such as "Added".
      */
     private void logEntryEvent(final EntryEvent entryEvent, final String action) {
 
@@ -253,8 +243,7 @@ public class HazelcastCacheListenerAdapter implements InstanceListener, ItemList
     /**
      * Converts the provided object to a Serializable to be used for CacheListener keys.
      *
-     * @param obj
-     *            The object to convert.
+     * @param obj The object to convert.
      * @return The serializable to be used as a key.
      */
     private Serializable getSerializable(final Object obj) {

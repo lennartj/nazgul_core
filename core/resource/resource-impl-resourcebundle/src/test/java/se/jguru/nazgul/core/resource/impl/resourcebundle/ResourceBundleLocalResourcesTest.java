@@ -101,7 +101,7 @@ public class ResourceBundleLocalResourcesTest {
         final Locale italian = Locale.ITALIAN;
         final ResourceBundleLocalResources unitUnderTest
                 = new ResourceBundleLocalResources("test/resources/keyvalues", defaultLocale);
-        
+
         // Act
         final String result1 = unitUnderTest.getLocalized(fooKey, "fooFallback");
         final String result2 = unitUnderTest.getLocalized(fooKey, "fooFallback", WellKnownLocale.SWEDISH.getLocale());
@@ -154,19 +154,19 @@ public class ResourceBundleLocalResourcesTest {
         Assert.assertEquals("Morrn Da!", norwegianFoo);
         Assert.assertEquals("bar_en", anotherEnglishFoo);
     }
-    
+
     @Test
     public void validateTokenization() {
-        
+
         // Assemble
         final String barKey = "bar";
         final String defaultValue = "barDefault";
         final Locale fallback = Locale.ITALIAN;
         final Locale swedish = WellKnownLocale.SWEDISH.getLocale();
-        
+
         final ResourceBundleLocalResources unitUnderTest = new ResourceBundleLocalResources(
                 "test/tokenizedresources/keyvalues", fallback);
-        
+
         // Act & Assert
         Assert.assertEquals("a ${nice} bar", unitUnderTest.getLocalized(barKey, defaultValue));
         Assert.assertEquals("a grand bar", unitUnderTest.getLocalized(barKey, defaultValue, "nice=grand"));

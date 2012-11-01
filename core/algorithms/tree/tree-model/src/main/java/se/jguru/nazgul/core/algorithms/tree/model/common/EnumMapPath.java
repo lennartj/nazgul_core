@@ -211,10 +211,10 @@ public class EnumMapPath<E extends Enum<E>, SegmentType extends Serializable & C
         if (index < 0) {
             throw new IndexOutOfBoundsException("Cannot handle negative index argument.");
         }
-        if(mapPathSegments == null) {
+        if (mapPathSegments == null) {
 
             // Re-build the mapPathSegments?
-            throw new IllegalStateException("mapPathSegments: "  + mapPathSegments);
+            throw new IllegalStateException("mapPathSegments: " + mapPathSegments);
         }
 
         // All done.

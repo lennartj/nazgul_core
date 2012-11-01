@@ -77,7 +77,7 @@ public class HazelcastLightweightTopicTest extends AbstractHazelcastCacheTest {
     }
 
     // TODO A null pointer deep down in hazelcast prevents this test to go through - must look in to!
-//    @Ignore("A null pointer deep down in hazelcast prevents this test to go through - must look in to!")
+    //    @Ignore("A null pointer deep down in hazelcast prevents this test to go through - must look in to!")
     @Test
     public void validateLightweightTopicListenerOperationInDistributedCache() throws InterruptedException {
 

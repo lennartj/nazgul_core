@@ -44,7 +44,7 @@ public class JaxbNamespacePrefixResolverTest {
 
         // Assert
         Assert.assertEquals(namespaces.length, preDeclaredNamespaceUris.length);
-        for(WellKnownNamespace current : namespaces) {
+        for (WellKnownNamespace current : namespaces) {
             Assert.assertTrue(registeredNamespaceURIs.contains(current.getNameSpaceUrl()));
             Assert.assertTrue(preDeclaredNamespaceUriList.contains(current.getNameSpaceUrl()));
             Assert.assertTrue(registeredPrefixes.contains(current.getXsdPrefix()));
