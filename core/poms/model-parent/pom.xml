@@ -136,4 +136,14 @@
             </plugin>
         </plugins>
     </build>
+
+    <!--
+    ################################################
+    # Section 4:  External systems
+    ################################################
+    -->
+    <scm>
+        <developerConnection>scm:hg:file://${basedir}/../../../</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
 </project>

@@ -147,7 +147,7 @@
     </build>
 
     <scm>
-        <developerConnection>scm:hg:file://${basedir}/../../../</developerConnection>
+        <developerConnection>scm:hg:file://${basedir}/../../../../</developerConnection>
         <tag>HEAD</tag>
     </scm>
 </project>
