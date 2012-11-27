@@ -19,7 +19,7 @@ public class HostNameParserAgentTest {
     public void validateHostNameParserAgentSubtitutions() throws Exception {
 
         // Assemble
-        final InetAddress localhost = InetAddress.getLocalHost();
+        final InetAddress localhost = HostNameParserAgent.getLocalhostNonLoopbackAddress();
         final String canonicalName = localhost.getCanonicalHostName();
         final String address = localhost.getHostAddress();
         final String name = localhost.getHostName();

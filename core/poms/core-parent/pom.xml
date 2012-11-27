@@ -25,7 +25,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <osgi.version>4.3.0</osgi.version>
+        <osgi.version>4.3.1</osgi.version>
         <felix.version>4.0.3</felix.version>
         <felix.fileinstall.version>3.2.6</felix.fileinstall.version>
         <felix.gogoruntime.version>0.10.0</felix.gogoruntime.version>

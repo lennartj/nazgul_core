@@ -6,6 +6,7 @@ package se.jguru.nazgul.core.resource.impl.resourcebundle.parser;
 
 import org.junit.Assert;
 import org.junit.Test;
+import se.jguru.nazgul.core.parser.api.agent.HostNameParserAgent;
 
 import java.net.InetAddress;
 
@@ -18,7 +19,7 @@ public class CompoundParserTest {
     public void validateDefaultTokenParsersUsingNullFactory() throws Exception {
 
         // Assemble
-        final InetAddress localhost = InetAddress.getLocalHost();
+        final InetAddress localhost = HostNameParserAgent.getLocalhostNonLoopbackAddress();
         final String canonicalName = localhost.getCanonicalHostName();
         final String address = localhost.getHostAddress();
         final String name = localhost.getHostName();
