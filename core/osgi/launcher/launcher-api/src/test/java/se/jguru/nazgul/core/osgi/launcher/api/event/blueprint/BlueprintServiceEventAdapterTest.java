@@ -50,7 +50,7 @@ public class BlueprintServiceEventAdapterTest {
 
         // Act
         unitUnderTest.register(bundleContext);
-        final ServiceRegistration<BlueprintContainer> reg = bundleContext.registerService(
+        final ServiceRegistration reg = bundleContext.registerService(
                 BlueprintContainer.class, blueprintContainer, blueprintContainerProperties);
 
         unitUnderTest.serviceChanged(new ServiceEvent(ServiceEvent.MODIFIED, reg.getReference()));
@@ -91,7 +91,7 @@ public class BlueprintServiceEventAdapterTest {
 
         // Act
         unitUnderTest.register(bundleContext);
-        final ServiceRegistration<Date> reg = bundleContext.registerService(
+        final ServiceRegistration reg = bundleContext.registerService(
                 Date.class, new Date(), new Hashtable<String, Object>());
 
         unitUnderTest.serviceChanged(new ServiceEvent(ServiceEvent.MODIFIED, reg.getReference()));
