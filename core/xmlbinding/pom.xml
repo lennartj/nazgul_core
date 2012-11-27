@@ -20,7 +20,7 @@
 
     <groupId>se.jguru.nazgul.core.xmlbinding</groupId>
     <artifactId>nazgul-core-xmlbinding-reactor</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1-SNAPSHOT</version>
     <name>${project.groupId}.${project.artifactId}</name>
     <packaging>pom</packaging>
 
@@ -36,6 +36,6 @@
 
     <scm>
         <developerConnection>scm:hg:file://${basedir}/../../</developerConnection>
-        <tag>nazgul-core-1.1.0</tag>
+        <tag>HEAD</tag>
     </scm>
 </project>
