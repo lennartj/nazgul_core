@@ -33,6 +33,7 @@ public class T_AbstractFrameworkLauncherTest {
         final MockFrameworkLauncher unitUnderTest = new MockFrameworkLauncher("testId");
         final Map<String, String> configuration = new HashMap<String, String>();
 
+        unitUnderTest.fw.init();
         unitUnderTest.fw.start();
         EasyMock.expect(unitUnderTest.fw.getBundleContext()).andReturn(unitUnderTest.ctx).times(4);
         unitUnderTest.fw.stop();
