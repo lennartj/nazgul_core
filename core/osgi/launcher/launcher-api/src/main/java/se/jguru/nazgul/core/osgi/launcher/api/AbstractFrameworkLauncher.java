@@ -73,6 +73,18 @@ public abstract class AbstractFrameworkLauncher<T extends OsgiFrameworkListener>
 
         // Create the Framework, and register ourselves as a FrameworkListener
         framework = createFramework(configuration);
+
+        try {
+
+            // Initialize the created OSGi Framework.
+            framework.init();
+
+            // Perform any custom processing.
+            onInitialize(configuration, framework);
+
+        } catch (final BundleException e) {
+            throw new IllegalStateException("Could not initialize the OSGi Framework", e);
+        }
     }
 
     /**
@@ -104,6 +116,18 @@ public abstract class AbstractFrameworkLauncher<T extends OsgiFrameworkListener>
 
         // Cater for custom event implementation.
         onStart(framework);
+    }
+
+    /**
+     * Custom handler for the init event - override this method
+     * if you need to implement some custom logic to execute after
+     * the Framework is initialized.
+     *
+     * @param framework     The just initialized osgiFramework instance.
+     * @param configuration A Map holding configuration data for the underlying OSGi container.
+     */
+    protected void onInitialize(final Map<String, String> configuration, final Framework framework) {
+        // Default implementation does nothing.
     }
 
     /**

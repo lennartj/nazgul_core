@@ -216,7 +216,9 @@ public class T_AbstractFrameworkEventListenerTest {
         final Framework felix = unitUnderTest.getFramework();
 
         // Assert
-        Assert.assertNull(felix.getBundleContext());
+        final BundleContext bundleContext = felix.getBundleContext();
+        Assert.assertNotNull(bundleContext);
+        Assert.assertEquals(Bundle.STARTING, felix.getState());
     }
 
     //
