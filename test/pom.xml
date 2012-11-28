@@ -14,7 +14,7 @@
     -->
     <groupId>se.jguru.nazgul.core.test</groupId>
     <artifactId>nazgul-core-test-reactor</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1-SNAPSHOT</version>
     <name>${project.groupId}.${project.artifactId}</name>
     <packaging>pom</packaging>
 
@@ -35,6 +35,6 @@
 
     <scm>
         <developerConnection>scm:hg:file://${basedir}/../</developerConnection>
-        <tag>nazgul-core-1.2.0</tag>
+        <tag>HEAD</tag>
     </scm>
 </project>
