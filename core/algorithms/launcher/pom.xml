@@ -18,8 +18,8 @@
         <version>1.0.0</version>
     </parent>
 
-    <groupId>se.jguru.nazgul.core.algorithms</groupId>
-    <artifactId>nazgul-core-algorithms-reactor</artifactId>
+    <groupId>se.jguru.nazgul.core.algorithms.launcher</groupId>
+    <artifactId>nazgul-core-launcher-reactor</artifactId>
     <version>1.2.1-SNAPSHOT</version>
     <name>${project.groupId}.${project.artifactId}</name>
     <packaging>pom</packaging>
@@ -30,14 +30,11 @@
     ################################################
     -->
     <modules>
-        <module>algorithms-api</module>
-        <module>tree</module>
-        <module>event</module>
-        <module>launcher</module>
+        <module>launcher-api</module>
     </modules>
 
     <scm>
-        <developerConnection>scm:hg:file://${basedir}/../../</developerConnection>
+        <developerConnection>scm:hg:file://${basedir}/../../../</developerConnection>
         <tag>HEAD</tag>
     </scm>
 </project>
