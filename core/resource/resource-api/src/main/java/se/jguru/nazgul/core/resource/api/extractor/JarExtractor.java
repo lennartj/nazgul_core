@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class JarExtractor {
+public abstract class JarExtractor {
 
     // Our Log
     private static final Logger log = LoggerFactory.getLogger(JarExtractor.class);
