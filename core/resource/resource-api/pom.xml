@@ -69,6 +69,38 @@
                     </instructions>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>${cobertura.plugin.version}</version>
+                <configuration>
+                    <instrumentation>
+                        <includes>
+                            <include>se/jguru/nazgul/**/*.class</include>
+                        </includes>
+                        <excludes>
+
+                            <!-- Don't check Exception classes -->
+                            <exclude>se/jguru/nazgul/**/*Exception.class</exclude>
+
+                        </excludes>
+                    </instrumentation>
+                    <check>
+                        <branchRate>65</branchRate>
+                        <lineRate>80</lineRate>
+                        <haltOnFailure>true</haltOnFailure>
+                        <regexes>
+                            <regex>
+                                <pattern>se.jguru.nazgul.core.resource.api.version.MavenVersionExtractor</pattern>
+                                <branchRate>65</branchRate>
+                                <lineRate>70</lineRate>
+                            </regex>
+                        </regexes>
+                    </check>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
