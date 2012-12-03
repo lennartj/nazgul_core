@@ -89,7 +89,7 @@ public class JarExtractorTest {
     public void validateDirectoryCreationAndExtraction() {
 
         // Assemble
-        final File targetDirectory = new File(targetDir, "properExtraction");
+        final File targetDirectory = new File(targetDir, "some/nested/directory/properExtraction");
 
         // Act
         JarExtractor.extractResourcesFrom(jar1File, JarExtractor.ALL_RESOURCES, targetDirectory, true);

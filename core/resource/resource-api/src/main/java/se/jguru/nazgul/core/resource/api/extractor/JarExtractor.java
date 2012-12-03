@@ -69,8 +69,13 @@ public abstract class JarExtractor {
         }
 
         // Do we need to create targetDir?
-        if (!targetDirectory.exists() && !targetDirectory.mkdirs()) {
-            throw new IllegalStateException("Could not create directory [" + targetDirectory.getAbsolutePath() + "]");
+        if (!targetDirectory.exists()) {
+            if (!targetDirectory.mkdirs()) {
+                throw new IllegalStateException("Could not create directory ["
+                        + targetDirectory.getAbsolutePath() + "]");
+            } else {
+                targetDirectory.mkdirs();
+            }
         }
 
         for (Enumeration<JarEntry> en = jarFile.entries(); en.hasMoreElements(); ) {
