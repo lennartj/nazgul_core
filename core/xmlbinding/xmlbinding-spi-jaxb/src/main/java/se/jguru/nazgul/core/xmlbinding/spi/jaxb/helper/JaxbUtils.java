@@ -10,7 +10,10 @@ import org.w3c.dom.ls.LSResourceResolver;
 import org.xml.sax.SAXException;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.common.ClassnameToClassTransformer;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.ClassInformationHolder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.TransportTypeConverter;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.TransportTypeConverterRegistry;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
@@ -25,6 +28,7 @@ import javax.xml.validation.SchemaFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -199,6 +203,61 @@ public abstract class JaxbUtils {
 
         } catch (final SAXException e) {
             throw new IllegalArgumentException("Could not create Schema from snippets.", e);
+        }
+    }
+
+    /**
+     * Extracts relevant data from the supplied {@code toWrapAndPackageForTransport} object,
+     * appending the JAXB-transportable objects into the {@code resultingTransportableObjects} List,
+     * and appending the transport type Class names into the {@code resultingTransportTypes} List.
+     *
+     * @param toWrapAndPackageForTransport  The instance from which transport data should be extracted
+     *                                      and appended onto the resultingTransportableObjects and
+     *                                      resultingTransportTypes Lists, respectively.
+     * @param registry                      The TransportTypeConverterRegistry instance used to extract
+     *                                      TransportTypeConverter instances, in turn used to translate
+     *                                      non-JAXB-annotated types to JaxbAnnotatedTypes for transport.
+     * @param resultingTransportableObjects The non-null List holding JAXB-convertible objects.
+     * @param resultingTransportTypes       The non-null SortedSet holding the class names of all
+     *                                      transport types.
+     */
+    public static void extractJaxbTransportData(final Object toWrapAndPackageForTransport,
+                                                final TransportTypeConverterRegistry registry,
+                                                final List<Object> resultingTransportableObjects,
+                                                final SortedSet<String> resultingTransportTypes) {
+
+        // Check sanity
+        Validate.notNull(registry, "Cannot handle null TransportTypeConverterRegistry argument.");
+        Validate.notNull(resultingTransportableObjects, "Cannot handle null resultingTransportableObjects argument.");
+        Validate.notNull(resultingTransportTypes, "Cannot handle null resultingTransportTypes argument.");
+        Object added = toWrapAndPackageForTransport;
+
+        // ### 1) Convert the current type if required.
+        TransportTypeConverter packagingConverter =
+                registry.getPackagingTransportTypeConverter(toWrapAndPackageForTransport);
+        if (packagingConverter != null) {
+
+            added = packagingConverter.packageForTransport(toWrapAndPackageForTransport);
+        }
+
+        // ### 2) Add the item itself.
+        ((List<Object>) resultingTransportableObjects).add(added);
+
+        // ### 3) Add the JAXB-annotated transport classes found within
+        //        the added object, via the use of its TypeExtractor methods.
+        if (added instanceof ClassInformationHolder) {
+            for (String current : ((ClassInformationHolder) added).getClassInformation()) {
+
+                if (!resultingTransportTypes.contains(current)) {
+                    resultingTransportTypes.add(current);
+                }
+            }
+        }
+
+        // ### 4) Add the class of the added object itself.
+        String addedClass = added.getClass().getName();
+        if (!resultingTransportTypes.contains(addedClass)) {
+            resultingTransportTypes.add(addedClass);
         }
     }
 

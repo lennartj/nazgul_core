@@ -5,6 +5,8 @@
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport;
 
 import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.converter.CollectionConverter;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.converter.DateTimeConverter;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.converter.NullConverter;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.converter.StringConverter;
 
@@ -30,6 +32,8 @@ public class DefaultTransportTypeConverterRegistry implements TransportTypeConve
         // Add default converters.
         addTransportTypeConverter(new NullConverter());
         addTransportTypeConverter(new StringConverter());
+        addTransportTypeConverter(new DateTimeConverter());
+        addTransportTypeConverter(new CollectionConverter());
     }
 
     /**

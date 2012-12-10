@@ -7,6 +7,7 @@ package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport;
 import org.apache.commons.lang3.Validate;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.ClassInformationHolder;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbUtils;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -104,36 +105,7 @@ public class EntityTransporter<T> implements ClassInformationHolder, Serializabl
      * @throws IllegalArgumentException if argument is null
      */
     public void addItem(final T toAdd) {
-
-        // Check sanity
-        Object added = toAdd;
-
-        // ### 1) Convert the current type if required.
-        TransportTypeConverter packagingConverter = getRegistry().getPackagingTransportTypeConverter(toAdd);
-        if (packagingConverter != null) {
-
-            added = packagingConverter.packageForTransport(toAdd);
-        }
-
-        // ### 2) Add the item itself.
-        ((List<Object>) items).add(added);
-
-        // ### 3) Add the JAXB-annotated transport classes found within
-        //        the added object, via the use of its TypeExtractor methods.
-        if (added instanceof ClassInformationHolder) {
-            for (String current : ((ClassInformationHolder) added).getClassInformation()) {
-
-                if (!entityClasses.contains(current)) {
-                    entityClasses.add(current);
-                }
-            }
-        }
-
-        // ### 4) Add the class of the added object itself.
-        String addedClass = added.getClass().getName();
-        if (!entityClasses.contains(addedClass)) {
-            entityClasses.add(addedClass);
-        }
+        JaxbUtils.extractJaxbTransportData(toAdd, getRegistry(), items, entityClasses);
     }
 
     /**

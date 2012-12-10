@@ -17,6 +17,7 @@ import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedNull
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.TreeSet;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -60,7 +61,7 @@ public class T_AbstractXmlAdapterTypeConverterTest {
 
         final List<String> classInfo = Arrays.asList(
                 Foo.class.getName(), JaxbAnnotatedFoo.class.getName(), JaxbAnnotatedNull.class.getName());
-        final JaxbAnnotatedFoo unitUnderTest = new JaxbAnnotatedFoo(classInfo);
+        final JaxbAnnotatedFoo unitUnderTest = new JaxbAnnotatedFoo(new TreeSet<String>(classInfo));
         unitUnderTest.setTransportForm(foo.getValue());
 
         // Act
