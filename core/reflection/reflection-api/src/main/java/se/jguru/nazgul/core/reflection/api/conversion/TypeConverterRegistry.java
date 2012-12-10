@@ -4,8 +4,6 @@
  */
 package se.jguru.nazgul.core.reflection.api.conversion;
 
-import java.util.Comparator;
-
 /**
  * Type converter registry specification, used as a generic type conversion service.
  *

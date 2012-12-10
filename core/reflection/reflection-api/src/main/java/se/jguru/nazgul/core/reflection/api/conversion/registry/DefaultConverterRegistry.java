@@ -26,8 +26,7 @@ import java.util.Map;
 public class DefaultConverterRegistry implements ConverterRegistry {
 
     // Internal state
-    // From (Class) --> Integer (priority) --> Method/Constructor (Object)
-    // Priority --> From --> To --> Method/Constructor [unique within class] (Object)
+    // From (Class) --> PrioritizedTypeConverter
     private Map<Class, PrioritizedTypeConverter> priority2converterMap;
 
     /**
@@ -52,7 +51,7 @@ public class DefaultConverterRegistry implements ConverterRegistry {
      * @see se.jguru.nazgul.core.reflection.api.conversion.Converter
      */
     @Override
-    public void add(Object... converters) throws IllegalArgumentException {
+    public void add(final Object... converters) throws IllegalArgumentException {
 
         // Check sanity
         Validate.notEmpty(converters, "Cannot handle null or empty converters argument.");
@@ -80,11 +79,6 @@ public class DefaultConverterRegistry implements ConverterRegistry {
             }
 
             // Map the current converter to its converter methods and constructors, respectively.
-            validConverters.put()
-        }
-
-        // All should be well. Insert the appropriate relations into the priority2converterMap.
-        for(Object current : validConverters) {
         }
     }
 
@@ -94,7 +88,7 @@ public class DefaultConverterRegistry implements ConverterRegistry {
      * @param converter The converter to remove.
      */
     @Override
-    public void remove(Object converter) {
+    public void remove(final Object converter) {
 
     }
 
@@ -102,7 +96,8 @@ public class DefaultConverterRegistry implements ConverterRegistry {
      * {@inheritDoc}
      */
     @Override
-    public <From, To, C extends To> C convert(From source, Class<To> desiredType) throws IllegalArgumentException {
+    public <From, To, C extends To> C convert(final From source, final Class<To> desiredType)
+            throws IllegalArgumentException {
         return null;
     }
 
@@ -110,7 +105,9 @@ public class DefaultConverterRegistry implements ConverterRegistry {
      * {@inheritDoc}
      */
     @Override
-    public <From, To> Class<To> getResultingType(Class<From> sourceType, Comparator<Class<?>> sortingCriterion) throws IllegalArgumentException {
+    public <From, To> Class<To> getResultingType(final Class<From> sourceType,
+                                                 final Comparator<Class<?>> sortingCriterion)
+            throws IllegalArgumentException {
         return null;
     }
 
