@@ -55,6 +55,11 @@ public @interface Converter {
     public static final int DEFAULT_PRIORITY = 100;
 
     /**
+     * The default converterMethod value, used to indicate that no converter method name has been supplied.
+     */
+    public static final String NO_CONVERTER_METHOD = "##NONE##";
+
+    /**
      * Parameter to indicate that this converter method or constructor accepts {@code null} values.
      * Defaults to {@code false}.
      */
@@ -68,10 +73,11 @@ public @interface Converter {
     int priority() default DEFAULT_PRIORITY;
 
     /**
-     * Name of a method with the same source type as the {@code @Converter}-annotated method,
-     * and which must return a {@code boolean}. If present, this conditionalConversionMethod value
-     * supplies the name of a method [within the same class as this Converter] which should be
-     * invoked to find out if the supplied source object can be converted by this method.
+     * Name of a method with a single parameter of the same source type as the {@code @Converter}-annotated
+     * method, and returning a {@code boolean}.
+     * If present, this conditionalConversionMethod value supplies the name of a method [within the
+     * same class as this Converter] which should be invoked to find out if the supplied source object
+     * can be converted by this method.
      * <p/>
      * This attribute is ignored for Constructor Converters.
      * <p/>
@@ -90,5 +96,5 @@ public @interface Converter {
      *     }
      * </pre>
      */
-    String conditionalConversionMethod();
+    String conditionalConversionMethod() default NO_CONVERTER_METHOD;
 }
