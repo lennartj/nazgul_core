@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
+import java.util.SortedSet;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -55,7 +55,7 @@ public class JaxbAnnotatedFoo extends AbstractJaxbAnnotatedTransportType<Foo> {
      * @param classInformation The classInformation data, holding strings received by calls
      *                         to {@code Class.getName()}.
      */
-    public JaxbAnnotatedFoo(final List<String> classInformation) {
+    public JaxbAnnotatedFoo(final SortedSet<String> classInformation) {
         super(classInformation);
     }
 

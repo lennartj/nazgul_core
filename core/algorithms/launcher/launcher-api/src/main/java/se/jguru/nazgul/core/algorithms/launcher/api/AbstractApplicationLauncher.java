@@ -237,6 +237,15 @@ public abstract class AbstractApplicationLauncher implements StandardLifecycle {
         return isArgumentSupplied(argument) ? commandLine.getOptionValue(argument) : fallbackValue;
     }
 
+    /**
+     * Retrieves the application description of this AbstractApplicationLauncher instance.
+     *
+     * @return the application description of this AbstractApplicationLauncher instance.
+     */
+    public final String getBriefApplicationDescription() {
+        return briefApplicationDescription;
+    }
+
     //
     // Private helpers
     //
@@ -275,7 +284,7 @@ public abstract class AbstractApplicationLauncher implements StandardLifecycle {
             formatter.printHelp(new PrintWriter(helpText),
                     80,
                     briefCommandLineSyntax,
-                    briefApplicationDescription + "\n\nArguments:",
+                    getBriefApplicationDescription() + "\n\nArguments:",
                     options,
                     2,
                     2,
