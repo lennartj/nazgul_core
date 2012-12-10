@@ -12,6 +12,7 @@ import se.jguru.nazgul.core.reflection.api.TypeExtractor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,7 @@ public class DefaultConverterRegistry implements ConverterRegistry {
     // Internal state
     // From (Class) --> Integer (priority) --> Method/Constructor (Object)
     // Priority --> From --> To --> Method/Constructor [unique within class] (Object)
-    private Map<Class, ReflectiveMultiConverterHolder> priority2converterMap;
+    private Map<Class, PrioritizedTypeConverter> priority2converterMap;
 
     /**
      * Default constructor, yielding an empty internal state - i.e. no default
@@ -36,7 +37,7 @@ public class DefaultConverterRegistry implements ConverterRegistry {
     public DefaultConverterRegistry() {
 
         // Create internal state
-        priority2converterMap = new HashMap<Class, ReflectiveMultiConverterHolder>();
+        priority2converterMap = new HashMap<Class, PrioritizedTypeConverter>();
     }
 
     /**
@@ -62,11 +63,14 @@ public class DefaultConverterRegistry implements ConverterRegistry {
         for(Object current : converters) {
 
             // Find any converter methods in the supplied converter
-            final List<Method> methods = TypeExtractor.getMethods(current.getClass(), CONVERSION_METHOD);
+            final List<Method> methods = TypeExtractor.getMethods(
+                    current.getClass(),
+                    ReflectiveConverterFilter.CONVERSION_METHOD_FILTER);
 
             // Find any converter constructors in the supplied converter
             final List<Constructor<?>> constructors = CollectionAlgorithms.filter(
-                    Arrays.asList(current.getClass().getConstructors()), CONVERSION_CONSTRUCTOR);
+                    Arrays.asList(current.getClass().getConstructors()),
+                    ReflectiveConverterFilter.CONVERTION_CONSTRUCTOR_FILTER);
 
             if(methods.size() == 0 && constructors.size() == 0) {
 
@@ -95,18 +99,18 @@ public class DefaultConverterRegistry implements ConverterRegistry {
     }
 
     /**
-     * Converts the provided source object to the desired type.
-     *
-     * @param source      The object to convert.
-     * @param desiredType The type to which the source object should be converted.
-     * @param <To>        The resulting type.
-     * @param <From>      The source type.
-     * @param <C>         The exact return type, subtype of To.
-     * @return The converted object.
-     * @throws IllegalArgumentException if the conversion failed.
+     * {@inheritDoc}
      */
     @Override
     public <From, To, C extends To> C convert(From source, Class<To> desiredType) throws IllegalArgumentException {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <From, To> Class<To> getResultingType(Class<From> sourceType, Comparator<Class<?>> sortingCriterion) throws IllegalArgumentException {
         return null;
     }
 
