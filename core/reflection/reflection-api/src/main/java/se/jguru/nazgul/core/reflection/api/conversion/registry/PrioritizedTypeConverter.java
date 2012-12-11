@@ -294,54 +294,6 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
         return null;
     }
 
-    /**
-     * Acquires the optimum (i.e. best-choice) TypeConverter object able to convert to the supplied targetType Class.
-     *
-     * @param targetType The type to which the converter should be able to convert.
-     * @param <To>       The desired type to retrieve.
-     * @return The Converter instance found, or {@code null} should no Converter matching the supplied
-     *         targetType be added to this ReflectiveMultiConverterHolder.
-     *
-    public <To> TypeConverter<From, To> getOptimumConverter(final Class<To> targetType) {
-        return getConverterWithMinimumPriority(0, targetType);
-    }
-
-    /**
-     * Acquires a Converter object able to convert to the supplied
-     * targetType Class, given the minimum priority supplied.
-     *
-     * @param minimumPriority The minimum priority of the converter instance returned (inclusive).
-     * @param targetType      The type to which the converter should be able to convert.
-     * @param <To>            The desired type to retrieve.
-     * @return The Converter instance found, or {@code null} should no Converter matching the supplied
-     *         targetType and minimumPriority be added to this ReflectiveMultiConverterHolder.
-     * @throws IllegalArgumentException if {@code minimumPriority &lt; 0}.
-     *
-    public <To> TypeConverter<From, To> getConverterWithMinimumPriority(final int minimumPriority,
-                                                                        final Class<To> targetType)
-            throws IllegalArgumentException {
-
-        // Check sanity
-        Validate.isTrue(minimumPriority >= 0, "Cannot handle negative minimumPriority argument.");
-        Validate.notNull(targetType, "Cannot handle null targetType argument.");
-
-        for (Integer current : prioritizedTypeConverterMap.keySet()) {
-
-            if (current >= minimumPriority) {
-
-                // Acquire the TypeConverter to return.
-                final TypeConverter<From, ?> toReturn = prioritizedTypeConverterMap.get(current).get(targetType);
-                if (toReturn != null) {
-                    return (TypeConverter<From, To>) toReturn;
-                }
-            }
-        }
-
-        // None found.
-        return null;
-    }
-    */
-
     //
     // Internal classes
     //

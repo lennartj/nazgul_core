@@ -6,6 +6,7 @@ package se.jguru.nazgul.core.reflection.api.conversion.registry;
 
 import org.apache.commons.lang.Validate;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
+import se.jguru.nazgul.core.reflection.api.conversion.ConverterRegistry;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
