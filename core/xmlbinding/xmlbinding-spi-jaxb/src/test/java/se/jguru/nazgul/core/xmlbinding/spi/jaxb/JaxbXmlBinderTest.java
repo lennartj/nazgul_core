@@ -2,9 +2,10 @@
  * Copyright (c) jGuru Europe AB.
  * All rights reserved.
  */
+
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 import se.jguru.nazgul.core.xmlbinding.api.NamespacePrefixResolver;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbNamespacePrefixResolver;
@@ -121,7 +122,7 @@ public class JaxbXmlBinderTest {
         // Assert
         Assert.assertNotNull(result);
         Assert.assertEquals("SavingsAccount", result.getName());
-        Assert.assertEquals(42.42, result.getBalance());
+        Assert.assertEquals(42.42, result.getBalance(), 0.01);
     }
 
     @Test(expected = IllegalArgumentException.class)

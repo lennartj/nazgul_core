@@ -5,7 +5,7 @@
 
 package se.jguru.nazgul.core.cache.api.distributed;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;

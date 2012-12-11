@@ -2,6 +2,7 @@
  * Copyright (c) jGuru Europe AB.
  * All rights reserved.
  */
+
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper;
 
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;

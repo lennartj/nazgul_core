@@ -4,7 +4,7 @@
  */
 package se.jguru.nazgul.core.reflection.api.types;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;

@@ -5,7 +5,7 @@
 
 package se.jguru.nazgul.core.algorithms.tree.model.common;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 import se.jguru.nazgul.core.algorithms.tree.model.MutableNode;
 import se.jguru.nazgul.core.algorithms.tree.model.Node;

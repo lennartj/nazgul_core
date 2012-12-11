@@ -2,6 +2,7 @@
  * Copyright (c) jGuru Europe AB.
  * All rights reserved.
  */
+
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type;
 
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
@@ -62,7 +63,7 @@ public class JaxbAnnotatedString extends AbstractJaxbAnnotatedTransportType<Stri
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(Object that) {
+    public int compareTo(final Object that) {
 
         if (that instanceof JaxbAnnotatedString) {
             return getValue().compareTo(((JaxbAnnotatedString) that).getValue());

@@ -74,7 +74,7 @@ public class JaxbAnnotatedDateTime extends AbstractJaxbAnnotatedTransportType<Da
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(Object that) {
+    public int compareTo(final Object that) {
 
         if (that instanceof JaxbAnnotatedDateTime) {
             return getValue().compareTo(((JaxbAnnotatedDateTime) that).getValue());
@@ -91,7 +91,7 @@ public class JaxbAnnotatedDateTime extends AbstractJaxbAnnotatedTransportType<Da
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         return obj != null
                 && (obj instanceof JaxbAnnotatedDateTime || obj instanceof DateTime)
                 && this.compareTo(obj) == 0;

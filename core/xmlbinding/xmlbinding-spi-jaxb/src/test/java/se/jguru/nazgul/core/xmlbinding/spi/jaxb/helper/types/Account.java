@@ -2,6 +2,7 @@
  * Copyright (c) jGuru Europe AB.
  * All rights reserved.
  */
+
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types;
 
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;

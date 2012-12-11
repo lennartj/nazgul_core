@@ -2,6 +2,7 @@
  * Copyright (c) jGuru Europe AB.
  * All rights reserved.
  */
+
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type;
 
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
@@ -31,10 +32,10 @@ public class JaxbAnnotatedNull implements ClassInformationHolder, Serializable, 
     public static final long serialVersionUID = 7085076030002L;
 
     @XmlTransient
-    private static final JaxbAnnotatedNull instance = new JaxbAnnotatedNull();
+    private static final JaxbAnnotatedNull INSTANCE = new JaxbAnnotatedNull();
 
     @XmlTransient
-    private static final SortedSet<String> classInfo = Collections.unmodifiableSortedSet(new TreeSet<String>());
+    private static final SortedSet<String> CLASS_INFO = Collections.unmodifiableSortedSet(new TreeSet<String>());
 
     /**
      * JAXB-friendly constructor.
@@ -44,10 +45,10 @@ public class JaxbAnnotatedNull implements ClassInformationHolder, Serializable, 
     }
 
     /**
-     * @return The singleton JaxbAnnotatedNull instance.
+     * @return The singleton JaxbAnnotatedNull INSTANCE.
      */
     public static JaxbAnnotatedNull getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     /**
@@ -55,7 +56,7 @@ public class JaxbAnnotatedNull implements ClassInformationHolder, Serializable, 
      */
     @Override
     public SortedSet<String> getClassInformation() {
-        return classInfo;
+        return CLASS_INFO;
     }
 
     /**
