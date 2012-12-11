@@ -4,12 +4,15 @@
  */
 package se.jguru.nazgul.core.reflection.api.conversion.registry;
 
+import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
+import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
 import se.jguru.nazgul.core.reflection.api.TypeExtractor;
 import se.jguru.nazgul.core.reflection.api.conversion.Converter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -31,9 +34,45 @@ public final class ReflectiveConverterFilter {
     public static final Filter<Constructor<?>> CONVERTION_CONSTRUCTOR_FILTER = new ConvertionConstructorFilter();
 
     /**
+     * Helper method to extract a Tuple of converter methods and constructors, as found within the supplied
+     * object instance.
+     *
+     * @param object The object which should be inspected for
+     * @return {@code null} if the object was {@code null} or no converter methods and constructors
+     *         were found within the supplied object. Otherwise returns a populated Tuple.
+     */
+    public static Tuple<List<Method>, List<Constructor<?>>> getConverterMethodsAndConstructors(
+            final Object object) {
+
+        // Create the return variable
+        Tuple<List<Method>, List<Constructor<?>>> toReturn = null;
+
+        if (object != null) {
+
+            // Find any converter methods in the supplied converter
+            final List<Method> methods = TypeExtractor.getMethods(
+                    object.getClass(), ReflectiveConverterFilter.CONVERSION_METHOD_FILTER);
+
+            // Find any converter constructors in the supplied converter
+            final List<Constructor<?>> constructors = CollectionAlgorithms.filter(
+                    Arrays.asList(object.getClass().getConstructors()),
+                    ReflectiveConverterFilter.CONVERTION_CONSTRUCTOR_FILTER);
+
+            // Only return a non-null value if we found some converter methods/constructors.
+            if (methods.size() != 0 || constructors.size() != 0) {
+                toReturn = new Tuple<List<Method>, List<Constructor<?>>>(methods, constructors);
+            }
+        }
+
+        // All done.
+        return toReturn;
+    }
+
+    /**
      * Hidden constructor.
      */
-    private ReflectiveConverterFilter() {}
+    private ReflectiveConverterFilter() {
+    }
 
     /**
      * Filter implementation detecting properly annotated Converter methods.
@@ -53,7 +92,7 @@ public final class ReflectiveConverterFilter {
 
             // Check the converter method itself.
             final Class<?>[] parameterTypes = candidate.getParameterTypes();
-            if(parameterTypes.length != 1 || candidate.getReturnType() == Void.TYPE) {
+            if (parameterTypes.length != 1 || candidate.getReturnType() == Void.TYPE) {
 
                 // This is not a proper converter method.
                 return false;

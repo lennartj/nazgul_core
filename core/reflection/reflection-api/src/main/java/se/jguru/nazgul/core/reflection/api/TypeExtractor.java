@@ -22,10 +22,15 @@ import java.util.List;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public abstract class TypeExtractor {
+public final class TypeExtractor {
 
     // Our Log
     private static final Logger log = LoggerFactory.getLogger(TypeExtractor.class);
+
+    /**
+     * Hidden utility class constructor.
+     */
+    private TypeExtractor() {}
 
     /**
      * Acquires all interfaces from the provided class which matches

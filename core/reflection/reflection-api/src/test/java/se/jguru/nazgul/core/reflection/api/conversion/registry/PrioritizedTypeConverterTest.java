@@ -11,6 +11,7 @@ import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.FakeConve
 import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.MultiConverter;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
@@ -38,11 +39,12 @@ public class PrioritizedTypeConverterTest {
     public void validateEmptyStateOnNoConvertersAdded() {
 
         // Act
-        final TypeConverter<String, StringBuffer> result = unitUnderTest.getOptimumConverter(StringBuffer.class);
+        final List<TypeConverter<String, StringBuffer>> result = unitUnderTest.getTypeConverters(StringBuffer.class);
 
         // Assert
         Assert.assertEquals(String.class, unitUnderTest.getSourceType());
-        Assert.assertNull(result);
+        Assert.assertNotNull(result);
+        Assert.assertEquals(0, result.size());
     }
 
     @Test
@@ -50,14 +52,19 @@ public class PrioritizedTypeConverterTest {
 
         // Assemble
         final MultiConverter multiConverter = new MultiConverter("fooBar");
+        final SortedMap<Integer, Map<Class<?>, TypeConverter<String, ?>>> typeConverterMap =
+                getTypeConverterMap(unitUnderTest);
 
         // Act
         unitUnderTest.add(multiConverter);
-        final TypeConverter<String, StringBuffer> result = unitUnderTest.getOptimumConverter(StringBuffer.class);
+        final StringBuffer result = unitUnderTest.convert(null, StringBuffer.class);
+        final TypeConverter<String, StringBuffer> internalConverter = (TypeConverter<String, StringBuffer>)
+                typeConverterMap.get(Converter.DEFAULT_PRIORITY).get(StringBuffer.class);
 
         // Assert
-        Assert.assertTrue(result.canConvert(null));
-        Assert.assertEquals("nothing!", result.convert(null).toString());
+        Assert.assertTrue(internalConverter.canConvert(null));
+        Assert.assertEquals("nothing!", internalConverter.convert(null).toString());
+        Assert.assertEquals("nothing!", result.toString());
     }
 
     @Test
@@ -72,9 +79,9 @@ public class PrioritizedTypeConverterTest {
 
         // Act
         unitUnderTest.add(multiConverter);
-        final TypeConverter<String, DateTime> optimumConverter = unitUnderTest.getOptimumConverter(DateTime.class);
-        final TypeConverter<String, DateTime> specificConverter =
-                unitUnderTest.getConverterWithMinimumPriority(150, DateTime.class);
+        final List<TypeConverter<String, DateTime>> typeConverters = unitUnderTest.getTypeConverters(DateTime.class);
+        final TypeConverter<String, DateTime> optimumConverter = typeConverters.get(0);
+        final TypeConverter<String, DateTime> specificConverter = typeConverters.get(1);
 
         // Assert
         Assert.assertNotNull(optimumConverter);
@@ -128,6 +135,9 @@ public class PrioritizedTypeConverterTest {
         Assert.assertEquals(methodTypeConverterClass,
                 lowerPriorityConverters.get(DateTime.class).getClass().getSimpleName());
 
+        for(TypeConverter<String, ?> current : defaultConverters.values()) {
+            Assert.assertNotNull(current.toString());
+        }
     }
 
     @Test

@@ -18,8 +18,10 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -74,6 +76,35 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
      */
     public final Class<From> getSourceType() {
         return sourceType;
+    }
+
+    /**
+     * Acquires all available targetTypes known to this PrioritizedTypeConverter instance, indicating the closure of
+     * all Classes to which this PrioritizedTypeConverter can convert objects.
+     *
+     * @return An unordered Set holding all available target type objects.
+     */
+    public Set<Class<?>> getAvailableTargetTypes() {
+
+        final Set<Class<?>> toReturn = new HashSet<Class<?>>();
+
+        for (Integer current : prioritizedTypeConverterMap.keySet()) {
+
+            // Acquire the current TypeConverter instances.
+            final Map<Class<?>, TypeConverter<From, ?>> from2ConverterMap = prioritizedTypeConverterMap.get(current);
+
+            for (Class<?> currentFromType : from2ConverterMap.keySet()) {
+                final TypeConverter<From, ?> currentTypeConverter = from2ConverterMap.get(currentFromType);
+                final Class<?> currentToType = currentTypeConverter.getToType();
+
+                if (!toReturn.contains(currentToType)) {
+                    toReturn.add(currentToType);
+                }
+            }
+        }
+
+        // All done.
+        return toReturn;
     }
 
     /**
@@ -189,13 +220,88 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
     }
 
     /**
+     * Retrieves the prioritized list holding all known TypeConverters able to convert between the
+     * sourceType to the targetType of this PrioritizedTypeConverter instance.
+     *
+     * @param targetType The type to which all retrieved TypeConverters should be able to convert to.
+     * @param <To>       The target Type desired.
+     * @return a prioritized list holding all known TypeConverters able to convert between the
+     *         sourceType to the targetType.
+     */
+    public <To> List<TypeConverter<From, To>> getTypeConverters(final Class<To> targetType) {
+
+        // Check sanity
+        Validate.notNull(targetType, "Cannot handle null targetType argument.");
+
+        final List<TypeConverter<From, To>> toReturn = new ArrayList<TypeConverter<From, To>>();
+
+        for (Integer current : prioritizedTypeConverterMap.keySet()) {
+
+            // Acquire the TypeConverter to return.
+            final Map<Class<?>, TypeConverter<From, ?>> from2TypeConvMap = prioritizedTypeConverterMap.get(current);
+
+            // Exact match?
+            final TypeConverter<From, ?> candidate = from2TypeConvMap.get(targetType);
+            if (candidate != null) {
+                toReturn.add((TypeConverter<From, To>) candidate);
+            }
+        }
+
+        for(Integer current : prioritizedTypeConverterMap.keySet()) {
+
+            // Acquire the TypeConverter to return.
+            final Map<Class<?>, TypeConverter<From, ?>> from2TypeConvMap = prioritizedTypeConverterMap.get(current);
+
+            // Fuzzy matches go after exact matches
+            for(Class<?> currentSourceClass : from2TypeConvMap.keySet()) {
+                if(targetType.isAssignableFrom(currentSourceClass)) {
+                    toReturn.add((TypeConverter<From, To>) from2TypeConvMap.get(currentSourceClass));
+                }
+            }
+        }
+
+        // All done.
+        return toReturn;
+    }
+
+    /**
+     * Performs a standard conversion from the supplied toConvert value to the given toType.
+     * The known converters will be attempted in correct priority order; the first TypeConverter
+     * instance which can handle the requested conversion will be executed to receive the results.
+     *
+     * @param toConvert The object which should be converted.
+     * @param toType    The type to convert to.
+     * @param <To>      The type to convert to.
+     * @return {@code null} if toConvert could not be converted, and the resulting [converted] instance otherwise.
+     */
+    public <To> To convert(final From toConvert, final Class<To> toType) {
+
+        // Check sanity
+        Validate.notNull(toType, "Cannot handle null toType argument.");
+
+        // Acquire all possible TypeConverters
+        final List<TypeConverter<From, To>> typeConverters = getTypeConverters(toType);
+
+        if (!typeConverters.isEmpty()) {
+            for (TypeConverter<From, To> current : typeConverters) {
+                if (current.canConvert(toConvert)) {
+                    return current.convert(toConvert);
+                }
+            }
+        }
+
+        // Could not convert the supplied value.
+        return null;
+    }
+
+    /**
      * Acquires the optimum (i.e. best-choice) TypeConverter object able to convert to the supplied targetType Class.
      *
      * @param targetType The type to which the converter should be able to convert.
      * @param <To>       The desired type to retrieve.
      * @return The Converter instance found, or {@code null} should no Converter matching the supplied
      *         targetType be added to this ReflectiveMultiConverterHolder.
-     */
+     *
     public <To> TypeConverter<From, To> getOptimumConverter(final Class<To> targetType) {
         return getConverterWithMinimumPriority(0, targetType);
     }
@@ -210,7 +316,7 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
      * @return The Converter instance found, or {@code null} should no Converter matching the supplied
      *         targetType and minimumPriority be added to this ReflectiveMultiConverterHolder.
      * @throws IllegalArgumentException if {@code minimumPriority &lt; 0}.
-     */
+     *
     public <To> TypeConverter<From, To> getConverterWithMinimumPriority(final int minimumPriority,
                                                                         final Class<To> targetType)
             throws IllegalArgumentException {
@@ -234,9 +340,10 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
         // None found.
         return null;
     }
+    */
 
     //
-    // Private helpers
+    // Internal classes
     //
 
     /**
@@ -294,6 +401,33 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
         public final Converter getConverterAnnotation() {
             return converterAnnotation;
         }
+
+        /**
+         * {@inheritDoc}
+         */
+        public String toString() {
+
+            final String typeDescription = this instanceof ConstructorTypeConverter ? "Constructor" : "Method";
+            StringBuilder builder = new StringBuilder();
+            builder.append(typeDescription).append(" converter ");
+
+            if (getConverterName() != null) {
+                builder.append("'" + getConverterName() + "' ");
+            }
+
+            builder.append("(" + getFromType().getSimpleName() + " --> " + getToType().getSimpleName() + ") ");
+            builder.append("\n  Annotation [" + converterAnnotation.toString() + "]");
+
+            // All done.
+            return builder.toString();
+        }
+
+        /**
+         * @return A simple name for this converter.
+         */
+        protected String getConverterName() {
+            return null;
+        }
     }
 
     /**
@@ -320,25 +454,6 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
             this.converterConstructor = converterConstructor;
             converterAnnotation = converterConstructor.getAnnotation(Converter.class);
         }
-
-        /**
-         * Creates a new ConstructorTypeConverter instance converting to the supplied type.
-         *
-         * @param toType The type to which instances should be converted.
-         * @throws NoSuchMethodException if the supplied toType class does not have a constructor
-         *                               accepting a single From instance.
-
-        public ConstructorTypeConverter(final Class<To> toType) throws NoSuchMethodException {
-
-        // Delegate
-        super(toType);
-
-        // Assign internal state
-        converterConstructor = toType.getConstructor(PrioritizedTypeConverter.this.getSourceType());
-        converterAnnotation = converterConstructor.getAnnotation(Converter.class);
-        }
-         */
-
 
         /**
          * {@inheritDoc}
@@ -368,6 +483,9 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
         private Object converterInstance;
 
         /**
+         * Creates a new MethodTypeConverter instance which invokes the supplied converter instance using the
+         * given converterMethod.
+         *
          * @param converter       The converter instance in which the converter method is invoked.
          * @param converterMethod The method invoked to convert the object.
          */
@@ -392,6 +510,31 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
                         converterAnnotation.conditionalConversionMethod(),
                         PrioritizedTypeConverter.this.getSourceType());
             }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public String toString() {
+
+            final StringBuilder builder = new StringBuilder(super.toString());
+
+            if (conditionalConvertionMethod != null) {
+                builder.append("\n  Conditional Conversion Method: [" + conditionalConvertionMethod + "]");
+            }
+
+            builder.append("\n  Converter instance type [" + converterInstance.getClass().getName() + "]");
+
+            // All done.
+            return builder.toString();
+        }
+
+        /**
+         * @return A simple name for this converter.
+         */
+        @Override
+        protected String getConverterName() {
+            return converterMethod.getName();
         }
 
         /**

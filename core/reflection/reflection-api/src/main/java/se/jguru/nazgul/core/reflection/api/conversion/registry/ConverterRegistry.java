@@ -4,7 +4,7 @@
  */
 package se.jguru.nazgul.core.reflection.api.conversion.registry;
 
-import java.util.Comparator;
+import java.util.Set;
 
 /**
  * Type converter registry specification, used as a generic type conversion service.
@@ -40,24 +40,21 @@ public interface ConverterRegistry {
      * @param desiredType The type to which the source object should be converted.
      * @param <To>        The resulting type.
      * @param <From>      The source type.
-     * @param <C>         The exact return type, subtype of To.
      * @return The converted object.
      * @throws IllegalArgumentException if the conversion failed.
      */
-    <From, To, C extends To> C convert(From source, Class<To> desiredType) throws IllegalArgumentException;
+    <From, To> To convert(From source, Class<To> desiredType) throws IllegalArgumentException;
 
     /**
-     * Retrieves the resulting type to which the given sourceType would be converted,
-     * given the supplied sortingCriterion instance.
+     * Retrieves the available targetTypes for the supplied sourceType, implying the closure of Classes
+     * to which the supplied sourceType can be converted by this ConverterRegistry.
      *
-     * @param sourceType       The source type.
-     * @param sortingCriterion used to indicate the priority of the types retrieved.
-     * @param <From>           The source type.
-     * @param <To>             The resulting type.
-     * @return The type to which the supplied sourceType would be converted by this TypeConverterRegistry, or
+     * @param sourceType The source type.
+     * @param <From>     The source type.
+     * @return the available targetTypes for the supplied sourceType, implying the closure of Classes
+     *         to which the supplied sourceType can be converted by this ConverterRegistry, or
      *         {@code null} in case this TypeConverterRegistry could not convert the supplied sourceType.
      * @throws IllegalArgumentException if the calculation could not be performed.
      */
-    <From, To> Class<To> getResultingType(Class<From> sourceType, Comparator<Class<?>> sortingCriterion)
-            throws IllegalArgumentException;
+    <From> Set<Class<?>> getPossibleConversions(Class<From> sourceType) throws IllegalArgumentException;
 }

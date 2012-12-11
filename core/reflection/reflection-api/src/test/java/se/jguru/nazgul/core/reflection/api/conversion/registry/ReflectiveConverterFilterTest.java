@@ -1,14 +1,20 @@
 package se.jguru.nazgul.core.reflection.api.conversion.registry;
 
+import com.sun.source.tree.AssertTree;
 import org.junit.Assert;
 import org.junit.Test;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
+import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
 import se.jguru.nazgul.core.reflection.api.conversion.Converter;
+import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.FakeConverter;
+import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.MultiConverter;
 import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.StringConstructorConverter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid, jGuru Europe AB</a>
@@ -163,6 +169,58 @@ public class ReflectiveConverterFilterTest {
 
         // Assert
         Assert.assertFalse(result);
+    }
+
+    @Test
+    public void validateNullReturnedForNoConvertersFound() {
+
+        // Assemble
+        final FakeConverter noConvertersHere = new FakeConverter();
+
+        // Act
+        final Tuple<List<Method>, List<Constructor<?>>> result =
+                ReflectiveConverterFilter.getConverterMethodsAndConstructors(noConvertersHere);
+
+        // Assert
+        Assert.assertNull(result);
+    }
+
+    @Test
+    public void validateNoExceptionOnNullConverterObject() {
+
+        // Act
+        final Tuple<List<Method>, List<Constructor<?>>> result =
+                ReflectiveConverterFilter.getConverterMethodsAndConstructors(null);
+
+        // Assert
+        Assert.assertNull(result);
+    }
+
+    @Test
+    public void validateConvertersProperlyExtractedFromConverterClass() {
+
+        // Assemble
+        final List<String> expectedMethodNames = Arrays.asList(
+                "convert", "convertToDate", "convertToDateTime", "lowerPriorityDateTimeConverter");
+        final MultiConverter multiConverter = new MultiConverter("foobar!");
+
+        // Act
+        final Tuple<List<Method>, List<Constructor<?>>> result =
+                ReflectiveConverterFilter.getConverterMethodsAndConstructors(multiConverter);
+
+        // Assert
+        Assert.assertNotNull(result);
+
+        final List<Method> methods = result.getKey();
+        final List<Constructor<?>> constructors = result.getValue();
+
+        Assert.assertEquals(4, methods.size());
+        Assert.assertEquals(1, constructors.size());
+
+        Assert.assertEquals(String.class, constructors.get(0).getParameterTypes()[0]);
+        for(Method current : methods) {
+            Assert.assertTrue(expectedMethodNames.contains(current.getName()));
+        }
     }
 
     //
