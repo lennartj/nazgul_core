@@ -1,6 +1,5 @@
 package se.jguru.nazgul.core.reflection.api.conversion.registry;
 
-import com.sun.source.tree.AssertTree;
 import org.junit.Assert;
 import org.junit.Test;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;

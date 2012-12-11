@@ -13,6 +13,7 @@ import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.MultiConv
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 
 /**
@@ -45,6 +46,32 @@ public class PrioritizedTypeConverterTest {
         Assert.assertEquals(String.class, unitUnderTest.getSourceType());
         Assert.assertNotNull(result);
         Assert.assertEquals(0, result.size());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void validateExceptionOnAddingNonConverterObjects() {
+
+        // Act & Assert
+        unitUnderTest.add(new FakeConverter());
+    }
+
+    @Test
+    public void validateBehaviourOnAddingTwoIdenticalConverters() {
+
+        // Assemble
+        final MultiConverter multiConverter = new MultiConverter("fooBar!");
+
+        // Act
+        unitUnderTest.add(multiConverter);
+
+        final int targetTypesSizeBeforeReAdd = unitUnderTest.getAvailableTargetTypes().size();
+        final int convertersSizeBeforeReAdd = unitUnderTest.getTypeConverters(StringBuffer.class).size();
+
+        unitUnderTest.add(multiConverter);
+
+        // Assert
+        Assert.assertEquals(targetTypesSizeBeforeReAdd, unitUnderTest.getAvailableTargetTypes().size());
+        Assert.assertEquals(convertersSizeBeforeReAdd, unitUnderTest.getTypeConverters(StringBuffer.class).size());
     }
 
     @Test
@@ -148,12 +175,14 @@ public class PrioritizedTypeConverterTest {
                 new PrioritizedTypeConverter<DateTime>(DateTime.class);
 
         // Act
-        final int result = unitUnderTest.compareTo(dateTimeConverter);
+        final int result1 = unitUnderTest.compareTo(dateTimeConverter);
+        final int result2 = unitUnderTest.compareTo(null);
 
         // Assert
         Assert.assertEquals(unitUnderTest.getSourceType().getName()
                 .compareTo(dateTimeConverter.getSourceType().getName()),
-                result);
+                result1);
+        Assert.assertEquals(Integer.MAX_VALUE, result2);
     }
 
     @Test(expected = IllegalArgumentException.class)

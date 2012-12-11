@@ -19,12 +19,12 @@ import java.lang.annotation.Target;
  * <pre>
  *     class FooConverter {
  *
- *         @Converter
+ *         &#64;Converter
  *         public String convert(Foo aFoo) {
  *             ...
  *         }
  *
- *         @Converter
+ *         &#64;Converter
  *         public Foo convert(String aString) {
  *             ...
  *         }
@@ -34,12 +34,14 @@ import java.lang.annotation.Target;
  * <pre>
  *     class Foo {
  *
- *         @Converter
+ *         &#64;Converter
  *         public Foo(String aString) {
  *             ...
  *         }
  *     }
  * </pre>
+ * <p/>
+ * Examples for arguments to the Converter annotation are found within their respective JavaDoc.
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
@@ -62,13 +64,42 @@ public @interface Converter {
     /**
      * Parameter to indicate that this converter method or constructor accepts {@code null} values.
      * Defaults to {@code false}.
+     * <p/>
+     * If this parameter is set to {@code true}, your converter [method or constructor] indicates that it
+     * should be able to provide a default value in the case of null input values. A typical example is
+     * provided below:
+     * <pre>
+     *
+     *     &#64;Converter(acceptsNullValues = true)
+     *     public StringBuffer convert(final String aString) {
+     *          final String bufferValue = aString == null ? "nothing!" : aString;
+     *          return new StringBuffer(bufferValue);
+     *     }
+     * </pre>
      */
     boolean acceptsNullValues() default false;
 
     /**
      * Parameter to indicate which priority this converter method or constructor should have.
      * A lower (but positive, until minimum 0) priority implies that this converter will be
-     * attempted before a converter with higher priority.
+     * attempted <strong>before</strong> a converter with higher priority value.
+     * <p/>
+     * In that sense, the priority should be regarded as the execution index of several converters.
+     * <p/>
+     * A typical example for defining a would be:
+     * <pre>
+     *     class AnotherFooConverter {
+     *
+     *         &#64;Converter(priority = 200)
+     *         public String convert(Foo aFoo) {
+     *             ...
+     *         }
+     *
+     *         public boolean checkFoo(Foo aFoo) {
+     *             // Find out if the aFoo can be converted by this FooConverter instance.
+     *         }
+     *     }
+     * </pre>
      */
     int priority() default DEFAULT_PRIORITY;
 
@@ -85,7 +116,7 @@ public @interface Converter {
      * <pre>
      *     class FooConverter {
      *
-     *         @Converter(conditionalConversionMethod = "checkFoo")
+     *         &#64;Converter(conditionalConversionMethod = "checkFoo")
      *         public String convert(Foo aFoo) {
      *             ...
      *         }
