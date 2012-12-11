@@ -77,7 +77,7 @@ public final class ReflectiveConverterFilter {
     /**
      * Filter implementation detecting properly annotated Converter methods.
      */
-    private static class ConversionMethodFilter implements Filter<Method> {
+    private static final class ConversionMethodFilter implements Filter<Method> {
 
         /**
          * {@inheritDoc}
@@ -127,7 +127,7 @@ public final class ReflectiveConverterFilter {
     /**
      * Filter implementation detecting properly annotated Converter constructors.
      */
-    private static class ConvertionConstructorFilter implements Filter<Constructor<?>> {
+    private static final class ConvertionConstructorFilter implements Filter<Constructor<?>> {
 
         /**
          * {@inheritDoc}
@@ -142,7 +142,7 @@ public final class ReflectiveConverterFilter {
     /**
      * Filter implementation detecting proper conditional converter methods.
      */
-    private static class ConditionalConverterMethodFilter implements Filter<Method> {
+    private static final class ConditionalConverterMethodFilter implements Filter<Method> {
 
         // Internal state
         private Class<?> requiredArgumentType;
