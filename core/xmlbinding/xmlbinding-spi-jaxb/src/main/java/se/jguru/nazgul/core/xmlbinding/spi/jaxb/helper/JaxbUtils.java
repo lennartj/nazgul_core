@@ -2,6 +2,7 @@
  * Copyright (c) jGuru Europe AB.
  * All rights reserved.
  */
+
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper;
 
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
@@ -12,6 +13,7 @@ import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.common.ClassnameToClassTransformer;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.ClassInformationHolder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.TransportMetaData;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.TransportTypeConverter;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.TransportTypeConverterRegistry;
 
@@ -28,7 +30,6 @@ import javax.xml.validation.SchemaFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -259,6 +260,39 @@ public abstract class JaxbUtils {
         if (!resultingTransportTypes.contains(addedClass)) {
             resultingTransportTypes.add(addedClass);
         }
+    }
+
+    /**
+     * Acquires the TransportType className for the supplied (non-null) originalType, by
+     * asking the supplied TransportMetadata instance. If the TransportMetaData
+     * instance does not know of any TransportType for the supplied originalType,
+     * the Class name of the originalType is returned.
+     *
+     * @param originalType The non-transport type for which the class name of the corresponding
+     *                     JAXB-annotated TransportType should be acquired.
+     * @param metadata     The TransportMetaData instance which should be asked for data type conversion.
+     * @return the TransportType className for the supplied (non-null) originalType, by
+     *         asking the supplied TransportMetadata instance. If the TransportMetaData
+     *         instance does not know of any TransportType for the supplied originalType,
+     *         the Class name of the originalType is returned.
+     */
+    public static String getTransportClassName(final Class<?> originalType,
+                                               final TransportMetaData metadata) {
+
+        // Check sanity
+        Validate.notNull(originalType, "Cannot handle null originalType argument.");
+        Validate.notNull(metadata, "Cannot handle null metadata argument.");
+
+        // Extract and assign converted types to the typeNames
+        final Class<?> transportType = metadata.getTransportType(originalType);
+        if (transportType == null) {
+
+            // Transport type conversion not possible.
+            return originalType.getName();
+        }
+
+        // Transport type conversion required.
+        return transportType.getName();
     }
 
     //

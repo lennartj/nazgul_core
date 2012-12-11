@@ -2,9 +2,10 @@
  * Copyright (c) jGuru Europe AB.
  * All rights reserved.
  */
+
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 import se.jguru.nazgul.core.xmlbinding.api.WellKnownNamespace;
 

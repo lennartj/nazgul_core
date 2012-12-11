@@ -1,5 +1,5 @@
 /*
- * Copyright (c) jGuru Europe AB
+ * Copyright (c) jGuru Europe AB.
  * All rights reserved.
  */
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type;
@@ -109,7 +109,7 @@ public class JaxbAnnotatedCollection<T extends Collection> extends AbstractJaxbA
     @Override
     public int compareTo(final Object that) {
 
-        int result = Integer.MIN_VALUE;
+        int result;
 
         if (that instanceof JaxbAnnotatedCollection) {
 
@@ -133,5 +133,15 @@ public class JaxbAnnotatedCollection<T extends Collection> extends AbstractJaxbA
         }
 
         throw new ClassCastException("Cannot compare JaxbAnnotatedCollections to [" + that.getClass().getName() + "]");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        return obj != null
+                && (obj instanceof JaxbAnnotatedCollection || obj instanceof Collection)
+                && this.compareTo(obj) == 0;
     }
 }

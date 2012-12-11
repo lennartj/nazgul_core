@@ -5,7 +5,7 @@
 
 package se.jguru.nazgul.core.reflection.api.serialization;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**

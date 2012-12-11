@@ -4,7 +4,7 @@
  */
 package se.jguru.nazgul.core.algorithms.api.collections.common;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.common.PatternMatchFilter;

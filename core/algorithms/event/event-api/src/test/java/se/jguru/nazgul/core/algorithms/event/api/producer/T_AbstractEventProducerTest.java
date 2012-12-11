@@ -5,7 +5,7 @@
 
 package se.jguru.nazgul.core.algorithms.event.api.producer;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import se.jguru.nazgul.core.algorithms.event.api.consumer.MockEvent;

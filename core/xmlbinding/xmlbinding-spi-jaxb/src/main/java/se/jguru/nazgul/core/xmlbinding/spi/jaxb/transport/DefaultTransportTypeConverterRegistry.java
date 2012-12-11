@@ -2,16 +2,22 @@
  * Copyright (c) jGuru Europe AB.
  * All rights reserved.
  */
+
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport;
 
 import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
+import se.jguru.nazgul.core.reflection.api.TypeExtractor;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.converter.CollectionConverter;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.converter.DateTimeConverter;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.converter.NullConverter;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.converter.StringConverter;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Abstract TransportTypeConverterRegistry implementation, holding a List of
@@ -23,6 +29,8 @@ public class DefaultTransportTypeConverterRegistry implements TransportTypeConve
 
     // Internal state
     private List<TransportTypeConverter> converters = new ArrayList<TransportTypeConverter>();
+    private Map<Class<?>, Class<?>> originalType2TransportTypeMap = new HashMap<Class<?>, Class<?>>();
+    private Map<Class<?>, Class<?>> transportType2OriginalTypeMap = new HashMap<Class<?>, Class<?>>();
 
     /**
      * Default constructor, adding all locally-defined converters.
@@ -50,6 +58,32 @@ public class DefaultTransportTypeConverterRegistry implements TransportTypeConve
         if (!converters.contains(toAdd)) {
             converters.add(toAdd);
         }
+
+        final List<Method> toTransport = TypeExtractor.getMethods(toAdd.getClass(), new Filter<Method>() {
+            @Override
+            public boolean accept(final Method candidate) {
+                return candidate.getName().equals("packageForTransport")
+                        && candidate.getReturnType() != Void.TYPE
+                        && candidate.getParameterTypes().length == 1;
+            }
+        });
+
+        final List<Method> toOriginal = TypeExtractor.getMethods(toAdd.getClass(), new Filter<Method>() {
+            @Override
+            public boolean accept(final Method candidate) {
+                return candidate.getName().equals("reviveAfterTransport")
+                        && candidate.getReturnType() != Void.TYPE
+                        && candidate.getParameterTypes().length == 1;
+            }
+        });
+
+        final Class<?> transportType = toTransport.get(0).getReturnType();
+        final Class<?> originalType = toOriginal.get(0).getReturnType();
+
+        if (!originalType2TransportTypeMap.containsKey(originalType)) {
+            originalType2TransportTypeMap.put(originalType, transportType);
+            transportType2OriginalTypeMap.put(transportType, originalType);
+        }
     }
 
     /**
@@ -61,7 +95,7 @@ public class DefaultTransportTypeConverterRegistry implements TransportTypeConve
      *         a transport type - or <code>null</code> should none be found.
      */
     @Override
-    public TransportTypeConverter getPackagingTransportTypeConverter(Object instance) {
+    public TransportTypeConverter getPackagingTransportTypeConverter(final Object instance) {
 
         for (TransportTypeConverter current : converters) {
             if (current.canPackageForTransport(instance)) {
@@ -81,7 +115,7 @@ public class DefaultTransportTypeConverterRegistry implements TransportTypeConve
      *         instance into its original type and state - or <code>null</code> should none be found.
      */
     @Override
-    public TransportTypeConverter getRevivingTypeConverter(Object instance) {
+    public TransportTypeConverter getRevivingTypeConverter(final Object instance) {
 
         for (TransportTypeConverter current : converters) {
             if (current.canReviveAfterTransport(instance)) {
@@ -90,5 +124,23 @@ public class DefaultTransportTypeConverterRegistry implements TransportTypeConve
         }
 
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <OriginalType, TransportType> Class<OriginalType> getOriginalType(
+            final Class<TransportType> transportType) {
+        return (Class<OriginalType>) transportType2OriginalTypeMap.get(transportType);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <TransportType, OriginalType> Class<TransportType> getTransportType(
+            final Class<OriginalType> originalType) {
+        return (Class<TransportType>) originalType2TransportTypeMap.get(originalType);
     }
 }

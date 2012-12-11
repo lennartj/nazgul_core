@@ -4,7 +4,7 @@
  */
 package se.jguru.nazgul.core.xmlbinding.api;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Map;

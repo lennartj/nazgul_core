@@ -5,7 +5,7 @@
 
 package se.jguru.nazgul.core.algorithms.api.trees;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.EnumMap;

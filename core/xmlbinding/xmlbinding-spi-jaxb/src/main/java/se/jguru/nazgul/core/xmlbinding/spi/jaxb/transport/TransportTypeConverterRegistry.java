@@ -2,6 +2,7 @@
  * Copyright (c) jGuru Europe AB.
  * All rights reserved.
  */
+
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport;
 
 /**
@@ -9,7 +10,7 @@ package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public interface TransportTypeConverterRegistry {
+public interface TransportTypeConverterRegistry extends TransportMetaData {
 
     /**
      * Adds the provided TransportTypeConverter instance to this TransportTypeConverterRegistry.

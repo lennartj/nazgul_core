@@ -2,6 +2,7 @@
  * Copyright (c) jGuru Europe AB.
  * All rights reserved.
  */
+
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type;
 
 import com.google.common.reflect.TypeToken;
@@ -10,7 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.ClassInformationHolder;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbUtils;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.TransportTypeConverterRegistry;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -20,7 +23,6 @@ import java.io.Serializable;
 import java.lang.reflect.GenericDeclaration;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -163,35 +165,39 @@ public abstract class AbstractJaxbAnnotatedTransportType<T>
      */
     @Override
     public int hashCode() {
-        return value.hashCode();
+        return getValue().hashCode();
     }
 
     //
     // Private helpers
     //
 
-    private static void populate(SortedSet<String> typeNames, final TypeVariable typeVariable) {
+    private static void populate(final SortedSet<String> typeNames, final TypeVariable typeVariable) {
 
         // Extract the generic declaration information from the TypeVariable
         GenericDeclaration genericDeclaration = typeVariable.getGenericDeclaration();
         if(genericDeclaration instanceof Class) {
 
-            // TODO: Extract and assign converted types to the typeNames (i.e. the JaxbAnnotatedX types)
-            EntityTransporter.getRegistry().getPackagingTransportTypeConverter()
-            typeNames.add(((Class) genericDeclaration).getName());
+            // Add the transportType class name, if applicable.
+            final String transportTypeName = JaxbUtils.getTransportClassName(
+                    (Class<?>) genericDeclaration,
+                    EntityTransporter.getRegistry());
+            typeNames.add(transportTypeName);
         }
 
         // Extract the types of the generics.
         for (Type current : typeVariable.getBounds()) {
             if (current instanceof Class) {
 
-                // TODO: Extract and assign converted types to the typeNames (i.e. the JaxbAnnotatedX types)
-                // Simply cast the type, and use it.
-                typeNames.add(((Class) current).getName());
+                // Add the transportType class name, if applicable.
+                final String transportTypeName = JaxbUtils.getTransportClassName(
+                        (Class<?>) current,
+                        EntityTransporter.getRegistry());
+                typeNames.add(transportTypeName);
 
             } else if(current instanceof TypeVariable) {
 
-                // Decend
+                // Descend
                 populate(typeNames, (TypeVariable) current);
             }
         }

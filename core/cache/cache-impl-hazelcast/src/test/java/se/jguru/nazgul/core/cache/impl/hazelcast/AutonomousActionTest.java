@@ -6,7 +6,7 @@ package se.jguru.nazgul.core.cache.impl.hazelcast;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.config.MapConfig;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;

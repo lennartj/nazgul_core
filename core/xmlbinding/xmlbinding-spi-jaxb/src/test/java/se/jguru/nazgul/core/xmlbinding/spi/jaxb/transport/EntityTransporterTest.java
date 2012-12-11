@@ -2,9 +2,10 @@
  * Copyright (c) jGuru Europe AB.
  * All rights reserved.
  */
+
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Person;
 
@@ -75,6 +76,16 @@ public class EntityTransporterTest {
 
             @Override
             public TransportTypeConverter getRevivingTypeConverter(Object instance) {
+                return null;
+            }
+
+            @Override
+            public <OriginalType, TransportType> Class<OriginalType> getOriginalType(Class<TransportType> transportType) {
+                return null;
+            }
+
+            @Override
+            public <TransportType, OriginalType> Class<TransportType> getTransportType(Class<OriginalType> originalType) {
                 return null;
             }
         };

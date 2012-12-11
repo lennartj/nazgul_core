@@ -110,6 +110,11 @@
                                 <branchRate>50</branchRate>
                                 <lineRate>80</lineRate>
                             </regex>
+                            <regex>
+                                <pattern>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.AbstractJaxbAnnotatedTransportType</pattern>
+                                <branchRate>64</branchRate>
+                                <lineRate>80</lineRate>
+                            </regex>
                         </regexes>
                     </check>
                 </configuration>

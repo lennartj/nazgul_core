@@ -2,6 +2,7 @@
  * Copyright (c) jGuru Europe AB.
  * All rights reserved.
  */
+
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.converter;
 
 import org.apache.commons.lang3.Validate;
@@ -57,7 +58,7 @@ public class AggregateTransportTypeConverter<OriginalType, TransportType>
      * {@inheritDoc}
      */
     @Override
-    protected boolean canReviveInstance(Object nonNullInstance) {
+    protected boolean canReviveInstance(final Object nonNullInstance) {
 
         // Check sanity.
         return unpackagingConverter.getFromType().isAssignableFrom(nonNullInstance.getClass())

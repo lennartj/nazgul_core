@@ -5,7 +5,7 @@
 
 package se.jguru.nazgul.core.osgi.launcher.api.event.blueprint;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;

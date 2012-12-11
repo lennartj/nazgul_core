@@ -5,7 +5,7 @@
 
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;

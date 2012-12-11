@@ -1,5 +1,5 @@
 /*
- * Copyright (c) jGuru Europe AB
+ * Copyright (c) jGuru Europe AB.
  * All rights reserved.
  */
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.converter;
@@ -51,7 +51,7 @@ public class CollectionConverter<T extends Collection> extends AbstractCondition
      * @return A clone of the OriginalType's instance.
      */
     @Override
-    public T reviveAfterTransport(JaxbAnnotatedCollection<T> toConvert) {
+    public T reviveAfterTransport(final JaxbAnnotatedCollection<T> toConvert) {
         return toConvert.getValue();
     }
 }
