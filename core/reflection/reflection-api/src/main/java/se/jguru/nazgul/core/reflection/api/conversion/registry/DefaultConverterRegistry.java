@@ -5,17 +5,15 @@
 package se.jguru.nazgul.core.reflection.api.conversion.registry;
 
 import org.apache.commons.lang.Validate;
-import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
-import se.jguru.nazgul.core.reflection.api.TypeExtractor;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Default implementation of the ConverterRegistry specification.
@@ -26,8 +24,7 @@ import java.util.Map;
 public class DefaultConverterRegistry implements ConverterRegistry {
 
     // Internal state
-    // From (Class) --> PrioritizedTypeConverter
-    private Map<Class, PrioritizedTypeConverter> priority2converterMap;
+    private Map<Class<?>, PrioritizedTypeConverter> sourceTypeToTypeConvertersMap;
 
     /**
      * Default constructor, yielding an empty internal state - i.e. no default
@@ -36,19 +33,11 @@ public class DefaultConverterRegistry implements ConverterRegistry {
     public DefaultConverterRegistry() {
 
         // Create internal state
-        priority2converterMap = new HashMap<Class, PrioritizedTypeConverter>();
+        sourceTypeToTypeConvertersMap = new HashMap<Class<?>, PrioritizedTypeConverter>();
     }
 
     /**
-     * Adds the provided Converters to this ConverterRegistry.
-     *
-     * @param converters A List of objects, annotated with @Converter. The priority provided in the annotation
-     *                   of each supplied converter will be used when setting up the internal state and the
-     *                   converter chain.
-     * @throws IllegalArgumentException if any of the converters was not annotated with @Converter, or if the
-     *                                  methods/constructors annotated with @Converter did not comply with a converter
-     *                                  specification.
-     * @see se.jguru.nazgul.core.reflection.api.conversion.Converter
+     * {@inheritDoc}
      */
     @Override
     public void add(final Object... converters) throws IllegalArgumentException {
@@ -59,26 +48,49 @@ public class DefaultConverterRegistry implements ConverterRegistry {
                 new HashMap<Object, Tuple<List<Method>, List<Constructor<?>>>>();
 
         // All converters have annotations?
-        for(Object current : converters) {
+        for (Object current : converters) {
 
-            // Find any converter methods in the supplied converter
-            final List<Method> methods = TypeExtractor.getMethods(
-                    current.getClass(),
-                    ReflectiveConverterFilter.CONVERSION_METHOD_FILTER);
+            final Tuple<List<Method>, List<Constructor<?>>> methodsAndConstructors =
+                    ReflectiveConverterFilter.getConverterMethodsAndConstructors(current);
 
-            // Find any converter constructors in the supplied converter
-            final List<Constructor<?>> constructors = CollectionAlgorithms.filter(
-                    Arrays.asList(current.getClass().getConstructors()),
-                    ReflectiveConverterFilter.CONVERTION_CONSTRUCTOR_FILTER);
-
-            if(methods.size() == 0 && constructors.size() == 0) {
+            if (methodsAndConstructors == null) {
 
                 // No converters methods or constructors found within the supplied converter. Complain.
                 throw new IllegalArgumentException("Found no @Converter-annotated methods within class ["
-                        + current.getClass().getName() + "].");
+                        + current.getClass().getName() + "]. No @Converters added.");
             }
 
             // Map the current converter to its converter methods and constructors, respectively.
+            validConverters.put(current, methodsAndConstructors);
+        }
+
+        // Map the respective converters to the sourceTypes of their @Converters.
+        final Map<Class<?>, Set<Object>> sourceTypeToConverterInstanceMap = new HashMap<Class<?>, Set<Object>>();
+        for (Object current : validConverters.keySet()) {
+
+            // Map the source types of all Methods & Constructors
+            for (Method currentMethod : validConverters.get(current).getKey()) {
+
+                final Class<?> currentType = currentMethod.getParameterTypes()[0];
+                addCurrentConverter(sourceTypeToConverterInstanceMap, current, currentType);
+            }
+
+            for (Constructor<?> currentConstructor : validConverters.get(current).getValue()) {
+
+                final Class<?> currentType = currentConstructor.getParameterTypes()[0];
+                addCurrentConverter(sourceTypeToConverterInstanceMap, current, currentType);
+            }
+        }
+
+        // Create PrioritizedTypeConverters for all source types.
+        for(Class<?> current : sourceTypeToConverterInstanceMap.keySet()) {
+
+            PrioritizedTypeConverter prioritizedTypeConverter = new PrioritizedTypeConverter(
+                    current,
+                    sourceTypeToConverterInstanceMap.get(current).toArray());
+
+            // Finally, add the PrioritizedTypeConverter instance.
+            sourceTypeToTypeConvertersMap.put(current, prioritizedTypeConverter);
         }
     }
 
@@ -89,30 +101,60 @@ public class DefaultConverterRegistry implements ConverterRegistry {
      */
     @Override
     public void remove(final Object converter) {
-
+        throw new UnsupportedOperationException("Converter removal not yet implemented.");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public <From, To, C extends To> C convert(final From source, final Class<To> desiredType)
+    public <From, To> To convert(final From source, final Class<To> desiredType)
             throws IllegalArgumentException {
-        return null;
+
+        // Acquire the TypeConverter instance
+        final PrioritizedTypeConverter<From> typeConverter = sourceTypeToTypeConvertersMap.get(source.getClass());
+        if(typeConverter == null) {
+            return null;
+        }
+
+        // Delegate and convert.
+        return typeConverter.convert(source, desiredType);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public <From, To> Class<To> getResultingType(final Class<From> sourceType,
-                                                 final Comparator<Class<?>> sortingCriterion)
-            throws IllegalArgumentException {
-        return null;
-    }
+    public <From> Set<Class<?>> getPossibleConversions(final Class<From> sourceType) throws IllegalArgumentException {
 
+        // Acquire the TypeConverter instance
+        final PrioritizedTypeConverter<From> typeConverter = sourceTypeToTypeConvertersMap.get(sourceType);
+        if(typeConverter == null) {
+            return new HashSet<Class<?>>();
+        }
+
+        // Delegate and return.
+        return typeConverter.getAvailableTargetTypes();
+    }
     //
     // Private helpers
     //
+
+    private void addCurrentConverter(final Map<Class<?>, Set<Object>> sourceTypeToConverterInstanceMap,
+                                     final Object value,
+                                     final Class<?> key) {
+
+        // Get or create the current converter set
+        Set<Object> currentConverterSet = sourceTypeToConverterInstanceMap.get(key);
+        if(currentConverterSet == null) {
+            currentConverterSet = new HashSet<Object>();
+            sourceTypeToConverterInstanceMap.put(key, currentConverterSet);
+        }
+
+        // Add if the current value is not present within the currentConverterSet.
+        if(!currentConverterSet.contains(value)) {
+            currentConverterSet.add(value);
+        }
+    }
 
 }
