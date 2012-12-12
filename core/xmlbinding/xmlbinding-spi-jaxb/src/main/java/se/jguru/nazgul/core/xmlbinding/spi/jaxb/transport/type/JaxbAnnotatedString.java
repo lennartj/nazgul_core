@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-@XmlType(namespace = XmlBinder.CORE_NAMESPACE)
+@XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = "transportForm")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxbAnnotatedString extends AbstractJaxbAnnotatedTransportType<String> {
 

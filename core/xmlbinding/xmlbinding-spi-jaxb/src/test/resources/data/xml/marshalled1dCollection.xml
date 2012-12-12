@@ -10,7 +10,7 @@
         <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedString</entityClass>
     </entityClasses>
     <items>
-        <item xsi:type="jaxbAnnotatedCollection">
+        <item xsi:type="core:jaxbAnnotatedCollection">
             <originalCollectionType>java.util.ArrayList</originalCollectionType>
             <items>
                 <item xsi:type="core:jaxbAnnotatedString">
