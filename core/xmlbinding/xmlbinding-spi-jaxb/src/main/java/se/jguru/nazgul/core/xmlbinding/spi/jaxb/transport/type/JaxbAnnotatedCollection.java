@@ -5,12 +5,16 @@
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type;
 
 import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbUtils;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.TransportTypeConverter;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -22,6 +26,8 @@ import java.util.TreeSet;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
+@XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"originalCollectionType", "items"})
+@XmlAccessorType(XmlAccessType.FIELD)
 public class JaxbAnnotatedCollection<T extends Collection> extends AbstractJaxbAnnotatedTransportType<T> {
 
     // Internal state
