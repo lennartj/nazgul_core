@@ -68,7 +68,7 @@ public abstract class AbstractXmlAdapterTypeConverter<TransportType, OriginalTyp
      * {@inheritDoc}
      */
     @Override
-    protected boolean canReviveInstance(Object nonNullInstance) {
+    protected boolean canReviveInstance(final Object nonNullInstance) {
         return transportTypeClass.isAssignableFrom(nonNullInstance.getClass());
     }
 

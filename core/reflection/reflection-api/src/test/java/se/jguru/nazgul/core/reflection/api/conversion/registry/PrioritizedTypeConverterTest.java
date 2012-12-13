@@ -10,7 +10,10 @@ import se.jguru.nazgul.core.reflection.api.conversion.TypeConverter;
 import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.FakeConverter;
 import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.MultiConverter;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -193,6 +196,25 @@ public class PrioritizedTypeConverterTest {
 
         // Act & Assert
         unitUnderTest.add(noConverterMethodsInHere);
+    }
+
+    @Test
+    public void validateFuzzyLogicConversion() {
+
+        // Assemble
+        final PrioritizedTypeConverter<Object> unitUnderTest = new PrioritizedTypeConverter<Object>(Object.class);
+        unitUnderTest.add(new MultiConverter("fooBar!"));
+        final String[] stringArray = new String[]{"foo", "bar"};
+
+        // Act
+        final List convert = unitUnderTest.convert(stringArray, ArrayList.class);
+
+        // Assert
+        Assert.assertNotNull(convert);
+        Assert.assertEquals(stringArray.length, convert.size());
+        for(int i = 0; i < stringArray.length; i++) {
+            Assert.assertEquals(stringArray[i], convert.get(i));
+        }
     }
 
     //

@@ -12,6 +12,7 @@ import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.FakeConve
 import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.MultiConverter;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -75,15 +76,11 @@ public class DefaultConverterRegistryTest {
         Assert.assertNull(result);
     }
 
-    @Test
-    public void validateNoExceptionOnNullConversionToType() {
+    @Test(expected = NullPointerException.class)
+    public void validateExceptionOnNullConversionToType() {
 
-        // Act
-        final Set<Class<?>> result = unitUnderTest.getPossibleConversions(null);
-
-        // Assert
-        Assert.assertNotNull(result);
-        Assert.assertEquals(0, result.size());
+        // Act & Assert
+        unitUnderTest.getPossibleConversions(null);
     }
 
     @Test
@@ -109,16 +106,17 @@ public class DefaultConverterRegistryTest {
     public void validateStateAfterAddingConverters() {
 
         // Assemble
-        final List<? extends Class<? extends Serializable>> expectedFroms = Arrays.asList(DateTime.class, String.class);
+        final List<Class<?>> expectedFroms = Arrays.asList(DateTime.class, String.class, Object.class);
         final Map<Class<?>, PrioritizedTypeConverter> convertersMap = getConvertersMap(unitUnderTest);
 
         // Act
         unitUnderTest.add(multiConverter);
 
         // Assert
-        Assert.assertEquals(2, convertersMap.size());
-        for(Class<? extends Serializable> current : expectedFroms) {
-            Assert.assertTrue(convertersMap.keySet().contains(current));
+        Assert.assertEquals(3, convertersMap.size());
+        for(Class<?> current : expectedFroms) {
+            Assert.assertTrue("Expected type [" + current.getSimpleName() + "] was not found.",
+                    convertersMap.keySet().contains(current));
         }
     }
 
@@ -147,6 +145,17 @@ public class DefaultConverterRegistryTest {
 
         // Act & Assert
         unitUnderTest.remove(multiConverter);
+    }
+
+    @Test
+    public void validateToStringPrintout() {
+
+        // Act
+        final String result = unitUnderTest.toString();
+
+        // Assert
+        Assert.assertNotNull(result);
+        Assert.assertFalse(result.contains("@"));
     }
 
     //

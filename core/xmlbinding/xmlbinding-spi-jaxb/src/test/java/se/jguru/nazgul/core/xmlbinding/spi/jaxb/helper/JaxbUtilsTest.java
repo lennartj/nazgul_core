@@ -11,6 +11,7 @@ import org.junit.Test;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Account;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Person;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.TransportMetaData;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -78,5 +79,29 @@ public class JaxbUtilsTest {
         // Assert
         Assert.assertSame(ctx1, ctx2);
         Assert.assertSame(ctx1, ctx3);
+    }
+
+    @Test
+    public void validateTransportTypeExtraction() {
+
+        // Assemble
+        final TransportMetaData mockMetadata = new TransportMetaData() {
+            @Override
+            public <OriginalType, TransportType> Class<OriginalType> getOriginalType(Class<TransportType> transportType) {
+                return (Class<OriginalType>) String.class;
+            }
+
+            @Override
+            public <TransportType, OriginalType> Class<TransportType> getTransportType(Class<OriginalType> originalType) {
+                return (Class<TransportType>) StringBuffer.class;
+            }
+        };
+
+
+        // Act
+        final String transportClassName = JaxbUtils.getTransportClassName(String.class, mockMetadata);
+
+        // Assert
+        Assert.assertEquals(StringBuffer.class.getName(), transportClassName);
     }
 }

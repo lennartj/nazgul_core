@@ -41,7 +41,7 @@ public class Foo implements Comparable<Foo> {
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(Foo o) {
+    public int compareTo(final Foo o) {
         return value.compareTo(o.getValue());
     }
 }
