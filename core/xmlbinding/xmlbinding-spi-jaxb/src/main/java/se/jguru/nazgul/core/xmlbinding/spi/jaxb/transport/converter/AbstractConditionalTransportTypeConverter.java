@@ -19,7 +19,7 @@ public abstract class AbstractConditionalTransportTypeConverter
      * {@inheritDoc}
      */
     @Override
-    public final boolean canPackageForTransport(Object instance) {
+    public final boolean canPackageForTransport(final Object instance) {
 
         // Nulls cannot normally be packaged by AbstractTransportTypeConverter implementations.
         return instance != null && canPackageInstance(instance);
@@ -35,13 +35,13 @@ public abstract class AbstractConditionalTransportTypeConverter
      * @return {@code true} if this AbstractTransportTypeConverter can
      *         package the provided instance for transport and {@code false} otherwise.
      */
-    protected abstract boolean canPackageInstance(Object nonNullInstance);
+    protected abstract boolean canPackageInstance(final Object nonNullInstance);
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final boolean canReviveAfterTransport(Object instance) {
+    public final boolean canReviveAfterTransport(final Object instance) {
 
         // Nulls cannot normally be revived by AbstractTransportTypeConverter implementations.
         return instance != null && canReviveInstance(instance);

@@ -5,12 +5,15 @@
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport;
 
 import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.reflection.api.conversion.ConverterRegistry;
 import se.jguru.nazgul.core.reflection.api.conversion.registry.DefaultConverterRegistry;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.converter.StandardConverters;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedNull;
 
 import javax.xml.bind.annotation.XmlType;
+import java.util.Set;
 
 /**
  * Default JaxbConverterRegistry implementation, using reflection Converter
@@ -19,6 +22,9 @@ import javax.xml.bind.annotation.XmlType;
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 public class DefaultJaxbConverterRegistry implements JaxbConverterRegistry {
+
+    // Our Log
+    private static final Logger log = LoggerFactory.getLogger(DefaultJaxbConverterRegistry.class);
 
     // Internal state
     private ConverterRegistry registry;
@@ -30,10 +36,10 @@ public class DefaultJaxbConverterRegistry implements JaxbConverterRegistry {
     public DefaultJaxbConverterRegistry() {
 
         // Create internal state
-        this.registry = new DefaultConverterRegistry();
+        registry = new DefaultConverterRegistry();
 
         // Add the standard converters
-        addConverters(new StandardConverters());
+        registry.add(new StandardConverters());
     }
 
     /**
@@ -50,24 +56,29 @@ public class DefaultJaxbConverterRegistry implements JaxbConverterRegistry {
     @Override
     public <TransportType, OriginalType> Class<TransportType> getTransportType(final Class<OriginalType> originalType) {
 
-        // While JaxbAnnotatedNull is used to transport null values, its *type* cannot be null.
+        // Check sanity
         Validate.notNull(originalType, "Cannot handle null originalType argument.");
 
-        // If the OriginalType is annotated with @XmlElement, simply return it.
+        // If the OriginalType is annotated with @XmlType, simply return it.
         if (originalType.isAnnotationPresent(XmlType.class)) {
             return (Class<TransportType>) originalType;
         }
 
         // Find something in our registry?
-        for (Class<?> current : registry.getPossibleConversions(originalType)) {
+        final Set<Class<?>> possibleConversions = registry.getPossibleConversions(originalType);
+        for (Class<?> current : possibleConversions) {
 
             // Is this a transport type?
-            if (current.isAnnotationPresent(XmlType.class)) {
+            // Also, disregard the JaxbAnnotatedNull in fuzzy logic searches.
+            if (!(current.equals(JaxbAnnotatedNull.class))
+                    && current.isAnnotationPresent(XmlType.class)) {
                 return (Class<TransportType>) current;
             }
         }
 
         // No converter found.
+        log.debug("No converter found for [" + originalType.getSimpleName() + "]. PossibleConversions: ["
+                + possibleConversions + "], registry: " + registry);
         return null;
     }
 
@@ -142,5 +153,13 @@ public class DefaultJaxbConverterRegistry implements JaxbConverterRegistry {
 
         // All done
         return originalType == null ? (OriginalType) transport : registry.convert(transport, originalType);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "DefaultJaxbConverterRegistry with internal state: " + this.registry;
     }
 }

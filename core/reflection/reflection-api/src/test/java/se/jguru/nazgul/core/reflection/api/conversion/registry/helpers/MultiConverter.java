@@ -4,7 +4,12 @@ import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 import se.jguru.nazgul.core.reflection.api.conversion.Converter;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid, jGuru Europe AB</a>
@@ -74,5 +79,20 @@ public class MultiConverter {
         }
 
         return true;
+    }
+
+    public boolean canConvertArrayToCollection(final Object object) {
+        return object != null && object.getClass().isArray();
+    }
+
+    @Converter(conditionalConversionMethod = "canConvertArrayToCollection")
+    public Collection<?> convertToCollection(final Object anArray) {
+
+        // Copy all objects in the array to the collection
+        final List<Object> toReturn = new ArrayList<Object>();
+        for(int i = 0; i < Array.getLength(anArray); i++) {
+            toReturn.add(Array.get(anArray, i));
+        }
+        return toReturn;
     }
 }

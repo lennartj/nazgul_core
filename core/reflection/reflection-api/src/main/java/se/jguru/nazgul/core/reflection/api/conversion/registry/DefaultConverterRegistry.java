@@ -4,17 +4,20 @@
  */
 package se.jguru.nazgul.core.reflection.api.conversion.registry;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
 import se.jguru.nazgul.core.reflection.api.conversion.ConverterRegistry;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * Default implementation of the ConverterRegistry specification.
@@ -84,7 +87,7 @@ public class DefaultConverterRegistry implements ConverterRegistry {
         }
 
         // Create PrioritizedTypeConverters for all source types.
-        for(Class<?> current : sourceTypeToConverterInstanceMap.keySet()) {
+        for (Class<?> current : sourceTypeToConverterInstanceMap.keySet()) {
 
             PrioritizedTypeConverter prioritizedTypeConverter = new PrioritizedTypeConverter(
                     current,
@@ -113,13 +116,20 @@ public class DefaultConverterRegistry implements ConverterRegistry {
             throws IllegalArgumentException {
 
         // Acquire the TypeConverter instance
-        final PrioritizedTypeConverter<From> typeConverter = sourceTypeToTypeConvertersMap.get(source.getClass());
-        if(typeConverter == null) {
-            return null;
+        PrioritizedTypeConverter<From> typeConverter = sourceTypeToTypeConvertersMap.get(source.getClass());
+        if (typeConverter == null) {
+
+            // Attempt fuzzy logic matching.
+            for (Class<?> current : sourceTypeToTypeConvertersMap.keySet()) {
+                if (current.isAssignableFrom(source.getClass())) {
+                    typeConverter = sourceTypeToTypeConvertersMap.get(current);
+                    break;
+                }
+            }
         }
 
-        // Delegate and convert.
-        return typeConverter.convert(source, desiredType);
+        // Convert if possible.
+        return typeConverter == null ? null : typeConverter.convert(source, desiredType);
     }
 
     /**
@@ -128,15 +138,75 @@ public class DefaultConverterRegistry implements ConverterRegistry {
     @Override
     public <From> Set<Class<?>> getPossibleConversions(final Class<From> sourceType) throws IllegalArgumentException {
 
+        // Check sanity
+        Validate.notNull(sourceType, "Cannot handle null sourceType argument.");
+
         // Acquire the TypeConverter instance
-        final PrioritizedTypeConverter<From> typeConverter = sourceTypeToTypeConvertersMap.get(sourceType);
-        if(typeConverter == null) {
+        final List<PrioritizedTypeConverter> converters = new ArrayList<PrioritizedTypeConverter>();
+        PrioritizedTypeConverter<From> typeConverter = sourceTypeToTypeConvertersMap.get(sourceType);
+        if (typeConverter == null) {
+
+            // No exact match found for the type desired.
+            // Perform compound fuzzy logic matching to acquire all matching converters.
+            for (Class<?> current : sourceTypeToTypeConvertersMap.keySet()) {
+                if (current.isAssignableFrom(sourceType)) {
+                    converters.add(sourceTypeToTypeConvertersMap.get(current));
+                }
+            }
+        } else {
+
+            // Exact match found for the type.
+            // Ignore fuzzy logic type resolution.
+            converters.add(typeConverter);
+        }
+
+        if (converters.size() == 0) {
             return new HashSet<Class<?>>();
         }
 
         // Delegate and return.
-        return typeConverter.getAvailableTargetTypes();
+        final Set<Class<?>> toReturn = new HashSet<Class<?>>();
+        for(PrioritizedTypeConverter current : converters) {
+
+            // Acquire the available target types for the current PrioritizedTypeConverter
+            final Set<Class<?>> availableTargetTypes = current.getAvailableTargetTypes();
+            for(Class<?> currentTargetType : availableTargetTypes) {
+
+                // Don't add twice.
+                if(!toReturn.contains(currentTargetType)) {
+                    toReturn.add(currentTargetType);
+                }
+            }
+        }
+
+        // All done.
+        return toReturn;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+
+        // Create a preamble
+        final StringBuilder builder = new StringBuilder("DefaultConverterRegistry ["
+                + sourceTypeToTypeConvertersMap.size() + "] source types.\n");
+
+        final SortedMap<String, Class<?>> sortedClassNames = new TreeMap<String, Class<?>>();
+        for (Class<?> current : sourceTypeToTypeConvertersMap.keySet()) {
+            sortedClassNames.put(current.getSimpleName(), current);
+        }
+
+        // Delegate detail printout to the PrioritizedTypeConverter.
+        for (String current : sortedClassNames.keySet()) {
+            builder.append(sourceTypeToTypeConvertersMap.get(sortedClassNames.get(current))).append("\n");
+        }
+
+        // All done.
+        return builder.toString();
+    }
+
     //
     // Private helpers
     //
@@ -147,13 +217,13 @@ public class DefaultConverterRegistry implements ConverterRegistry {
 
         // Get or create the current converter set
         Set<Object> currentConverterSet = sourceTypeToConverterInstanceMap.get(key);
-        if(currentConverterSet == null) {
+        if (currentConverterSet == null) {
             currentConverterSet = new HashSet<Object>();
             sourceTypeToConverterInstanceMap.put(key, currentConverterSet);
         }
 
         // Add if the current value is not present within the currentConverterSet.
-        if(!currentConverterSet.contains(value)) {
+        if (!currentConverterSet.contains(value)) {
             currentConverterSet.add(value);
         }
     }

@@ -6,6 +6,7 @@ package se.jguru.nazgul.core.reflection.api.conversion.registry;
 
 import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
+import se.jguru.nazgul.core.algorithms.api.collections.predicate.Transformer;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
 import se.jguru.nazgul.core.reflection.api.TypeExtractor;
 import se.jguru.nazgul.core.reflection.api.conversion.Converter;
@@ -29,9 +30,21 @@ public final class ReflectiveConverterFilter {
     public static final Filter<Method> CONVERSION_METHOD_FILTER = new ConversionMethodFilter();
 
     /**
-     * Singleton instance of this ConvertionConstructorFilter type.
+     * Singleton instance of the ConversionConstructorFilter type.
      */
-    public static final Filter<Constructor<?>> CONVERTION_CONSTRUCTOR_FILTER = new ConvertionConstructorFilter();
+    public static final Filter<Constructor<?>> CONVERSION_CONSTRUCTOR_FILTER = new ConversionConstructorFilter();
+
+    /**
+     * Singleton instance of a Transformer yielding the {@code getShortName()} result for Classes.
+     */
+    public static final Transformer<Class<?>, String> SHORT_CLASSNAME_TRANSFORMER
+            = new ClassToClassNameTransformer(true);
+
+    /**
+     * Singleton instance of a Transformer yielding the {@code getName()} result for Classes.
+     */
+    public static final Transformer<Class<?>, String> FULL_CLASSNAME_TRANSFORMER
+            = new ClassToClassNameTransformer(false);
 
     /**
      * Helper method to extract a Tuple of converter methods and constructors, as found within the supplied
@@ -56,7 +69,7 @@ public final class ReflectiveConverterFilter {
             // Find any converter constructors in the supplied converter
             final List<Constructor<?>> constructors = CollectionAlgorithms.filter(
                     Arrays.asList(object.getClass().getConstructors()),
-                    ReflectiveConverterFilter.CONVERTION_CONSTRUCTOR_FILTER);
+                    ReflectiveConverterFilter.CONVERSION_CONSTRUCTOR_FILTER);
 
             // Only return a non-null value if we found some converter methods/constructors.
             if (methods.size() != 0 || constructors.size() != 0) {
@@ -127,7 +140,7 @@ public final class ReflectiveConverterFilter {
     /**
      * Filter implementation detecting properly annotated Converter constructors.
      */
-    private static final class ConvertionConstructorFilter implements Filter<Constructor<?>> {
+    private static final class ConversionConstructorFilter implements Filter<Constructor<?>> {
 
         /**
          * {@inheritDoc}
@@ -173,6 +186,27 @@ public final class ReflectiveConverterFilter {
 
             // All done.
             return matchingName && booleanReturnType && correctArgumentType;
+        }
+    }
+
+    /**
+     * Transformer implementation acquiring class names from class instances.
+     */
+    private static final class ClassToClassNameTransformer implements Transformer<Class<?>, String> {
+
+        // Internal state
+        private boolean shortForm;
+
+        private ClassToClassNameTransformer(final boolean shortForm) {
+            this.shortForm = shortForm;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String transform(final Class<?> input) {
+            return shortForm ? input.getSimpleName() : input.getName();
         }
     }
 }

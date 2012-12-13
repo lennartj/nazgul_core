@@ -101,6 +101,7 @@ public class StandardConverters {
      * Converts Collection subtypes to JaxbAnnotatedCollection instances.
      *
      * @param obj The object to package.
+     * @param <T> The collection (sub)type.
      * @return The resulting JaxbAnnotatedCollection instane.
      */
     @Converter
@@ -112,6 +113,7 @@ public class StandardConverters {
      * Resurrects Collection subtypes from JaxbAnnotatedCollection instances.
      *
      * @param obj The object to resurrect.
+     * @param <T> The collection (sub)type.
      * @return A clone of the OriginalType's instance.
      */
     @Converter

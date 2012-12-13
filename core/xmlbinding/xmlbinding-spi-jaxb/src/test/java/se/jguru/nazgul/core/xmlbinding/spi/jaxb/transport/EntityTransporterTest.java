@@ -5,7 +5,9 @@
 
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Person;
 
@@ -16,6 +18,12 @@ import java.util.SortedSet;
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 public class EntityTransporterTest {
+
+    @Before
+    @After
+    public void restoreTransportTypeConverterRegistry() {
+        EntityTransporter.setTransportTypeConverterRegistry(new DefaultTransportTypeConverterRegistry());
+    }
 
     @Test
     public void validateAddingTypedSingleObject() {

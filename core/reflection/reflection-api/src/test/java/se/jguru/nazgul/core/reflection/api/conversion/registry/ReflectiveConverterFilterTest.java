@@ -1,17 +1,22 @@
 package se.jguru.nazgul.core.reflection.api.conversion.registry;
 
+import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
+import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
+import se.jguru.nazgul.core.algorithms.api.collections.predicate.Transformer;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
 import se.jguru.nazgul.core.reflection.api.conversion.Converter;
 import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.FakeConverter;
 import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.MultiConverter;
 import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.StringConstructorConverter;
 
+import java.beans.Introspector;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -23,7 +28,7 @@ public class ReflectiveConverterFilterTest {
     // Shared state
     private Filter<Method> conversionMethodFilter = ReflectiveConverterFilter.CONVERSION_METHOD_FILTER;
     private Filter<Constructor<?>> conversionConstructorFilter =
-            ReflectiveConverterFilter.CONVERTION_CONSTRUCTOR_FILTER;
+            ReflectiveConverterFilter.CONVERSION_CONSTRUCTOR_FILTER;
 
     @Test(expected = NullPointerException.class)
     public void validateExceptionOnNullMethodArgument() {
@@ -199,8 +204,8 @@ public class ReflectiveConverterFilterTest {
     public void validateConvertersProperlyExtractedFromConverterClass() {
 
         // Assemble
-        final List<String> expectedMethodNames = Arrays.asList(
-                "convert", "convertToDate", "convertToDateTime", "lowerPriorityDateTimeConverter");
+        final List<String> expectedMethodNames = Arrays.asList("convert", "convertToDate", "convertToDateTime",
+                "lowerPriorityDateTimeConverter", "convertToCollection");
         final MultiConverter multiConverter = new MultiConverter("foobar!");
 
         // Act
@@ -213,12 +218,44 @@ public class ReflectiveConverterFilterTest {
         final List<Method> methods = result.getKey();
         final List<Constructor<?>> constructors = result.getValue();
 
-        Assert.assertEquals(4, methods.size());
+        Assert.assertEquals(expectedMethodNames.size(), methods.size());
         Assert.assertEquals(1, constructors.size());
 
         Assert.assertEquals(String.class, constructors.get(0).getParameterTypes()[0]);
         for(Method current : methods) {
             Assert.assertTrue(expectedMethodNames.contains(current.getName()));
+        }
+    }
+
+    @Test
+    public void validateShortClassNameExtraction() {
+
+        // Assemble
+        final List<Class<?>> classes = Arrays.asList(DateTime.class, String.class, Introspector.class);
+
+        // Act
+        final Collection<String> result = CollectionAlgorithms.transform(classes,
+                ReflectiveConverterFilter.SHORT_CLASSNAME_TRANSFORMER);
+
+        // Assert
+        for(Class<?> current : classes) {
+            Assert.assertTrue(result.contains(current.getSimpleName()));
+        }
+    }
+
+    @Test
+    public void validateClassNameExtraction() {
+
+        // Assemble
+        final List<Class<?>> classes = Arrays.asList(DateTime.class, String.class, Introspector.class);
+
+        // Act
+        final Collection<String> result = CollectionAlgorithms.transform(classes,
+                ReflectiveConverterFilter.FULL_CLASSNAME_TRANSFORMER);
+
+        // Assert
+        for(Class<?> current : classes) {
+            Assert.assertTrue(result.contains(current.getName()));
         }
     }
 

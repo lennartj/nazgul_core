@@ -8,6 +8,7 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
+import se.jguru.nazgul.core.algorithms.api.collections.predicate.Transformer;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
 import se.jguru.nazgul.core.reflection.api.TypeExtractor;
 import se.jguru.nazgul.core.reflection.api.conversion.Converter;
@@ -17,13 +18,16 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * Holder class for a set of prioritized TypeConverter instances, all of which convert objects
@@ -151,7 +155,7 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
             // Find any converter constructors in the supplied converter
             final List<Constructor<?>> constructors = CollectionAlgorithms.filter(
                     Arrays.asList(current.getClass().getConstructors()),
-                    ReflectiveConverterFilter.CONVERTION_CONSTRUCTOR_FILTER);
+                    ReflectiveConverterFilter.CONVERSION_CONSTRUCTOR_FILTER);
 
             if (methods.size() == 0 && constructors.size() == 0) {
 
@@ -247,14 +251,14 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
             }
         }
 
-        for(Integer current : prioritizedTypeConverterMap.keySet()) {
+        for (Integer current : prioritizedTypeConverterMap.keySet()) {
 
             // Acquire the TypeConverter to return.
             final Map<Class<?>, TypeConverter<From, ?>> from2TypeConvMap = prioritizedTypeConverterMap.get(current);
 
             // Fuzzy matches go after exact matches
-            for(Class<?> currentSourceClass : from2TypeConvMap.keySet()) {
-                if(targetType.isAssignableFrom(currentSourceClass)) {
+            for (Class<?> currentSourceClass : from2TypeConvMap.keySet()) {
+                if (currentSourceClass.isAssignableFrom(targetType)) {
                     toReturn.add((TypeConverter<From, To>) from2TypeConvMap.get(currentSourceClass));
                 }
             }
@@ -292,6 +296,41 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
 
         // Could not convert the supplied value.
         return null;
+    }
+
+    /**
+     * Prints out a debug information string about the state within this PrioritizedTypeConverter instance.
+     *
+     * @return The source type and possible target types of this PrioritizedTypeConverter instance.
+     *         For simplicity, the target types are sorted in alphabetical order.
+     */
+    @Override
+    public String toString() {
+
+        // Acquire all target types.
+        final SortedMap<Integer, SortedSet<String>> priorityTargetTypeMap = new TreeMap<Integer, SortedSet<String>>();
+        for (int currentIndex : this.prioritizedTypeConverterMap.keySet()) {
+
+            // Acquire all [simple] class names of the target types.
+            final List<String> classNames = CollectionAlgorithms.flatten(
+                    prioritizedTypeConverterMap.get(currentIndex),
+                    new Transformer<Tuple<Class<?>, TypeConverter<From, ?>>, String>() {
+                        @Override
+                        public String transform(final Tuple<Class<?>, TypeConverter<From, ?>> input) {
+
+                            // Just dig out the simple class name.
+                            return input.getKey().getSimpleName();
+                        }
+                    });
+
+            // Sort and add the class names.
+            priorityTargetTypeMap.put(currentIndex, new TreeSet<String>(classNames));
+        }
+
+
+        // All done.
+        return "PrioritizedTypeConverter: [" + getSourceType().getSimpleName() + "] --> ["
+                + priorityTargetTypeMap + "]";
     }
 
     //
