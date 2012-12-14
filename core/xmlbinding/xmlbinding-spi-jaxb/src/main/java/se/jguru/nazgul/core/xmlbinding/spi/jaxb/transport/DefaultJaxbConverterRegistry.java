@@ -39,7 +39,7 @@ public class DefaultJaxbConverterRegistry implements JaxbConverterRegistry {
         registry = new DefaultConverterRegistry();
 
         // Add the standard converters
-        registry.add(new StandardConverters());
+        addConverters(new StandardConverters());
     }
 
     /**
@@ -128,8 +128,15 @@ public class DefaultJaxbConverterRegistry implements JaxbConverterRegistry {
         // Find the transport type of the source.
         final Class<TransportType> transportTypeClass = getTransportType(source.getClass());
 
+        TransportType toReturn = (TransportType) source;
+        if(transportTypeClass != null) {
+
+            // Convert the source instance to the supplied transportClass (or a subclass).
+            toReturn = registry.convert(source, transportTypeClass);
+        }
+
         // All done
-        return transportTypeClass == null ? (TransportType) source : registry.convert(source, transportTypeClass);
+        return toReturn;
     }
 
     /**

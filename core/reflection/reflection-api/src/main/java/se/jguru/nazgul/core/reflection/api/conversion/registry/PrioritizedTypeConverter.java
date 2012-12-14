@@ -68,7 +68,8 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
         Validate.notNull(sourceType, "Cannot handle null sourceType argument.");
 
         // Assign internal state
-        this.prioritizedTypeConverterMap = new TreeMap<Integer, Map<Class<?>, TypeConverter<From, ?>>>();
+        this.prioritizedTypeConverterMap = Collections.synchronizedSortedMap(
+                new TreeMap<Integer, Map<Class<?>, TypeConverter<From, ?>>>());
         this.sourceType = sourceType;
         if (converters != null) {
             add(converters);
@@ -285,6 +286,9 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
 
         // Acquire all possible TypeConverters
         final List<TypeConverter<From, To>> typeConverters = getTypeConverters(toType);
+
+        log.warn("Converting [" + toConvert.getClass() + " --> " + toType.getSimpleName()
+                + "] using " + typeConverters + ". My Converters: " + this.prioritizedTypeConverterMap);
 
         if (!typeConverters.isEmpty()) {
             for (TypeConverter<From, To> current : typeConverters) {

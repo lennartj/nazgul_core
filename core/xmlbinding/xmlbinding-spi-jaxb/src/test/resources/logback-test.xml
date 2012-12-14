@@ -19,6 +19,7 @@
     <!-- Lower the logging level for relevant classes -->
     <logger name="se.jguru.nazgul" level="WARN"/>
     <logger name="se.jguru.nazgul.core.xmlbinding" level="DEBUG"/>
+    <logger name="se.jguru.nazgul.core.reflection.api.conversion.registry" level="DEBUG"/>
 
     <!-- Make the frameworks shut up. -->
     <logger name="org.springframework" level="WARN"/>

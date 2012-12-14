@@ -8,6 +8,7 @@ import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.CollectionsConverter;
 import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.FakeConverter;
 import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.MultiConverter;
 
@@ -16,6 +17,8 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -156,6 +159,20 @@ public class DefaultConverterRegistryTest {
         // Assert
         Assert.assertNotNull(result);
         Assert.assertFalse(result.contains("@"));
+    }
+
+    @Test
+    public void validateFuzzyLogicConversion() {
+
+        // Assemble
+        unitUnderTest.add(new CollectionsConverter());
+        final HashSet<String> set = new HashSet<String>(Arrays.asList("foo", "bar"));
+
+        // Act
+        final Collection result1 = unitUnderTest.convert(set, Collection.class);
+
+        // Assert
+        Assert.assertNotNull(result1);
     }
 
     //
