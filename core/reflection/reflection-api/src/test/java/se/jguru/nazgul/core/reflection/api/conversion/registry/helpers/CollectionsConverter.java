@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -24,6 +25,16 @@ public class CollectionsConverter {
         // Not an inbound List. Wrap and return.
         List<T> toReturn = new ArrayList<T>();
         toReturn.addAll(collection);
+        return toReturn;
+    }
+
+    @Converter
+    @SuppressWarnings("unchecked")
+    public List convertSetToList(final Set set) {
+
+        final List toReturn = new ArrayList();
+        toReturn.add("convertSetToList");
+        toReturn.addAll(set);
         return toReturn;
     }
 

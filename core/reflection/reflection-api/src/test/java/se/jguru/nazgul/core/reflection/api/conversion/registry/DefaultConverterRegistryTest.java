@@ -12,9 +12,9 @@ import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.Collectio
 import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.FakeConverter;
 import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.MultiConverter;
 
-import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,6 +22,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -63,7 +66,7 @@ public class DefaultConverterRegistryTest {
         Assert.assertNotNull(result);
         Assert.assertEquals(3, result.size());
 
-        for(Class<?> current : expectedTypes) {
+        for (Class<?> current : expectedTypes) {
             Assert.assertTrue(expectedTypes.contains(current));
         }
     }
@@ -117,7 +120,7 @@ public class DefaultConverterRegistryTest {
 
         // Assert
         Assert.assertEquals(3, convertersMap.size());
-        for(Class<?> current : expectedFroms) {
+        for (Class<?> current : expectedFroms) {
             Assert.assertTrue("Expected type [" + current.getSimpleName() + "] was not found.",
                     convertersMap.keySet().contains(current));
         }
@@ -169,10 +172,30 @@ public class DefaultConverterRegistryTest {
         final HashSet<String> set = new HashSet<String>(Arrays.asList("foo", "bar"));
 
         // Act
-        final Collection result1 = unitUnderTest.convert(set, Collection.class);
+        final Collection result1 = unitUnderTest.convert(set, SortedSet.class);
 
         // Assert
         Assert.assertNotNull(result1);
+        for (String current : set) {
+            Assert.assertTrue(result1.contains(current));
+        }
+    }
+
+    @Test
+    public void validatePriotitized() {
+
+    }
+
+    @Test
+    public void validateFuzzyLogicPrioritizedConverters() {
+
+        // Assemble
+        unitUnderTest.add(new CollectionsConverter());
+
+        // Act
+        final Set<Class<?>> possibleConversions = unitUnderTest.getPossibleConversions(TreeSet.class);
+
+        System.out.println("Got: " + unitUnderTest);
     }
 
     //
@@ -187,6 +210,19 @@ public class DefaultConverterRegistryTest {
             return (Map<Class<?>, PrioritizedTypeConverter>) mapField.get(instance);
         } catch (Exception e) {
             throw new IllegalArgumentException("could not acquire field.", e);
+        }
+    }
+
+    private <From> SortedMap<Integer, PrioritizedTypeConverter> getPrioritizedConverters(
+            final Class<From> sourceType, final DefaultConverterRegistry registry) {
+
+        try {
+            Method method = DefaultConverterRegistry.class.getDeclaredMethod("getPrioritizedConverters", Class.class);
+            method.setAccessible(true);
+
+            return (SortedMap<Integer, PrioritizedTypeConverter>) method.invoke(registry, sourceType);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Could not aquuire prioritizedConverters", e);
         }
     }
 }

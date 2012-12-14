@@ -8,14 +8,12 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
-import se.jguru.nazgul.core.algorithms.api.collections.predicate.Transformer;
+import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
 import se.jguru.nazgul.core.reflection.api.conversion.ConverterRegistry;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -123,26 +121,34 @@ public class DefaultConverterRegistry implements ConverterRegistry {
     public <From, To> To convert(final From source, final Class<To> desiredType)
             throws IllegalArgumentException {
 
-        // Acquire converter data, optionally applying fuzzy logic to the selection process.
-        final Tuple<PrioritizedTypeConverter<From>, Class<To>> optimumConverterInformation = getConverterTuple(
-                source, desiredType);
-        final PrioritizedTypeConverter<From> typeConverter = optimumConverterInformation.getKey();
-        final Class<To> toClass = optimumConverterInformation.getValue();
+        // Find the best PrioritizedTypeConverter instance for the supplied source.
+        final Class<From> sourceType = (Class<From>) source.getClass();
+        PrioritizedTypeConverter<From> typeConverter = sourceTypeToTypeConvertersMap.get(sourceType);
 
         if (typeConverter == null) {
 
-            final String decoration = toClass == desiredType ? "" : " (fuzzy: " + toClass.getSimpleName() + ")";
+            // Resort to fuzzy logic to acquire the PrioritizedTypeConverter
+            final SortedMap<Integer, PrioritizedTypeConverter> prioritized = getPrioritizedConverters(sourceType);
+            typeConverter = prioritized.get(prioritized.firstKey());
+        }
 
-            // Log somewhat.
-            log.warn("TypeConverter not found. [" + desiredType.getSimpleName() + decoration
-                    + " --> " + typeConverter + "]");
+        // No TypeConverter found at all?
+        if (typeConverter == null) {
 
-            // Give up.
+            // Holler a tad...
+            log.info("TypeConverter not found. [" + desiredType.getSimpleName() + " --> " + typeConverter + "]");
             return null;
         }
 
-        // Convert the inbound data.
-        return (To) typeConverter.convert(source, toClass);
+        // Dig out the corresponding optimalToType for the acquired TypeConverter.
+        final Class<To> optimalToType = getOptimalToType(typeConverter, desiredType);
+
+        log.debug("Found TypeConverter [" + desiredType.getSimpleName()
+                + (optimalToType == desiredType ? "" : " (fuzzy: " + optimalToType.getSimpleName() + ")")
+                + " --> " + typeConverter + "]");
+
+        // Convert the inbound data, and return.
+        return (To) typeConverter.convert(source, optimalToType);
     }
 
     /**
@@ -155,15 +161,17 @@ public class DefaultConverterRegistry implements ConverterRegistry {
         Validate.notNull(sourceType, "Cannot handle null sourceType argument.");
 
         // Acquire the TypeConverter instance
-        final List<PrioritizedTypeConverter> converters = getConverters(sourceType);
+        final SortedMap<Integer, PrioritizedTypeConverter> converterMap = getPrioritizedConverters(sourceType);
 
-        if (converters.size() == 0) {
+        if (converterMap.size() == 0) {
             return new HashSet<Class<?>>();
         }
 
         // Delegate and return.
         final Set<Class<?>> toReturn = new HashSet<Class<?>>();
-        for (PrioritizedTypeConverter current : converters) {
+        for (Integer currentIndex : converterMap.keySet()) {
+
+            final PrioritizedTypeConverter<From> current = converterMap.get(currentIndex);
 
             // Acquire the available target types for the current PrioritizedTypeConverter
             final Set<Class<?>> availableTargetTypes = current.getAvailableTargetTypes();
@@ -208,125 +216,95 @@ public class DefaultConverterRegistry implements ConverterRegistry {
     // Private helpers
     //
 
-    private <From, To> Tuple<PrioritizedTypeConverter<From>, Class<To>> getConverterTuple(
-            final From source, final Class<To> desiredType) {
+    private <From, To> Class<To> getOptimalToType(final PrioritizedTypeConverter<From> typeConverter,
+                                                  final Class<To> requestedToType) {
 
-        // Find the optimum converter instance used to convert the source instance
-        final Class<From> sourceType = (Class<From>) source.getClass();
-        final Set<Class<?>> possibleConversions = getPossibleConversions(sourceType);
+        // Get the available To/target types for the supplied typeConverter.
+        final Set<Class<?>> availableTargetTypes = typeConverter.getAvailableTargetTypes();
 
-        // Prioritize the possible conversions, to select the "best" match.
-        final Transformer<Class<?>, Tuple<Integer, Class<?>>> priorityTransformer =
-                new TypeClosenessTransformer(sourceType);
-        final SortedMap<Integer, Class<?>> prioritizedConversions = new TreeMap<Integer, Class<?>>(
-                CollectionAlgorithms.map(possibleConversions, priorityTransformer));
+        // First - is the requestedToType available?
+        if (availableTargetTypes.contains(requestedToType)) {
 
-        // Debug somewhat
-        log.debug("Found prioritizedConversions: " + prioritizedConversions);
+            // Debug somewhat.
+            log.debug("Exact conversion [" + typeConverter.getSourceType().getSimpleName() + " --> "
+                    + requestedToType.getSimpleName() + "] found in " + typeConverter);
 
-        final Class<?> optimumToClassConverter = prioritizedConversions.get(prioritizedConversions.firstKey());
-
-        log.debug("Optimum toClassConverter: " + sourceType.getSimpleName()
-                + " --> " + optimumToClassConverter.getSimpleName());
-
-        // Acquire the [optimal] TypeConverter instance, and its corresponding best desiredType.
-        PrioritizedTypeConverter<From> typeConverter = sourceTypeToTypeConvertersMap.get(optimumToClassConverter);
-        Class<?> actualDesiredTo = desiredType;
-        if (typeConverter == null) {
-
-            // Attempt fuzzy logic matching.
-            for (Class<?> current : sourceTypeToTypeConvertersMap.keySet()) {
-                if (current.isAssignableFrom(source.getClass())) {
-
-                    // We can use this sourceToTypeConverter
-                    typeConverter = sourceTypeToTypeConvertersMap.get(current);
-
-                    // Adjust the actual target type if not identical to the desiredType.
-                    final Transformer<Class<?>, Tuple<Integer, Class<?>>> sourcePriorityTransformer =
-                            new TypeClosenessTransformer(desiredType);
-                    final SortedMap<Integer, Class<?>> priotitizedTargetTypes = new TreeMap<Integer, Class<?>>(
-                            CollectionAlgorithms.map(typeConverter.getAvailableTargetTypes(),
-                                    sourcePriorityTransformer));
-
-                    actualDesiredTo = priotitizedTargetTypes.get(priotitizedTargetTypes.firstKey());
-                    break;
-                }
-            }
+            return requestedToType;
         }
+
+        // Get the best available To/target type, related to the supplied requestedToType.
+        SortedMap<Integer, Class<?>> prioritizedToTypes = new TreeMap<Integer, Class<?>>(CollectionAlgorithms.map(
+                availableTargetTypes, new ClassPriotityTransformer(requestedToType)));
+
+        final Class<To> optimalToClass = (Class<To>) prioritizedToTypes.get(prioritizedToTypes.firstKey());
+
+        // Debug somewhat.
+        log.debug("Fuzzy conversion [" + typeConverter.getSourceType().getSimpleName() + " --> "
+                + optimalToClass.getSimpleName() + " (" + requestedToType.getSimpleName() + ")] found in "
+                + typeConverter);
+
+        // All done.
+        return optimalToClass;
     }
 
-    private class TypeClosenessTransformer implements Transformer<Class<?>, Tuple<Integer, Class<?>>> {
-
-        // Internal state
-        private Class<?> desiredType;
-
-        private TypeClosenessTransformer(final Class<?> desiredType) {
-
-            // Check sanity
-            Validate.notNull(desiredType, "Cannot handle null desiredType argument.");
-
-            // Assign internal state
-            this.desiredType = desiredType;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Tuple<Integer, Class<?>> transform(final Class<?> candidateType) {
-
-            // The candidateToType must extend/implement the desiredType
-            // Simply use the most specific converter first.
-            int depth = 0;
-
-            for (Class<?> current = candidateType; current != Object.class;
-                 current = current.getSuperclass()) {
-
-                // Does the current class implement the desiredType, or *is* it the desiredType?
-                List<Class<?>> currentInterfaces = new ArrayList<Class<?>>();
-                Collections.addAll(currentInterfaces, candidateType.getInterfaces());
-
-                if (current == desiredType || currentInterfaces.contains(desiredType)) {
-
-                    // Found the depth.
-                    break;
-                }
-
-                // Increase the depth
-                depth++;
-            }
-
-            // All done.
-            return new Tuple<Integer, Class<?>>(depth, candidateType);
-        }
-    }
-
-    private <From> List<PrioritizedTypeConverter> getConverters(final Class<From> sourceType) {
+    /**
+     * Acquires a SortedMap holding all available PrioritizedTypeConverter instances
+     * which can convert from the supplied sourceType.
+     *
+     * @param sourceType The type to convert from.
+     * @param <From>     The type to convert from.
+     * @return a SortedMap holding all available PrioritizedTypeConverter instances
+     *         which can convert from the supplied sourceType, mapped to their priority
+     *         as defined by the algorithm found in the TypeClosenessTransformer class.
+     */
+    private <From> SortedMap<Integer, PrioritizedTypeConverter> getPrioritizedConverters(
+            final Class<From> sourceType) {
 
         // Create the List of converters to return
-        final List<PrioritizedTypeConverter> converters = new ArrayList<PrioritizedTypeConverter>();
+        final SortedMap<Integer, PrioritizedTypeConverter> toReturn =
+                new TreeMap<Integer, PrioritizedTypeConverter>();
 
+        // Exact match?
         PrioritizedTypeConverter<From> typeConverter = sourceTypeToTypeConvertersMap.get(sourceType);
-        if (typeConverter == null) {
-
-            // No exact match found for the type desired.
-            // Perform compound fuzzy logic matching to acquire all matching converters.
-            for (Class<?> current : sourceTypeToTypeConvertersMap.keySet()) {
-                if (current.isAssignableFrom(sourceType)) {
-                    converters.add(sourceTypeToTypeConvertersMap.get(current));
-                }
-            }
-        } else {
+        if (typeConverter != null) {
 
             // Exact match found for the type.
             // Ignore fuzzy logic type resolution.
-            converters.add(typeConverter);
+            toReturn.put(0, typeConverter);
+
+        } else {
+
+            // No exact match found for the type desired.
+            // Perform compound fuzzy logic matching to acquire all matching converters.
+
+            // Filter out all TypeConverters which can convert the supplied sourceType.
+            final Map<Class<?>, PrioritizedTypeConverter> candidates = CollectionAlgorithms.filter(
+                    sourceTypeToTypeConvertersMap,
+                    new Filter<Tuple<Class<?>, PrioritizedTypeConverter>>() {
+                        @Override
+                        public boolean accept(final Tuple<Class<?>, PrioritizedTypeConverter> candidate) {
+
+                            // Only accept candidates able to convert from the supplied sourceType/fromType.
+                            return candidate.getKey().isAssignableFrom(sourceType);
+                        }
+                    });
+
+            // Now, prioritize the found sourceTypes
+            final ClassPriotityTransformer transformer = new ClassPriotityTransformer(sourceType);
+            final SortedMap<Integer, Class<?>> prioritizedFromTypes = new TreeMap<Integer, Class<?>>(
+                    CollectionAlgorithms.map(candidates.keySet(), transformer));
+
+            // Populate the return map
+            for (Integer current : prioritizedFromTypes.keySet()) {
+                toReturn.put(current, candidates.get(prioritizedFromTypes.get(current)));
+            }
         }
 
-        log.debug("Source type [" + sourceType + "] yields converters: " + converters);
+        // Debug somewhat
+        log.debug("Source type [" + sourceType.getSimpleName() + "] yields converters: " + toReturn);
 
         // All done.
-        return converters;
+        return toReturn;
     }
 
     private void addCurrentConverter(final Map<Class<?>, Set<Object>> sourceTypeToConverterInstanceMap,
