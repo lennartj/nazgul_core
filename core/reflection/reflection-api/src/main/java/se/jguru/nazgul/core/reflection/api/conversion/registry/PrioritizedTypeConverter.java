@@ -287,7 +287,8 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
         // Acquire all possible TypeConverters
         final List<TypeConverter<From, To>> typeConverters = getTypeConverters(toType);
 
-        log.warn("Converting [" + toConvert.getClass() + " --> " + toType.getSimpleName()
+        final String toConvertTypeName = toConvert == null ? "null" : toConvert.getClass().getSimpleName();
+        log.warn("Converting [" + toConvertTypeName + " --> " + toType.getSimpleName()
                 + "] using " + typeConverters + ". My Converters: " + this.prioritizedTypeConverterMap);
 
         if (!typeConverters.isEmpty()) {
