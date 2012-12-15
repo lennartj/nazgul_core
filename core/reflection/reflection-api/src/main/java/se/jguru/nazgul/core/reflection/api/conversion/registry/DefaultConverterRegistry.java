@@ -234,7 +234,7 @@ public class DefaultConverterRegistry implements ConverterRegistry {
 
         // Get the best available To/target type, related to the supplied requestedToType.
         SortedMap<Integer, Class<?>> prioritizedToTypes = new TreeMap<Integer, Class<?>>(CollectionAlgorithms.map(
-                availableTargetTypes, new ClassPriotityTransformer(requestedToType)));
+                availableTargetTypes, new ClassPriorityTransformer(requestedToType)));
 
         final Class<To> optimalToClass = (Class<To>) prioritizedToTypes.get(prioritizedToTypes.firstKey());
 
@@ -290,7 +290,7 @@ public class DefaultConverterRegistry implements ConverterRegistry {
                     });
 
             // Now, prioritize the found sourceTypes
-            final ClassPriotityTransformer transformer = new ClassPriotityTransformer(sourceType);
+            final ClassPriorityTransformer transformer = new ClassPriorityTransformer(sourceType);
             final SortedMap<Integer, Class<?>> prioritizedFromTypes = new TreeMap<Integer, Class<?>>(
                     CollectionAlgorithms.map(candidates.keySet(), transformer));
 

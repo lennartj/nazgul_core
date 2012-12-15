@@ -18,7 +18,7 @@ import java.util.List;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid, jGuru Europe AB</a>
  */
-public class ClassPriotityTransformer implements Transformer<Class<?>, Tuple<Integer, Class<?>>> {
+public class ClassPriorityTransformer implements Transformer<Class<?>, Tuple<Integer, Class<?>>> {
 
     // Internal state
     private Class<?> desiredType;
@@ -29,7 +29,7 @@ public class ClassPriotityTransformer implements Transformer<Class<?>, Tuple<Int
      *
      * @param desiredType The class against which we should perform tranformations.
      */
-    public ClassPriotityTransformer(final Class<?> desiredType) {
+    public ClassPriorityTransformer(final Class<?> desiredType) {
 
         // Check sanity
         Validate.notNull(desiredType, "Cannot handle null desiredType argument.");
@@ -58,6 +58,10 @@ public class ClassPriotityTransformer implements Transformer<Class<?>, Tuple<Int
      */
     public static int getRelationDifference(final Class<?> source, final Class<?> target)
             throws IllegalArgumentException {
+
+        // Check sanity
+        Validate.notNull(source, "Cannot handle null source argument.");
+        Validate.notNull(target, "Cannot handle null target argument.");
 
         if (source.isAssignableFrom(target)) {
 
