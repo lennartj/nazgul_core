@@ -60,7 +60,7 @@ public class JaxbAnnotatedCollectionTest {
 
         // Act
         final List<? extends Class<? extends Serializable>> expectedClasses = Arrays.asList(String.class,
-                Integer.class, DateTime.class, JaxbAnnotatedString.class, JaxbAnnotatedDateTime.class);
+                Integer.class, DateTime.class, JaxbAnnotatedDateTime.class);
         final JaxbAnnotatedCollection<List> unitUnderTest = new JaxbAnnotatedCollection<List>(data1D);
         final SortedSet<String> classInformation = unitUnderTest.getClassInformation();
 
@@ -82,7 +82,7 @@ public class JaxbAnnotatedCollectionTest {
 
         // Act
         final List<? extends Class<? extends Serializable>> expectedClasses = Arrays.asList(String.class,
-                Integer.class, DateTime.class, JaxbAnnotatedString.class, JaxbAnnotatedDateTime.class,
+                Integer.class, DateTime.class, JaxbAnnotatedDateTime.class,
                 JaxbAnnotatedNull.class, JaxbAnnotatedCollection.class);
         final JaxbAnnotatedCollection<List> unitUnderTest = new JaxbAnnotatedCollection<List>(data2D);
         final SortedSet<String> classInformation = unitUnderTest.getClassInformation();

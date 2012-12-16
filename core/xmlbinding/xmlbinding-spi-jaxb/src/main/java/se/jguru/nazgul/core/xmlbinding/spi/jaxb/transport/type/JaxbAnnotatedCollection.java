@@ -8,7 +8,6 @@ import org.apache.commons.lang3.Validate;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbUtils;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter;
-import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.TransportTypeConverter;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -29,6 +28,11 @@ import java.util.TreeSet;
 @XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"originalCollectionType", "items"})
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxbAnnotatedCollection<T extends Collection> extends AbstractJaxbAnnotatedTransportType<T> {
+
+    /**
+     * Transport types require a serialVersionUID.
+     */
+    public static final long serialVersionUID = 7085076030011L;
 
     // Internal state
     @XmlElement(required = true, nillable = false)
@@ -94,14 +98,9 @@ public class JaxbAnnotatedCollection<T extends Collection> extends AbstractJaxbA
 
             for (Object current : items) {
 
-                // Find a type converter to resurrect the object
-                TransportTypeConverter resurrectionConverter =
-                        EntityTransporter.getRegistry().getRevivingTypeConverter(current);
-                if (resurrectionConverter != null) {
-                    value.add(resurrectionConverter.reviveAfterTransport(current));
-                } else {
-                    value.add(current);
-                }
+                // Resurrect the current item, and add it to the value Collection.
+                final Object resurrected = EntityTransporter.getRegistry().resurrectAfterTransport(current);
+                value.add(resurrected);
             }
         }
 

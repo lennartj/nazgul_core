@@ -11,9 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.ClassInformationHolder;
-import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbUtils;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter;
-import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.TransportTypeConverterRegistry;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -40,11 +38,6 @@ public abstract class AbstractJaxbAnnotatedTransportType<T>
 
     // Our Log
     private static final Logger log = LoggerFactory.getLogger(AbstractJaxbAnnotatedTransportType.class);
-
-    /**
-     * Transport types require a serialVersionUID.
-     */
-    public static final long serialVersionUID = 7085076030001L;
 
     // Internal state
     @XmlTransient
@@ -179,10 +172,15 @@ public abstract class AbstractJaxbAnnotatedTransportType<T>
         if(genericDeclaration instanceof Class) {
 
             // Add the transportType class name, if applicable.
-            final String transportTypeName = JaxbUtils.getTransportClassName(
-                    (Class<?>) genericDeclaration,
-                    EntityTransporter.getRegistry());
-            typeNames.add(transportTypeName);
+            final Class<?> genericDeclarationType = (Class<?>) genericDeclaration;
+            final Class<Object> transportType = EntityTransporter.getRegistry()
+                    .getTransportType(genericDeclarationType);
+
+            if(transportType != null) {
+                typeNames.add(transportType.getName());
+            } else {
+                log.warn("No TransportType found for [" + genericDeclarationType.getSimpleName() + "].");
+            }
         }
 
         // Extract the types of the generics.
@@ -190,10 +188,14 @@ public abstract class AbstractJaxbAnnotatedTransportType<T>
             if (current instanceof Class) {
 
                 // Add the transportType class name, if applicable.
-                final String transportTypeName = JaxbUtils.getTransportClassName(
-                        (Class<?>) current,
-                        EntityTransporter.getRegistry());
-                typeNames.add(transportTypeName);
+                final Class<?> typeVariableType = (Class<?>) current;
+                final Class<Object> transportType = EntityTransporter.getRegistry().getTransportType(typeVariableType);
+
+                if(transportType != null) {
+                    typeNames.add(transportType.getName());
+                } else {
+                    log.warn("No TransportType found for [" + typeVariableType.getSimpleName() + "].");
+                }
 
             } else if(current instanceof TypeVariable) {
 

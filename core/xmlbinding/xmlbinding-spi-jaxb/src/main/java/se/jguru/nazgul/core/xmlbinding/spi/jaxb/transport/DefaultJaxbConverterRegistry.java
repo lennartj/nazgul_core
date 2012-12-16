@@ -13,6 +13,9 @@ import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.converter.StandardConv
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedNull;
 
 import javax.xml.bind.annotation.XmlType;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -27,6 +30,9 @@ public class DefaultJaxbConverterRegistry implements JaxbConverterRegistry {
     private static final Logger log = LoggerFactory.getLogger(DefaultJaxbConverterRegistry.class);
 
     // Internal state
+    private static final List<? extends Class<? extends Serializable>> SELF_CONVERTIBLE =
+            Arrays.asList(Boolean.class, Byte.class, Short.class, Integer.class, Float.class,
+                    Double.class, Long.class, String.class);
     private ConverterRegistry registry;
 
     /**
@@ -94,8 +100,11 @@ public class DefaultJaxbConverterRegistry implements JaxbConverterRegistry {
         Validate.isTrue(transportType != JaxbAnnotatedNull.class,
                 "Cannot acquire OriginalType for JaxbAnnotatedNull argument.");
 
-        // If the transportType is not annotated with XmlType ... complain.
-        if (!transportType.isAnnotationPresent(XmlType.class)) {
+        // If the transportType is neither a Primitive nor annotated with XmlType ... complain.
+        boolean incorrectType = !transportType.isPrimitive()
+                && !SELF_CONVERTIBLE.contains(transportType)
+                && !transportType.isAnnotationPresent(XmlType.class);
+        if (incorrectType) {
             throw new IllegalArgumentException("Supplied transportType [" + transportType.getName()
                     + "] is not annotated with XmlType.");
         }
@@ -129,7 +138,7 @@ public class DefaultJaxbConverterRegistry implements JaxbConverterRegistry {
         final Class<TransportType> transportTypeClass = getTransportType(source.getClass());
 
         TransportType toReturn = (TransportType) source;
-        if(transportTypeClass != null) {
+        if (transportTypeClass != null) {
 
             // Convert the source instance to the supplied transportClass (or a subclass).
             toReturn = registry.convert(source, transportTypeClass);

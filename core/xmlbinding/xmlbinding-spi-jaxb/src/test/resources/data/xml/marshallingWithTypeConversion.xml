@@ -5,15 +5,12 @@
         <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Person</entityClass>
         <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter</entityClass>
         <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedNull</entityClass>
-        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedString</entityClass>
     </entityClasses>
     <items>
         <item xsi:type="core:person" age="44">
             <name>Lennart</name>
         </item>
-        <item xsi:type="core:jaxbAnnotatedString">
-            <transportForm>FooBar!</transportForm>
-        </item>
+        <item xsi:type="xs:string">FooBar!</item>
         <item xsi:type="core:jaxbAnnotatedNull"/>
         <item xsi:type="core:person" age="478">
             <name>Malin</name>

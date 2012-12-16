@@ -22,7 +22,7 @@ public class EntityTransporterTest {
     @Before
     @After
     public void restoreTransportTypeConverterRegistry() {
-        EntityTransporter.setTransportTypeConverterRegistry(new DefaultTransportTypeConverterRegistry());
+        EntityTransporter.setTransportTypeConverterRegistry(new DefaultJaxbConverterRegistry());
     }
 
     @Test
@@ -52,18 +52,18 @@ public class EntityTransporterTest {
     }
 
     @Test
-    public void validateManagingTypeConverterRegistry() {
+    public void validateManagingJaxbConverterRegistry() {
 
         // Assemble
-        final TransportTypeConverterRegistry mockRegistry = getRegistry();
+        final JaxbConverterRegistry mockRegistry = getRegistry();
 
         // Act
-        final TransportTypeConverterRegistry originalRegistry = EntityTransporter.getRegistry();
+        final JaxbConverterRegistry originalRegistry = EntityTransporter.getRegistry();
         EntityTransporter.setTransportTypeConverterRegistry(mockRegistry);
-        final TransportTypeConverterRegistry afterSetRegistry = EntityTransporter.getRegistry();
+        final JaxbConverterRegistry afterSetRegistry = EntityTransporter.getRegistry();
 
         // Assert
-        Assert.assertTrue(originalRegistry instanceof DefaultTransportTypeConverterRegistry);
+        Assert.assertTrue(originalRegistry instanceof DefaultJaxbConverterRegistry);
         Assert.assertNotSame(originalRegistry, afterSetRegistry);
     }
 
@@ -71,29 +71,44 @@ public class EntityTransporterTest {
     // Private helpers
     //
 
-    TransportTypeConverterRegistry getRegistry() {
-        return new TransportTypeConverterRegistry() {
+    JaxbConverterRegistry getRegistry() {
+        return new JaxbConverterRegistry() {
+            /**
+             * {@inheritDoc}
+             */
             @Override
-            public void addTransportTypeConverter(TransportTypeConverter toAdd) throws IllegalArgumentException {
+            public void addConverters(Object... converters) throws IllegalArgumentException {
             }
 
-            @Override
-            public TransportTypeConverter getPackagingTransportTypeConverter(Object instance) {
-                return null;
-            }
-
-            @Override
-            public TransportTypeConverter getRevivingTypeConverter(Object instance) {
-                return null;
-            }
-
-            @Override
-            public <OriginalType, TransportType> Class<OriginalType> getOriginalType(Class<TransportType> transportType) {
-                return null;
-            }
-
+            /**
+             * {@inheritDoc}
+             */
             @Override
             public <TransportType, OriginalType> Class<TransportType> getTransportType(Class<OriginalType> originalType) {
+                return null;
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public <OriginalType, TransportType> Class<OriginalType> getOriginalType(Class<TransportType> transportType) throws IllegalArgumentException {
+                return null;
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public <OriginalType, TransportType> TransportType packageForTransport(OriginalType source) throws IllegalArgumentException {
+                return null;
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public <OriginalType, TransportType> OriginalType resurrectAfterTransport(TransportType toConvert) throws IllegalArgumentException {
                 return null;
             }
         };

@@ -8,7 +8,6 @@ import se.jguru.nazgul.core.xmlbinding.spi.jaxb.JaxbXmlBinder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedCollection;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedDateTime;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedNull;
-import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedString;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,7 +39,7 @@ public class DefaultJaxbConverterRegistryTest {
 
     private List<? extends Class<? extends Serializable>> standardTransportTypes = Arrays.asList(
             JaxbAnnotatedNull.class, JaxbAnnotatedCollection.class,
-            JaxbAnnotatedDateTime.class, JaxbAnnotatedString.class);
+            JaxbAnnotatedDateTime.class);
     private List<Object> sourceObjects = Arrays.asList(null, data2D, firstAprilThreePm, fooBar);
 
     private DefaultJaxbConverterRegistry unitUnderTest;
@@ -101,7 +100,6 @@ public class DefaultJaxbConverterRegistryTest {
 
         expectedTransportTypeMap.put(data2D, JaxbAnnotatedCollection.class);
         expectedTransportTypeMap.put(firstAprilThreePm, JaxbAnnotatedDateTime.class);
-        expectedTransportTypeMap.put(fooBar, JaxbAnnotatedString.class);
 
         // Act & Assert
         for(Object current : expectedTransportTypeMap.keySet()) {
@@ -118,7 +116,7 @@ public class DefaultJaxbConverterRegistryTest {
     public void validateExceptionOnGettingOriginalTypeUsingNonAnnotatedTransportType() {
 
         // Act & Assert
-        unitUnderTest.getOriginalType(String.class);
+        unitUnderTest.getOriginalType(StringBuffer.class);
     }
 
     @Test

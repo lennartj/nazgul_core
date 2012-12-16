@@ -9,7 +9,6 @@ import se.jguru.nazgul.core.reflection.api.conversion.Converter;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedCollection;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedDateTime;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedNull;
-import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedString;
 
 import java.util.Collection;
 
@@ -51,28 +50,6 @@ public class StandardConverters {
     @Converter
     public Object resurrectNull(final JaxbAnnotatedNull obj) {
         return null;
-    }
-
-    /**
-     * Converts strings into JaxbAnnotatedString instances.
-     *
-     * @param obj The object to package.
-     * @return The resulting JaxbAnnotatedString instance.
-     */
-    @Converter
-    public JaxbAnnotatedString packageString(final String obj) {
-        return new JaxbAnnotatedString(obj);
-    }
-
-    /**
-     * Resurrects strings from JaxbAnnotatedString instances.
-     *
-     * @param obj The object to resurrect.
-     * @return The resurrected String.
-     */
-    @Converter
-    public String resurrectString(final JaxbAnnotatedString obj) {
-        return obj.getValue();
     }
 
     /**
