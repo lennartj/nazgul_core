@@ -168,26 +168,28 @@ public class DefaultConverterRegistryTest {
     public void validateFuzzyLogicConversion() {
 
         // Assemble
-        unitUnderTest.add(new CollectionsConverter());
+        final String setToListConverterElementIdentifier = "convertSetToList";
         final HashSet<String> set = new HashSet<String>(Arrays.asList("foo", "bar"));
+        unitUnderTest.add(new CollectionsConverter());
 
         // Act
         final Collection result1 = unitUnderTest.convert(set, SortedSet.class);
+        final Collection result2 = unitUnderTest.convert(set, List.class);
 
         // Assert
-        Assert.assertNotNull(result1);
+        Assert.assertNull(result1);
+        Assert.assertNotNull(result2);
+
+        Assert.assertTrue("convertSetToList element not found --> Incorrect type converter selected.",
+                result2.contains(setToListConverterElementIdentifier));
+
         for (String current : set) {
-            Assert.assertTrue(result1.contains(current));
+            Assert.assertTrue(result2.contains(current));
         }
     }
 
     @Test
-    public void validatePriotitized() {
-
-    }
-
-    @Test
-    public void validateFuzzyLogicPrioritizedConverters() {
+    public void validatePossibleFuzzyLogicConverterTypesSelection1() {
 
         // Assemble
         unitUnderTest.add(new CollectionsConverter());
@@ -195,7 +197,9 @@ public class DefaultConverterRegistryTest {
         // Act
         final Set<Class<?>> possibleConversions = unitUnderTest.getPossibleConversions(TreeSet.class);
 
-        System.out.println("Got: " + unitUnderTest);
+        // Assert
+        Assert.assertEquals(1, possibleConversions.size());
+        Assert.assertEquals(List.class, possibleConversions.iterator().next());
     }
 
     //
