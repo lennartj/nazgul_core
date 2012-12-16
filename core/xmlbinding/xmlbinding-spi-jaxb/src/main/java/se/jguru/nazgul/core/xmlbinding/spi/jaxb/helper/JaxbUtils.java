@@ -13,9 +13,8 @@ import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.common.ClassnameToClassTransformer;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.ClassInformationHolder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter;
-import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.TransportMetaData;
-import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.TransportTypeConverter;
-import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.TransportTypeConverterRegistry;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.JaxbConverterRegistry;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedNull;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
@@ -223,7 +222,7 @@ public abstract class JaxbUtils {
      *                                      transport types.
      */
     public static void extractJaxbTransportData(final Object toWrapAndPackageForTransport,
-                                                final TransportTypeConverterRegistry registry,
+                                                final JaxbConverterRegistry registry,
                                                 final List<Object> resultingTransportableObjects,
                                                 final SortedSet<String> resultingTransportTypes) {
 
@@ -231,18 +230,19 @@ public abstract class JaxbUtils {
         Validate.notNull(registry, "Cannot handle null TransportTypeConverterRegistry argument.");
         Validate.notNull(resultingTransportableObjects, "Cannot handle null resultingTransportableObjects argument.");
         Validate.notNull(resultingTransportTypes, "Cannot handle null resultingTransportTypes argument.");
-        Object added = toWrapAndPackageForTransport;
 
         // ### 1) Convert the current type if required.
-        TransportTypeConverter packagingConverter =
-                registry.getPackagingTransportTypeConverter(toWrapAndPackageForTransport);
-        if (packagingConverter != null) {
+        Object added = toWrapAndPackageForTransport;
+        final Class<?> transportType = toWrapAndPackageForTransport == null
+                ? JaxbAnnotatedNull.class
+                : registry.getTransportType(toWrapAndPackageForTransport.getClass());
 
-            added = packagingConverter.packageForTransport(toWrapAndPackageForTransport);
+        if(added == null || added.getClass() != transportType) {
+            added = registry.packageForTransport(toWrapAndPackageForTransport);
         }
 
         // ### 2) Add the item itself.
-        ((List<Object>) resultingTransportableObjects).add(added);
+        resultingTransportableObjects.add(added);
 
         // ### 3) Add the JAXB-annotated transport classes found within
         //        the added object, via the use of its TypeExtractor methods.
@@ -260,39 +260,6 @@ public abstract class JaxbUtils {
         if (!resultingTransportTypes.contains(addedClass)) {
             resultingTransportTypes.add(addedClass);
         }
-    }
-
-    /**
-     * Acquires the TransportType className for the supplied (non-null) originalType, by
-     * asking the supplied TransportMetadata instance. If the TransportMetaData
-     * instance does not know of any TransportType for the supplied originalType,
-     * the Class name of the originalType is returned.
-     *
-     * @param originalType The non-transport type for which the class name of the corresponding
-     *                     JAXB-annotated TransportType should be acquired.
-     * @param metadata     The TransportMetaData instance which should be asked for data type conversion.
-     * @return the TransportType className for the supplied (non-null) originalType, by
-     *         asking the supplied TransportMetadata instance. If the TransportMetaData
-     *         instance does not know of any TransportType for the supplied originalType,
-     *         the Class name of the originalType is returned.
-     */
-    public static String getTransportClassName(final Class<?> originalType,
-                                               final TransportMetaData metadata) {
-
-        // Check sanity
-        Validate.notNull(originalType, "Cannot handle null originalType argument.");
-        Validate.notNull(metadata, "Cannot handle null metadata argument.");
-
-        // Extract and assign converted types to the typeNames
-        final Class<?> transportType = metadata.getTransportType(originalType);
-        if (transportType == null) {
-
-            // Transport type conversion not possible.
-            return originalType.getName();
-        }
-
-        // Transport type conversion required.
-        return transportType.getName();
     }
 
     //

@@ -80,28 +80,4 @@ public class JaxbUtilsTest {
         Assert.assertSame(ctx1, ctx2);
         Assert.assertSame(ctx1, ctx3);
     }
-
-    @Test
-    public void validateTransportTypeExtraction() {
-
-        // Assemble
-        final TransportMetaData mockMetadata = new TransportMetaData() {
-            @Override
-            public <OriginalType, TransportType> Class<OriginalType> getOriginalType(Class<TransportType> transportType) {
-                return (Class<OriginalType>) String.class;
-            }
-
-            @Override
-            public <TransportType, OriginalType> Class<TransportType> getTransportType(Class<OriginalType> originalType) {
-                return (Class<TransportType>) StringBuffer.class;
-            }
-        };
-
-
-        // Act
-        final String transportClassName = JaxbUtils.getTransportClassName(String.class, mockMetadata);
-
-        // Assert
-        Assert.assertEquals(StringBuffer.class.getName(), transportClassName);
-    }
 }

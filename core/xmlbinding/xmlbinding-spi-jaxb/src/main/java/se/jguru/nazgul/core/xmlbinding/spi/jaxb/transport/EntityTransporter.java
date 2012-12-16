@@ -9,6 +9,7 @@ import org.apache.commons.lang3.Validate;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.ClassInformationHolder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbUtils;
+import se.jguru.nazgul.tools.validation.api.Validatable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -48,7 +49,7 @@ public class EntityTransporter<T> implements ClassInformationHolder, Serializabl
     private List<Object> items = new ArrayList<Object>();
 
     @XmlTransient
-    private static TransportTypeConverterRegistry typeConverterRegistry = new DefaultTransportTypeConverterRegistry();
+    private static JaxbConverterRegistry typeConverterRegistry = new DefaultJaxbConverterRegistry();
 
     /**
      * JAXB-friendly constructor.
@@ -85,13 +86,9 @@ public class EntityTransporter<T> implements ClassInformationHolder, Serializabl
 
         for (Object current : items) {
 
-            // Find a type converter to resurrect the object
-            TransportTypeConverter resurrectionConverter = getRegistry().getRevivingTypeConverter(current);
-            if (resurrectionConverter != null) {
-                toReturn.add((T) resurrectionConverter.reviveAfterTransport(current));
-            } else {
-                toReturn.add((T) current);
-            }
+            // Resurrect the current item, if required.
+            // The current item should not be null.
+            toReturn.add((T) getRegistry().resurrectAfterTransport(current));
         }
 
         // All done.
@@ -110,10 +107,22 @@ public class EntityTransporter<T> implements ClassInformationHolder, Serializabl
     }
 
     /**
-     * @return The singleton TypeConverterRegistry used by all
-     *         EntityWrapper instances.
+     * Validates the state of all validatable objects within the items List.
      */
-    public static TransportTypeConverterRegistry getRegistry() {
+    public void validateItemState() {
+        if (items != null) {
+            for (Object current : items) {
+                if (current instanceof Validatable) {
+                    ((Validatable) current).validateInternalState();
+                }
+            }
+        }
+    }
+
+    /**
+     * @return The singleton JaxbConverterRegistry used by all EntityWrapper instances.
+     */
+    public static JaxbConverterRegistry getRegistry() {
         return typeConverterRegistry;
     }
 
@@ -124,10 +133,10 @@ public class EntityTransporter<T> implements ClassInformationHolder, Serializabl
      * @param registry The TypeConverterRegistry instance to use.
      * @throws IllegalArgumentException if the registry parameter was null.
      */
-    public static void setTransportTypeConverterRegistry(final TransportTypeConverterRegistry registry)
+    public static void setTransportTypeConverterRegistry(final JaxbConverterRegistry registry)
             throws IllegalArgumentException {
 
-        Validate.notNull(registry, "Cannot handle null TransportTypeConverterRegistry");
+        Validate.notNull(registry, "Cannot handle null registry argument.");
         typeConverterRegistry = registry;
     }
 }

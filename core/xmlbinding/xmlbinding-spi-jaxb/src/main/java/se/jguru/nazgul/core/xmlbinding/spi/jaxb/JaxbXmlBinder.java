@@ -86,13 +86,6 @@ public class JaxbXmlBinder implements XmlBinder<Object> {
     }
 
     /**
-     * @return The TypeConverterRegistry in use by this JaxbXmlBinder.
-    public final TypeConverterRegistry getTypeConverterRegistry() {
-    return typeConverterRegistry;
-    }
-     */
-
-    /**
      * Converts the provided source java objects to an XML formatted String.
      * Order between the provided objects is preserved in the resulting XML.
      *
@@ -111,7 +104,10 @@ public class JaxbXmlBinder implements XmlBinder<Object> {
         for (Object current : toConvert) {
             transporter.addItem(current);
         }
-        validate(transporter);
+
+        // Validate without requiring resurrecting the items.
+        transporter.validateItemState();
+        // validate(transporter);
 
         // Acquire a Marshaller for the provided EntityTransporter
         final JAXBContext ctx = JaxbUtils.getJaxbContext(transporter);

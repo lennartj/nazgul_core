@@ -7,15 +7,12 @@
         <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter</entityClass>
         <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedCollection</entityClass>
         <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedDateTime</entityClass>
-        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedString</entityClass>
     </entityClasses>
     <items>
         <item xsi:type="core:jaxbAnnotatedCollection">
             <originalCollectionType>java.util.ArrayList</originalCollectionType>
             <items>
-                <item xsi:type="core:jaxbAnnotatedString">
-                    <transportForm>FooBar!</transportForm>
-                </item>
+                <item xsi:type="xs:string">FooBar!</item>
                 <item xsi:type="core:jaxbAnnotatedDateTime">
                     <transportForm>2012-04-01T15:00:00.000+02:00</transportForm>
                 </item>
