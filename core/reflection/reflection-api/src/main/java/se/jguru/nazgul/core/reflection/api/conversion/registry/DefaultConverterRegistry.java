@@ -10,10 +10,12 @@ import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
+import se.jguru.nazgul.core.reflection.api.TypeExtractor;
 import se.jguru.nazgul.core.reflection.api.conversion.ConverterRegistry;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -105,7 +107,7 @@ public class DefaultConverterRegistry implements ConverterRegistry {
     }
 
     /**
-     * Removes the supplied converter instance from this ConverterRegistry.
+     * Throws {@code UnsupportedOperationException}.
      *
      * @param converter The converter to remove.
      */
@@ -129,7 +131,9 @@ public class DefaultConverterRegistry implements ConverterRegistry {
 
             // Resort to fuzzy logic to acquire the PrioritizedTypeConverter
             final SortedMap<Integer, PrioritizedTypeConverter> prioritized = getPrioritizedConverters(sourceType);
-            typeConverter = prioritized.get(prioritized.firstKey());
+
+            // Get the least divergent type converter
+            typeConverter = prioritized.get(prioritized.lastKey());
         }
 
         // No TypeConverter found at all?
@@ -141,14 +145,22 @@ public class DefaultConverterRegistry implements ConverterRegistry {
         }
 
         // Dig out the corresponding optimalToType for the acquired TypeConverter.
+        // We may acquire a null response here, if no optimalToType can be found.
         final Class<To> optimalToType = getOptimalToType(typeConverter, desiredType);
 
-        log.debug("Found TypeConverter [" + desiredType.getSimpleName()
-                + (optimalToType == desiredType ? "" : " (fuzzy: " + optimalToType.getSimpleName() + ")")
-                + " --> " + typeConverter + "]");
+        To toReturn = null;
+        if(optimalToType != null) {
 
-        // Convert the inbound data, and return.
-        return (To) typeConverter.convert(source, optimalToType);
+            log.debug("Found TypeConverter [" + desiredType.getSimpleName()
+                    + (optimalToType == desiredType ? "" : " (fuzzy: " + optimalToType.getSimpleName() + ")")
+                    + " --> " + typeConverter + "]");
+
+            // Convert the data
+            toReturn = (To) typeConverter.convert(source, optimalToType);
+        }
+
+        // All done.
+        return toReturn;
     }
 
     /**
@@ -233,10 +245,17 @@ public class DefaultConverterRegistry implements ConverterRegistry {
         }
 
         // Get the best available To/target type, related to the supplied requestedToType.
-        SortedMap<Integer, Class<?>> prioritizedToTypes = new TreeMap<Integer, Class<?>>(CollectionAlgorithms.map(
-                availableTargetTypes, new ClassPriorityTransformer(requestedToType)));
+        final SortedMap<Integer, List<Class<?>>> prioritizedTypes = createPrioritizedClassMap(
+                requestedToType, availableTargetTypes);
 
-        final Class<To> optimalToClass = (Class<To>) prioritizedToTypes.get(prioritizedToTypes.firstKey());
+        // Unrelated?
+        if(prioritizedTypes.size() == 0) {
+            return null;
+        }
+
+        // Several optimal types available?
+        final List<Class<?>> bestChoiceToTypes = prioritizedTypes.get(prioritizedTypes.firstKey());
+        final Class<To> optimalToClass = (Class<To>) getOptimalClosestType(bestChoiceToTypes);
 
         // Debug somewhat.
         log.debug("Fuzzy conversion [" + typeConverter.getSourceType().getSimpleName() + " --> "
@@ -290,13 +309,15 @@ public class DefaultConverterRegistry implements ConverterRegistry {
                     });
 
             // Now, prioritize the found sourceTypes
-            final ClassPriorityTransformer transformer = new ClassPriorityTransformer(sourceType);
-            final SortedMap<Integer, Class<?>> prioritizedFromTypes = new TreeMap<Integer, Class<?>>(
-                    CollectionAlgorithms.map(candidates.keySet(), transformer));
+            final SortedMap<Integer, List<Class<?>>> prioritizedClassMap = createPrioritizedClassMap(
+                    sourceType, candidates.keySet());
 
             // Populate the return map
-            for (Integer current : prioritizedFromTypes.keySet()) {
-                toReturn.put(current, candidates.get(prioritizedFromTypes.get(current)));
+            for (Integer current : prioritizedClassMap.keySet()) {
+
+                // For each priority, simply pick the first type returned.
+                List<Class<?>> typeConvertersInGivenOrder = prioritizedClassMap.get(current);
+                toReturn.put(current, candidates.get(typeConvertersInGivenOrder.get(0)));
             }
         }
 
@@ -324,4 +345,67 @@ public class DefaultConverterRegistry implements ConverterRegistry {
         }
     }
 
+    private Class<?> getOptimalClosestType(final List<Class<?>> initialBestChoices) {
+
+        // Start with the first available best choice type.
+        Class<?> optimalToClass = initialBestChoices.get(0);
+
+        // Several choices available?
+        if (initialBestChoices.size() > 1) {
+
+            // If there are class types, use the first one of them.
+            // Otherwise use the first bestChoiceToType found.
+            final List<Class<?>> optimalClasses = CollectionAlgorithms.filter(
+                    initialBestChoices,
+                    new Filter<Class<?>>() {
+                        @Override
+                        public boolean accept(final Class<?> candidate) {
+                            return !candidate.isInterface();
+                        }
+                    });
+
+            optimalToClass = optimalClasses.size() > 0 ? optimalClasses.get(0) : initialBestChoices.get(0);
+
+            // Debug somewhat
+            List<String> initialBestChoicesClassNames = new ArrayList<String>();
+            for (Class<?> current : initialBestChoices) {
+                initialBestChoicesClassNames.add(current.getSimpleName());
+            }
+
+            log.debug("Optimal type [" + optimalToClass.getSimpleName()
+                    + "] selected from choices " + initialBestChoicesClassNames);
+
+        } else {
+            log.debug("Single/optimal best choice type: " + initialBestChoices);
+        }
+
+        // All done.
+        return optimalToClass;
+    }
+
+    private <To> SortedMap<Integer, List<Class<?>>> createPrioritizedClassMap(
+            final Class<To> requestedToType, final Set<Class<?>> availableTargetTypes) {
+
+        SortedMap<Integer, List<Class<?>>> prioritizedTypes = new TreeMap<Integer, List<Class<?>>>();
+        for (Class<?> current : availableTargetTypes) {
+
+            // Find the current priority
+            try {
+                final int priority = TypeExtractor.getRelationDifference(current, requestedToType);
+
+                List<Class<?>> currentPriorityTypes = prioritizedTypes.get(priority);
+                if (currentPriorityTypes == null) {
+                    currentPriorityTypes = new ArrayList<Class<?>>();
+                    prioritizedTypes.put(priority, currentPriorityTypes);
+                }
+
+                // ... and add the current type.
+                currentPriorityTypes.add(current);
+
+            } catch (IllegalArgumentException e) {
+                // Ignore this type.
+            }
+        }
+        return prioritizedTypes;
+    }
 }

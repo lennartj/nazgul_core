@@ -15,6 +15,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -123,5 +124,88 @@ public final class TypeExtractor {
 
         // Delegate
         return CollectionAlgorithms.filter(fields, selector);
+    }
+
+    /**
+     * Finds the number of types between related classes source and target.
+     *
+     * @param source The source type.
+     * @param target The target type.
+     * @return The number of class hops (i.e. class/superclass relations) between the
+     *         source and target types; if source is a superclass of target, the value
+     *         is negative, and otherwise positive.
+     * @throws IllegalArgumentException if source and target classes are not related.
+     */
+    public static int getRelationDifference(final Class<?> source, final Class<?> target)
+            throws IllegalArgumentException {
+
+        // Check sanity
+        Validate.notNull(source, "Cannot handle null source argument.");
+        Validate.notNull(target, "Cannot handle null target argument.");
+
+        if (source.isAssignableFrom(target)) {
+
+            int depth = 0;
+
+            for (Class<?> current = target; current != null; current = current.getSuperclass()) {
+
+                // Same type?
+                if (current == source) {
+                    break;
+                }
+
+                // Interface implemented by the current class?
+                // Does the current class implement the desiredType, or *is* it the desiredType?
+                List<Class<?>> interfacesImplemented = new ArrayList<Class<?>>();
+                Collections.addAll(interfacesImplemented, current.getInterfaces());
+
+                // Done?
+                if (interfacesImplemented.contains(source)) {
+                    depth--;
+                    break;
+                }
+
+                // Decrease one.
+                depth -= 2;
+            }
+
+            // All done.
+            return depth;
+        }
+
+        if (target.isAssignableFrom(source)) {
+
+            int depth = 0;
+
+            for (Class<?> current = source; current != null; current = current.getSuperclass()) {
+
+                // Same type?
+                if (current == target) {
+                    break;
+                }
+
+                // Interface implemented by the current class?
+                // Does the current class implement the desiredType, or *is* it the desiredType?
+                List<Class<?>> interfacesImplemented = new ArrayList<Class<?>>();
+                Collections.addAll(interfacesImplemented, current.getInterfaces());
+
+                // Done?
+                if (interfacesImplemented.contains(target)) {
+                    depth++;
+                    break;
+                }
+
+                // Decrease one.
+                depth += 2;
+            }
+
+            // All done.
+            return depth;
+
+        }
+
+        // Complain.
+        throw new IllegalArgumentException("Types [" + source.getSimpleName() + "] and [" + target.getSimpleName()
+                + "] are not related.");
     }
 }

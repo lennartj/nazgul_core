@@ -14,11 +14,17 @@ import se.jguru.nazgul.core.reflection.api.annotation.AnnotatedSpecification;
 import se.jguru.nazgul.core.reflection.api.annotation.TestFieldMarkerAnnotation;
 import se.jguru.nazgul.core.reflection.api.annotation.TestMethodMarkerAnnotation;
 import se.jguru.nazgul.core.reflection.api.annotation.TestTypeMarkerAnnotation;
+import se.jguru.nazgul.core.reflection.api.conversion.ConverterRegistry;
+import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.MockConverterRegistry;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.AbstractSet;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -137,5 +143,28 @@ public class TypeExtractorTest {
         Assert.assertNotNull(fields);
         Assert.assertEquals(1, fields.size());
         Assert.assertEquals(expected, fields.get(0));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void validateExceptionOnUnrelatedClasses() {
+
+        // Act & Assert
+        TypeExtractor.getRelationDifference(String.class, Set.class);
+    }
+
+    @Test
+    public void validateRelationDifference() {
+
+        // Assemble
+
+        // Act & Assert
+        Assert.assertEquals(0, TypeExtractor.getRelationDifference(Set.class, Set.class));
+        Assert.assertEquals(-2, TypeExtractor.getRelationDifference(AbstractSet.class, HashSet.class));
+        Assert.assertEquals(2, TypeExtractor.getRelationDifference(HashSet.class, AbstractSet.class));
+        Assert.assertEquals(-4, TypeExtractor.getRelationDifference(Object.class, Float.class));
+        Assert.assertEquals(4, TypeExtractor.getRelationDifference(Integer.class, Object.class));
+        Assert.assertEquals(-5, TypeExtractor.getRelationDifference(Collection.class, HashSet.class));
+        Assert.assertEquals(3, TypeExtractor.getRelationDifference(
+                MockConverterRegistry.class, ConverterRegistry.class));
     }
 }
