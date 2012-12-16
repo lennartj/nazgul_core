@@ -44,6 +44,7 @@ public class T_AbstractFrameworkEventListenerTest {
     private File targetDirectory;
     private File downloadedBundlesDirectory;
     private boolean stopFramework;
+    private static int iteration = 0;
 
     @Before
     public void launchFelix() {
@@ -61,12 +62,15 @@ public class T_AbstractFrameworkEventListenerTest {
         stopFramework = true;
 
         // Create the embedder
-        unitUnderTest = new FelixFrameworkLauncher("testID");
+        unitUnderTest = new FelixFrameworkLauncher("testID_" + iteration++);
+
+        final File userDir = new File(targetDirectory, "userDir_" + iteration);
+        userDir.delete();
 
         // Create base configuration properties
         configuration = new TreeMap<String, String>();
         configuration.put("felix.log.level", "3");
-        configuration.put("felix.cache.rootdir", new File(targetDirectory, "felix-cache").getAbsolutePath());
+        configuration.put("felix.cache.rootdir", new File(userDir, "felix-cache").getAbsolutePath());
 
         // Create the ServiceEventAdapter
         listener = new MockBlueprintServiceEventAdapter("testListener");
@@ -76,8 +80,12 @@ public class T_AbstractFrameworkEventListenerTest {
     public void shutdownFelix() throws Exception {
 
         if (stopFramework) {
-            unitUnderTest.stop();
-            unitUnderTest.getFramework().waitForStop(0);
+            try {
+                unitUnderTest.stop();
+                unitUnderTest.getFramework().waitForStop(0);
+            } catch (Exception e) {
+                log.error("Could not properly stop Felix", e);
+            }
         }
     }
 
