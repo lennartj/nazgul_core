@@ -20,7 +20,7 @@
 
     <groupId>se.jguru.nazgul.core.persistence</groupId>
     <artifactId>nazgul-core-persistence-reactor</artifactId>
-    <version>1.4.0</version>
+    <version>1.4.1-SNAPSHOT</version>
     <name>${project.groupId}.${project.artifactId}</name>
     <packaging>pom</packaging>
 
@@ -36,6 +36,6 @@
 
     <scm>
         <developerConnection>scm:hg:file://${basedir}/../../</developerConnection>
-        <tag>nazgul-core-1.4.0</tag>
+        <tag>HEAD</tag>
     </scm>
 </project>
