@@ -10,6 +10,8 @@ import org.junit.Test;
 import se.jguru.nazgul.core.xmlbinding.api.NamespacePrefixResolver;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbNamespacePrefixResolver;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Account;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Beverage;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Foo;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Person;
 
 import java.io.BufferedReader;
@@ -107,6 +109,28 @@ public class JaxbXmlBinderTest {
         Assert.assertNotNull(resolver);
         Assert.assertTrue(resolver instanceof JaxbNamespacePrefixResolver);
     }
+
+    @Test
+    public void validateMarshallingWithSeparateNamspaces() {
+
+        // Assemble
+        final String data = readFully("data/xml/compoundNamespaceEntities.xml");
+        final NamespacePrefixResolver resolver = unitUnderTest.getNamespacePrefixResolver();
+        resolver.put("http://some/good/beverage", "drink");
+        resolver.put("http://www.jguru.se/foo", "foo");
+
+        final Beverage ale = new Beverage("Chimay Bleue");
+        final Foo aFoo = new Foo("Bar!");
+        final Person person = new Person("Lennart", 42);
+
+        // Act
+        final String result = unitUnderTest.marshal(ale, "FooBar!", person, aFoo);
+
+        // Assert
+        Assert.assertEquals(data, result);
+    }
+
+
 
     @Test
     public void validateUnmarshallingSingleInstance() {
