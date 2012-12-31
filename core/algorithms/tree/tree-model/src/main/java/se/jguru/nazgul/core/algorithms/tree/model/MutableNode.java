@@ -16,14 +16,14 @@ import java.util.List;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public interface MutableNode<ValueType extends Serializable, KeyType extends Serializable & Comparable<KeyType>>
-        extends Node<ValueType, KeyType> {
+public interface MutableNode<KeyType extends Serializable & Comparable<KeyType>, ValueType extends Serializable>
+        extends Node<KeyType, ValueType> {
 
     /**
      * @return A List holding the immediate child nodes of this Node.
      *         The returned List should be modifiable.
      */
-    <X extends Node<ValueType, KeyType>> List<X> getChildren();
+    <X extends Node<KeyType, ValueType>> List<X> getChildren();
 
     /**
      * Adds the provided node as a child to this MutableNode.
@@ -31,14 +31,14 @@ public interface MutableNode<ValueType extends Serializable, KeyType extends Ser
      * @param node The node to add.
      * @throws IllegalArgumentException if the given node could not be added properly.
      */
-    void addChild(MutableNode<ValueType, KeyType> node) throws IllegalArgumentException;
+    void addChild(MutableNode<KeyType, ValueType> node) throws IllegalArgumentException;
 
     /**
      * Removes all immediate children of this MutableNode matching the provided Filter.
      *
      * @param nodeFilter a Filter defining which children should be removed.
      */
-    void removeChildren(Filter<Node<ValueType, KeyType>> nodeFilter);
+    void removeChildren(Filter<Node<KeyType, ValueType>> nodeFilter);
 
     /**
      * Removes the provided child node from this MutableNode, if it exists.
@@ -47,14 +47,14 @@ public interface MutableNode<ValueType extends Serializable, KeyType extends Ser
      *
      * @param node The node to remove.
      */
-    void removeChild(MutableNode<ValueType, KeyType> node);
+    void removeChild(MutableNode<KeyType, ValueType> node);
 
     /**
      * Assigns the parent of this MutableNode.
      *
      * @param parent The parent of this node.
      */
-    void setParent(MutableNode<ValueType, KeyType> parent);
+    void setParent(MutableNode<KeyType, ValueType> parent);
 
     /**
      * Removes this MutableNode from its parent, by removing both the

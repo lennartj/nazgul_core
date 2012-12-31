@@ -24,14 +24,14 @@ import java.util.List;
  * @param <KeyType>   The key type of this Node.
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class ListMutableNode<ValueType extends Serializable, KeyType extends Serializable & Comparable<KeyType>>
-        implements MutableNode<ValueType, KeyType> {
+public class ListMutableNode<KeyType extends Serializable & Comparable<KeyType>, ValueType extends Serializable>
+        implements MutableNode<KeyType, ValueType> {
 
     // Internal state
     private ValueType data;
     private KeyType key;
-    private MutableNode<ValueType, KeyType> parent;
-    private final List<Node<ValueType, KeyType>> children;
+    private MutableNode<KeyType, ValueType> parent;
+    private final List<Node<KeyType, ValueType>> children;
 
     /**
      * Compound constructor, creating a new DefaultMutableNode instance from the
@@ -45,8 +45,8 @@ public class ListMutableNode<ValueType extends Serializable, KeyType extends Ser
      */
     public ListMutableNode(final KeyType key,
                            final ValueType data,
-                           final MutableNode<ValueType, KeyType> parent,
-                           final List<Node<ValueType, KeyType>> children) {
+                           final MutableNode<KeyType, ValueType> parent,
+                           final List<Node<KeyType, ValueType>> children) {
 
         // Check sanity
         Validate.notNull(key, "Cannot handle null key argument.");
@@ -56,7 +56,7 @@ public class ListMutableNode<ValueType extends Serializable, KeyType extends Ser
         this.key = key;
         this.parent = parent;
 
-        List<Node<ValueType, KeyType>> tmp = children == null ? new ArrayList<Node<ValueType, KeyType>>() : children;
+        List<Node<KeyType, ValueType>> tmp = children == null ? new ArrayList<Node<KeyType, ValueType>>() : children;
         this.children = Collections.synchronizedList(tmp);
     }
 
@@ -68,7 +68,7 @@ public class ListMutableNode<ValueType extends Serializable, KeyType extends Ser
      */
     @Override
     @SuppressWarnings("unchecked")
-    public <X extends Node<ValueType, KeyType>> List<X> getChildren() {
+    public <X extends Node<KeyType, ValueType>> List<X> getChildren() {
         return (List<X>) children;
     }
 
@@ -76,7 +76,7 @@ public class ListMutableNode<ValueType extends Serializable, KeyType extends Ser
      * {@inheritDoc}
      */
     @Override
-    public void addChild(final MutableNode<ValueType, KeyType> node) throws IllegalArgumentException {
+    public void addChild(final MutableNode<KeyType, ValueType> node) throws IllegalArgumentException {
 
         Validate.notNull(node, "Cannot handle null node argument.");
 
@@ -93,27 +93,27 @@ public class ListMutableNode<ValueType extends Serializable, KeyType extends Ser
      * {@inheritDoc}
      */
     @Override
-    public void removeChildren(final Filter<Node<ValueType, KeyType>> mutableNodeFilter) {
+    public void removeChildren(final Filter<Node<KeyType, ValueType>> mutableNodeFilter) {
 
         // Check sanity
         Validate.notNull(mutableNodeFilter, "Cannot handle null mutableNodeFilter argument.");
 
         // Find all nodes which should be removed.
-        List<MutableNode<ValueType, KeyType>> toRemove = new ArrayList<MutableNode<ValueType, KeyType>>();
+        List<MutableNode<KeyType, ValueType>> toRemove = new ArrayList<MutableNode<KeyType, ValueType>>();
         for (Object current : children) {
 
             // This should be either a Node or a MutableNode.
             @SuppressWarnings("unchecked")
-            Node<ValueType, KeyType> currentNode = (Node<ValueType, KeyType>) current;
+            Node<KeyType, ValueType> currentNode = (Node<KeyType, ValueType>) current;
             if (mutableNodeFilter.accept(currentNode) && currentNode instanceof MutableNode) {
-                toRemove.add((MutableNode<ValueType, KeyType>) currentNode);
+                toRemove.add((MutableNode<KeyType, ValueType>) currentNode);
             }
         }
 
         // Remove all appropriate nodes.
         if (toRemove.size() > 0) {
             synchronized (children) {
-                for (MutableNode<ValueType, KeyType> current : toRemove)
+                for (MutableNode<KeyType, ValueType> current : toRemove)
                     removeChild(current);
             }
         }
@@ -127,13 +127,13 @@ public class ListMutableNode<ValueType extends Serializable, KeyType extends Ser
      * @param node The node to remove.
      */
     @Override
-    public void removeChild(final MutableNode<ValueType, KeyType> node) {
+    public void removeChild(final MutableNode<KeyType, ValueType> node) {
 
         // Check sanity
         Validate.notNull(node, "Cannot handle null node argument.");
 
-        Node<ValueType, KeyType> toRemove = null;
-        for (Node<ValueType, KeyType> current : children) {
+        Node<KeyType, ValueType> toRemove = null;
+        for (Node<KeyType, ValueType> current : children) {
             if (node.equals(current)) {
                 toRemove = current;
                 break;
@@ -152,7 +152,7 @@ public class ListMutableNode<ValueType extends Serializable, KeyType extends Ser
             }
             */
 
-            MutableNode<ValueType, KeyType> mutableNodeToRemove = (MutableNode<ValueType, KeyType>) toRemove;
+            MutableNode<KeyType, ValueType> mutableNodeToRemove = (MutableNode<KeyType, ValueType>) toRemove;
 
             synchronized (children) {
 
@@ -167,7 +167,7 @@ public class ListMutableNode<ValueType extends Serializable, KeyType extends Ser
      * @return The parent of this Node.
      */
     @Override
-    public <X extends Node<ValueType, KeyType>> X getParent() {
+    public <X extends Node<KeyType, ValueType>> X getParent() {
         return (X) parent;
     }
 
@@ -175,11 +175,11 @@ public class ListMutableNode<ValueType extends Serializable, KeyType extends Ser
      * {@inheritDoc}
      */
     @Override
-    public void setParent(final MutableNode<ValueType, KeyType> parent) {
+    public void setParent(final MutableNode<KeyType, ValueType> parent) {
 
         // Check sanity
         Validate.notNull(parent, "Cannot handle null parent argument.");
-        MutableNode<ValueType, KeyType> oldParent = this.parent;
+        MutableNode<KeyType, ValueType> oldParent = this.parent;
 
         // Add this MutableNode to the provided parent.
         synchronized (children) {
@@ -193,7 +193,7 @@ public class ListMutableNode<ValueType extends Serializable, KeyType extends Ser
             // Assign our internal state.
             this.parent = parent;
 
-            final List<Node<ValueType, KeyType>> newParentChildren = parent.getChildren();
+            final List<Node<KeyType, ValueType>> newParentChildren = parent.getChildren();
             if (!newParentChildren.contains(this)) {
                 newParentChildren.add(this);
             }
@@ -242,7 +242,7 @@ public class ListMutableNode<ValueType extends Serializable, KeyType extends Ser
 
         List<KeyType> pathSegments = new ArrayList<KeyType>();
 
-        for (MutableNode<ValueType, KeyType> current = this; current != null; current = current.getParent()) {
+        for (MutableNode<KeyType, ValueType> current = this; current != null; current = current.getParent()) {
             pathSegments.add(current.getKey());
         }
 
@@ -275,7 +275,7 @@ public class ListMutableNode<ValueType extends Serializable, KeyType extends Ser
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(final Node<ValueType, KeyType> that) {
+    public int compareTo(final Node<KeyType, ValueType> that) {
 
         // Delegate to Key comparison.
         return key.compareTo(that.getKey());

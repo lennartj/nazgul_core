@@ -74,9 +74,6 @@ public class SimpleTreeTest {
         Assert.assertEquals(0, oldRoot.getChildren().size());
         Assert.assertEquals(1, root2.getChildren().size());
         Assert.assertSame(child1, unitUnderTest.getRoot().getChildren().get(0));
-
-        // Act & Assert #3
-
     }
 
     @Test

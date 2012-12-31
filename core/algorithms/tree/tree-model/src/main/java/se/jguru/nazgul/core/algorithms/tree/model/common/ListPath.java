@@ -14,6 +14,8 @@ import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationExc
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -42,10 +44,12 @@ public class ListPath<SegmentType extends Serializable & Comparable<SegmentType>
 
     // Internal state
     @XmlTransient
+    @OneToMany
     private List<SegmentType> segments;
 
     @XmlElementWrapper(name = "pathSegments")
     @XmlElement(name = "pathSegment")
+    @Transient
     private List internalSegments;
 
     /**

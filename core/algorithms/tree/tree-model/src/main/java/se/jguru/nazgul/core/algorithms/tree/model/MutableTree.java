@@ -13,8 +13,8 @@ import java.io.Serializable;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public interface MutableTree<ValueType extends Serializable, KeyType extends Serializable & Comparable<KeyType>>
-        extends Tree<ValueType, KeyType> {
+public interface MutableTree<KeyType extends Serializable & Comparable<KeyType>, ValueType extends Serializable>
+        extends Tree<KeyType, ValueType> {
 
     /**
      * Reassigns the root node of this MutableTree, and moves all existing (immediate)
@@ -28,5 +28,5 @@ public interface MutableTree<ValueType extends Serializable, KeyType extends Ser
      *                                  any existing children are not MutableNode instances.
      *                                  Also thrown if {@code root} has a parent node assigned.
      */
-    MutableNode<ValueType, KeyType> setRoot(MutableNode<ValueType, KeyType> root) throws IllegalArgumentException;
+    MutableNode<KeyType, ValueType> setRoot(MutableNode<KeyType, ValueType> root) throws IllegalArgumentException;
 }
