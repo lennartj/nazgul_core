@@ -1,0 +1,52 @@
+------
+Introduction
+------
+
+${project.artifactId}
+
+The Parser API project contains specification and generic implementation
+for token-style parsers and an extensible mechanism to add functionality
+into a token-style parser, called ParserAgent.
+
+* Token Parser vs. Parser Agent
+
+The <<
+<TokenParser>>> interface is the main type which should be used to
+    parse data strings into resulting, tokenized strings. Simply use the
+    substituteTokens(String data) method to submit your data string as input
+    and receive the tokenized result as the return value.
+
+    The <<
+    <ParserAgent>>> is what makes a TokenParser extensible, and encapsulates
+        the algorithms to handle a (single) type of token replacement. If using the
+        <<
+        <DefaultTokenParser>>> implementation, several ParserAgents can be added to
+            the TokenParser and used in concert.
+
+            Please refer to the <<
+            <DefaultTokenParserTest>>> for more examples. A snippet
+                is pasted below:
+
+                +------------------------------------------+
+                @Test
+                public void validateNormalParsing() {
+
+                // Assemble
+                final String data = "Your JDK version is $\{sysprop:java.version}, which is $\{good}.";
+                final String expected = "Your JDK version is " + System.getProperty("java.version")
+                + ", which is bad.";
+
+                final DefaultParserAgent parserAgent = new DefaultParserAgent();
+                parserAgent.addStaticReplacement("good", "bad");
+
+                final DefaultTokenParser unitUnderTest = new DefaultTokenParser();
+                unitUnderTest.addAgent(parserAgent);
+
+                // Act
+                final String result = unitUnderTest.substituteTokens(data);
+
+                // Assert
+                Assert.assertEquals(expected, result);
+                }
+                +------------------------------------------+
+

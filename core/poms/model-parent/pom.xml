@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) jGuru Europe AB.
+  ~ All rights reserved.
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+    ################################################
+    # Section 1:  Project information
+    ################################################
+    -->
+    <parent>
+        <groupId>se.jguru.nazgul.core.poms.core-parent</groupId>
+        <artifactId>nazgul-core-parent</artifactId>
+        <version>1.4.1-SNAPSHOT</version>
+        <relativePath>../core-parent</relativePath>
+    </parent>
+
+    <groupId>se.jguru.nazgul.core.poms.model-parent</groupId>
+    <artifactId>nazgul-core-model-parent</artifactId>
+    <version>1.4.1-SNAPSHOT</version>
+    <name>${project.groupId}.${project.artifactId}</name>
+    <packaging>pom</packaging>
+
+    <!--
+    ################################################
+    # Section 2:  Dependency (management) settings
+    ################################################
+    -->
+    <dependencies>
+        <!-- Internal dependencies -->
+        <dependency>
+            <groupId>se.jguru.nazgul.core.reflection.api</groupId>
+            <artifactId>nazgul-core-reflection-api</artifactId>
+            <version>1.4.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>se.jguru.nazgul.core.xmlbinding.api</groupId>
+            <artifactId>nazgul-core-xmlbinding-api</artifactId>
+            <version>1.4.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <!--
+    ################################################
+    # Section 3:  Build settings
+    ################################################
+    -->
+    <build>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>${project.build.directory}/jaxb2/transformed</directory>
+                <includes>
+                    <include>**/*.xsd</include>
+                </includes>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Export-Package>{local-packages}</Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+
+            <!--
+                Use the dependency plugin to copy the OpenJPA runtime
+                to the target directory.
+            -->
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.apache.openjpa</groupId>
+                                    <artifactId>openjpa</artifactId>
+                                    <version>${openjpa.version}</version>
+                                    <outputDirectory>${project.build.directory}</outputDirectory>
+                                    <destFileName>openjpa.jar</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--
+                Configure the Surefire plugin to run all JPA unit tests
+                with the OpenJPA javaagent enabled
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <forkMode>pertest</forkMode>
+                    <argLine>-javaagent:${basedir}/target/openjpa.jar</argLine>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <version>1.5</version>
+                <configuration>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                    <outputDirectory>${project.build.directory}/jaxb2/transformed/generated-schema</outputDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+
+        <profile>
+            <id>eclipselink2</id>
+            <activation>
+                <property>
+                    <name>jpaSpec</name>
+                    <value>eclipselink2</value>
+                </property>
+            </activation>
+
+            <properties>
+                <jpa.provider.class>org.eclipse.persistence.jpa.PersistenceProvider</jpa.provider.class>
+            </properties>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.eclipse.persistence</groupId>
+                    <artifactId>javax.persistence</artifactId>
+                    <version>2.0.0</version>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.eclipse.persistence</groupId>
+                    <artifactId>eclipselink</artifactId>
+                    <version>2.3.0</version>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>openjpa1</id>
+            <activation>
+                <property>
+                    <name>jpaSpec</name>
+                    <value>openjpa1</value>
+                </property>
+            </activation>
+
+            <properties>
+                <openjpa.version>2.2.0</openjpa.version>
+                <jpa.provider.class>org.apache.openjpa.persistence.PersistenceProviderImpl</jpa.provider.class>
+            </properties>
+
+            <dependencies>
+                <dependency>
+                    <groupId>javax.persistence</groupId>
+                    <artifactId>persistence-api</artifactId>
+                    <version>1.0</version>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
+
+            <build>
+                <plugins>
+
+                    <!--
+                        OpenJPA static enhancement.
+                    -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>openjpa-maven-plugin</artifactId>
+                        <version>1.2</version>
+                        <configuration>
+                            <includes>se/jguru/nazgul/**/*.class</includes>
+                            <addDefaultConstructor>true</addDefaultConstructor>
+                            <enforcePropertyRestrictions>true</enforcePropertyRestrictions>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>enhancer</id>
+                                <phase>process-classes</phase>
+                                <goals>
+                                    <goal>enhance</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.openjpa</groupId>
+                                <artifactId>openjpa</artifactId>
+                                <version>${openjpa.version}</version>
+                            </dependency>
+                        </dependencies>
+
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>openjpa2</id>
+
+            <activation>
+                <property>
+                    <name>jpaSpec</name>
+                    <value>openjpa2</value>
+                </property>
+            </activation>
+
+            <properties>
+                <openjpa.version>2.1.1</openjpa.version>
+                <jpa.provider.class>org.apache.openjpa.persistence.PersistenceProviderImpl</jpa.provider.class>
+            </properties>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-jpa_2.0_spec</artifactId>
+                    <version>1.1</version>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
+
+            <build>
+                <plugins>
+                    <!--
+                        OpenJPA static enhancement.
+                    -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>openjpa-maven-plugin</artifactId>
+                        <version>1.2</version>
+                        <configuration>
+                            <includes>se/jguru/nazgul/**/*.class</includes>
+                            <excludes>org/forodrim/intranet/model/EntityWrapper.class</excludes>
+                            <addDefaultConstructor>true</addDefaultConstructor>
+                            <enforcePropertyRestrictions>true</enforcePropertyRestrictions>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>enhancer</id>
+                                <phase>process-classes</phase>
+                                <goals>
+                                    <goal>enhance</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.openjpa</groupId>
+                                <artifactId>openjpa</artifactId>
+                                <version>${openjpa.version}</version>
+                            </dependency>
+                        </dependencies>
+
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <!--
+    ################################################
+    # Section 4:  External systems
+    ################################################
+    -->
+    <scm>
+        <developerConnection>scm:hg:file://${basedir}/../../../</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+</project>

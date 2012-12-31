@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) jGuru Europe AB.
+  ~ All rights reserved.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+    ################################################
+    # Section 1:  Project information
+    ################################################
+    -->
+    <parent>
+        <groupId>se.jguru.nazgul.core.poms.model-parent</groupId>
+        <artifactId>nazgul-core-model-parent</artifactId>
+        <version>1.0.1-SNAPSHOT</version>
+        <relativePath>../../poms/model-parent/pom.xml</relativePath>
+    </parent>
+
+    <groupId>se.jguru.nazgul.core.clustering.model</groupId>
+    <artifactId>nazgul-core-clustering-model</artifactId>
+    <version>1.0.1-SNAPSHOT</version>
+    <name>${project.groupId}.${project.artifactId}</name>
+    <packaging>bundle</packaging>
+
+    <!--
+    ################################################
+    # Section 2:  Dependency (management) settings
+    ################################################
+    -->
+    <dependencies>
+        <!-- Internal dependencies. -->
+        <dependency>
+            <groupId>se.jguru.nazgul.core.persistence.model</groupId>
+            <artifactId>nazgul-core-persistence-model</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <!-- External dependencies. -->
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jms_1.1_spec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jpa_2.0_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <!--
+    ################################################
+    # Section 3:  Build settings
+    ################################################
+    -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.openjpa</groupId>
+                <artifactId>openjpa-maven-plugin</artifactId>
+                <version>${openjpa.version}</version>
+                <executions>
+                    <execution>
+                        <id>enhancer</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>enhance</goal>
+                        </goals>
+                        <configuration>
+                            <includes>**/*.class</includes>
+                            <persistenceXmlFile>${basedir}/src/main/weaving/openjpa/persistence-model-persistence.xml
+                            </persistenceXmlFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>test-enchancer</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>test-enhance</goal>
+                        </goals>
+                        <configuration>
+                            <includes>**/*.class</includes>
+                            <persistenceXmlFile>
+                                ${basedir}/src/test/weaving/openjpa/persistence-model-test-persistence.xml
+                            </persistenceXmlFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Export-Package>{local-packages}</Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generateXsd</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>schemagen</goal>
+                        </goals>
+                        <configuration>
+                            <transformSchemas>
+                                <transformSchema>
+                                    <uri>http://www.jguru.se/nazgul/core</uri>
+                                    <toPrefix>core</toPrefix>
+                                    <toFile>core_messaging_model.xsd</toFile>
+                                </transformSchema>
+                            </transformSchemas>
+                            <includes>
+                                <include>se/jguru/nazgul/**/*.java</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <scm>
+        <developerConnection>scm:hg:file://${basedir}/../../../</developerConnection>
+    </scm>
+</project>

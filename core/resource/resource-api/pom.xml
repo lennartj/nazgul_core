@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+    ################################################
+    # Section 1:  Project information
+    ################################################
+    -->
+    <parent>
+        <groupId>se.jguru.nazgul.core.poms.core-parent</groupId>
+        <artifactId>nazgul-core-parent</artifactId>
+        <version>1.4.1-SNAPSHOT</version>
+        <relativePath>../../poms/core-parent</relativePath>
+    </parent>
+
+    <groupId>se.jguru.nazgul.core.resource.api</groupId>
+    <artifactId>nazgul-core-resource-api</artifactId>
+    <version>1.4.1-SNAPSHOT</version>
+    <name>${project.groupId}.${project.artifactId}</name>
+    <packaging>bundle</packaging>
+
+    <!--
+    ################################################
+    # Section 2:  Dependency (management) settings
+    ################################################
+    -->
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>se.jguru.nazgul.core.algorithms.api</groupId>
+            <artifactId>nazgul-core-algorithms-api</artifactId>
+            <version>1.4.1-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <!--
+    ################################################
+    # Section 3:  Build settings
+    ################################################
+    -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Export-Package>{local-packages}</Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>${cobertura.plugin.version}</version>
+                <configuration>
+                    <instrumentation>
+                        <includes>
+                            <include>se/jguru/nazgul/**/*.class</include>
+                        </includes>
+                        <excludes>
+
+                            <!-- Don't check Exception classes -->
+                            <exclude>se/jguru/nazgul/**/*Exception.class</exclude>
+
+                        </excludes>
+                    </instrumentation>
+                    <check>
+                        <branchRate>65</branchRate>
+                        <lineRate>80</lineRate>
+                        <haltOnFailure>true</haltOnFailure>
+                        <regexes>
+                            <regex>
+                                <pattern>se.jguru.nazgul.core.resource.api.version.MavenVersionExtractor</pattern>
+                                <branchRate>65</branchRate>
+                                <lineRate>70</lineRate>
+                            </regex>
+                        </regexes>
+                    </check>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <scm>
+        <developerConnection>scm:hg:file://${basedir}/../../../</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+</project>

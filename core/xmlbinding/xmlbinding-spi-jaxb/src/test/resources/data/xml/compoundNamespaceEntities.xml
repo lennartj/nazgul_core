@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<core:entityTransporter xmlns:drink="http://some/good/beverage" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:foo="http://www.jguru.se/foo" xmlns:core="http://www.jguru.se/nazgul/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <entityClasses>
+        <entityClass>java.lang.String</entityClass>
+        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Beverage</entityClass>
+        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Foo</entityClass>
+        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Person</entityClass>
+        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter</entityClass>
+    </entityClasses>
+    <items>
+        <item xsi:type="drink:beverage">
+            <name>Chimay Bleue</name>
+        </item>
+        <item xsi:type="xs:string">FooBar!</item>
+        <item xsi:type="core:person" age="42">
+            <name>Lennart</name>
+        </item>
+        <item xsi:type="foo:foo">
+            <name>Bar!</name>
+        </item>
+    </items>
+</core:entityTransporter>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<core:entityTransporter xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="http://www.jguru.se/nazgul/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <entityClasses>
+        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Account</entityClass>
+        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter</entityClass>
+    </entityClasses>
+    <items>
+        <item xsi:type="core:account" incorrectAttribute="42.42">
+            <name>SavingsAccount</name>
+        </item>
+    </items>
+</core:entityTransporter>
+
