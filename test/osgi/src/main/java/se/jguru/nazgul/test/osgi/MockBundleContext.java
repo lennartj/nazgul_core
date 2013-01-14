@@ -92,20 +92,9 @@ public class MockBundleContext implements BundleContext {
     }
 
     /**
-     * Returns the value of the specified property. If the key is not found in
-     * the Framework properties, the system properties are then searched. The
-     * method returns {@code null} if the property is not found.
+     * Searches only properties defined within the MockBundleContext.
      * <p/>
-     * <p/>
-     * All bundles must have permission to read properties whose names start
-     * with &quot;org.osgi.&quot;.
-     *
-     * @param key The name of the requested property.
-     * @return The value of the requested property, or {@code null} if the
-     *         property is undefined.
-     * @throws SecurityException If the caller does not have the appropriate
-     *                           {@code PropertyPermission} to read the property, and the Java
-     *                           Runtime Environment supports permissions.
+     * {@inheritDoc}
      */
     @Override
     public String getProperty(final String key) {
@@ -113,12 +102,9 @@ public class MockBundleContext implements BundleContext {
     }
 
     /**
-     * Returns the {@code Bundle} object associated with this
-     * {@code BundleContext}. This bundle is called the context bundle.
-     *
-     * @return The {@code Bundle} object associated with this
-     *         {@code BundleContext}.
-     * @throws IllegalStateException If this BundleContext is no longer valid.
+     * Retrieves the internal Bundle.
+     * <p/>
+     * {@inheritDoc}
      */
     @Override
     public Bundle getBundle() {
