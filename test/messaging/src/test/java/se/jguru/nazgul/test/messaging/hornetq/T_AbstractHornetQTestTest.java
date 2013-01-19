@@ -79,9 +79,5 @@ public class T_AbstractHornetQTestTest {
         Assert.assertNotNull(session);
         Assert.assertNotNull(requestProducer);
         Assert.assertNotNull(message);
-
-        for(String current : Collections.list(((Enumeration<String>) message.getPropertyNames()))) {
-            System.out.println("[" + current + "]");
-        }
     }
 }

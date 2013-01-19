@@ -206,19 +206,4 @@ public class HornetQBroker implements MessageBroker {
     public String getName() {
         return jmsServer.getHornetQServer().getIdentity();
     }
-
-    //
-    // Private helpers
-    //
-
-    /*
-    private void createManualConnectionFactory() {
-
-        TransportConfiguration transportConfiguration = new TransportConfiguration(
-                NettyConnectorFactory.class.getName());
-        HornetQConnectionFactory cf = HornetQJMSClient.createConnectionFactoryWithoutHA(JMSFactoryType.CF,
-                transportConfiguration);
-
-    }
-    */
 }
