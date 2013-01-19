@@ -21,7 +21,7 @@ public abstract class AbstractHornetQTest extends AbstractJmsTest {
      * @param transactedOperation {@code true} if the HornetQBroker is transactional,
      *                            and {@code false} otherwise.
      */
-    public AbstractHornetQTest(boolean transactedOperation) {
+    public AbstractHornetQTest(final boolean transactedOperation) {
         this(transactedOperation, new HornetQBroker());
     }
 
