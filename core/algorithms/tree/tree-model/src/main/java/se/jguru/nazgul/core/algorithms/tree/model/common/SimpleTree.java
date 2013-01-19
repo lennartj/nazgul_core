@@ -21,19 +21,19 @@ import java.util.List;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid, jGuru Europe AB</a>
  */
-public class SimpleTree<ValueType extends Serializable, KeyType extends Serializable & Comparable<KeyType>>
-        implements MutableTree<ValueType, KeyType>, Serializable {
+public class SimpleTree<KeyType extends Serializable & Comparable<KeyType>, ValueType extends Serializable>
+        implements MutableTree<KeyType, ValueType>, Serializable {
 
     // Internal state
     private final Object lock = new Object();
-    private MutableNode<ValueType, KeyType> root;
+    private MutableNode<KeyType, ValueType> root;
 
     /**
      * Creates a SimpleTree instance with the provided root node.
      *
      * @param root The root node within the tree.
      */
-    public SimpleTree(final MutableNode<ValueType, KeyType> root) {
+    public SimpleTree(final MutableNode<KeyType, ValueType> root) {
 
         // Check sanity
         Validate.notNull(root, "Cannot handle null root argument.");
@@ -46,20 +46,20 @@ public class SimpleTree<ValueType extends Serializable, KeyType extends Serializ
      * {@inheritDoc}
      */
     @Override
-    public MutableNode<ValueType, KeyType> setRoot(final MutableNode<ValueType, KeyType> root)
+    public MutableNode<KeyType, ValueType> setRoot(final MutableNode<KeyType, ValueType> root)
             throws IllegalArgumentException {
 
         // Check sanity
         Validate.notNull(root, "Cannot handle null root argument.");
 
         // Assign internal state
-        MutableNode<ValueType, KeyType> oldRoot = this.root;
+        MutableNode<KeyType, ValueType> oldRoot = this.root;
 
         // Ensure all children can be moved.
-        List<MutableNode<ValueType, KeyType>> mutableChildren = new ArrayList<MutableNode<ValueType, KeyType>>();
-        for (Node<ValueType, KeyType> current : oldRoot.getChildren()) {
+        List<MutableNode<KeyType, ValueType>> mutableChildren = new ArrayList<MutableNode<KeyType, ValueType>>();
+        for (Node<KeyType, ValueType> current : oldRoot.getChildren()) {
             if (current instanceof MutableNode) {
-                mutableChildren.add((MutableNode<ValueType, KeyType>) current);
+                mutableChildren.add((MutableNode<KeyType, ValueType>) current);
             } else {
                 throw new IllegalStateException("Existing child [" + current + "] was not a MutableNode, " +
                         "so cannot be moved from old root node [" + oldRoot + "]. Aborting setRoot.");
@@ -68,7 +68,7 @@ public class SimpleTree<ValueType extends Serializable, KeyType extends Serializ
 
         // Move the children from oldRoot to newRoot
         synchronized (lock) {
-            for (MutableNode<ValueType, KeyType> current : mutableChildren) {
+            for (MutableNode<KeyType, ValueType> current : mutableChildren) {
                 root.addChild(current);
             }
 
@@ -84,7 +84,7 @@ public class SimpleTree<ValueType extends Serializable, KeyType extends Serializ
      * @return The root node of this tree.
      */
     @Override
-    public MutableNode<ValueType, KeyType> getRoot() {
+    public MutableNode<KeyType, ValueType> getRoot() {
         return root;
     }
 
@@ -96,7 +96,7 @@ public class SimpleTree<ValueType extends Serializable, KeyType extends Serializ
      * @return The Node at the provided path, or {@code null} if no node was found.
      */
     @Override
-    public <X extends Node<ValueType, KeyType>> X get(final Path<KeyType> path) {
+    public <X extends Node<KeyType, ValueType>> X get(final Path<KeyType> path) {
 
         // Check sanity
         Validate.notNull(path, "Cannot handle null path argument.");
@@ -105,10 +105,10 @@ public class SimpleTree<ValueType extends Serializable, KeyType extends Serializ
             return null;
         }
 
-        Node<ValueType, KeyType> currentNode = getRoot();
+        Node<KeyType, ValueType> currentNode = getRoot();
         for (int depth = 1; depth < path.size(); depth++) {
 
-            final Node<ValueType, KeyType> child = findChild(currentNode, path.get(depth));
+            final Node<KeyType, ValueType> child = findChild(currentNode, path.get(depth));
 
             if (child == null) {
                 currentNode = null;
@@ -126,9 +126,9 @@ public class SimpleTree<ValueType extends Serializable, KeyType extends Serializ
     // Private helpers
     //
 
-    private Node<ValueType, KeyType> findChild(final Node<ValueType, KeyType> node, final KeyType key) {
+    private Node<KeyType, ValueType> findChild(final Node<KeyType, ValueType> node, final KeyType key) {
 
-        for (Node<ValueType, KeyType> current : node.getChildren()) {
+        for (Node<KeyType, ValueType> current : node.getChildren()) {
             if (current.getKey().equals(key)) {
                 return current;
             }

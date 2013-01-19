@@ -15,7 +15,17 @@ import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationExc
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.CollectionTable;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.MapKey;
+import javax.persistence.MapKeyEnumerated;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -45,12 +55,15 @@ public class EnumMapPath<E extends Enum<E>, SegmentType extends Serializable & C
 
     // Internal state
     @XmlTransient
+    @Transient
     private E[] enumConstants;
 
     @XmlAttribute(required = true)
     private Class<E> enumType;
 
     @XmlJavaTypeAdapter(EnumMapTypeConverter.class)
+    @OneToMany
+    @MapKeyEnumerated(EnumType.STRING)
     private EnumMap<E, SegmentType> mapPathSegments;
 
     /**

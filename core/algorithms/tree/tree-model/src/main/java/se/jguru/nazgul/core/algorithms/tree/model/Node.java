@@ -21,18 +21,18 @@ import java.util.List;
  * @param <KeyType>   The type for the keys of this Node.
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public interface Node<ValueType extends Serializable, KeyType extends Serializable & Comparable<KeyType>>
-        extends Comparable<Node<ValueType, KeyType>>, Serializable {
+public interface Node<KeyType extends Serializable & Comparable<KeyType>, ValueType extends Serializable>
+        extends Comparable<Node<KeyType, ValueType>>, Serializable {
 
     /**
      * @return An unmodifiable List holding the immediate child nodes of this Node.
      */
-    <X extends Node<ValueType, KeyType>> List<X> getChildren();
+    <X extends Node<KeyType, ValueType>> List<X> getChildren();
 
     /**
      * @return The parent of this Node.
      */
-    <X extends Node<ValueType, KeyType>> X getParent();
+    <X extends Node<KeyType, ValueType>> X getParent();
 
     /**
      * @return The data of this Node.
