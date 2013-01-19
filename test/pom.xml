@@ -31,6 +31,7 @@
     -->
     <modules>
         <module>osgi</module>
+        <module>messaging</module>
     </modules>
 
     <scm>
