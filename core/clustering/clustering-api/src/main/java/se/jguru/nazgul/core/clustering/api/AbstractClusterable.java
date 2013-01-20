@@ -79,6 +79,15 @@ public abstract class AbstractClusterable implements Clusterable {
     }
 
     /**
+     * Retrieves the assigned IdGenerator, or {@code null} if none is assigned.
+     *
+     * @return the assigned IdGenerator, or {@code null} if none is assigned.
+     */
+    protected final IdGenerator getIdGenerator() {
+        return idGenerator;
+    }
+
+    /**
      * @return a debug string representation of this AbstractClusterable.
      */
     @Override
