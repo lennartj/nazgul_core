@@ -25,8 +25,9 @@
 
     Subdirectories can be specified below the property e.g. java.io.tmpdir/one
 
+    <diskStore path="java.io.tmpdir"/>
     -->
-    <diskStore path="java.io.tmpdir/unitTests/cacheImplEhCache"/>
+    <diskStore path="${dir:uniqueSubTarget}"/>
 
     <!--
     Mandatory Default Cache configuration. These settings will be applied to caches

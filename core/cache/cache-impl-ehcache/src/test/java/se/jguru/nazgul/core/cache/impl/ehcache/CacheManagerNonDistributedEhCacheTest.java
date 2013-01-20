@@ -6,7 +6,9 @@
 package se.jguru.nazgul.core.cache.impl.ehcache;
 
 import net.sf.ehcache.CacheManager;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.Serializable;
@@ -16,13 +18,25 @@ import java.io.Serializable;
  */
 public class CacheManagerNonDistributedEhCacheTest {
 
+    // Shared state
+    private CacheManager cacheManager;
+
+    @Before
+    public void setupCacheManager() {
+        final String config = "ehcache/config/LocalHostUnitTestStandaloneConfig.xml";
+        cacheManager = AbstractCacheTest.getTokenizedCacheManager(config);
+    }
+
+    @After
+    public void shutdownCacheManager() {
+        cacheManager.shutdown();
+    }
+
     @Test
     public void validateLifecycleUsingPredefinedCacheManager() {
 
         // Assemble
-        final String config = "ehcache/config/LocalHostUnitTestStandaloneConfig.xml";
-        final CacheManager mgr = NonDistributedEhCache.getCacheManager(config);
-        final NonDistributedEhCache unitUnderTest = new NonDistributedEhCache(mgr);
+        final NonDistributedEhCache unitUnderTest = new NonDistributedEhCache(cacheManager);
         final String key = "key";
 
         // Act
