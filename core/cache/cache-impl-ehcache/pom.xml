@@ -41,6 +41,12 @@
             <artifactId>nazgul-core-cache-api</artifactId>
             <version>1.4.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>se.jguru.nazgul.core.parser.api</groupId>
+            <artifactId>nazgul-core-parser-api</artifactId>
+            <version>1.4.1-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
 
         <!-- External dependencies -->
         <dependency>

@@ -59,7 +59,7 @@ public class HostNameParserAgent extends AbstractParserAgent {
      * @return The replacement value.
      */
     @Override
-    protected String performDynamicReplacement(String token) {
+    protected String performDynamicReplacement(final String token) {
 
         final InetAddress localhost = getLocalhostNonLoopbackAddress();
 
