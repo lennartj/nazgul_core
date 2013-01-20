@@ -30,7 +30,6 @@
     ################################################
     -->
     <modules>
-        <!-- module>clustering-model</module -->
         <module>clustering-api</module>
     </modules>
 
