@@ -5,13 +5,21 @@
 
 package se.jguru.nazgul.core.cache.impl.ehcache;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class EhCacheClusterIdGeneratorTest {
+public class EhCacheClusterIdGeneratorTest extends AbstractCacheTest {
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getEhCacheConfiguration() {
+        return "ehcache/config/LocalHostUnitTestStandaloneConfig.xml";
+    }
 
     @Test(expected = NullPointerException.class)
     public void validateNullPointerExceptionIfNotSettingCacheCluster() {
@@ -29,10 +37,14 @@ public class EhCacheClusterIdGeneratorTest {
 
         // Assemble
         final EhCacheClusterIdGenerator unitUnderTest = new EhCacheClusterIdGenerator();
-        // unitUnderTest.setCacheManager();
+        unitUnderTest.setCacheManager(getCache().getCacheInstance().getCacheManager());
 
-        // Act & Assert
-        Assert.assertFalse(unitUnderTest.isIdentifierAvailable());
-        unitUnderTest.getIdentifier();
+        // Act
+        Assert.assertTrue(unitUnderTest.isIdentifierAvailable());
+        final String identifier = unitUnderTest.getIdentifier();
+
+        // Assert
+        Assert.assertNotNull(identifier);
+        Assert.assertEquals(getCache().getId(), identifier);
     }
 }

@@ -4,11 +4,6 @@
   ~ All rights reserved.
   -->
 
-<!--
-  ~ Copyright (c) jGuru Europe AB.
-  ~ All rights reserved.
-  -->
-
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="1.7">
 
     <xs:element name="ehcache">
