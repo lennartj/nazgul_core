@@ -16,6 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class MockIdGenerator implements IdGenerator {
 
+    public boolean idAvailable = true;
     public List<String> callTrace = new ArrayList<String>();
     public static AtomicInteger counter = new AtomicInteger(0);
 
@@ -27,6 +28,16 @@ public class MockIdGenerator implements IdGenerator {
         Validate.notEmpty(prefix, "Cannot handle null or empty prefix.");
         this.prefix = prefix;
         index = counter.incrementAndGet();
+    }
+
+    /**
+     * @return {@code true} if this IdGenerator can deliver an identifier
+     *         at the time of this method being called, and {@code false}
+     *         otherwise.
+     */
+    @Override
+    public boolean isIdentifierAvailable() {
+        return idAvailable;
     }
 
     /**

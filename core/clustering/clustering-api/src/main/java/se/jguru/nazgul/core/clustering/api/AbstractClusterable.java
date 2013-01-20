@@ -24,6 +24,7 @@ import java.util.UUID;
 public abstract class AbstractClusterable implements Clusterable {
 
     // Internal state
+    private IdGenerator idGenerator;
     String id;
 
     /**
@@ -35,7 +36,13 @@ public abstract class AbstractClusterable implements Clusterable {
     protected AbstractClusterable(final IdGenerator idGenerator) {
 
         // Check sanity and assign internal state
-        id = (idGenerator == null ? UUID.randomUUID().toString() : idGenerator.getIdentifier());
+        if(idGenerator == null) {
+            this.id = UUID.randomUUID().toString();
+        } else if(idGenerator.isIdentifierAvailable()) {
+            this.id = idGenerator.getIdentifier();
+        } else {
+            this.idGenerator = idGenerator;
+        }
     }
 
     /**
@@ -55,7 +62,20 @@ public abstract class AbstractClusterable implements Clusterable {
      */
     @Override
     public String getId() {
-        return id;
+
+        if(id == null && idGenerator != null) {
+            if(idGenerator.isIdentifierAvailable()) {
+                id = idGenerator.getIdentifier();
+            }
+        }
+
+        if(id != null) {
+            return id;
+        }
+
+        // This should not happen.
+        final String idGeneratorType = idGenerator == null ? "<none>" : idGenerator.getClass().getSimpleName();
+        throw new IllegalStateException("Cannot acquire ID; idGenerator [" + idGeneratorType + "] cannot generate ID.");
     }
 
     /**
