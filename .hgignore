@@ -12,9 +12,9 @@ target/
 # and generated for the corresponding IDEs.
 #
 .idea/
-*.iws
-*.ipr
-*.iml
+**.iws
+**.ipr
+**.iml
 .project/
 .metadata/
 .settings/
