@@ -32,6 +32,7 @@
     <modules>
         <module>cache-api</module>
         <module>cache-impl-hazelcast</module>
+        <module>cache-impl-ehcache</module>
     </modules>
 
     <scm>
