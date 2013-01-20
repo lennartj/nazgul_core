@@ -18,4 +18,11 @@ public interface IdGenerator extends Serializable {
      * @return A (cluster-)unique identifier for each call.
      */
     String getIdentifier();
+
+    /**
+     * @return {@code true} if this IdGenerator can deliver an identifier
+     *         at the time of this method being called, and {@code false}
+     *         otherwise.
+     */
+    boolean isIdentifierAvailable();
 }
