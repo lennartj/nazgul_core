@@ -62,28 +62,22 @@ public class EhCacheListenerAutonomousActionTest extends AbstractCacheTest {
             Assert.assertEquals("onPut [" + key + "_" + i + "]: " + value + "_" + i, callTrace.get(i + 1));
         }
 
-        for (int i = 0; i < callTrace.size(); i++) {
-            System.out.println("[" + i + "]: " + callTrace.get(i));
-        }
-        System.out.println("Last element assumed to be autoEvicted, on the form 'onAutonomousEvict [Nyckel_0]: null'");
-
         // The last element is expired, yielding a null value.
         Assert.assertTrue(onAutonomousEvictCalled3Times);
         Assert.assertTrue(callTrace.get(callTrace.size() - 1).startsWith("onAutonomousEvict [" + key + "_"));
         Assert.assertTrue(callTrace.get(callTrace.size() - 1).endsWith("]: null"));
 
-        System.out.println(listener.callStack);
-
-        // onPut [Nyckel_0]: åäöÅÄÖ_0,
-        // onPut [Nyckel_1]: åäöÅÄÖ_1,
-        // onPut [Nyckel_2]: åäöÅÄÖ_2,
-        // onPut [Nyckel_3]: åäöÅÄÖ_3,
-        // onPut [Nyckel_4]: åäöÅÄÖ_4,
-        // onPut [Nyckel_5]: åäöÅÄÖ_5,
-        // onAutonomousEvict [Nyckel_4]: null,
-        // onAutonomousEvict [Nyckel_5]: null,
-        // onAutonomousEvict [Nyckel_2]: null,
-        // onAutonomousEvict [Nyckel_3]: null
+        /*
+         * onPut [Nyckel_0]: åäöÅÄÖ_0,
+         * onPut [Nyckel_1]: åäöÅÄÖ_1,
+         * onPut [Nyckel_2]: åäöÅÄÖ_2,
+         * onPut [Nyckel_3]: åäöÅÄÖ_3,
+         * onPut [Nyckel_4]: åäöÅÄÖ_4,
+         * onPut [Nyckel_5]: åäöÅÄÖ_5,
+         * onAutonomousEvict [Nyckel_4]: null,
+         * onAutonomousEvict [Nyckel_5]: null,
+         * onAutonomousEvict [Nyckel_2]: null
+         */
     }
 
     @Test

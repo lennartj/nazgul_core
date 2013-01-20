@@ -5,6 +5,8 @@
 
 package se.jguru.nazgul.core.cache.impl.ehcache;
 
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.hibernate.EhCache;
 import org.junit.After;
 import org.junit.Before;
 
@@ -35,5 +37,7 @@ public abstract class AbstractCacheTest {
     @After
     public void shutdownLocalEhCache() {
         NonDistributedEhCache.shutdownCache(cache);
+
+        CacheManager.getInstance().shutdown();
     }
 }
