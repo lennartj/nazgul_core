@@ -18,6 +18,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * JAXB-compliant transport type for an {@code EnumMap}.
@@ -58,8 +59,9 @@ public class JaxbAnnotatedEnumMap<E extends Enum<E>> implements Serializable {
         // Assign internal state
         this.enumType = enumType;
         values = new ArrayList();
-        for (E current : value.keySet()) {
-            values.add(value.get(current));
+
+        for (Map.Entry<E, ?> current : value.entrySet()) {
+            values.add(current.getValue());
         }
     }
 

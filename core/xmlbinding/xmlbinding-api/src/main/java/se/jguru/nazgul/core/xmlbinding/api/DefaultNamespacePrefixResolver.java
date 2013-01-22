@@ -78,20 +78,18 @@ public class DefaultNamespacePrefixResolver implements NamespacePrefixResolver {
         synchronized (lock) {
 
             // Validate the provided xmlUri2PrefixMap
-            for (String current : xmlUri2PrefixMap.keySet()) {
+            for(Map.Entry<String, String> current : xmlUri2PrefixMap.entrySet()) {
 
                 // Check sanity
-                Validate.notEmpty(current, "Cannot handle null or empty xmlNamespaceUri.");
+                Validate.notEmpty(current.getKey(), "Cannot handle null or empty xmlNamespaceUri.");
+                Validate.notEmpty(current.getValue(), "Cannot handle null or empty prefix.");
 
-                final String currentPrefix = xmlUri2PrefixMap.get(current);
-                Validate.notEmpty(currentPrefix, "Cannot handle null or empty prefix.");
-
-                validateNotRegistered(current, currentPrefix);
+                validateNotRegistered(current.getKey(), current.getValue());
             }
 
             // Add all key <-> value entries
-            for (String current : xmlUri2PrefixMap.keySet()) {
-                put(current, xmlUri2PrefixMap.get(current));
+            for(Map.Entry<String, String> current : xmlUri2PrefixMap.entrySet()) {
+                put(current.getKey(), current.getValue());
             }
         }
     }

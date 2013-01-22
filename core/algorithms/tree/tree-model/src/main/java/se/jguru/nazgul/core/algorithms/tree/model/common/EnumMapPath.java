@@ -15,14 +15,8 @@ import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationExc
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
-import javax.persistence.CollectionTable;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.MapKey;
 import javax.persistence.MapKeyEnumerated;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
@@ -39,6 +33,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Semantic Path implementation using an Enum to define the semantic meaning of
@@ -94,8 +89,8 @@ public class EnumMapPath<E extends Enum<E>, SegmentType extends Serializable & C
         this.mapPathSegments = TreeAlgorithms.getEmptyEnumMap(enumType);
         this.enumConstants = enumType.getEnumConstants();
 
-        for (E current : segments.keySet()) {
-            this.mapPathSegments.put(current, segments.get(current));
+        for(Map.Entry<E, SegmentType> current : segments.entrySet()) {
+            this.mapPathSegments.put(current.getKey(), current.getValue());
         }
 
         // Check sanity

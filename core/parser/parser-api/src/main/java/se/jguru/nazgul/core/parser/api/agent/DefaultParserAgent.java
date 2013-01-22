@@ -44,8 +44,8 @@ public class DefaultParserAgent extends AbstractParserAgent {
     public DefaultParserAgent(final Map<String, String> staticTokens) {
 
         if (staticTokens != null) {
-            for (String current : staticTokens.keySet()) {
-                addStaticReplacement(current, staticTokens.get(current));
+            for(Map.Entry<String, String> current : staticTokens.entrySet()) {
+                addStaticReplacement(current.getKey(), current.getValue());
             }
         }
 
