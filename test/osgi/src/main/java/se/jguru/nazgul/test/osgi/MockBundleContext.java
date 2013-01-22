@@ -245,7 +245,7 @@ public class MockBundleContext implements BundleContext {
      *         not match any installed bundle.
      */
     @Override
-    public Bundle getBundle(long id) {
+    public Bundle getBundle(final long id) {
         return bundles.get(id);
     }
 
@@ -332,7 +332,7 @@ public class MockBundleContext implements BundleContext {
      * @see #addServiceListener(org.osgi.framework.ServiceListener, String)
      */
     @Override
-    public void addServiceListener(ServiceListener listener) {
+    public void addServiceListener(final ServiceListener listener) {
 
         // Create a cluster-unique id
         final ServiceListenerAdapter adapter = new ServiceListenerAdapter(
@@ -356,7 +356,7 @@ public class MockBundleContext implements BundleContext {
      * @throws IllegalStateException If this BundleContext is no longer valid.
      */
     @Override
-    public void removeServiceListener(ServiceListener listener) {
+    public void removeServiceListener(final ServiceListener listener) {
 
         // Re-create the ServiceListenerAdapter instance.
         final ServiceListenerAdapter adapter = new ServiceListenerAdapter(
@@ -387,7 +387,7 @@ public class MockBundleContext implements BundleContext {
      * @see org.osgi.framework.BundleListener
      */
     @Override
-    public void addBundleListener(BundleListener listener) {
+    public void addBundleListener(final BundleListener listener) {
 
         final BundleListenerAdapter toAdd = new BundleListenerAdapter(
                 "BundleListener_" + listener.hashCode(),
@@ -413,7 +413,7 @@ public class MockBundleContext implements BundleContext {
      *                               and the Java Runtime Environment supports permissions.
      */
     @Override
-    public void removeBundleListener(BundleListener listener) {
+    public void removeBundleListener(final BundleListener listener) {
 
         final BundleListenerAdapter toRemove = new BundleListenerAdapter(
                 "BundleListener_" + listener.hashCode(),
@@ -438,7 +438,7 @@ public class MockBundleContext implements BundleContext {
      * @see org.osgi.framework.FrameworkListener
      */
     @Override
-    public void addFrameworkListener(FrameworkListener listener) {
+    public void addFrameworkListener(final FrameworkListener listener) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
@@ -454,7 +454,7 @@ public class MockBundleContext implements BundleContext {
      * @throws IllegalStateException If this BundleContext is no longer valid.
      */
     @Override
-    public void removeFrameworkListener(FrameworkListener listener) {
+    public void removeFrameworkListener(final FrameworkListener listener) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
@@ -544,7 +544,7 @@ public class MockBundleContext implements BundleContext {
 
         Integer serviceRanking = (Integer) properties.get(Constants.SERVICE_RANKING);
         if (serviceRanking == null) {
-            serviceRanking = new Integer(0);
+            serviceRanking = 0;
         }
 
         final MockServiceReference reference = new MockServiceReference(bundle,
@@ -614,7 +614,9 @@ public class MockBundleContext implements BundleContext {
      * @see #registerService(String[], Object, java.util.Dictionary)
      */
     @Override
-    public ServiceRegistration<?> registerService(String clazz, Object service, Dictionary<String, ?> properties) {
+    public ServiceRegistration<?> registerService(final String clazz,
+                                                  final Object service,
+                                                  final Dictionary<String, ?> properties) {
         return registerService(new String[]{clazz}, service, properties);
     }
 
@@ -779,7 +781,9 @@ public class MockBundleContext implements BundleContext {
      * @since 1.3
      */
     @Override
-    public ServiceReference<?>[] getAllServiceReferences(String clazz, String filter) throws InvalidSyntaxException {
+    public ServiceReference<?>[] getAllServiceReferences(final String clazz,
+                                                         final String filter)
+            throws InvalidSyntaxException {
         return getServiceReferences(clazz, filter);
     }
 
@@ -815,7 +819,7 @@ public class MockBundleContext implements BundleContext {
      * @see #getServiceReferences(String, String)
      */
     @Override
-    public ServiceReference<?> getServiceReference(String clazz) {
+    public ServiceReference<?> getServiceReference(final String clazz) {
         return serviceReferences.get(clazz);
     }
 
@@ -850,7 +854,7 @@ public class MockBundleContext implements BundleContext {
      * @since 1.6
      */
     @Override
-    public <S> ServiceReference<S> getServiceReference(Class<S> clazz) {
+    public <S> ServiceReference<S> getServiceReference(final Class<S> clazz) {
         return (ServiceReference<S>) getServiceReference(clazz.getName());
     }
 
@@ -910,7 +914,7 @@ public class MockBundleContext implements BundleContext {
      * @since 1.6
      */
     @Override
-    public <S> Collection<ServiceReference<S>> getServiceReferences(Class<S> clazz, String filter)
+    public <S> Collection<ServiceReference<S>> getServiceReferences(final Class<S> clazz, final String filter)
             throws InvalidSyntaxException {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
@@ -977,7 +981,7 @@ public class MockBundleContext implements BundleContext {
      * @see org.osgi.framework.ServiceFactory
      */
     @Override
-    public <S> S getService(ServiceReference<S> reference) {
+    public <S> S getService(final ServiceReference<S> reference) {
         return (S) services.get(reference);
     }
 
@@ -1018,7 +1022,7 @@ public class MockBundleContext implements BundleContext {
      * @see org.osgi.framework.ServiceFactory
      */
     @Override
-    public boolean ungetService(ServiceReference<?> reference) {
+    public boolean ungetService(final ServiceReference<?> reference) {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
@@ -1045,7 +1049,7 @@ public class MockBundleContext implements BundleContext {
      * @throws IllegalStateException If this BundleContext is no longer valid.
      */
     @Override
-    public File getDataFile(String filename) {
+    public File getDataFile(final String filename) {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
@@ -1083,7 +1087,7 @@ public class MockBundleContext implements BundleContext {
      * @since 1.6
      */
     @Override
-    public Bundle getBundle(String location) {
+    public Bundle getBundle(final String location) {
         return bundle;
     }
 }

@@ -45,7 +45,7 @@ public class BundleListenerAdapter<T extends EventConsumer<T>>
      * @param event The {@code BundleEvent}.
      */
     @Override
-    public void bundleChanged(BundleEvent event) {
+    public void bundleChanged(final BundleEvent event) {
         delegate.bundleChanged(event);
     }
 
@@ -53,8 +53,8 @@ public class BundleListenerAdapter<T extends EventConsumer<T>>
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(T o) {
-        return new Integer(hashCode()).compareTo(o.hashCode());
+    public int compareTo(final T o) {
+        return Integer.valueOf(hashCode()).compareTo(o.hashCode());
     }
 
     /**

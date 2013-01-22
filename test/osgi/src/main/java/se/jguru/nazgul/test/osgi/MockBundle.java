@@ -257,7 +257,7 @@ public class MockBundle implements Bundle, Serializable {
 
         bundleContext.fireBundleEvent(new EventConsumerCallback<BundleListenerAdapter>() {
             @Override
-            public void onEvent(BundleListenerAdapter eventConsumer) {
+            public void onEvent(final BundleListenerAdapter eventConsumer) {
                 eventConsumer.bundleChanged(startEvent);
             }
         });
@@ -371,7 +371,7 @@ public class MockBundle implements Bundle, Serializable {
 
         bundleContext.fireBundleEvent(new EventConsumerCallback<BundleListenerAdapter>() {
             @Override
-            public void onEvent(BundleListenerAdapter eventConsumer) {
+            public void onEvent(final BundleListenerAdapter eventConsumer) {
                 eventConsumer.bundleChanged(stopEvent);
             }
         });

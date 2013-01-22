@@ -25,11 +25,13 @@ public interface Node<KeyType extends Serializable & Comparable<KeyType>, ValueT
         extends Comparable<Node<KeyType, ValueType>>, Serializable {
 
     /**
+     * @param <X> The Node subtype.
      * @return An unmodifiable List holding the immediate child nodes of this Node.
      */
     <X extends Node<KeyType, ValueType>> List<X> getChildren();
 
     /**
+     * @param <X> The Node subtype.
      * @return The parent of this Node.
      */
     <X extends Node<KeyType, ValueType>> X getParent();

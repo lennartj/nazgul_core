@@ -158,7 +158,7 @@ public class ListPath<SegmentType extends Serializable & Comparable<SegmentType>
      * {@inheritDoc}
      */
     @Override
-    public SegmentType get(int index) throws IndexOutOfBoundsException {
+    public SegmentType get(final int index) throws IndexOutOfBoundsException {
         return segments.get(index);
     }
 

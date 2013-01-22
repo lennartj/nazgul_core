@@ -215,7 +215,7 @@ public class MockServiceReference implements ServiceReference {
      * @since 1.3
      */
     @Override
-    public boolean isAssignableTo(Bundle bundle, String className) {
+    public boolean isAssignableTo(final Bundle bundle, final String className) {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
@@ -247,7 +247,7 @@ public class MockServiceReference implements ServiceReference {
      * @since 1.4
      */
     @Override
-    public int compareTo(Object reference) {
+    public int compareTo(final Object reference) {
 
         if (!(reference instanceof ServiceReference)) {
             throw new ClassCastException("Could not compare ServiceReference to ["
@@ -271,7 +271,7 @@ public class MockServiceReference implements ServiceReference {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(Object that) {
+    public boolean equals(final Object that) {
         return compareTo(that) == 0;
     }
 

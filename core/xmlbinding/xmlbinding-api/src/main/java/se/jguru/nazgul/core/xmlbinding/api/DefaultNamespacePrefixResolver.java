@@ -142,7 +142,9 @@ public class DefaultNamespacePrefixResolver implements NamespacePrefixResolver {
     // Private helpers
     //
 
-    private void validateNotRegistered(String xmlNamespaceUri, String xmlPrefix) throws IllegalArgumentException {
+    private void validateNotRegistered(final String xmlNamespaceUri,
+                                       final String xmlPrefix)
+            throws IllegalArgumentException {
 
         final String presentPrefix = url2PrefixMap.get(xmlNamespaceUri);
         final String presentNamespaceUri = prefix2UrlMap.get(xmlPrefix);

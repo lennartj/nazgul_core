@@ -61,8 +61,8 @@ public class SimpleTree<KeyType extends Serializable & Comparable<KeyType>, Valu
             if (current instanceof MutableNode) {
                 mutableChildren.add((MutableNode<KeyType, ValueType>) current);
             } else {
-                throw new IllegalStateException("Existing child [" + current + "] was not a MutableNode, " +
-                        "so cannot be moved from old root node [" + oldRoot + "]. Aborting setRoot.");
+                throw new IllegalStateException("Existing child [" + current + "] was not a MutableNode, "
+                        + "so cannot be moved from old root node [" + oldRoot + "]. Aborting setRoot.");
             }
         }
 

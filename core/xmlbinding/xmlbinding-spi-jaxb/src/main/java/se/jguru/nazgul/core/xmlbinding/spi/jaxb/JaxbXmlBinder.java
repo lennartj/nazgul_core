@@ -97,7 +97,8 @@ public class JaxbXmlBinder implements XmlBinder<Object> {
      *                                  that did not pass validation.
      */
     @Override
-    public String marshal(Object... toConvert) throws IllegalArgumentException, InternalStateValidationException {
+    public String marshal(final Object... toConvert)
+            throws IllegalArgumentException, InternalStateValidationException {
 
         // Create an EntityTransporter holding all given objects.
         final EntityTransporter<Object> transporter = new EntityTransporter<Object>();
@@ -180,13 +181,14 @@ public class JaxbXmlBinder implements XmlBinder<Object> {
      *
      * @param transportReader The Reader holding a single XML-formatted String being converted by the
      *                        marshal method in an XmlBinder of the same internal implementation type as this one.
+     * @param <S>             The instance type to return.
      * @return A fully unmarshalled instance clone of the original object written to the stream.
      * @throws IllegalArgumentException If the object graph could not be properly resurrected.
      * @throws se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException
      *                                  if any object resurrected was a Validatable which did not pass validation.
      */
     @Override
-    public <S> S unmarshalInstance(Reader transportReader)
+    public <S> S unmarshalInstance(final Reader transportReader)
             throws IllegalArgumentException, InternalStateValidationException {
 
         // Convert

@@ -20,6 +20,7 @@ public interface PersistenceOperations {
      * Creates the provided entity and persists it within a JPA-aware database.
      *
      * @param entity The entity to persist.
+     * @param <T>    The entity type.
      * @throws PersistenceOperationException if the entity could not be created.
      */
     <T extends NazgulEntity> void create(T entity) throws PersistenceOperationException;
@@ -29,6 +30,7 @@ public interface PersistenceOperations {
      * entity within a JPA-aware entity.
      *
      * @param entity The entity to update / merge.
+     * @param <T>    The entity type.
      * @throws PersistenceOperationException if the entity could not be updated.
      */
     <T extends NazgulEntity> T update(T entity) throws PersistenceOperationException;
@@ -37,6 +39,7 @@ public interface PersistenceOperations {
      * Replaces the state of the provided NazgulEntity with the database current state.
      *
      * @param entity The entity to refresh.
+     * @param <T>    The entity type.
      * @throws PersistenceOperationException if the entity could not be refreshed.
      */
     <T extends NazgulEntity> void refresh(T entity) throws PersistenceOperationException;
@@ -45,6 +48,7 @@ public interface PersistenceOperations {
      * Deletes the persistent state of the provided entity from a JPA-aware database.
      *
      * @param toDelete The entity to delete.
+     * @param <T>      The entity type.
      * @throws PersistenceOperationException if the entity could not be deleted.
      */
     <T extends NazgulEntity> void delete(T toDelete) throws PersistenceOperationException;

@@ -59,6 +59,8 @@ public abstract class AbstractJmsTest {
 
     /**
      * Starts the JMS BrokerService.
+     *
+     * @throws JMSException if any of the underlying JMS methods does.
      */
     @Before
     public final void startJmsBroker() throws JMSException {
@@ -84,6 +86,8 @@ public abstract class AbstractJmsTest {
 
     /**
      * Stops the JMS BrokerService.
+     *
+     * @throws JMSException if any of the underlying JMS methods does.
      */
     @After
     public final void stopJmsBroker() throws JMSException {
