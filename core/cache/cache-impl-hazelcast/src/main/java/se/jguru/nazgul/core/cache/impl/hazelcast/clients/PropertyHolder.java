@@ -91,7 +91,7 @@ public class PropertyHolder {
      * @return The local listening port for this cache.
      */
     public Integer getLocalListeningPort() {
-        return new Integer(properties.get(CACHE_PORT_KEY));
+        return Integer.valueOf(properties.get(CACHE_PORT_KEY));
     }
 
     /**
@@ -121,7 +121,7 @@ public class PropertyHolder {
         Validate.notEmpty(properties.get(CACHE_PORT_KEY), getPropertyErrorMessage(CACHE_PORT_KEY));
 
         try {
-            new Integer(properties.get(CACHE_PORT_KEY));
+            Integer.valueOf(properties.get(CACHE_PORT_KEY));
         } catch (Exception e) {
             throw new IllegalArgumentException("Property [" + CACHE_PORT_KEY + "] must be a positive integer.");
         }
@@ -129,7 +129,7 @@ public class PropertyHolder {
 
     private String getPropertyErrorMessage(final String key) {
 
-        return "Property [" + key + "] cannot be null or empty. " +
-                "This implies a configuration error [most likely in run.conf].";
+        return "Property [" + key + "] cannot be null or empty. "
+                + "This implies a configuration error [most likely in run.conf].";
     }
 }

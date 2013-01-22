@@ -39,7 +39,7 @@ public class ServiceListenerAdapter<T extends EventConsumer<T>> extends Abstract
      */
     @Override
     public int compareTo(final T that) {
-        return new Integer(hashCode()).compareTo(that.hashCode());
+        return Integer.valueOf(hashCode()).compareTo(that.hashCode());
     }
 
     /**

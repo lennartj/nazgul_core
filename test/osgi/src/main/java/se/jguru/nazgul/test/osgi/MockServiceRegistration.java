@@ -114,7 +114,7 @@ public class MockServiceRegistration<S> implements ServiceRegistration<S> {
         // Fire the modified event
         bundleContext.fireServiceEvent(new EventConsumerCallback<ServiceListenerAdapter>() {
             @Override
-            public void onEvent(ServiceListenerAdapter eventConsumer) {
+            public void onEvent(final ServiceListenerAdapter eventConsumer) {
                 eventConsumer.serviceChanged(new ServiceEvent(ServiceEvent.MODIFIED, serviceReference));
             }
         });

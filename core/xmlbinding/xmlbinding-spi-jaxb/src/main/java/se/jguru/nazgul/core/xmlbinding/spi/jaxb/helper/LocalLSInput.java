@@ -235,7 +235,7 @@ public class LocalLSInput implements LSInput {
      * {@inheritDoc}
      */
     @Override
-    public void setCertifiedText(boolean certifiedText) {
+    public void setCertifiedText(final boolean certifiedText) {
         throw new UnsupportedOperationException("LocalLSInput does not support setting CertifiedText.");
     }
 }

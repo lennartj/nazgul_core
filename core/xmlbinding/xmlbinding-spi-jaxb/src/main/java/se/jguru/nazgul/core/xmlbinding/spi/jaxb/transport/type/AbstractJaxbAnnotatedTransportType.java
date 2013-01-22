@@ -87,7 +87,7 @@ public abstract class AbstractJaxbAnnotatedTransportType<T>
      *
      * @param value The original type value to wrap.
      */
-    public AbstractJaxbAnnotatedTransportType(T value) {
+    public AbstractJaxbAnnotatedTransportType(final T value) {
         this();
 
         // Check sanity

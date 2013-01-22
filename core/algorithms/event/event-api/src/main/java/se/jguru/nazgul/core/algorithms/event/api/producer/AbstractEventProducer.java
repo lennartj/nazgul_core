@@ -83,7 +83,7 @@ public abstract class AbstractEventProducer<T extends EventConsumer>
      * {@inheritDoc}
      */
     @Override
-    public final void addConsumer(T consumer) {
+    public final void addConsumer(final T consumer) {
 
         // Check sanity
         if (consumer != null) {

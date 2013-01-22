@@ -231,8 +231,9 @@ public class HazelcastCacheListenerAdapter implements InstanceListener, ItemList
 
             String localMember = entryEvent.getMember() == null ? "<no member>"
                     : entryEvent.getMember().localMember() ? " (local member)" : "";
-            final String memberIP = entryEvent.getMember() == null ? "" :
-                    entryEvent.getMember().getInetSocketAddress().toString();
+            final String memberIP = entryEvent.getMember() == null
+                    ? ""
+                    : entryEvent.getMember().getInetSocketAddress().toString();
 
             log.debug("(Listener " + getId() + "): " + action + " entry [" + entryEvent.getName() + "] from member ["
                     + memberIP + "]" + localMember + ". Key: " + entryEvent.getKey() + ", Value: "

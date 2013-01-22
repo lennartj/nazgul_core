@@ -63,12 +63,14 @@ public abstract class MavenVersionExtractor {
      * <p/>
      * etc.
      *
-     * @param groupId    The groupId for which the version should be acquired.
-     * @param artifactId The artifactId for which the version should be acquired.
+     * @param groupId             The groupId for which the version should be acquired.
+     * @param artifactId          The artifactId for which the version should be acquired.
+     * @param configurationReader The Reader connected to the depends-maven-plugin file/stream.
      * @return The version of the given groupId and artifactId, or {@code null} if the version was
      *         not found within the supplied configurationReader.
      * @throws IllegalArgumentException if an exception was thrown while searching for the version
      *                                  for the given groupId and artifactId.
+     * @throws IllegalStateException    if the format of a version line was incorrect.
      */
     public static String getDependencyVersion(final String groupId,
                                               final String artifactId,

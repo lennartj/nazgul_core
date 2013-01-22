@@ -59,7 +59,9 @@ public interface JaxbConverterRegistry {
     /**
      * Converts the provided transport type instance (back) to its original type, ready for normal use.
      *
-     * @param toConvert The transport type to be converted.
+     * @param toConvert       The transport type to be converted.
+     * @param <TransportType> The JAXB-annotated TransportType corresponding to the supplied originalType;
+     * @param <OriginalType>  The OriginalType for which we would like to acquire the JAXB-annotated TransportType.
      * @return The resurrected object.
      * @throws IllegalArgumentException if the conversion failed.
      */
