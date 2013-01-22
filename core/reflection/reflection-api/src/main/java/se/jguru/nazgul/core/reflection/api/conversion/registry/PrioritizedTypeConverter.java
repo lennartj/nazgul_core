@@ -93,13 +93,15 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
 
         final Set<Class<?>> toReturn = new HashSet<Class<?>>();
 
-        for (Integer current : prioritizedTypeConverterMap.keySet()) {
+        for(Map.Entry<Integer, Map<Class<?>, TypeConverter<From, ?>>> prioTypeConverterMap
+                : prioritizedTypeConverterMap.entrySet()) {
 
             // Acquire the current TypeConverter instances.
-            final Map<Class<?>, TypeConverter<From, ?>> from2ConverterMap = prioritizedTypeConverterMap.get(current);
+            final Map<Class<?>, TypeConverter<From, ?>> from2ConverterMap = prioTypeConverterMap.getValue();
 
-            for (Class<?> currentFromType : from2ConverterMap.keySet()) {
-                final TypeConverter<From, ?> currentTypeConverter = from2ConverterMap.get(currentFromType);
+            for(Map.Entry<Class<?>, TypeConverter<From, ?>> currentFrom2Converter : from2ConverterMap.entrySet()) {
+
+                final TypeConverter<From, ?> currentTypeConverter = currentFrom2Converter.getValue();
                 final Class<?> currentToType = currentTypeConverter.getToType();
 
                 if (!toReturn.contains(currentToType)) {
@@ -258,9 +260,9 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
             final Map<Class<?>, TypeConverter<From, ?>> from2TypeConvMap = prioritizedTypeConverterMap.get(current);
 
             // Fuzzy matches go after exact matches
-            for (Class<?> currentSourceClass : from2TypeConvMap.keySet()) {
-                if (currentSourceClass.isAssignableFrom(targetType)) {
-                    toReturn.add((TypeConverter<From, To>) from2TypeConvMap.get(currentSourceClass));
+            for(Map.Entry<Class<?>, TypeConverter<From, ?>> currentSourceClass2TypeConverter : from2TypeConvMap.entrySet()) {
+                if (currentSourceClass2TypeConverter.getKey().isAssignableFrom(targetType)) {
+                    toReturn.add((TypeConverter<From, To>) currentSourceClass2TypeConverter.getValue());
                 }
             }
         }

@@ -80,14 +80,16 @@ public class DefaultConverterRegistry implements ConverterRegistry {
         final Map<Class<?>, Set<Object>> sourceTypeToConverterInstanceMap = new HashMap<Class<?>, Set<Object>>();
         for (Object current : validConverters.keySet()) {
 
+            final Tuple<List<Method>, List<Constructor<?>>> methodsAndConstructors = validConverters.get(current);
+
             // Map the source types of all Methods & Constructors
-            for (Method currentMethod : validConverters.get(current).getKey()) {
+            for (Method currentMethod : methodsAndConstructors.getKey()) {
 
                 final Class<?> currentType = currentMethod.getParameterTypes()[0];
                 addCurrentConverter(sourceTypeToConverterInstanceMap, current, currentType);
             }
 
-            for (Constructor<?> currentConstructor : validConverters.get(current).getValue()) {
+            for (Constructor<?> currentConstructor : methodsAndConstructors.getValue()) {
 
                 final Class<?> currentType = currentConstructor.getParameterTypes()[0];
                 addCurrentConverter(sourceTypeToConverterInstanceMap, current, currentType);
