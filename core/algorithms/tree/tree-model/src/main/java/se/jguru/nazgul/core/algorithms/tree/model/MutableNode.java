@@ -8,22 +8,17 @@ package se.jguru.nazgul.core.algorithms.tree.model;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Specification for a Node whose internal state can be manipulated, in terms
  * of moving it within trees, and adding/removing children.
  *
+ * @param <ValueType> The value type of this MutableNode.
+ * @param <KeyType>   The key type of this MutableNode.
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 public interface MutableNode<KeyType extends Serializable & Comparable<KeyType>, ValueType extends Serializable>
         extends Node<KeyType, ValueType> {
-
-    /**
-     * @return A List holding the immediate child nodes of this Node.
-     *         The returned List should be modifiable.
-     */
-    <X extends Node<KeyType, ValueType>> List<X> getChildren();
 
     /**
      * Adds the provided node as a child to this MutableNode.
