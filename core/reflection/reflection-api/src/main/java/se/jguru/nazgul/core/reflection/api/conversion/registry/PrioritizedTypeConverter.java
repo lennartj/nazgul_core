@@ -198,10 +198,10 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
         }
 
         // Find the Method or Constructor as appropriate for the distilled converters.
-        for (Object current : validConverterMap.keySet()) {
+        for(Map.Entry<Object, Tuple<List<Method>, List<Constructor<?>>>> currentEntry : validConverterMap.entrySet()) {
 
             // Map all constructor converters.
-            final Tuple<List<Method>, List<Constructor<?>>> typeConverterTuple = validConverterMap.get(current);
+            final Tuple<List<Method>, List<Constructor<?>>> typeConverterTuple = currentEntry.getValue();
 
             // Start with the constructors
             for (Constructor<?> currentConstructor : typeConverterTuple.getValue()) {
@@ -215,7 +215,7 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
 
                 try {
                     // Create and map the TypeConverter
-                    final MethodTypeConverter converter = new MethodTypeConverter(current, currentMethod);
+                    final MethodTypeConverter converter = new MethodTypeConverter(currentEntry.getKey(), currentMethod);
                     addTypeConverter(converter);
 
                 } catch (NoSuchMethodException e) {

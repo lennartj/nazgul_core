@@ -78,21 +78,21 @@ public class DefaultConverterRegistry implements ConverterRegistry {
 
         // Map the respective converters to the sourceTypes of their @Converters.
         final Map<Class<?>, Set<Object>> sourceTypeToConverterInstanceMap = new HashMap<Class<?>, Set<Object>>();
-        for (Object current : validConverters.keySet()) {
+        for(Map.Entry<Object, Tuple<List<Method>, List<Constructor<?>>>> currentEntry : validConverters.entrySet()) {
 
-            final Tuple<List<Method>, List<Constructor<?>>> methodsAndConstructors = validConverters.get(current);
+            final Tuple<List<Method>, List<Constructor<?>>> methodsAndConstructors = currentEntry.getValue();
 
             // Map the source types of all Methods & Constructors
             for (Method currentMethod : methodsAndConstructors.getKey()) {
 
                 final Class<?> currentType = currentMethod.getParameterTypes()[0];
-                addCurrentConverter(sourceTypeToConverterInstanceMap, current, currentType);
+                addCurrentConverter(sourceTypeToConverterInstanceMap, currentEntry.getKey(), currentType);
             }
 
             for (Constructor<?> currentConstructor : methodsAndConstructors.getValue()) {
 
                 final Class<?> currentType = currentConstructor.getParameterTypes()[0];
-                addCurrentConverter(sourceTypeToConverterInstanceMap, current, currentType);
+                addCurrentConverter(sourceTypeToConverterInstanceMap, currentEntry.getKey(), currentType);
             }
         }
 
@@ -183,12 +183,10 @@ public class DefaultConverterRegistry implements ConverterRegistry {
 
         // Delegate and return.
         final Set<Class<?>> toReturn = new HashSet<Class<?>>();
-        for (Integer currentIndex : converterMap.keySet()) {
-
-            final PrioritizedTypeConverter<From> current = converterMap.get(currentIndex);
+        for(Map.Entry<Integer, PrioritizedTypeConverter> currentEntry : converterMap.entrySet()) {
 
             // Acquire the available target types for the current PrioritizedTypeConverter
-            final Set<Class<?>> availableTargetTypes = current.getAvailableTargetTypes();
+            final Set<Class<?>> availableTargetTypes = currentEntry.getValue().getAvailableTargetTypes();
             for (Class<?> currentTargetType : availableTargetTypes) {
 
                 // Don't add twice.
@@ -218,8 +216,8 @@ public class DefaultConverterRegistry implements ConverterRegistry {
         }
 
         // Delegate detail printout to the PrioritizedTypeConverter.
-        for (String current : sortedClassNames.keySet()) {
-            builder.append(sourceTypeToTypeConvertersMap.get(sortedClassNames.get(current))).append("\n");
+        for(Map.Entry<String, Class<?>> current : sortedClassNames.entrySet()) {
+            builder.append(sourceTypeToTypeConvertersMap.get(sortedClassNames.get(current.getKey()))).append("\n");
         }
 
         // All done.
@@ -315,11 +313,10 @@ public class DefaultConverterRegistry implements ConverterRegistry {
                     sourceType, candidates.keySet());
 
             // Populate the return map
-            for (Integer current : prioritizedClassMap.keySet()) {
+            for(Map.Entry<Integer, List<Class<?>>> current : prioritizedClassMap.entrySet()) {
 
                 // For each priority, simply pick the first type returned.
-                List<Class<?>> typeConvertersInGivenOrder = prioritizedClassMap.get(current);
-                toReturn.put(current, candidates.get(typeConvertersInGivenOrder.get(0)));
+                toReturn.put(current.getKey(), candidates.get(current.getValue().get(0)));
             }
         }
 
