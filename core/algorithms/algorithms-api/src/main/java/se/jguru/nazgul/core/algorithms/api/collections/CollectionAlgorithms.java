@@ -145,11 +145,10 @@ public abstract class CollectionAlgorithms {
         // Create a return instance
         final Map<K, V> toReturn = new HashMap<K, V>();
 
-        for (K current : source.keySet()) {
+        for (Map.Entry<K, V> currentEntry : source.entrySet()) {
 
-            final V value = source.get(current);
-            if (selector.accept(new Tuple<K, V>(current, value))) {
-                toReturn.put(current, value);
+            if (selector.accept(new Tuple<K, V>(currentEntry.getKey(), currentEntry.getValue()))) {
+                toReturn.put(currentEntry.getKey(), currentEntry.getValue());
             }
         }
 
@@ -207,8 +206,8 @@ public abstract class CollectionAlgorithms {
         // Create a return instance
         List<T> toReturn = new ArrayList<T>();
 
-        for (K current : source.keySet()) {
-            toReturn.add(transformer.transform(new Tuple<K, V>(current, source.get(current))));
+        for (Map.Entry<K, V> currentEntry : source.entrySet()) {
+            toReturn.add(transformer.transform(new Tuple<K, V>(currentEntry.getKey(), currentEntry.getValue())));
         }
 
         return toReturn;
