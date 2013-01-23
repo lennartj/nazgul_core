@@ -95,9 +95,11 @@ public abstract class NazgulEntity implements Serializable, Cloneable, Validatab
     /**
      * Convenience clone method, which does not require the caller to handle CloneNotSupportedException.
      *
+     * @param <T> The exact subtype of NazgulEntity used.
      * @return A clone of this instance, or an IllegalStateException.
      * @throws IllegalStateException if cloning this instance failed with a {@code CloneNotSupportedException}.
      */
+    @SuppressWarnings("unchecked")
     public final <T extends NazgulEntity> T copy() throws IllegalStateException {
 
         try {

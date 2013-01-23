@@ -19,6 +19,8 @@ import java.util.List;
  * MutableTree implementation which only holds a root node.
  * All mutability operations except the get method are delegated to the Node.
  *
+ * @param <KeyType>   The type of key used within all MutableNode instances that constructs this SimpleTree.
+ * @param <ValueType> The type of value used within all MutableNode instances that constitutes this SimpleTree.
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid, jGuru Europe AB</a>
  */
 public class SimpleTree<KeyType extends Serializable & Comparable<KeyType>, ValueType extends Serializable>
