@@ -32,6 +32,7 @@
     <modules>
         <module>osgi</module>
         <module>messaging</module>
+        <module>xmlbinding</module>
     </modules>
 
     <scm>

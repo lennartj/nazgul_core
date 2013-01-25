@@ -9,7 +9,6 @@ import org.apache.commons.lang3.Validate;
 import org.hornetq.api.core.TransportConfiguration;
 import org.hornetq.core.config.Configuration;
 import org.hornetq.core.config.impl.ConfigurationImpl;
-import org.hornetq.core.registry.MapBindingRegistry;
 import org.hornetq.core.remoting.impl.netty.NettyAcceptorFactory;
 import org.hornetq.core.remoting.impl.netty.NettyConnectorFactory;
 import org.hornetq.jms.server.config.JMSConfiguration;
@@ -109,14 +108,15 @@ public class HornetQBroker implements MessageBroker {
         configuration.setPersistenceEnabled(false);
         configuration.setSecurityEnabled(false);
 
-        // b) Add a transport
+        // b) Add a transport.
+        //    Map it as an acceptor and a connector (using the same id).
         final String connectorId = "connector";
         final Set<TransportConfiguration> transportConfigurations = new HashSet<TransportConfiguration>();
         transportConfigurations.add(new TransportConfiguration(NettyAcceptorFactory.class.getName()));
-        configuration.setAcceptorConfigurations(transportConfigurations);
 
-        TransportConfiguration connectorConfig = new TransportConfiguration(NettyConnectorFactory.class.getName());
-        configuration.getConnectorConfigurations().put(connectorId, connectorConfig);
+        configuration.setAcceptorConfigurations(transportConfigurations);
+        configuration.getConnectorConfigurations().put(connectorId,
+                new TransportConfiguration(NettyConnectorFactory.class.getName()));
 
         // c) Create the JMS configuration
         final JMSConfiguration jmsConfig = new JMSConfigurationImpl();
