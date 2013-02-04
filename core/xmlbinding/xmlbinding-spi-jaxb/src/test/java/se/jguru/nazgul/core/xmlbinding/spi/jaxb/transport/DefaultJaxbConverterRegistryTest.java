@@ -8,11 +8,8 @@ import se.jguru.nazgul.core.xmlbinding.spi.jaxb.JaxbXmlBinder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedCollection;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedDateTime;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedNull;
+import se.jguru.nazgul.test.xmlbinding.XmlTestUtils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -130,7 +127,6 @@ public class DefaultJaxbConverterRegistryTest {
 
         // Assert
         Assert.assertSame(transportType, dtc);
-
     }
 
     @Test
@@ -147,7 +143,7 @@ public class DefaultJaxbConverterRegistryTest {
     public void validateNormalConversionWith2dCollection() {
 
         // Assemble
-        final String expectedResult = readFully("data/xml/marshalled2dCollection.xml");
+        final String expectedResult = XmlTestUtils.readFully("data/xml/marshalled2dCollection.xml");
 
         // Act
         final JaxbAnnotatedCollection transportForm = unitUnderTest.packageForTransport(data2D);
@@ -162,7 +158,7 @@ public class DefaultJaxbConverterRegistryTest {
     public void validateNormalConversionWith1dCollection() {
 
         // Assemble
-        final String expectedResult = readFully("data/xml/marshalled1dCollection.xml");
+        final String expectedResult = XmlTestUtils.readFully("data/xml/marshalled1dCollection.xml");
 
         // Act
         final JaxbAnnotatedCollection transportForm = unitUnderTest.packageForTransport(data1D);
@@ -194,27 +190,5 @@ public class DefaultJaxbConverterRegistryTest {
 
         // Assert
         Assert.assertSame(simpleDateFormat, result);
-    }
-
-    //
-    // Private helpers
-    //
-
-    private String readFully(final String path) {
-
-        final InputStream in = getClass().getClassLoader().getResourceAsStream(path);
-        final BufferedReader tmp = new BufferedReader(new InputStreamReader(in));
-        final StringBuilder toReturn = new StringBuilder();
-
-        try {
-            for (String line = tmp.readLine(); line != null; line = tmp.readLine()) {
-                toReturn.append(line).append('\n');
-            }
-        } catch (final IOException e) {
-            throw new IllegalArgumentException("Problem reading data from Reader", e);
-        }
-
-        // All done.
-        return toReturn.toString();
     }
 }

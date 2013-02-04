@@ -7,6 +7,8 @@ package se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper;
 
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.ls.LSResourceResolver;
 import org.xml.sax.SAXException;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
@@ -44,6 +46,9 @@ import java.util.concurrent.ConcurrentMap;
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 public abstract class JaxbUtils {
+
+    // Our log
+    private static final Logger log = LoggerFactory.getLogger(JaxbUtils.class.getName());
 
     /**
      * The namespace prefix key for external JAXB distribution.
@@ -190,7 +195,12 @@ public abstract class JaxbUtils {
         StreamSource[] schemaSources = new StreamSource[schemaSnippets.size()];
         for (int i = 0; i < schemaSources.length; i++) {
             ByteArrayOutputStream tmp = schemaSnippets.get(i);
-            // log.info("Generated schema: " + new String(tmp.toByteArray()));
+
+            if (log.isDebugEnabled()) {
+                log.info("Generated schema [" + (i + 1) + "/" + schemaSources.length + "]:\n "
+                        + new String(tmp.toByteArray()));
+            }
+
             schemaSources[i] = new StreamSource(new ByteArrayInputStream(tmp.toByteArray()), "");
         }
 
@@ -237,7 +247,7 @@ public abstract class JaxbUtils {
                 ? JaxbAnnotatedNull.class
                 : registry.getTransportType(toWrapAndPackageForTransport.getClass());
 
-        if(added == null || added.getClass() != transportType) {
+        if (added == null || added.getClass() != transportType) {
             added = registry.packageForTransport(toWrapAndPackageForTransport);
         }
 

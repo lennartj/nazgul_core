@@ -14,11 +14,7 @@ import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.DefaultJaxbConverterRe
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.helper.TrivialCharSequence;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.helper.TrivialCharSequenceConverter;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import se.jguru.nazgul.test.xmlbinding.XmlTestUtils;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -53,7 +49,7 @@ public class T_AbstractJaxbAnnotatedTransportTypeTest {
     public void validateTransportConversionUsingCustomConverter() {
 
         // Assemble
-        final String expected = readFully("data/xml/marshalledTrivialCharSequence.xml");
+        final String expected = XmlTestUtils.readFully("data/xml/marshalledTrivialCharSequence.xml");
         EntityTransporter.getRegistry().addConverters(new TrivialCharSequenceConverter());
 
         final StringBuffer buf = new StringBuffer();
@@ -67,27 +63,5 @@ public class T_AbstractJaxbAnnotatedTransportTypeTest {
         // Assert
         Assert.assertNotNull(result);
         Assert.assertEquals(expected, result);
-    }
-
-    //
-    // Private helpers
-    //
-
-    private String readFully(final String path) {
-
-        final InputStream in = getClass().getClassLoader().getResourceAsStream(path);
-        final BufferedReader tmp = new BufferedReader(new InputStreamReader(in));
-        final StringBuilder toReturn = new StringBuilder();
-
-        try {
-            for (String line = tmp.readLine(); line != null; line = tmp.readLine()) {
-                toReturn.append(line).append('\n');
-            }
-        } catch (final IOException e) {
-            throw new IllegalArgumentException("Problem reading data from Reader", e);
-        }
-
-        // All done.
-        return toReturn.toString();
     }
 }
