@@ -9,13 +9,15 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Account;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Beverage;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Person;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.ThreePartCereal;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter;
-import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.TransportMetaData;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.validation.Schema;
+import javax.xml.validation.Validator;
 import java.lang.reflect.Field;
 import java.util.concurrent.ConcurrentMap;
 
@@ -79,5 +81,22 @@ public class JaxbUtilsTest {
         // Assert
         Assert.assertSame(ctx1, ctx2);
         Assert.assertSame(ctx1, ctx3);
+    }
+
+    @Test
+    public void validateGenerateTransientXSDs() {
+
+        // Assemble
+        final ThreePartCereal cereal = new ThreePartCereal("barley", "strawberry", "blueberry", 3, 4);
+        final EntityTransporter<ThreePartCereal> transporter = new EntityTransporter<ThreePartCereal>(cereal);
+        final JAXBContext context = JaxbUtils.getJaxbContext(transporter);
+        final JaxbNamespacePrefixResolver resolver = new JaxbNamespacePrefixResolver();
+
+        // Act
+        final Schema result = JaxbUtils.generateTransientXSD(context, resolver);
+        final Validator schemaValidator = result.newValidator();
+
+        // Assert
+        System.out.println("Got: " + result);
     }
 }

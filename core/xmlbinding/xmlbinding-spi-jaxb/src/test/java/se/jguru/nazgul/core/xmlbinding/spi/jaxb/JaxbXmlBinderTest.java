@@ -7,18 +7,29 @@ package se.jguru.nazgul.core.xmlbinding.spi.jaxb;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.xml.sax.SAXException;
 import se.jguru.nazgul.core.xmlbinding.api.NamespacePrefixResolver;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbNamespacePrefixResolver;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbUtils;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Account;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Beverage;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Foo;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Person;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.ThreePartCereal;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter;
+import se.jguru.nazgul.test.xmlbinding.XmlTestUtils;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.Validator;
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +54,7 @@ public class JaxbXmlBinderTest {
         // Assemble
         final Person person1 = new Person("Lennart", 44);
         final Person person2 = new Person("Malin", 478);
-        final String expected = readFully("data/xml/simpleMarshalling.xml");
+        final String expected = XmlTestUtils.readFully("data/xml/simpleMarshalling.xml");
 
         // Act
         final String result = unitUnderTest.marshal(person1, person2);
@@ -58,7 +69,7 @@ public class JaxbXmlBinderTest {
         // Assemble
         final Person person1 = new Person("Lennart", 44);
         final Person person2 = new Person("Malin", 478);
-        final String expected = readFully("data/xml/marshallingWithTypeConversion.xml");
+        final String expected = XmlTestUtils.readFully("data/xml/marshallingWithTypeConversion.xml");
 
         // Act
         final String result = unitUnderTest.marshal(person1, "FooBar!", null, person2);
@@ -111,10 +122,10 @@ public class JaxbXmlBinderTest {
     }
 
     @Test
-    public void validateMarshallingWithSeparateNamspaces() {
+    public void validateMarshallingWithSeparateNamespaces() {
 
         // Assemble
-        final String data = readFully("data/xml/compoundNamespaceEntities.xml");
+        final String data = XmlTestUtils.readFully("data/xml/compoundNamespaceEntities.xml");
         final NamespacePrefixResolver resolver = unitUnderTest.getNamespacePrefixResolver();
         resolver.put("http://some/good/beverage", "drink");
         resolver.put("http://www.jguru.se/foo", "foo");
@@ -129,8 +140,6 @@ public class JaxbXmlBinderTest {
         // Assert
         Assert.assertEquals(data, result);
     }
-
-
 
     @Test
     public void validateUnmarshallingSingleInstance() {
@@ -183,28 +192,5 @@ public class JaxbXmlBinderTest {
 
         // Act & Assert
         unitUnderTest.unmarshal(input);
-    }
-
-    //
-    // Private helpers
-    //
-
-    private String readFully(final String path) {
-
-        final InputStream resource = getClass().getClassLoader().getResourceAsStream(path);
-
-        final BufferedReader tmp = new BufferedReader(new InputStreamReader(resource));
-        final StringBuilder toReturn = new StringBuilder(50);
-
-        try {
-            for (String line = tmp.readLine(); line != null; line = tmp.readLine()) {
-                toReturn.append(line).append('\n');
-            }
-        } catch (final IOException e) {
-            throw new IllegalArgumentException("Problem reading data from Reader", e);
-        }
-
-        // All done.
-        return toReturn.toString();
     }
 }
