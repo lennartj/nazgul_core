@@ -255,7 +255,7 @@
                         <version>1.2</version>
                         <configuration>
                             <includes>se/jguru/nazgul/**/*.class</includes>
-                            <excludes>org/forodrim/intranet/model/EntityWrapper.class</excludes>
+                            <excludes>se/jguru/nazgul/core/xmlbinding/spi/jaxb/transport/EntityWrapper.class</excludes>
                             <addDefaultConstructor>true</addDefaultConstructor>
                             <enforcePropertyRestrictions>true</enforcePropertyRestrictions>
                         </configuration>

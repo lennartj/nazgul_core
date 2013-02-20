@@ -14,7 +14,7 @@
     <parent>
         <groupId>se.jguru.nazgul.tools.poms</groupId>
         <artifactId>nazgul-parent</artifactId>
-        <version>1.1.2</version>
+        <version>1.2.0</version>
         <relativePath />
     </parent>
 
@@ -58,6 +58,7 @@
         <aries.blueprintcore.version>1.0.1</aries.blueprintcore.version>
         <aries.blueprint.version>1.0.0</aries.blueprint.version>
         <test.bundles.version>1.0.0</test.bundles.version>
+        <nazgul.tools.version>1.2.0</nazgul.tools.version>
         <nazgul.core.version>${project.version}</nazgul.core.version>
     </properties>
 

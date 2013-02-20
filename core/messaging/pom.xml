@@ -32,7 +32,7 @@
     -->
     <modules>
         <!-- module>messaging-model</module -->
-        <!-- module>messaging-api</module -->
+        <module>messaging-api</module>
     </modules>
 
     <scm>

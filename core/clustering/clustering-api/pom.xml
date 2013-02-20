@@ -94,15 +94,6 @@
                         <branchRate>65</branchRate>
                         <lineRate>80</lineRate>
                         <haltOnFailure>true</haltOnFailure>
-                        <regexes>
-                            <regex>
-                                <pattern>
-                                    se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbNamespacePrefixResolver\\$LocalLSInput.class
-                                </pattern>
-                                <branchRate>0</branchRate>
-                                <lineRate>0</lineRate>
-                            </regex>
-                        </regexes>
                     </check>
                 </configuration>
             </plugin>
