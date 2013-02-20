@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+  ~ Copyright (c) jGuru Europe AB.
+  ~ All rights reserved.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+    ################################################
+    # Section 1:  Project information
+    ################################################
+    -->
+    <parent>
+        <groupId>se.jguru.nazgul.tools.poms</groupId>
+        <artifactId>nazgul-reactor</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <groupId>se.jguru.nazgul.core.persistence</groupId>
+    <artifactId>nazgul-core-persistence-reactor</artifactId>
+    <version>1.4.1-SNAPSHOT</version>
+    <name>${project.groupId}.${project.artifactId}</name>
+    <packaging>pom</packaging>
+
+    <!--
+    ################################################
+    # Section 2:  Module definitions
+    ################################################
+    -->
+    <modules>
+        <module>persistence-model</module>
+        <module>persistence-api</module>
+    </modules>
+
+    <scm>
+        <developerConnection>scm:hg:file://${basedir}/../../</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+</project>

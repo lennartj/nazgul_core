@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) jGuru Europe AB.
+  ~ All rights reserved.
+  -->
+
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+    <!--
+        Define two services from separate implementations.
+    -->
+    <service id="trivialSudoku" interface="se.jguru.nazgul.test.blueprint.types.Sudoku">
+        <service-properties>
+            <entry key="difficulty" value="simple" />
+        </service-properties>
+        <bean class="se.jguru.nazgul.test.blueprint.types.TrivialSudoku"/>
+    </service>
+
+    <service id="complexSudoku" interface="se.jguru.nazgul.test.blueprint.types.Sudoku">
+        <service-properties>
+            <entry key="difficulty" value="complex" />
+        </service-properties>
+        <bean class="se.jguru.nazgul.test.blueprint.types.ComplexSudoku"/>
+    </service>
+
+</blueprint>
