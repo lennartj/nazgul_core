@@ -69,7 +69,7 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
 
         synchronized (lock) {
             final HazelcastCacheListenerAdapter wrapper = new HazelcastCacheListenerAdapter(listener);
-            getLocallyRegisteredListeners().put(listener.getId(), wrapper);
+            getLocallyRegisteredListeners().put(listener.getClusterId(), wrapper);
             cacheInstance.addInstanceListener(wrapper);
         }
     }

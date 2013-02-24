@@ -32,7 +32,7 @@ public class T_AbstractSwiftClusterableTest {
         final TestAbstractSwiftClusterable unitUnderTest = new TestAbstractSwiftClusterable();
 
         // Assert
-        final String id = unitUnderTest.getId();
+        final String id = unitUnderTest.getClusterId();
         Assert.assertTrue(id != null && !id.equals(""));
     }
 
@@ -45,7 +45,7 @@ public class T_AbstractSwiftClusterableTest {
         final TestAbstractSwiftClusterable unitUnderTest = new TestAbstractSwiftClusterable(id, name, age);
 
         // Assert
-        Assert.assertEquals(id, unitUnderTest.getId());
+        Assert.assertEquals(id, unitUnderTest.getClusterId());
     }
 
     @Test(expected = NullPointerException.class)
@@ -73,7 +73,7 @@ public class T_AbstractSwiftClusterableTest {
                 42);
 
         // Assert
-        Assert.assertEquals(idPrefix + "_1", unitUnderTest.getId());
+        Assert.assertEquals(idPrefix + "_1", unitUnderTest.getClusterId());
     }
 
     /*
@@ -111,7 +111,7 @@ public class T_AbstractSwiftClusterableTest {
 
         // Assert
         Assert.assertNotSame(result, unitUnderTest);
-        Assert.assertEquals(unitUnderTest.getId(), result.getId());
+        Assert.assertEquals(unitUnderTest.getClusterId(), result.getClusterId());
 
         Assert.assertEquals(1, result.callTrace.size());
         Assert.assertEquals("performReadExternal [testName, 42]", result.callTrace.get(0));

@@ -89,8 +89,8 @@ public class HazelcastClientCacheListenerTest extends AbstractHazelcastCacheTest
         final boolean collRemoveResult = distributedCollection.remove(value);
         final int collSizeAfterRemovingValue = distributedCollection.size();
 
-        hzCache1.removeListenerFor(distributedCollection, unitUnderTest1.getId());
-        hzCache1.removeListenerFor(distributedCollection, unitUnderTest2.getId());
+        hzCache1.removeListenerFor(distributedCollection, unitUnderTest1.getClusterId());
+        hzCache1.removeListenerFor(distributedCollection, unitUnderTest2.getClusterId());
         // Wait for the async listener removal to complete - implemented within the
         Thread.sleep(200);
 
@@ -205,8 +205,8 @@ public class HazelcastClientCacheListenerTest extends AbstractHazelcastCacheTest
         final String getAndRemoveResult = distributedQueue.poll();  // This is the normal use of a queue.
         final int sizeAfterRemovingValue = distributedQueue.size();
 
-        hzCache1.removeListenerFor(distributedQueue, unitUnderTest1.getId());
-        hzCache1.removeListenerFor(distributedQueue, unitUnderTest2.getId());
+        hzCache1.removeListenerFor(distributedQueue, unitUnderTest1.getClusterId());
+        hzCache1.removeListenerFor(distributedQueue, unitUnderTest2.getClusterId());
         Thread.sleep(200);  // Wait for the async remove operation to complete
 
         // Assert #1: Check cache state.
@@ -265,7 +265,7 @@ public class HazelcastClientCacheListenerTest extends AbstractHazelcastCacheTest
         waitAwhile(100);
         adminTopic.publish(AdminMessage.createShutdownInstanceMessage("noMatchingInstance"));
         waitAwhile(100);
-        adminTopic.publish(AdminMessage.createShutdownInstanceMessage(cacheClient.getId()));
+        adminTopic.publish(AdminMessage.createShutdownInstanceMessage(cacheClient.getClusterId()));
         waitAwhile(100);
 
         final HazelcastInstance cacheInstance = getInternalInstance(cacheClient);

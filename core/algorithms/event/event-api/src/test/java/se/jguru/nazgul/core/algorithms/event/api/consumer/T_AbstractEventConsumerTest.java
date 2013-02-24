@@ -31,6 +31,6 @@ public class T_AbstractEventConsumerTest {
         final MockEventConsumer unitUnderTest = new MockEventConsumer(id);
 
         // Act & Assert
-        Assert.assertEquals(id, unitUnderTest.getId());
+        Assert.assertEquals(id, unitUnderTest.getClusterId());
     }
 }

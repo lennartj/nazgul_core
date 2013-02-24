@@ -38,7 +38,7 @@ public class DebugHazelcastLightweightTopicListener implements LightweightTopicL
      * @return a human-readable, cluster-unique Identifier for this cache instance.
      */
     @Override
-    public String getId() {
+    public String getClusterId() {
         return id;
     }
 }

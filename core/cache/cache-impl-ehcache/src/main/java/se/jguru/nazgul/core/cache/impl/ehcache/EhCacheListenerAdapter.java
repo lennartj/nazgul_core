@@ -114,7 +114,7 @@ public class EhCacheListenerAdapter implements CacheEventListener, Serializable 
      * @return The identifier of the contained CacheListener.
      */
     public final String getId() {
-        return listener.getId();
+        return listener.getClusterId();
     }
 
     /**
