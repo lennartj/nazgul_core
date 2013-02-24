@@ -166,7 +166,7 @@ public class T_AbstractFrameworkEventListenerTest {
         unitUnderTest.addConsumer(listener);
         unitUnderTest.addConsumer(listener2);
         unitUnderTest.removeConsumer("nonexistent");
-        unitUnderTest.removeConsumer(listener2.getId());
+        unitUnderTest.removeConsumer(listener2.getClusterId());
         final int toRegisterSizeBeforeInit = getMapOfPendingBundleContextHolders(true).size();
         final int toDeregisterSizeBeforeInit = getMapOfPendingBundleContextHolders(false).size();
 

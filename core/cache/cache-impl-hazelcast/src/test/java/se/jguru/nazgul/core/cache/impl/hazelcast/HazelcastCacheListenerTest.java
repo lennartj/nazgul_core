@@ -106,7 +106,7 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
         // Assemble
         final DebugCacheListener listener1 = new DebugCacheListener("listener_1");
         final DebugCacheListener listener2 = new DebugCacheListener("listener_2");
-        final DebugCacheListener listener3WithSameIdAsListener2 = new DebugCacheListener(listener2.getId());
+        final DebugCacheListener listener3WithSameIdAsListener2 = new DebugCacheListener(listener2.getClusterId());
 
         // Act
         final boolean listener1Added = hzCache1.addListener(listener1);
@@ -119,13 +119,13 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
         hzCache1.put(key, value);
         hzCache1.remove(key);
 
-        hzCache1.removeListener(listener1.getId());
+        hzCache1.removeListener(listener1.getClusterId());
         // Wait a little for the async Topic to spray
         // out its message and remove the Listener.
         Thread.sleep(50);
         final List<String> listenerKeysAfterListener1Removed = hzCache1.getListenerIds();
 
-        hzCache1.removeListener(listener2.getId());
+        hzCache1.removeListener(listener2.getClusterId());
         // Wait a little for the async Topic to spray
         // out its message and remove the Listener.
         Thread.sleep(50);
@@ -137,15 +137,15 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
         Assert.assertFalse(listener3Added);
 
         Assert.assertEquals(1, listenerKeysAfterListener1Added.size());
-        Assert.assertEquals(listener1.getId(), listenerKeysAfterListener1Added.get(0));
+        Assert.assertEquals(listener1.getClusterId(), listenerKeysAfterListener1Added.get(0));
         Assert.assertEquals(2, listenerKeysAfterListener2Added.size());
-        Assert.assertEquals(listener1.getId(), listenerKeysAfterListener2Added.get(0));
-        Assert.assertEquals(listener2.getId(), listenerKeysAfterListener2Added.get(1));
+        Assert.assertEquals(listener1.getClusterId(), listenerKeysAfterListener2Added.get(0));
+        Assert.assertEquals(listener2.getClusterId(), listenerKeysAfterListener2Added.get(1));
         Assert.assertEquals(2, listenerKeysAfterListener3Added.size());
-        Assert.assertEquals(listener1.getId(), listenerKeysAfterListener3Added.get(0));
-        Assert.assertEquals(listener2.getId(), listenerKeysAfterListener3Added.get(1));
+        Assert.assertEquals(listener1.getClusterId(), listenerKeysAfterListener3Added.get(0));
+        Assert.assertEquals(listener2.getClusterId(), listenerKeysAfterListener3Added.get(1));
         Assert.assertEquals(1, listenerKeysAfterListener1Removed.size());
-        Assert.assertEquals(listener2.getId(), listenerKeysAfterListener1Removed.get(0));
+        Assert.assertEquals(listener2.getClusterId(), listenerKeysAfterListener1Removed.get(0));
         Assert.assertEquals(0, listenerKeysAfterListener2Removed.size());
     }
 
@@ -157,7 +157,7 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
         final HazelcastInstance internalInstance1 = getInternalInstance(hzCache1);
         final HazelcastInstance internalInstance2 = getInternalInstance(hzCache2);
         final DebugCacheListener listener = new DebugCacheListener("listener_1");
-        final String listenerID = listener.getId();
+        final String listenerID = listener.getClusterId();
 
         // Act
         final boolean addedSuccessfully = hzCache1.addListener(listener);
@@ -219,11 +219,11 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
         final List<String> listenerIDs2 = hzCache2.getListenerIds();
 
         Assert.assertEquals(2, listenerIDs1.size());
-        Assert.assertEquals(unitUnderTest1.getId(), listenerIDs1.get(0));
-        Assert.assertEquals(unitUnderTest2.getId(), listenerIDs1.get(1));
+        Assert.assertEquals(unitUnderTest1.getClusterId(), listenerIDs1.get(0));
+        Assert.assertEquals(unitUnderTest2.getClusterId(), listenerIDs1.get(1));
         Assert.assertEquals(2, listenerIDs2.size());
-        Assert.assertEquals(unitUnderTest1.getId(), listenerIDs2.get(0));
-        Assert.assertEquals(unitUnderTest2.getId(), listenerIDs2.get(1));
+        Assert.assertEquals(unitUnderTest1.getClusterId(), listenerIDs2.get(0));
+        Assert.assertEquals(unitUnderTest2.getClusterId(), listenerIDs2.get(1));
 
         // Assert #2: Validate the Lifecycle of the CacheListeners.
         final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap1 = unitUnderTest1.eventId2KeyValueMap;
@@ -274,12 +274,12 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
         final List<String> listeners2 = hzCache2.getListenersIDsFor(distributedMap2);
 
         Assert.assertEquals(2, listeners1.size());
-        Assert.assertEquals(unitUnderTest1.getId(), listeners1.get(0));
-        Assert.assertEquals(unitUnderTest2.getId(), listeners1.get(1));
+        Assert.assertEquals(unitUnderTest1.getClusterId(), listeners1.get(0));
+        Assert.assertEquals(unitUnderTest2.getClusterId(), listeners1.get(1));
 
         Assert.assertEquals(2, listeners2.size());
-        Assert.assertEquals(unitUnderTest1.getId(), listeners2.get(0));
-        Assert.assertEquals(unitUnderTest2.getId(), listeners2.get(1));
+        Assert.assertEquals(unitUnderTest1.getClusterId(), listeners2.get(0));
+        Assert.assertEquals(unitUnderTest2.getClusterId(), listeners2.get(1));
 
         // Assert #2: Validate the Lifecycle of the CacheListeners.
         final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap1 = unitUnderTest1.eventId2KeyValueMap;
@@ -318,8 +318,8 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
         final boolean collRemoveResult = distributedCollection.remove(value);
         final int collSizeAfterRemovingValue = distributedCollection.size();
 
-        hzCache1.removeListenerFor(distributedCollection, unitUnderTest1.getId());
-        hzCache1.removeListenerFor(distributedCollection, unitUnderTest2.getId());
+        hzCache1.removeListenerFor(distributedCollection, unitUnderTest1.getClusterId());
+        hzCache1.removeListenerFor(distributedCollection, unitUnderTest2.getClusterId());
         // Thread.sleep(200);
         // Wait for the async listener removal to complete - implemented within the
 
@@ -434,8 +434,8 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
         final String getAndRemoveResult = distributedQueue.poll(); // This is the normal use of a queue.
         final int sizeAfterRemovingValue = distributedQueue.size();
 
-        hzCache1.removeListenerFor(distributedQueue, unitUnderTest1.getId());
-        hzCache2.removeListenerFor(distributedQueue, unitUnderTest2.getId());
+        hzCache1.removeListenerFor(distributedQueue, unitUnderTest1.getClusterId());
+        hzCache2.removeListenerFor(distributedQueue, unitUnderTest2.getClusterId());
         Thread.sleep(200); // Wait for the async remove operation to complete
 
         // Assert #1: Check cache state.
@@ -481,7 +481,7 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
                         DistributedCache.DistributedCollectionType.QUEUE, "queue_1");
         Thread.sleep(500);
 
-        final boolean successfullyRemoved = hzCache1.removeInstanceListener(listener1.getId());
+        final boolean successfullyRemoved = hzCache1.removeInstanceListener(listener1.getClusterId());
 
         // Assert
         Assert.assertTrue(successfullyRemoved);

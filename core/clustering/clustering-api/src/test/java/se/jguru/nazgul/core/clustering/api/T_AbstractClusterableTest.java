@@ -38,7 +38,7 @@ public class T_AbstractClusterableTest {
 
         // Assert
         for(int i = 0; i < 10; i++) {
-            Assert.assertEquals("goo_1", unitUnderTest.getId());
+            Assert.assertEquals("goo_1", unitUnderTest.getClusterId());
         }
         Assert.assertNotNull(unitUnderTest.getIdGenerator());
     }
@@ -53,7 +53,7 @@ public class T_AbstractClusterableTest {
         final TestAbstractSwiftClusterable unitUnderTest = new TestAbstractSwiftClusterable(idGenerator, "bar", 42);
 
         // Act & Assert
-        unitUnderTest.getId();
+        unitUnderTest.getClusterId();
         Assert.assertNotNull(unitUnderTest.getIdGenerator());
     }
 

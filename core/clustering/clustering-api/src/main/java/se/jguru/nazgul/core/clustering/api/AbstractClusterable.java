@@ -61,7 +61,7 @@ public abstract class AbstractClusterable implements Clusterable {
      * @return an Identifier, unique within the cluster.
      */
     @Override
-    public String getId() {
+    public String getClusterId() {
 
         if(id == null && idGenerator != null) {
             if(idGenerator.isIdentifierAvailable()) {
@@ -92,6 +92,6 @@ public abstract class AbstractClusterable implements Clusterable {
      */
     @Override
     public String toString() {
-        return "[" + this.getClass().getSimpleName() + "::" + getId() + "]";
+        return "[" + this.getClass().getSimpleName() + "::" + getClusterId() + "]";
     }
 }

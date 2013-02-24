@@ -49,7 +49,7 @@ public class MockFrameworkLauncher extends AbstractFrameworkLauncher<BlueprintSe
 
     @Override
     protected BundleContextHolder makeBundleContextHolder(final BlueprintServiceListener validEventConsumer) {
-        callTrace.add("makeBundleContextHolder [" + validEventConsumer.getId() + "]");
+        callTrace.add("makeBundleContextHolder [" + validEventConsumer.getClusterId() + "]");
         return new BlueprintServiceEventAdapter(validEventConsumer);
     }
 

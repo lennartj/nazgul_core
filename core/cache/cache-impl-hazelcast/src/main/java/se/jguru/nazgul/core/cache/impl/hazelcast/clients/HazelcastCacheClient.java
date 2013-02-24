@@ -107,14 +107,14 @@ public class HazelcastCacheClient extends AbstractHazelcastInstanceWrapper {
                 // Only the member that owns the listener should remove it.
                 if (!getLocallyRegisteredListeners().containsKey(toRemoveId)) {
 
-                    log.debug("(CacheID: " + getId() + "): No local registered listener with id [" + toRemoveId
+                    log.debug("(CacheID: " + getClusterId() + "): No local registered listener with id [" + toRemoveId
                             + "] found. Ignoring remove request.");
 
                     return;
                 }
 
                 final String rollbackMessage =
-                        "(CacheID: " + getId() + "): Could not remove listener with id [" + toRemoveId
+                        "(CacheID: " + getClusterId() + "): Could not remove listener with id [" + toRemoveId
                                 + "] from distributedObject [" + distributedObjectiD + "]";
 
                 performTransactedAction(new AbstractTransactedAction(rollbackMessage) {
@@ -163,7 +163,7 @@ public class HazelcastCacheClient extends AbstractHazelcastInstanceWrapper {
 
                 // Is it *this* instance that should be shut down?
                 final String shutdownInstanceID = message.getArguments().get(0);
-                if (!getId().equals(shutdownInstanceID)) {
+                if (!getClusterId().equals(shutdownInstanceID)) {
                     return;
                 }
 

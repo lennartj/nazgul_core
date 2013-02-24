@@ -55,7 +55,7 @@ public class BlueprintServiceEventAdapter extends AbstractEventConsumer<Blueprin
      */
     public BlueprintServiceEventAdapter(final BlueprintServiceListener delegate,
                                         final Filter<ServiceReference> serviceReferenceFilter) {
-        super(delegate.getId());
+        super(delegate.getClusterId());
 
         // Check sanity
         Validate.notNull(delegate, "Cannot handle null delegate argument.");
@@ -69,8 +69,8 @@ public class BlueprintServiceEventAdapter extends AbstractEventConsumer<Blueprin
      * {@inheritDoc}
      */
     @Override
-    public final String getId() {
-        return delegate.getId();
+    public final String getClusterId() {
+        return delegate.getClusterId();
     }
 
     /**
@@ -108,7 +108,7 @@ public class BlueprintServiceEventAdapter extends AbstractEventConsumer<Blueprin
      */
     @Override
     public int compareTo(final BlueprintServiceEventAdapter o) {
-        return o == null ? -1 : getId().compareTo(o.getId());
+        return o == null ? -1 : getClusterId().compareTo(o.getClusterId());
     }
 
     /**

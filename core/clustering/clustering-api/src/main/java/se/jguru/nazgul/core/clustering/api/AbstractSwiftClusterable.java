@@ -38,7 +38,7 @@ public abstract class AbstractSwiftClusterable extends AbstractClusterable imple
     public final void writeExternal(final ObjectOutput out) throws IOException {
 
         // Start with the ID.
-        out.writeUTF(getId());
+        out.writeUTF(getClusterId());
 
         // Delegate the rest.
         performWriteExternal(out);

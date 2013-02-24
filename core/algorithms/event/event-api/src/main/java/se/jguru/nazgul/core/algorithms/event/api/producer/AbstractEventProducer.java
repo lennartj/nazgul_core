@@ -89,7 +89,7 @@ public abstract class AbstractEventProducer<T extends EventConsumer>
         if (consumer != null) {
 
             // Already registered?
-            final String consumerID = consumer.getId();
+            final String consumerID = consumer.getClusterId();
             if (consumers.containsKey(consumerID)) {
                 log.warn("Consumer with id [" + consumerID + "] already registered.");
                 return;
@@ -103,7 +103,7 @@ public abstract class AbstractEventProducer<T extends EventConsumer>
 
                 // Notify any listeners about the newly added consumer
                 try {
-                    onConsumerRegistered(getId(), consumer);
+                    onConsumerRegistered(getClusterId(), consumer);
                 } catch (final Exception e) {
 
                     log.error("Could not properly notify other AbstractEventProducer about adding an EventConsumer.",
@@ -148,7 +148,7 @@ public abstract class AbstractEventProducer<T extends EventConsumer>
 
         // Send a removeListener event message to the other cluster EventProducers,
         // to remove the EventConsumer from any of them.
-        return onRemoveNonRegisteredConsumer(getId(), consumerID);
+        return onRemoveNonRegisteredConsumer(getClusterId(), consumerID);
     }
 
     /**
@@ -218,7 +218,7 @@ public abstract class AbstractEventProducer<T extends EventConsumer>
      * clusteredEventProducer1.addConsumer(anEventConsumer);
      *
      * // Remove the EventConsumer from another node in the cluster
-     * clusteredEventProducer2.removeConsumer(anEventConsumer.getId());
+     * clusteredEventProducer2.removeConsumer(anEventConsumer.getClusterId());
      * </pre>
      * </code>
      * <p/>
@@ -245,7 +245,7 @@ public abstract class AbstractEventProducer<T extends EventConsumer>
      * @param exception     the exception that occurred.
      */
     protected void onExceptionDuringConsumerNotification(final T eventConsumer, final Exception exception) {
-        log.error("Unable to notify EventConsumer '" + eventConsumer.getId() + "'", exception);
+        log.error("Unable to notify EventConsumer '" + eventConsumer.getClusterId() + "'", exception);
     }
 
     /**

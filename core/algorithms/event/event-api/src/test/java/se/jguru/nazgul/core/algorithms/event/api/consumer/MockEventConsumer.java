@@ -37,6 +37,6 @@ public class MockEventConsumer extends AbstractEventConsumer<MockEventConsumer> 
      */
     @Override
     public int compareTo(final MockEventConsumer that) {
-        return that == null ? -1 : getId().compareTo(that.getId());
+        return that == null ? -1 : getClusterId().compareTo(that.getClusterId());
     }
 }

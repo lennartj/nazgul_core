@@ -365,7 +365,7 @@ public class MockBundleContext implements BundleContext {
                 listener);
 
         // Remove the ServiceListener from the known collection of consumers.
-        serviceListeners.removeConsumer(adapter.getId());
+        serviceListeners.removeConsumer(adapter.getClusterId());
     }
 
     /**
@@ -420,7 +420,7 @@ public class MockBundleContext implements BundleContext {
                 BundleListenerAdapter.class,
                 listener);
 
-        bundleListeners.removeConsumer(toRemove.getId());
+        bundleListeners.removeConsumer(toRemove.getClusterId());
     }
 
     /**
