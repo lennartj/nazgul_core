@@ -125,10 +125,10 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
 
         // Is the listener already registered onto the shared map?
         final TreeSet<String> knownListenerIDs = getCacheListenersIDMap().get("" + instance.getId());
-        if (knownListenerIDs != null && knownListenerIDs.contains(listener.getId())) {
+        if (knownListenerIDs != null && knownListenerIDs.contains(listener.getClusterId())) {
 
             if (log.isWarnEnabled()) {
-                log.warn("(CacheID: " + getId() + "): CacheListener [" + listener.getId()
+                log.warn("(CacheID: " + getClusterId() + "): CacheListener [" + listener.getClusterId()
                         + "] was already registered to the Instance [" + instance.getId()
                         + "]. Aborting registration.");
             }
@@ -137,10 +137,10 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
         }
 
         // Do we have a mismatch between the knownListenerIDs and our locallyRegisteredListeners map?
-        if (locallyRegisteredListeners.containsKey(listener.getId())) {
+        if (locallyRegisteredListeners.containsKey(listener.getClusterId())) {
             if (log.isWarnEnabled()) {
                 final HazelcastCacheListenerAdapter alreadyRegistered =
-                        locallyRegisteredListeners.get(listener.getId());
+                        locallyRegisteredListeners.get(listener.getClusterId());
                 log.warn("Already registered listener [" + alreadyRegistered.getId()
                         + "] holding CacheListener of type ["
                         + alreadyRegistered.getCacheListener().getClass().getName() + "]. Aborting registration.");
@@ -156,7 +156,7 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
         final HazelcastCacheListenerAdapter toAdd = new HazelcastCacheListenerAdapter(listener);
 
         synchronized (lock) {
-            performTransactedAction(new AbstractTransactedAction("Could not add listener [" + listener.getId()
+            performTransactedAction(new AbstractTransactedAction("Could not add listener [" + listener.getClusterId()
                     + "] of type [" + listener.getClass().getName() + "]") {
 
                 /**
@@ -232,7 +232,7 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
         final TreeSet<String> listenerIDs = getCacheListenersIDMap().get("" + instance.getId());
         if (listenerIDs == null || !listenerIDs.contains(cacheListenerId)) {
 
-            throw new IllegalStateException("(CacheID: " + getId() + "): Listener [" + cacheListenerId
+            throw new IllegalStateException("(CacheID: " + getClusterId() + "): Listener [" + cacheListenerId
                     + "] not registered for instance [" + instance.getId() + "] in Hazelcast.");
         }
 
@@ -269,7 +269,7 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
      */
     protected final boolean isLocallyRegistered(final CacheListener listener) {
 
-        return listener != null && locallyRegisteredListeners.containsKey(listener.getId());
+        return listener != null && locallyRegisteredListeners.containsKey(listener.getClusterId());
     }
 
     /**
@@ -290,7 +290,7 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
     public Instance cast(final Object distributedObject) throws IllegalArgumentException {
 
         if (!(distributedObject instanceof Instance)) {
-            throw new IllegalArgumentException("(CacheID: " + getId() + "): Only Instance objects can be "
+            throw new IllegalArgumentException("(CacheID: " + getClusterId() + "): Only Instance objects can be "
                     + "distributed in Hazelcast. Class [" + distributedObject.getClass().getName()
                     + "] is not an instance.");
         }

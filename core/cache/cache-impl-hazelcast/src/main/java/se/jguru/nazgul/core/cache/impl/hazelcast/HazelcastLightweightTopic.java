@@ -65,7 +65,7 @@ public class HazelcastLightweightTopic<MessageType extends Serializable> impleme
                     new HazelcastLightweightTopicListenerAdapter<MessageType>(listener);
 
             // Add to map and topic
-            knownListeners.put(lst.getId(), lst);
+            knownListeners.put(lst.getClusterId(), lst);
             hazelcastTopic.addMessageListener(lst);
         }
     }
@@ -84,15 +84,15 @@ public class HazelcastLightweightTopic<MessageType extends Serializable> impleme
         }
 
         // Get the Wrapper
-        final HazelcastLightweightTopicListenerAdapter<MessageType> toRemove = knownListeners.get(listener.getId());
+        final HazelcastLightweightTopicListenerAdapter<MessageType> toRemove = knownListeners.get(listener.getClusterId());
 
         if (toRemove == null) {
-            log.warn("HazelcastLightweightTopicListenerAdapter [" + listener.getId() + "] not found. Aborting.");
+            log.warn("HazelcastLightweightTopicListenerAdapter [" + listener.getClusterId() + "] not found. Aborting.");
             return;
         }
 
         synchronized (lock) {
-            hazelcastTopic.removeMessageListener(knownListeners.remove(listener.getId()));
+            hazelcastTopic.removeMessageListener(knownListeners.remove(listener.getClusterId()));
         }
     }
 
@@ -100,7 +100,7 @@ public class HazelcastLightweightTopic<MessageType extends Serializable> impleme
      * @return a human-readable, cluster-unique Identifier for this instance.
      */
     @Override
-    public String getId() {
+    public String getClusterId() {
         return hazelcastTopic.getName();
     }
 }

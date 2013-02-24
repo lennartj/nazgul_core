@@ -49,7 +49,7 @@ public class HazelcastLightweightTopicListenerAdapter<MessageType extends Serial
      * @return a human-readable, cluster-unique Identifier for this cache instance.
      */
     @Override
-    public String getId() {
-        return delegate.getId();
+    public String getClusterId() {
+        return delegate.getClusterId();
     }
 }

@@ -33,9 +33,9 @@ public class EhCacheListenerAdapterTest extends AbstractCacheTest {
         final MockCacheListener listener2 = new MockCacheListener("listener2");
 
         // Act & Assert
-        unitUnderTest.removeListener(listener1.getId());
+        unitUnderTest.removeListener(listener1.getClusterId());
         unitUnderTest.addListener(listener1);
-        unitUnderTest.removeListener(listener2.getId());
+        unitUnderTest.removeListener(listener2.getClusterId());
     }
 
     @Test
@@ -55,9 +55,9 @@ public class EhCacheListenerAdapterTest extends AbstractCacheTest {
         // Assert
         Assert.assertEquals(0, before.size());
         Assert.assertEquals(1, mid.size());
-        Assert.assertEquals(listener.getId(), mid.get(0));
+        Assert.assertEquals(listener.getClusterId(), mid.get(0));
         Assert.assertEquals(1, after.size());
-        Assert.assertEquals(listener.getId(), after.get(0));
+        Assert.assertEquals(listener.getClusterId(), after.get(0));
     }
 
     @Test
@@ -96,13 +96,13 @@ public class EhCacheListenerAdapterTest extends AbstractCacheTest {
         final List<String> before = unitUnderTest.getListenerIds();
         unitUnderTest.addListener(listener);
         final List<String> mid = unitUnderTest.getListenerIds();
-        unitUnderTest.removeListener(listener.getId());
+        unitUnderTest.removeListener(listener.getClusterId());
         final List<String> after = unitUnderTest.getListenerIds();
 
         // Assert
         Assert.assertEquals(0, before.size());
         Assert.assertEquals(1, mid.size());
-        Assert.assertEquals(listener.getId(), mid.get(0));
+        Assert.assertEquals(listener.getClusterId(), mid.get(0));
         Assert.assertEquals(0, after.size());
     }
 
@@ -167,7 +167,7 @@ public class EhCacheListenerAdapterTest extends AbstractCacheTest {
 
         // Assemble
         final MockCacheListener listener = new MockCacheListener("listener");
-        final String expectedToString = listener.getId();
+        final String expectedToString = listener.getClusterId();
         final EhCacheListenerAdapter unitUnderTest = new EhCacheListenerAdapter(listener);
 
         // Act

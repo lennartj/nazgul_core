@@ -66,7 +66,7 @@ public class BlueprintServiceEventAdapterTest {
 
         Assert.assertEquals(4, callTrace.size());
         Assert.assertSame(blueprintContainer, callTrace.get(0));
-        Assert.assertEquals(mockServiceListener.getId(), unitUnderTest.getId());
+        Assert.assertEquals(mockServiceListener.getClusterId(), unitUnderTest.getClusterId());
     }
 
     @Test
