@@ -27,8 +27,8 @@ public class ServiceListenerAdapterTest {
         final ServiceListenerAdapter adapter2 = new ServiceListenerAdapter(id2, ServiceListenerAdapter.class, listener2);
 
         // Act & Assert
-        Assert.assertEquals(id1, adapter1.getId());
-        Assert.assertEquals(id2, adapter2.getId());
+        Assert.assertEquals(id1, adapter1.getClusterId());
+        Assert.assertEquals(id2, adapter2.getClusterId());
 
         Assert.assertEquals(listener1.hashCode(), adapter1.hashCode());
         Assert.assertEquals(listener2.hashCode(), adapter2.hashCode());

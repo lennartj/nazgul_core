@@ -73,8 +73,8 @@ public class HazelcastCacheTest extends AbstractHazelcastCacheTest {
         Assert.assertNull(previous);
         Assert.assertTrue(hzCache1.containsKey(key));
         Assert.assertEquals(value, result);
-        Assert.assertTrue(hzCache1.getId().startsWith(cacheIDStart));
-        Assert.assertTrue(hzCache1.getId().endsWith(cacheIDEnd));
+        Assert.assertTrue(hzCache1.getClusterId().startsWith(cacheIDStart));
+        Assert.assertTrue(hzCache1.getClusterId().endsWith(cacheIDEnd));
     }
 
 
@@ -137,7 +137,7 @@ public class HazelcastCacheTest extends AbstractHazelcastCacheTest {
 
         LightweightTopic<AdminMessage> adminTopic = hzCache1.getTopic(GridOperations.CLUSTER_ADMIN_TOPIC);
 
-        adminTopic.publish(AdminMessage.createShutdownInstanceMessage(hzCache1.getId()));
+        adminTopic.publish(AdminMessage.createShutdownInstanceMessage(hzCache1.getClusterId()));
         Thread.sleep(200);      // Wait for the cache instance to make a full stop.
 
         final Serializable result = hzCache2.getDistributedMap(TEST_DIST_MAP).get(key);

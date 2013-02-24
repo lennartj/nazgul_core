@@ -209,7 +209,7 @@ public abstract class AbstractFrameworkLauncher<T extends OsgiFrameworkListener>
         if (getFramework() == null || getFramework().getBundleContext() == null) {
 
             // Defer registration until startup
-            toRegister.put(bundleContextHolder.getId(), bundleContextHolder);
+            toRegister.put(bundleContextHolder.getClusterId(), bundleContextHolder);
 
         } else {
 
@@ -219,7 +219,7 @@ public abstract class AbstractFrameworkLauncher<T extends OsgiFrameworkListener>
                 bundleContextHolder.register(bundleContext);
             } catch (Exception e) {
 
-                log.error("Could not add [" + bundleContextHolder.getId() + "] as an EventConsumer", e);
+                log.error("Could not add [" + bundleContextHolder.getClusterId() + "] as an EventConsumer", e);
                 bundleContextHolder.unregister(bundleContext);
                 return false;
             }
@@ -240,7 +240,7 @@ public abstract class AbstractFrameworkLauncher<T extends OsgiFrameworkListener>
         if (getFramework() == null || getFramework().getBundleContext() == null) {
 
             // Defer deregistration until shutdown
-            toDeregister.put(bundleContextHolder.getId(), bundleContextHolder);
+            toDeregister.put(bundleContextHolder.getClusterId(), bundleContextHolder);
 
         } else {
 
@@ -251,7 +251,7 @@ public abstract class AbstractFrameworkLauncher<T extends OsgiFrameworkListener>
 
             } catch (Exception e) {
 
-                log.error("Could not remove [" + bundleContextHolder.getId() + "] as an EventConsumer", e);
+                log.error("Could not remove [" + bundleContextHolder.getClusterId() + "] as an EventConsumer", e);
                 return false;
             }
 
@@ -291,7 +291,7 @@ public abstract class AbstractFrameworkLauncher<T extends OsgiFrameworkListener>
                     try {
                         bundleContextHolder.register(ctx);
                     } catch (Exception e) {
-                        log.error("Could not add [" + bundleContextHolder.getId() + "] as a ServiceListener. Abandoning.", e);
+                        log.error("Could not add [" + bundleContextHolder.getClusterId() + "] as a ServiceListener. Abandoning.", e);
 
                         // Rollback this particular listener.
                         bundleContextHolder.unregister(ctx);
@@ -334,8 +334,8 @@ public abstract class AbstractFrameworkLauncher<T extends OsgiFrameworkListener>
                         wrapper.unregister(ctx);
                     } catch (Exception e) {
 
-                        log.error("Could not deregister [" + wrapper.getId() + "]. Listener state may be corrupt.", e);
-                        this.toDeregister.put(wrapper.getId(), wrapper);
+                        log.error("Could not deregister [" + wrapper.getClusterId() + "]. Listener state may be corrupt.", e);
+                        this.toDeregister.put(wrapper.getClusterId(), wrapper);
                     }
                 }
 

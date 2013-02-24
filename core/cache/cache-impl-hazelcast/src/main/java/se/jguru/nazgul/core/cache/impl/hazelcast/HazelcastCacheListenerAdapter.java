@@ -76,7 +76,7 @@ public class HazelcastCacheListenerAdapter implements InstanceListener, ItemList
     public int hashCode() {
         final int prime = 37;
         int result = 1;
-        result = prime * result + ((listener == null) ? 0 : listener.getId().hashCode());
+        result = prime * result + ((listener == null) ? 0 : listener.getClusterId().hashCode());
         return result;
     }
 
@@ -84,7 +84,7 @@ public class HazelcastCacheListenerAdapter implements InstanceListener, ItemList
      * @return The identifier of the contained CacheListener.
      */
     public final String getId() {
-        return listener.getId();
+        return listener.getClusterId();
     }
 
     /**
@@ -210,7 +210,7 @@ public class HazelcastCacheListenerAdapter implements InstanceListener, ItemList
      */
     @Override
     public String toString() {
-        return "[" + getClass().getSimpleName() + " wrapping CacheListener (" + listener.getId() + ")]";
+        return "[" + getClass().getSimpleName() + " wrapping CacheListener (" + listener.getClusterId() + ")]";
     }
 
     //

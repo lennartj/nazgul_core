@@ -73,7 +73,7 @@ public class HazelcastLightweightTopicTest extends AbstractHazelcastCacheTest {
         Assert.assertEquals(value, callTrace1.get(0));
         Assert.assertEquals(value, callTrace2.get(0));
 
-        Assert.assertEquals(topicID, distributedTopic.getId());
+        Assert.assertEquals(topicID, distributedTopic.getClusterId());
     }
 
     // TODO A null pointer deep down in hazelcast prevents this test to go through - must look in to!

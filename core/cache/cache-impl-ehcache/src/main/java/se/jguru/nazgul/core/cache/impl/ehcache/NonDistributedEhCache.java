@@ -236,7 +236,7 @@ public class NonDistributedEhCache extends AbstractClusterable implements Cache<
         }
 
 
-        final String errMsg = "Could not add listener [" + listener.getId() + "] of type ["
+        final String errMsg = "Could not add listener [" + listener.getClusterId() + "] of type ["
                 + listener.getClass().getName() + "]";
 
         performTransactedAction(

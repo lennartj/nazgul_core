@@ -27,7 +27,7 @@ public class T_AbstractCacheListenerTest {
         final AbstractCacheListener unitUnderTest = new DebugCacheListener();
 
         // Act
-        final String id = unitUnderTest.getId();
+        final String id = unitUnderTest.getClusterId();
 
         // Assert
         Assert.assertTrue(id != null && !id.equals(""));
@@ -45,7 +45,7 @@ public class T_AbstractCacheListenerTest {
         final DebugCacheListener unitUnderTest = new DebugCacheListener(id, name, age);
 
         // Assert
-        Assert.assertEquals(id, unitUnderTest.getId());
+        Assert.assertEquals(id, unitUnderTest.getClusterId());
         Assert.assertEquals(0, unitUnderTest.callTrace.size());
     }
 
@@ -81,7 +81,7 @@ public class T_AbstractCacheListenerTest {
 
         // Assert
         Assert.assertNotSame(result, unitUnderTest);
-        Assert.assertEquals(unitUnderTest.getId(), result.getId());
+        Assert.assertEquals(unitUnderTest.getClusterId(), result.getClusterId());
 
         Assert.assertEquals(1, result.callTrace.size());
         Assert.assertEquals("performReadExternal [testName, 42]", result.callTrace.get(0));
@@ -112,7 +112,7 @@ public class T_AbstractCacheListenerTest {
         unitUnderTest.onAutonomousLoad("foo", "bar");
 
         // Assert
-        Assert.assertEquals(id, unitUnderTest.getId());
+        Assert.assertEquals(id, unitUnderTest.getClusterId());
     }
 
     @Test

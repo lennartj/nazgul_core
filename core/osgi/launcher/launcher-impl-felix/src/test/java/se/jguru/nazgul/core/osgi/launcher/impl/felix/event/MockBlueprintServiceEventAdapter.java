@@ -53,7 +53,7 @@ public class MockBlueprintServiceEventAdapter implements BlueprintServiceListene
      * @return an Identifier, unique within the cluster.
      */
     @Override
-    public String getId() {
+    public String getClusterId() {
         return id;
     }
 
@@ -62,6 +62,6 @@ public class MockBlueprintServiceEventAdapter implements BlueprintServiceListene
      */
     @Override
     public int compareTo(BlueprintServiceListener that) {
-        return that == null ? -1 : getId().compareTo(that.getId());
+        return that == null ? -1 : getClusterId().compareTo(that.getClusterId());
     }
 }

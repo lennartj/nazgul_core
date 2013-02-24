@@ -16,5 +16,5 @@ public interface Clusterable extends Serializable {
     /**
      * @return an Identifier, unique within the cluster.
      */
-    String getId();
+    String getClusterId();
 }
