@@ -5,6 +5,7 @@
 
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb;
 
+import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.Difference;
 import org.junit.Assert;
@@ -15,6 +16,7 @@ import org.xml.sax.SAXParseException;
 import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Transformer;
+import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
 import se.jguru.nazgul.core.xmlbinding.api.DefaultNamespacePrefixResolver;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbNamespacePrefixResolver;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbUtils;
@@ -24,10 +26,12 @@ import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter;
 import se.jguru.nazgul.test.xmlbinding.XmlTestUtils;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.MarshalException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.SchemaOutputResolver;
+import javax.xml.namespace.QName;
 import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -41,6 +45,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -276,5 +281,73 @@ public class JaxbSchemaGenerationBehaviourTest {
                 return input.toString().trim();
             }
         });
+    }
+
+    @Test
+    public void validateJaxbQnameAndNamespacePrefixMapperOperation() throws Exception {
+
+        // Assemble
+        final JAXBContext ctx = JAXBContext.newInstance(ThreePartCerealWithNillableAnnotationElement.class);
+        final ThreePartCerealWithNillableAnnotationElement cereal =
+                new ThreePartCerealWithNillableAnnotationElement("wholegrain", "raisins", null, 2, 1);
+        final QName qName = new QName("http://www.jguru.se/foobar", "rootElementName", "xmlPrefix");
+        final JAXBElement<ThreePartCerealWithNillableAnnotationElement> element =
+                new JAXBElement<ThreePartCerealWithNillableAnnotationElement>(qName,
+                        ThreePartCerealWithNillableAnnotationElement.class, cereal);
+        final SortedMap<String, Tuple<String, Boolean>> namespaceToPrefixTupleMap =
+                new TreeMap<String, Tuple<String, Boolean>>();
+
+        final String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+                "<xmlPrefix:rootElementName flavourPercentage=\"2\" colourPercentage=\"1\" xmlns:colour=\"http://cereal/ingredients/colour\" xmlns:base=\"http://cereal/ingredients/base\" xmlns:xmlPrefix=\"http://www.jguru.se/foobar\" xmlns:flavour=\"http://cereal/ingredients/flavour\">\n" +
+                "    <base:baseIngredient>wholegrain</base:baseIngredient>\n" +
+                "    <flavour:flavourIngredient>raisins</flavour:flavourIngredient>\n" +
+                "    <colour:colourIngredient xsi:nil=\"true\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"/>\n" +
+                "</xmlPrefix:rootElementName>";
+
+        final Marshaller marshaller = ctx.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new NamespacePrefixMapper() {
+            @Override
+            public String getPreferredPrefix(final String namespaceUri,
+                                             final String suggestion,
+                                             final boolean requirePrefix) {
+
+                // Log the usage.
+                namespaceToPrefixTupleMap.put(namespaceUri, new Tuple<String, Boolean>(suggestion, requirePrefix));
+
+                if (suggestion == null && namespaceUri != null) {
+                    return namespaceUri.equals("")
+                            ? "fooBarz"
+                            : namespaceUri.substring(namespaceUri.lastIndexOf("/") + 1);
+                }
+
+                // We have a suggested namespace prefix. Simply return it.
+                return suggestion;
+            }
+        });
+
+        // Act
+        final StringWriter out = new StringWriter();
+        marshaller.marshal(element, new StreamResult(out));
+
+        // Assert
+        final Diff diff = XmlTestUtils.compareXmlIgnoringWhitespace(expected, out.toString());
+        Assert.assertTrue(diff.identical());
+
+        for(String current : namespaceToPrefixTupleMap.keySet()) {
+
+            if(current.equals("http://www.w3.org/2001/XMLSchema-instance")) {
+                Assert.assertEquals("xsi", namespaceToPrefixTupleMap.get(current).getKey());
+                Assert.assertEquals(true, namespaceToPrefixTupleMap.get(current).getValue());
+            } else {
+
+                // Only the http://www.jguru.se/foobar namespace has a defined prefix via the QName.
+                final String suppliedPrefix = "http://www.jguru.se/foobar".equals(current)  ? "xmlPrefix" : null;
+
+                Assert.assertEquals(suppliedPrefix, namespaceToPrefixTupleMap.get(current).getKey());
+                Assert.assertEquals(false, namespaceToPrefixTupleMap.get(current).getValue());
+            }
+        }
     }
 }
