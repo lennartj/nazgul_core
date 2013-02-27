@@ -7,7 +7,7 @@ package se.jguru.nazgul.test.messaging.activemq;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import se.jguru.nazgul.test.messaging.MessageBroker;
 
 import javax.jms.ConnectionFactory;

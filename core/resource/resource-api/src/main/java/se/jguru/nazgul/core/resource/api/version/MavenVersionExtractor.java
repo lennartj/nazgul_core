@@ -5,7 +5,7 @@
 
 package se.jguru.nazgul.core.resource.api.version;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 import java.io.BufferedReader;
 import java.io.IOException;

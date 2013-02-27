@@ -4,7 +4,8 @@
   ~ All rights reserved.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <!--
@@ -48,12 +49,14 @@
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api-osgi</artifactId>
-            <version>2.2.7</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-osgi</artifactId>
-            <version>2.2.7-b53</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -114,7 +117,9 @@
                         <haltOnFailure>true</haltOnFailure>
                         <regexes>
                             <regex>
-                                <pattern>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.converter.StandardConverters</pattern>
+                                <pattern>
+                                    se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.converter.StandardConverters
+                                </pattern>
                                 <branchRate>0</branchRate>
                                 <lineRate>0</lineRate>
                             </regex>
@@ -124,7 +129,9 @@
                                 <lineRate>80</lineRate>
                             </regex>
                             <regex>
-                                <pattern>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.AbstractJaxbAnnotatedTransportType</pattern>
+                                <pattern>
+                                    se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.AbstractJaxbAnnotatedTransportType
+                                </pattern>
                                 <branchRate>60</branchRate>
                                 <lineRate>80</lineRate>
                             </regex>
@@ -153,12 +160,13 @@
                                 <requireJavaVersion>
                                     <version>${jdk.version}</version>
                                 </requireJavaVersion>
-                                <requireUpperBoundDeps />
+                                <requireUpperBoundDeps/>
 
                                 <!--
                                     We need to import the xml binding implementation.
                                 -->
-                                <restrictImplDependencies implementation="se.jguru.nazgul.tools.codestyle.enforcer.rules.RestrictImplDependencies">
+                                <restrictImplDependencies
+                                        implementation="se.jguru.nazgul.tools.codestyle.enforcer.rules.RestrictImplDependencies">
                                     <includedGroupIdPatterns>^se\\.jguru\\.nazgul\\..*</includedGroupIdPatterns>
                                     <excludedGroupIdPatterns>
                                         ^se\\.jguru\\.nazgul\\..*\\.generated\\..*,^se\\.jguru\\.nazgul\\.tools\\.codestyle\\..*,^com\\.sun\\.xml\\.bind\\..*
