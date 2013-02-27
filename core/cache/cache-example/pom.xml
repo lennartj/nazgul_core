@@ -46,55 +46,9 @@
             <groupId>se.jguru.nazgul.core.parser.api</groupId>
             <artifactId>nazgul-core-parser-api</artifactId>
             <version>1.4.1-SNAPSHOT</version>
-            <scope>test</scope>
         </dependency>
 
         <!-- External dependencies -->
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.aries.blueprint</groupId>
-            <artifactId>org.apache.aries.blueprint</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.aries.blueprint</groupId>
-            <artifactId>org.apache.aries.blueprint.cm</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.pojosr</groupId>
-            <artifactId>de.kalpatec.pojosr.framework.bare</artifactId>
-            <version>0.2.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.base</groupId>
-            <artifactId>ops4j-base-io</artifactId>
-            <version>1.4.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-junit4</artifactId>
-            <version>2.6.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-container-native</artifactId>
-            <version>2.6.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.framework</artifactId>
-            <version>4.0.3</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>javax.transaction</groupId>
             <artifactId>jta</artifactId>

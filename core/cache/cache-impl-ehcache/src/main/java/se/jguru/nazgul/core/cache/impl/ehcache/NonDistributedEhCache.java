@@ -10,7 +10,7 @@ import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.TransactionController;
 import net.sf.ehcache.transaction.manager.TransactionManagerLookup;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.cache.api.Cache;
@@ -50,7 +50,8 @@ public class NonDistributedEhCache extends AbstractClusterable implements Cache<
     /**
      * Creates an LocalEhCache instance using the provided classpath-relative configuration file.
      *
-     * @param classpathRelativeConfigurationFile The LocalEhCache configuration file.
+     * @param classpathRelativeConfigurationFile
+     *         The LocalEhCache configuration file.
      */
     public NonDistributedEhCache(final String classpathRelativeConfigurationFile) {
 

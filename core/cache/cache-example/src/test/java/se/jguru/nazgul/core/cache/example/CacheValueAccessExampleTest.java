@@ -7,33 +7,12 @@ package se.jguru.nazgul.core.cache.example;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.OptionUtils;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import se.jguru.nazgul.core.cache.api.Cache;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-@RunWith(JUnit4TestRunner.class)
 public class CacheValueAccessExampleTest extends AbstractCacheExample {
-
-    @Configuration
-    public Option[] configuration() {
-
-        // Install all dependency data bundles into the container.
-        Option[] server = AbstractCacheExample.getServerPlatform();
-
-        // All done.
-        final Option[] result = OptionUtils.combine(getAllDependenciesOption(), server);
-        for(Option current : result) {
-            System.out.println("Got: " + current);
-        }
-
-        return result;
-    }
 
     @Test
     public void useCase1_putAndGetValuesInCache() throws InterruptedException {

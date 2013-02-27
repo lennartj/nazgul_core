@@ -5,133 +5,153 @@
 
 package se.jguru.nazgul.core.cache.example;
 
-import org.junit.Assert;
-import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.CoreOptions;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
-import org.ops4j.pax.exam.options.extra.DirScannerProvisionOption;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
-import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.core.joran.spi.JoranException;
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
+import org.junit.AfterClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.cache.api.Cache;
-import se.jguru.nazgul.core.reflection.api.DependencyData;
+import se.jguru.nazgul.core.cache.impl.hazelcast.AbstractHazelcastInstanceWrapper;
+import se.jguru.nazgul.core.cache.impl.hazelcast.clients.HazelcastCacheMember;
 
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.Field;
+import java.net.URL;
 
 /**
  * Common functionality for cache examples.
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-@RunWith(JUnit4TestRunner.class)
 public abstract class AbstractCacheExample {
 
-    /**
-     * GroupID for Hazelcast Cache implementation.
-     */
-    public static final String HAZELCAST_GROUPID = "se.jguru.nazgul.core.cache.impl.hazelcast";
+    // Our log
+    private static final Logger log = LoggerFactory.getLogger(AbstractCacheExample.class);
+
+    // Shared state
+    private Cache<String> cache;
 
     /**
-     * GroupID for EhCache implementation.
-     */
-    public static final String EHCACHE_GROUPID = "se.jguru.nazgul.core.cache.impl.ehcache";
-
-
-    /**
-     * DependencyData for the current project.
-     */
-    protected final List<DependencyData> localDependencyData;
-    protected DependencyData hazelcastDependencyData;
-    protected DependencyData ehCacheDependencyData;
-
-    @Inject
-    private BundleContext ctx;
-
-    protected AbstractCacheExample() {
-
-        // Acquire local-project dependency data.
-        localDependencyData = DependencyData.parseDefaultPlacedDependencyPropertiesFile();
-
-        // Validate that the localDependencyData contains HazelcastCache and EhCache implementations.
-        final List<DependencyData> hazelcast = CollectionAlgorithms.filter(localDependencyData,
-                new Filter<DependencyData>() {
-                    @Override
-                    public boolean accept(final DependencyData candidate) {
-                        return candidate.getGroupId().equals(HAZELCAST_GROUPID);
-                    }
-                });
-        final List<DependencyData> ehCache = CollectionAlgorithms.filter(localDependencyData,
-                new Filter<DependencyData>() {
-                    @Override
-                    public boolean accept(final DependencyData candidate) {
-                        return candidate.getGroupId().equals(EHCACHE_GROUPID);
-                    }
-                });
-
-        // Assign internal state
-        this.hazelcastDependencyData = hazelcast.get(0);
-        this.ehCacheDependencyData = ehCache.get(0);
-
-        // Check sanity
-        Assert.assertNotNull(this.hazelcastDependencyData);
-        Assert.assertNotNull(this.ehCacheDependencyData);
-    }
-
-    /**
-     * Retrieves the local BundleContext.
+     * Acquires a AbstractHazelcastInstanceWrapper instance, invigorated by the provided
+     * configuration file.
      *
-     * @return the local BundleContext.
+     * @param configFile The classpath-relative resource path to a Hazelcast configuration file.
+     * @return A fully set-up AbstractHazelcastInstanceWrapper instance.
      */
-    protected BundleContext getBundleContext() {
-        return ctx;
+    protected static HazelcastCacheMember getCache(final String configFile) {
+
+        // Add a local, non-loopback interface.
+        return new HazelcastCacheMember(HazelcastCacheMember.readConfigFile(configFile));
     }
 
-    /**
-     * Convenience method to acquire the Cache from the unit test BundleContext.
-     *
-     * @return The BundleContext-bound Cache instance.
-     */
-    protected Cache<String> getCache() {
-        final ServiceReference<Cache> serviceReference = getBundleContext().getServiceReference(Cache.class);
-        return (Cache<String>) getBundleContext().getService(serviceReference);
-    }
+    public static void configureLogging(final String logbackConfigResource) {
 
-    /**
-     * Supplies the server platform options to Pax configuration.
-     *
-     * @return The Server platform options.
-     */
-    public static Option[] getServerPlatform() {
-        String ariesAssemblyDir = "${aries.assembly}/target";
-        Option bootPackages = CoreOptions.bootDelegationPackages("javax.transaction", "javax.transaction.*");
-        DirScannerProvisionOption unfiltered = CoreOptions.scanDir(ariesAssemblyDir);
-        Option ariesAsembly = unfiltered.filter("*-*.jar");
-        Option osgiFramework = CoreOptions.felix().version("3.5.0");
-        return CoreOptions.options(bootPackages, ariesAsembly, CoreOptions.junitBundles(), osgiFramework);
-    }
+        // Really close the Hazelcast cluster.
+        Hazelcast.shutdownAll();
 
-    protected Option[] getAllDependenciesOption() {
+        // Make certain that Hazelcast uses the slf4j logging factory.
+        System.setProperty("hazelcast.logging.type", "slf4j");
 
-        List<Option> allOptions = new ArrayList<Option>();
+        // Load the Logback configuration using the native JoranConfigurator
+        final ClassLoader ctxClassLoader = Thread.currentThread().getContextClassLoader();
+        final URL logbackConfiguration = ctxClassLoader.getResource(logbackConfigResource);
 
-        for(DependencyData current : localDependencyData) {
+        final LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+        context.reset();
+        final JoranConfigurator configurator = new JoranConfigurator();
+        configurator.setContext(context);
 
-            MavenArtifactProvisionOption currentOption = CoreOptions.mavenBundle()
-                    .groupId(current.getGroupId())
-                    .artifactId(current.getArtifactId())
-                    .version(current.getVersion());
-
-            allOptions.add(currentOption);
+        try {
+            configurator.doConfigure(logbackConfiguration);
+        } catch (JoranException e) {
+            e.printStackTrace();
         }
 
-        Option[] toReturn = new Option[allOptions.size()];
-        allOptions.toArray(toReturn);
+        if (log.isDebugEnabled()) {
+            log.debug("Read SLF4J config from: " + logbackConfiguration.toString());
+        }
+    }
 
-        return toReturn;
+    @AfterClass
+    public static void teardownHazelcastCacheInstance() {
+        Hazelcast.shutdownAll();
+        Hazelcast.shutdownAll();
+    }
+
+    protected Cache<String> getCache() {
+
+        if(cache == null) {
+            cache = getCache("config/hazelcast/StandaloneConfig.xml");
+        }
+
+        // All done.
+        return cache;
+    }
+
+    /*
+    protected void purgeCache(final AbstractHazelcastInstanceWrapper cache) {
+        if (cache == null) {
+            log.warn("Can not purge null cache");
+            return;
+        }
+        try {
+            final HazelcastInstance current = getInternalInstance(cache);
+
+            for (final Instance instance : current.getInstances()) {
+                final String instanceId = (String) instance.getId();
+                // We don't want to destroy our internal maps for the cache
+                if (!(instanceId.endsWith(GridOperations.CLUSTER_ADMIN_TOPIC))) {
+
+                    final Instance.InstanceType instanceType = instance.getInstanceType();
+
+                    // see http://code.google.com/p/hazelcast/issues/detail?id=516
+                    if (instanceType.isMultiMap()) {
+                        MultiMap map = (MultiMap) instance;
+                        map.clear();
+                    } else if (instanceType.isMap()) {
+                        Map map = (Map) instance;
+                        map.clear();
+                    } else if (instanceType.isList() || instanceType.isSet() || instanceType.isQueue()) {
+                        Collection collection = (Collection) instance;
+                        collection.clear();
+                    }
+
+                    final Set<String> listeners = new TreeSet<String>(cache.getListenerIDsFor(instance));
+                    for (final String listenerId : listeners) {
+                        cache.removeListenerFor(instance, listenerId);
+                    }
+
+                    //                    can't use this - it clears internal state of hazelcast
+                    //                    if (!(instanceId.endsWith(CLUSTERWIDE_SHARED_CACHE_MAP) ||
+                    //                            instanceId.endsWith(CLUSTERWIDE_LISTENERID_MAP))) {
+                    //                        instance.destroy();
+                    //                    }
+                }
+            }
+
+            final Set<String> listeners = new TreeSet<String>(cache.getLocallyRegisteredListeners().keySet());
+            for (final String listenerId : listeners) {
+                cache.removeInstanceListener(listenerId);
+            }
+
+        } catch (final Exception e) {
+            log.warn("Unable to purge cache", e);
+        }
+    }
+    */
+
+    protected HazelcastInstance getInternalInstance(final AbstractHazelcastInstanceWrapper cache) {
+
+        try {
+            Field instanceField = cache.getClass().getSuperclass().getDeclaredField("cacheInstance");
+            instanceField.setAccessible(true);
+
+            return (HazelcastInstance) instanceField.get(cache);
+
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Could not acquire the cacheInstance", e);
+        }
     }
 }
