@@ -58,7 +58,7 @@ public abstract class AbstractClusterable implements Clusterable {
     }
 
     /**
-     * @return an Identifier, unique within the cluster.
+     * {@inheritDoc}
      */
     @Override
     public String getClusterId() {

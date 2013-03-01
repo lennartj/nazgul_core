@@ -11,7 +11,7 @@ import org.apache.commons.lang3.Validate;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class ConstantIdGenerator implements IdGenerator {
+public final class ConstantIdGenerator implements IdGenerator {
 
     // Internal state
     private String id;
@@ -27,7 +27,7 @@ public class ConstantIdGenerator implements IdGenerator {
     }
 
     /**
-     * @return A (cluster-)unique identifier for each call.
+     * {@inheritDoc}
      */
     @Override
     public final String getIdentifier() {
@@ -35,12 +35,10 @@ public class ConstantIdGenerator implements IdGenerator {
     }
 
     /**
-     * @return {@code true} if this IdGenerator can deliver an identifier
-     *         at the time of this method being called, and {@code false}
-     *         otherwise.
+     * {@inheritDoc}
      */
     @Override
-    public boolean isIdentifierAvailable() {
+    public final boolean isIdentifierAvailable() {
         return true;
     }
 }
