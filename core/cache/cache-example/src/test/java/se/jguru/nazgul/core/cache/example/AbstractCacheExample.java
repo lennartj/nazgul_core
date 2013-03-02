@@ -13,7 +13,7 @@ import com.hazelcast.core.HazelcastInstance;
 import org.junit.AfterClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.jguru.nazgul.core.cache.api.Cache;
+import se.jguru.nazgul.core.cache.api.distributed.async.DestinationProvider;
 import se.jguru.nazgul.core.cache.impl.hazelcast.AbstractHazelcastInstanceWrapper;
 import se.jguru.nazgul.core.cache.impl.hazelcast.clients.HazelcastCacheMember;
 
@@ -31,7 +31,7 @@ public abstract class AbstractCacheExample {
     private static final Logger log = LoggerFactory.getLogger(AbstractCacheExample.class);
 
     // Shared state
-    private Cache<String> cache;
+    private DestinationProvider<String> cache;
 
     /**
      * Acquires a AbstractHazelcastInstanceWrapper instance, invigorated by the provided
@@ -80,7 +80,7 @@ public abstract class AbstractCacheExample {
         Hazelcast.shutdownAll();
     }
 
-    protected Cache<String> getCache() {
+    protected DestinationProvider<String> getCache() {
 
         if(cache == null) {
             cache = getCache("config/hazelcast/StandaloneConfig.xml");
