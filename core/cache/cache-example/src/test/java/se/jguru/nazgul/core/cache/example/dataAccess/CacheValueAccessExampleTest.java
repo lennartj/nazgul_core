@@ -3,11 +3,12 @@
  * All rights reserved.
  */
 
-package se.jguru.nazgul.core.cache.example;
+package se.jguru.nazgul.core.cache.example.dataAccess;
 
 import org.junit.Assert;
 import org.junit.Test;
 import se.jguru.nazgul.core.cache.api.Cache;
+import se.jguru.nazgul.core.cache.example.AbstractCacheExample;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
