@@ -20,7 +20,7 @@
 
     <groupId>se.jguru.nazgul.core.cache</groupId>
     <artifactId>nazgul-core-cache-reactor</artifactId>
-    <version>1.4.1</version>
+    <version>1.4.2-SNAPSHOT</version>
     <name>${project.groupId}.${project.artifactId}</name>
     <packaging>pom</packaging>
 
@@ -38,6 +38,6 @@
 
     <scm>
         <developerConnection>scm:hg:file://${basedir}/../../</developerConnection>
-        <tag>nazgul-core-1.4.1</tag>
+        <tag>HEAD</tag>
     </scm>
 </project>
