@@ -65,11 +65,11 @@ public class MockBlueprintPaxTest {
 
                 // Add an in-project dependency to the container.
                 CoreOptions.mavenBundle("se.jguru.nazgul.core.reflection.api",
-                        "nazgul-core-reflection-api").versionAsInProject(),
+                        "nazgul-core-reflection-api").version("1.3.1"),
                 CoreOptions.mavenBundle("org.apache.commons",
                         "commons-lang3").versionAsInProject(),
                 CoreOptions.mavenBundle("se.jguru.nazgul.core.algorithms.api",
-                        "nazgul-core-algorithms-api").versionAsInProject(),
+                        "nazgul-core-algorithms-api").version("1.3.1"),
 
                 // Add Aries blueprint Bundles
                 CoreOptions.mavenBundle("org.apache.aries.blueprint",
