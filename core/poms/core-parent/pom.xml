@@ -14,7 +14,7 @@
     <parent>
         <groupId>se.jguru.nazgul.tools.poms</groupId>
         <artifactId>nazgul-parent</artifactId>
-        <version>1.3.2</version>
+        <version>1.4.1</version>
         <relativePath />
     </parent>
 
@@ -52,7 +52,7 @@
             This property must always be identical to the
             version of the nazgul-tools.version.
         -->
-        <nazgul.tools.version>1.3.2</nazgul.tools.version>
+        <nazgul.tools.version>1.4.1</nazgul.tools.version>
 
         <!--
             Other, external version properties.
