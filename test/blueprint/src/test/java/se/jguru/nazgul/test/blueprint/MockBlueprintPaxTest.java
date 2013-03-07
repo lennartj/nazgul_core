@@ -11,6 +11,7 @@ import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
+import org.ops4j.pax.exam.util.PathUtils;
 import org.ops4j.pax.swissbox.tracker.ServiceLookup;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -80,11 +81,15 @@ public class MockBlueprintPaxTest {
                         "org.apache.aries.proxy").versionAsInProject(),
 
                 // Add logback as a logging backend to SLF4J
+                CoreOptions.mavenBundle("org.slf4j", "slf4j-api").versionAsInProject(),
                 CoreOptions.mavenBundle("ch.qos.logback", "logback-core").versionAsInProject(),
                 CoreOptions.mavenBundle("ch.qos.logback", "logback-classic").versionAsInProject(),
 
                 // Add JUnit bundles.
-                CoreOptions.junitBundles()
+                CoreOptions.junitBundles(),
+
+                // Make sure we log with SLF4J and Logback
+                CoreOptions.vmOptions("pax.exam.logging=none")
                                   );
     }
 
