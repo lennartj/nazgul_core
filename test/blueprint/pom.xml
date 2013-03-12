@@ -32,13 +32,13 @@
     <parent>
         <groupId>se.jguru.nazgul.core.poms.core-parent</groupId>
         <artifactId>nazgul-core-parent</artifactId>
-        <version>1.4.2-SNAPSHOT</version>
+        <version>1.4.2</version>
         <relativePath>../../core/poms/core-parent</relativePath>
     </parent>
 
     <groupId>se.jguru.nazgul.test.blueprint</groupId>
     <artifactId>nazgul-core-blueprint-test</artifactId>
-    <version>1.4.2-SNAPSHOT</version>
+    <version>1.4.2</version>
     <name>${project.groupId}.${project.artifactId}</name>
     <packaging>bundle</packaging>
 
@@ -58,7 +58,7 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.reflection.api</groupId>
             <artifactId>nazgul-core-reflection-api</artifactId>
-            <version>1.4.2-SNAPSHOT</version>
+            <version>1.4.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -220,6 +220,6 @@ and
 
     <scm>
         <developerConnection>scm:hg:file://${basedir}/../../</developerConnection>
-        <tag>HEAD</tag>
+        <tag>nazgul-core-1.4.2</tag>
     </scm>
 </project>
