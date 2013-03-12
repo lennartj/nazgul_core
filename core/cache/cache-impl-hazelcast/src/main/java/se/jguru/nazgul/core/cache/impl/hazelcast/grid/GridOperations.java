@@ -1,6 +1,23 @@
 /*
- * Copyright (c) jGuru Europe AB.
- * All rights reserved.
+ * #%L
+ *   se.jguru.nazgul.core.poms.core-parent.nazgul-core-parent
+ *   %%
+ *   Copyright (C) 2010 - 2013 jGuru Europe AB
+ *   %%
+ *   Licensed under the jGuru Europe AB license (the "License"), based
+ *   on Apache License, Version 2.0; you may not use this file except
+ *   in compliance with the License.
+ *
+ *   You may obtain a copy of the License at
+ *
+ *         http://www.jguru.se/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *   #L%
  */
 
 package se.jguru.nazgul.core.cache.impl.hazelcast.grid;
@@ -22,18 +39,18 @@ public interface GridOperations {
      * The clusterwide Map[String, List[String]] relating ID of all distributed objects to a
      * List holding IDs of its listeners.
      */
-    public static final String CLUSTER_KNOWN_LISTENERIDS = "hazelcast_cluster_distributedObjectID2cacheListenerIDsMap";
+    String CLUSTER_KNOWN_LISTENERIDS = "hazelcast_cluster_distributedObjectID2cacheListenerIDsMap";
 
     /**
      * The id of the clusterwide shared cache map.
      */
-    public static final String CLUSTER_SHARED_CACHE_MAP = "hazelcast_cluster_commonCacheMap";
+    String CLUSTER_SHARED_CACHE_MAP = "hazelcast_cluster_commonCacheMap";
 
     /**
      * The id of the clusterwide topic which transmits AdminMessage instances which - among other things - handles
      * removal of named listeners.
      */
-    public static final String CLUSTER_ADMIN_TOPIC = "hazelcast_cluster_adminTopic";
+    String CLUSTER_ADMIN_TOPIC = "hazelcast_cluster_adminTopic";
 
     /**
      * Sends the provided AdminMessage to all members of the Cluster.
@@ -53,7 +70,6 @@ public interface GridOperations {
      *         given distributed object [value].
      */
     IMap<String, TreeSet<String>> getCacheListenersIDMap();
-    // was: IMap<String, TreeSet<String>> getListenersIdMap();
 
     /**
      * Adds the given listenerID to the listenerIdSet for the provided distributedObject.

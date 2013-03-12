@@ -1,6 +1,23 @@
 /*
- * Copyright (c) jGuru Europe AB.
- * All rights reserved.
+ * #%L
+ *   se.jguru.nazgul.core.poms.core-parent.nazgul-core-parent
+ *   %%
+ *   Copyright (C) 2010 - 2013 jGuru Europe AB
+ *   %%
+ *   Licensed under the jGuru Europe AB license (the "License"), based
+ *   on Apache License, Version 2.0; you may not use this file except
+ *   in compliance with the License.
+ *
+ *   You may obtain a copy of the License at
+ *
+ *         http://www.jguru.se/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *   #L%
  */
 package se.jguru.nazgul.core.cache.impl.hazelcast.clients;
 
@@ -11,28 +28,16 @@ import com.hazelcast.config.MulticastConfig;
 import com.hazelcast.config.TcpIpConfig;
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.ICollection;
-import com.hazelcast.core.IMap;
-import com.hazelcast.core.Instance;
-import com.hazelcast.core.Message;
 import com.hazelcast.nio.Address;
 import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import se.jguru.nazgul.core.cache.api.distributed.DistributedCache;
-import se.jguru.nazgul.core.cache.api.transaction.AbstractTransactedAction;
 import se.jguru.nazgul.core.cache.impl.hazelcast.AbstractHazelcastInstanceWrapper;
-import se.jguru.nazgul.core.cache.impl.hazelcast.HazelcastCacheListenerAdapter;
-import se.jguru.nazgul.core.cache.impl.hazelcast.grid.AdminMessage;
 
 import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.TreeSet;
 
 /**
  * Hazelcast cache implementation, using Strings as CacheKeys.
@@ -40,9 +45,6 @@ import java.util.TreeSet;
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 public class HazelcastCacheMember extends AbstractHazelcastInstanceWrapper {
-
-    // Our log
-    private static final Logger log = LoggerFactory.getLogger(HazelcastCacheMember.class);
 
     /**
      * Path to the Main configuration file, used by the Main factory method.
@@ -234,138 +236,6 @@ public class HazelcastCacheMember extends AbstractHazelcastInstanceWrapper {
 
         // Construct the Config and return it
         return new XmlConfigBuilder(in).build();
-    }
-
-    /**
-     * Invoked when a message is received for the added topic.
-     *
-     * @param adminMessageMessage received message
-     */
-    @Override
-    public void onMessage(final Message<AdminMessage> adminMessageMessage) {
-
-        final AdminMessage message = adminMessageMessage.getMessageObject();
-
-        switch (message.getCommand()) {
-            case REMOVE_LISTENER:
-
-                final String distributedObjectiD = message.getArguments().get(0);
-                final String toRemoveId = message.getArguments().get(1);
-
-                // Take no action if we do not own the listener.
-                // Only the member that owns the listener should remove it.
-                if (!getLocallyRegisteredListeners().containsKey(toRemoveId)) {
-
-                    log.debug("(CacheID: " + getClusterId() + "): No local registered listener with id [" + toRemoveId
-                            + "] found. Ignoring remove request.");
-
-                    return;
-                }
-
-                final String rollbackMessage =
-                        "(CacheID: " + getClusterId() + "): Could not remove listener with id [" + toRemoveId
-                                + "] from distributedObject [" + distributedObjectiD + "]";
-
-                performTransactedAction(new AbstractTransactedAction(rollbackMessage) {
-
-                    @Override
-                    public void doInTransaction() throws RuntimeException {
-
-                        Instance distributedObject = null;
-
-                        // Find the distributed object from which to remove the listener
-                        for (final Instance current : getInstances()) {
-                            if (distributedObjectiD.equals("" + current.getId())) {
-                                distributedObject = current;
-                                break;
-                            }
-                        }
-
-                        // Remove the listener locally.
-                        final HazelcastCacheListenerAdapter removed
-                                = getLocallyRegisteredListeners().remove(toRemoveId);
-
-                        // Remove the listener ID from the listenersIdMap,
-                        // and update the TreeSet within the distributedListenersIdMap.
-                        final TreeSet<String> idSet = getCacheListenersIDMap().get(distributedObjectiD);
-                        final boolean removedOKFromIdMap = idSet.remove(toRemoveId);
-                        getCacheListenersIDMap().put(distributedObjectiD, idSet);
-
-                        // Remove the listener from the distributedObject.
-                        switch (distributedObject.getInstanceType()) {
-                            case MAP:
-                                ((IMap) distributedObject).removeEntryListener(removed);
-                                break;
-
-                            case LIST:
-                            case SET:
-                            case QUEUE:
-                                ((ICollection) distributedObject).removeItemListener(removed);
-                                break;
-                        }
-                    }
-                });
-
-                break;
-
-            case SHUTDOWN_INSTANCE:
-
-                // Is it *this* instance that should be shut down?
-                final String shutdownInstanceID = message.getArguments().get(0);
-                if (!getClusterId().equals(shutdownInstanceID)) {
-                    return;
-                }
-
-                // Unregister all keys for listeners that we own.
-                for (final Instance current : getInstances()) {
-
-                    final Set<String> listenerIDs = getListenerIDsFor(current);
-                    for (final String currentID : getLocallyRegisteredListeners().keySet()) {
-                        if (listenerIDs.contains(currentID)) {
-                            listenerIDs.remove(currentID);
-                        }
-                    }
-                }
-
-                // Now perform shutdown.
-                // This will automatically remove all local listeners from their instances.
-                HazelcastCacheMember.this.stopCache();
-                break;
-
-            case CREATE_INCACHE_INSTANCE:
-                final AdminMessage.TypeDefinition toCreateType =
-                        AdminMessage.TypeDefinition.valueOf(message.getArguments().get(0));
-                final String clusterUniqueID = message.getArguments().get(1);
-
-                switch (toCreateType) {
-
-                    case SET:
-                        getDistributedCollection(DistributedCache.DistributedCollectionType.SET, clusterUniqueID);
-                        break;
-
-                    case COLLECTION:
-                        getDistributedCollection(DistributedCache.DistributedCollectionType.COLLECTION,
-                                clusterUniqueID);
-                        break;
-
-                    case QUEUE:
-                        getDistributedCollection(DistributedCache.DistributedCollectionType.QUEUE, clusterUniqueID);
-                        break;
-
-                    case TOPIC:
-                        getTopic(clusterUniqueID);
-                        break;
-
-                    case MAP:
-                        getDistributedMap(clusterUniqueID);
-                        break;
-                }
-                break;
-
-            default:
-                throw new UnsupportedOperationException("AdminMessage command [" + message.getCommand()
-                        + "] not yet supported.");
-        }
     }
 
     //

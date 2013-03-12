@@ -1,35 +1,40 @@
 /*
- * Copyright (c) jGuru Europe AB.
- * All rights reserved.
+ * #%L
+ *   se.jguru.nazgul.core.poms.core-parent.nazgul-core-parent
+ *   %%
+ *   Copyright (C) 2010 - 2013 jGuru Europe AB
+ *   %%
+ *   Licensed under the jGuru Europe AB license (the "License"), based
+ *   on Apache License, Version 2.0; you may not use this file except
+ *   in compliance with the License.
+ *
+ *   You may obtain a copy of the License at
+ *
+ *         http://www.jguru.se/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *   #L%
  */
 
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.xml.sax.SAXException;
 import se.jguru.nazgul.core.xmlbinding.api.NamespacePrefixResolver;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbNamespacePrefixResolver;
-import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbUtils;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Account;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Beverage;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Foo;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Person;
-import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.ThreePartCereal;
-import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter;
 import se.jguru.nazgul.test.xmlbinding.XmlTestUtils;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.Validator;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +54,7 @@ public class JaxbXmlBinderTest {
     }
 
     @Test
-    public void validateMarshallingToXml() {
+    public void validateMarshallingToXml() throws Exception {
 
         // Assemble
         final Person person1 = new Person("Lennart", 44);
@@ -60,11 +65,11 @@ public class JaxbXmlBinderTest {
         final String result = unitUnderTest.marshal(person1, person2);
 
         // Assert
-        Assert.assertEquals(expected.replaceAll("\\s", ""), result.replaceAll("\\s", ""));
+        Assert.assertTrue(XmlTestUtils.compareXmlIgnoringWhitespace(expected, result).identical());
     }
 
     @Test
-    public void validateMarshallingWithTypeConversion() {
+    public void validateMarshallingWithTypeConversion() throws Exception {
 
         // Assemble
         final Person person1 = new Person("Lennart", 44);
@@ -75,7 +80,7 @@ public class JaxbXmlBinderTest {
         final String result = unitUnderTest.marshal(person1, "FooBar!", null, person2);
 
         // Assert
-        Assert.assertEquals(expected, result);
+        Assert.assertTrue(XmlTestUtils.compareXmlIgnoringWhitespace(expected, result).identical());
     }
 
     @Test
@@ -122,7 +127,7 @@ public class JaxbXmlBinderTest {
     }
 
     @Test
-    public void validateMarshallingWithSeparateNamespaces() {
+    public void validateMarshallingWithSeparateNamespaces() throws Exception {
 
         // Assemble
         final String data = XmlTestUtils.readFully("data/xml/compoundNamespaceEntities.xml");
@@ -138,7 +143,7 @@ public class JaxbXmlBinderTest {
         final String result = unitUnderTest.marshal(ale, "FooBar!", person, aFoo);
 
         // Assert
-        Assert.assertEquals(data, result);
+        Assert.assertTrue(XmlTestUtils.compareXmlIgnoringWhitespace(data, result).identical());
     }
 
     @Test
