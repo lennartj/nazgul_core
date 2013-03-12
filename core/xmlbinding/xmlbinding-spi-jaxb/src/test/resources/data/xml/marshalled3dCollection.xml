@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  ~ #%L
+  ~   se.jguru.nazgul.core.poms.core-parent.nazgul-core-parent
+  ~   %%
+  ~   Copyright (C) 2010 - 2013 jGuru Europe AB
+  ~   %%
+  ~   Licensed under the jGuru Europe AB license (the "License"), based
+  ~   on Apache License, Version 2.0; you may not use this file except
+  ~   in compliance with the License.
+  ~
+  ~   You may obtain a copy of the License at
+  ~
+  ~         http://www.jguru.se/licenses/LICENSE-2.0
+  ~
+  ~   Unless required by applicable law or agreed to in writing, software
+  ~   distributed under the License is distributed on an "AS IS" BASIS,
+  ~   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~   See the License for the specific language governing permissions and
+  ~   limitations under the License.
+  ~   #L%
+  -->
+
+<core:entityTransporter xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="http://www.jguru.se/nazgul/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <entityClasses>
+        <entityClass>java.lang.Integer</entityClass>
+        <entityClass>java.lang.String</entityClass>
+        <entityClass>org.joda.time.DateTime</entityClass>
+        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter</entityClass>
+        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedCollection</entityClass>
+        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedDateTime</entityClass>
+        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedNull</entityClass>
+    </entityClasses>
+    <items>
+        <item xsi:type="core:jaxbAnnotatedCollection">
+            <originalCollectionType>java.util.ArrayList</originalCollectionType>
+            <items>
+                <item xsi:type="xs:string">FooBar!</item>
+                <item xsi:type="core:jaxbAnnotatedCollection">
+                    <originalCollectionType>java.util.LinkedList</originalCollectionType>
+                    <items>
+                        <item xsi:type="xs:string">FooBar!</item>
+                        <item xsi:type="core:jaxbAnnotatedDateTime">
+                            <transportForm>2012-04-01T15:00:00.000+02:00</transportForm>
+                        </item>
+                        <item xsi:type="core:jaxbAnnotatedCollection">
+                            <originalCollectionType>java.util.ArrayList</originalCollectionType>
+                            <items>
+                                <item xsi:type="xs:string">FooBar!</item>
+                                <item xsi:type="core:jaxbAnnotatedDateTime">
+                                    <transportForm>2012-04-01T15:00:00.000+02:00</transportForm>
+                                </item>
+                                <item xsi:type="xs:int">42</item>
+                            </items>
+                        </item>
+                        <item xsi:type="xs:int">42</item>
+                        <item xsi:type="core:jaxbAnnotatedNull"/>
+                    </items>
+                </item>
+            </items>
+        </item>
+    </items>
+</core:entityTransporter>
