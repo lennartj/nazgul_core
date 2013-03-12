@@ -32,13 +32,13 @@
     <parent>
         <groupId>se.jguru.nazgul.core.poms.core-parent</groupId>
         <artifactId>nazgul-core-parent</artifactId>
-        <version>1.4.2-SNAPSHOT</version>
+        <version>1.4.2</version>
         <relativePath>../../poms/core-parent</relativePath>
     </parent>
 
     <groupId>se.jguru.nazgul.core.cache.example</groupId>
     <artifactId>nazgul-core-cache-example</artifactId>
-    <version>1.4.2-SNAPSHOT</version>
+    <version>1.4.2</version>
     <name>${project.groupId}.${project.artifactId}</name>
     <packaging>jar</packaging>
 
@@ -52,17 +52,17 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.cache.impl.hazelcast</groupId>
             <artifactId>nazgul-core-cache-impl-hazelcast</artifactId>
-            <version>1.4.2-SNAPSHOT</version>
+            <version>1.4.2</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.cache.impl.ehcache</groupId>
             <artifactId>nazgul-core-cache-impl-ehcache</artifactId>
-            <version>1.4.2-SNAPSHOT</version>
+            <version>1.4.2</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.parser.api</groupId>
             <artifactId>nazgul-core-parser-api</artifactId>
-            <version>1.4.2-SNAPSHOT</version>
+            <version>1.4.2</version>
         </dependency>
 
         <!-- External dependencies -->
@@ -143,6 +143,6 @@
 
     <scm>
         <developerConnection>scm:hg:file://${basedir}/../../../</developerConnection>
-        <tag>HEAD</tag>
+        <tag>nazgul-core-1.4.2</tag>
     </scm>
 </project>
