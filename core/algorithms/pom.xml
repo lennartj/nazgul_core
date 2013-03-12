@@ -37,7 +37,7 @@
 
     <groupId>se.jguru.nazgul.core.algorithms</groupId>
     <artifactId>nazgul-core-algorithms-reactor</artifactId>
-    <version>1.4.2</version>
+    <version>1.4.3-SNAPSHOT</version>
     <name>${project.groupId}.${project.artifactId}</name>
     <packaging>pom</packaging>
 
@@ -55,6 +55,6 @@
 
     <scm>
         <developerConnection>scm:hg:file://${basedir}/../../</developerConnection>
-        <tag>nazgul-core-1.4.2</tag>
+        <tag>HEAD</tag>
     </scm>
 </project>

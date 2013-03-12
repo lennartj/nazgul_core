@@ -32,13 +32,13 @@
     <parent>
         <groupId>se.jguru.nazgul.core.poms.model-parent</groupId>
         <artifactId>nazgul-core-model-parent</artifactId>
-        <version>1.4.2</version>
+        <version>1.4.3-SNAPSHOT</version>
         <relativePath>../../poms/model-parent/pom.xml</relativePath>
     </parent>
 
     <groupId>se.jguru.nazgul.core.persistence.model</groupId>
     <artifactId>nazgul-core-persistence-model</artifactId>
-    <version>1.4.2</version>
+    <version>1.4.3-SNAPSHOT</version>
     <name>${project.groupId}.${project.artifactId}</name>
     <packaging>bundle</packaging>
 
@@ -162,6 +162,6 @@
 
     <scm>
         <developerConnection>scm:hg:file://${basedir}/../../../</developerConnection>
-        <tag>nazgul-core-1.4.2</tag>
+        <tag>HEAD</tag>
     </scm>
 </project>
