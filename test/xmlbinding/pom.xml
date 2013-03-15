@@ -38,8 +38,6 @@
 
     <groupId>se.jguru.nazgul.test.xmlbinding</groupId>
     <artifactId>nazgul-core-xmlbinding-test</artifactId>
-    <version>1.4.3-SNAPSHOT</version>
-    <name>${project.groupId}.${project.artifactId}</name>
     <packaging>bundle</packaging>
 
     <!--

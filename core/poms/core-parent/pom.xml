@@ -29,9 +29,9 @@
     ################################################
     -->
     <parent>
-        <groupId>se.jguru.nazgul.tools.poms</groupId>
-        <artifactId>nazgul-parent</artifactId>
-        <version>1.4.2</version>
+        <groupId>se.jguru.nazgul.tools.poms.external</groupId>
+        <artifactId>nazgul-tools-external-parent</artifactId>
+        <version>1.4.3-SNAPSHOT</version>
         <relativePath />
     </parent>
 
@@ -66,10 +66,9 @@
 
     <properties>
         <!--
-            This property must always be identical to the
-            version of the nazgul-tools.version.
+            Supply the version of the Nazgul Tools framework as a Property.
         -->
-        <nazgul.tools.version>1.4.2</nazgul.tools.version>
+        <nazgul.tools.version>${project.parent.version}</nazgul.tools.version>
 
         <!--
             Other, external version properties.

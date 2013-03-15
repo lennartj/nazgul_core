@@ -38,8 +38,6 @@
 
     <groupId>se.jguru.nazgul.core.cache.impl.ehcache</groupId>
     <artifactId>nazgul-core-cache-impl-ehcache</artifactId>
-    <version>1.4.3-SNAPSHOT</version>
-    <name>${project.groupId}.${project.artifactId}</name>
     <packaging>bundle</packaging>
 
     <properties>
@@ -56,12 +54,12 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.cache.api</groupId>
             <artifactId>nazgul-core-cache-api</artifactId>
-            <version>1.4.3-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.parser.api</groupId>
             <artifactId>nazgul-core-parser-api</artifactId>
-            <version>1.4.3-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
             <scope>test</scope>
         </dependency>
 

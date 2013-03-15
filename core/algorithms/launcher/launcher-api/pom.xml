@@ -38,8 +38,6 @@
 
     <groupId>se.jguru.nazgul.core.algorithms.launcher.api</groupId>
     <artifactId>nazgul-core-launcher-api</artifactId>
-    <version>1.4.3-SNAPSHOT</version>
-    <name>${project.groupId}.${project.artifactId}</name>
     <packaging>bundle</packaging>
 
     <!--

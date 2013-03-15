@@ -38,8 +38,6 @@
 
     <groupId>se.jguru.nazgul.test.blueprint</groupId>
     <artifactId>nazgul-core-blueprint-test</artifactId>
-    <version>1.4.3-SNAPSHOT</version>
-    <name>${project.groupId}.${project.artifactId}</name>
     <packaging>bundle</packaging>
 
     <properties>
@@ -58,9 +56,11 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.reflection.api</groupId>
             <artifactId>nazgul-core-reflection-api</artifactId>
-            <version>1.4.3-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- External dependencies -->
         <dependency>
             <groupId>se.jguru.nazgul.test.bundles.hello.impl.blueprint</groupId>
             <artifactId>nazgul-test-hello-impl-blueprint</artifactId>
@@ -73,8 +73,6 @@
             <version>2.0.0</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- External dependencies -->
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>

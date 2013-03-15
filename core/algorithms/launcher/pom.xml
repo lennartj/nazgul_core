@@ -30,15 +30,13 @@
     ################################################
     -->
     <parent>
-        <groupId>se.jguru.nazgul.tools.poms</groupId>
-        <artifactId>nazgul-reactor</artifactId>
-        <version>1.0.0</version>
+        <groupId>se.jguru.nazgul.core.algorithms</groupId>
+        <artifactId>nazgul-core-algorithms-reactor</artifactId>
+        <version>1.4.3-SNAPSHOT</version>
     </parent>
 
     <groupId>se.jguru.nazgul.core.algorithms.launcher</groupId>
     <artifactId>nazgul-core-launcher-reactor</artifactId>
-    <version>1.4.3-SNAPSHOT</version>
-    <name>${project.groupId}.${project.artifactId}</name>
     <packaging>pom</packaging>
 
     <!--

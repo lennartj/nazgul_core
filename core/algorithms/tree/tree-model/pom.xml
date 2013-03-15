@@ -38,8 +38,6 @@
 
     <groupId>se.jguru.nazgul.core.algorithms.tree.model</groupId>
     <artifactId>nazgul-core-tree-model</artifactId>
-    <version>1.4.3-SNAPSHOT</version>
-    <name>${project.groupId}.${project.artifactId}</name>
     <packaging>bundle</packaging>
 
     <!--
@@ -52,12 +50,12 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.persistence.model</groupId>
             <artifactId>nazgul-core-persistence-model</artifactId>
-            <version>1.4.3-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.xmlbinding.spi.jaxb</groupId>
             <artifactId>nazgul-core-xmlbinding-spi-jaxb</artifactId>
-            <version>1.4.3-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
             <scope>test</scope>
         </dependency>
 

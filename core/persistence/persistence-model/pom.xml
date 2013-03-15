@@ -38,8 +38,6 @@
 
     <groupId>se.jguru.nazgul.core.persistence.model</groupId>
     <artifactId>nazgul-core-persistence-model</artifactId>
-    <version>1.4.3-SNAPSHOT</version>
-    <name>${project.groupId}.${project.artifactId}</name>
     <packaging>bundle</packaging>
 
     <!--
