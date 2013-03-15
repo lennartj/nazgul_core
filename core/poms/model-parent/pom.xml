@@ -37,8 +37,6 @@
 
     <groupId>se.jguru.nazgul.core.poms.model-parent</groupId>
     <artifactId>nazgul-core-model-parent</artifactId>
-    <version>1.4.3-SNAPSHOT</version>
-    <name>${project.groupId}.${project.artifactId}</name>
     <packaging>pom</packaging>
 
     <!--
@@ -51,12 +49,12 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.reflection.api</groupId>
             <artifactId>nazgul-core-reflection-api</artifactId>
-            <version>1.4.3-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.xmlbinding.api</groupId>
             <artifactId>nazgul-core-xmlbinding-api</artifactId>
-            <version>1.4.3-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 

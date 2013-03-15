@@ -38,8 +38,6 @@
 
     <groupId>se.jguru.nazgul.core.reflection.api</groupId>
     <artifactId>nazgul-core-reflection-api</artifactId>
-    <version>1.4.3-SNAPSHOT</version>
-    <name>${project.groupId}.${project.artifactId}</name>
     <packaging>bundle</packaging>
 
     <!--
@@ -52,7 +50,7 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.algorithms.api</groupId>
             <artifactId>nazgul-core-algorithms-api</artifactId>
-            <version>1.4.3-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <!-- External Dependencies -->

@@ -38,8 +38,6 @@
 
     <groupId>se.jguru.nazgul.core.algorithms.event.api</groupId>
     <artifactId>nazgul-core-algorithms-event-api</artifactId>
-    <version>1.4.3-SNAPSHOT</version>
-    <name>${project.groupId}.${project.artifactId}</name>
     <packaging>bundle</packaging>
 
     <!--
@@ -54,7 +52,7 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.clustering.api</groupId>
             <artifactId>nazgul-core-clustering-api</artifactId>
-            <version>1.4.3-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <!--

@@ -30,15 +30,13 @@
     ################################################
     -->
     <parent>
-        <groupId>se.jguru.nazgul.tools.poms</groupId>
-        <artifactId>nazgul-reactor</artifactId>
-        <version>1.0.0</version>
+        <groupId>se.jguru.nazgul.core</groupId>
+        <artifactId>nazgul-core-core-reactor</artifactId>
+        <version>1.4.3-SNAPSHOT</version>
     </parent>
 
     <groupId>se.jguru.nazgul.core.algorithms</groupId>
     <artifactId>nazgul-core-algorithms-reactor</artifactId>
-    <version>1.4.3-SNAPSHOT</version>
-    <name>${project.groupId}.${project.artifactId}</name>
     <packaging>pom</packaging>
 
     <!--
@@ -53,6 +51,11 @@
         <module>launcher</module>
     </modules>
 
+    <!--
+    ################################################
+    # Section 3:  External systems
+    ################################################
+    -->
     <scm>
         <developerConnection>scm:hg:file://${basedir}/../../</developerConnection>
         <tag>HEAD</tag>
