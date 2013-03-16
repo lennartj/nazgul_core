@@ -50,12 +50,12 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.persistence.model</groupId>
             <artifactId>nazgul-core-persistence-model</artifactId>
-            <version>${project.parent.version}</version>
+            <version>1.4.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.xmlbinding.spi.jaxb</groupId>
             <artifactId>nazgul-core-xmlbinding-spi-jaxb</artifactId>
-            <version>${project.parent.version}</version>
+            <version>1.4.3-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
 

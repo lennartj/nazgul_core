@@ -50,12 +50,12 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.xmlbinding.api</groupId>
             <artifactId>nazgul-core-xmlbinding-api</artifactId>
-            <version>${project.parent.version}</version>
+            <version>1.4.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.test.xmlbinding</groupId>
             <artifactId>nazgul-core-xmlbinding-test</artifactId>
-            <version>${project.parent.version}</version>
+            <version>1.4.3-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
 

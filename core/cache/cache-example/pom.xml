@@ -50,17 +50,17 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.cache.impl.hazelcast</groupId>
             <artifactId>nazgul-core-cache-impl-hazelcast</artifactId>
-            <version>${project.parent.version}</version>
+            <version>1.4.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.cache.impl.ehcache</groupId>
             <artifactId>nazgul-core-cache-impl-ehcache</artifactId>
-            <version>${project.parent.version}</version>
+            <version>1.4.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.parser.api</groupId>
             <artifactId>nazgul-core-parser-api</artifactId>
-            <version>${project.parent.version}</version>
+            <version>1.4.3-SNAPSHOT</version>
         </dependency>
 
         <!-- External dependencies -->

@@ -50,12 +50,12 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.resource.api</groupId>
             <artifactId>nazgul-core-resource-api</artifactId>
-            <version>${project.parent.version}</version>
+            <version>1.4.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.parser.api</groupId>
             <artifactId>nazgul-core-parser-api</artifactId>
-            <version>${project.parent.version}</version>
+            <version>1.4.3-SNAPSHOT</version>
         </dependency>
 
         <!-- External dependencies -->
@@ -80,7 +80,7 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.algorithms.api</groupId>
             <artifactId>nazgul-core-algorithms-api</artifactId>
-            <version>${project.parent.version}</version>
+            <version>1.4.3-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

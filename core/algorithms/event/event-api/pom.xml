@@ -52,7 +52,7 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.clustering.api</groupId>
             <artifactId>nazgul-core-clustering-api</artifactId>
-            <version>${project.parent.version}</version>
+            <version>1.4.3-SNAPSHOT</version>
         </dependency>
 
         <!--
