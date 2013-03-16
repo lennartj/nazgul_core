@@ -38,7 +38,6 @@
 
     <groupId>se.jguru.nazgul.core.algorithms.api</groupId>
     <artifactId>nazgul-core-algorithms-api</artifactId>
-    <name>${project.groupId}.${project.artifactId}</name>
     <packaging>bundle</packaging>
 
     <!--
