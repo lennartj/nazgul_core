@@ -1,6 +1,6 @@
 /*
  * #%L
- * Nazgul Project: se.jguru.nazgul.core.algorithms.api.nazgul-core-algorithms-api
+ * Nazgul Project: nazgul-core-algorithms-api
  * %%
  * Copyright (C) 2010 - 2013 jGuru Europe AB
  * %%

@@ -52,11 +52,6 @@
     -->
     <dependencies>
         <!-- Internal dependencies -->
-        <dependency>
-            <groupId>se.jguru.nazgul.core.algorithms.event.api</groupId>
-            <artifactId>nazgul-core-algorithms-event-api</artifactId>
-            <version>1.4.3-SNAPSHOT</version>
-        </dependency>
 
         <!-- External dependencies -->
         <dependency>
