@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.cache.api.Cache;
 import se.jguru.nazgul.core.cache.api.CacheListener;
+import se.jguru.nazgul.core.cache.api.ReadOnlyIterator;
 import se.jguru.nazgul.core.cache.api.transaction.AbstractTransactedAction;
 import se.jguru.nazgul.core.cache.api.transaction.TransactedAction;
 import se.jguru.nazgul.core.clustering.api.AbstractClusterable;
@@ -42,6 +43,7 @@ import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -143,6 +145,36 @@ public class NonDistributedEhCache extends AbstractClusterable implements Cache<
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
+    public Iterator<String> iterator() {
+
+        // This mode of implementation is required since EhCache is stupid
+        // enough to require that *all* operations in a transacted cache is
+        // executed within transaction boundaries.
+
+        final String errorMessage = "Could not retrieve cache keySet";
+        final List<String> keys = new ArrayList<String>();
+
+        AbstractElementReferenceTransactedAction getAction =
+                new AbstractElementReferenceTransactedAction(errorMessage) {
+                    @Override
+                    public void doInTransaction() throws RuntimeException {
+
+                        for(Object current : cacheInstance.getKeys()) {
+                            keys.add("" + current);
+                        }
+                    }
+                };
+        performTransactedAction(getAction);
+
+        // All done.
+        return new ReadOnlyIterator<String>(keys.iterator());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Serializable get(final String key) {
 
         // This mode of implementation is required since EhCache is stupid
@@ -165,7 +197,7 @@ public class NonDistributedEhCache extends AbstractClusterable implements Cache<
             return toReturn;
         }
 
-        return toReturn.getValue();
+        return (Serializable) toReturn.getObjectValue();
     }
 
     /**

@@ -34,6 +34,7 @@ import com.hazelcast.core.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.cache.api.CacheListener;
+import se.jguru.nazgul.core.cache.api.ReadOnlyIterator;
 import se.jguru.nazgul.core.cache.api.distributed.DistributedCache;
 import se.jguru.nazgul.core.cache.api.distributed.UnsupportedDistributionException;
 import se.jguru.nazgul.core.cache.api.distributed.async.DistributedExecutor;
@@ -46,6 +47,7 @@ import se.jguru.nazgul.core.cache.impl.hazelcast.grid.DataSerializableAdapter;
 import java.io.Externalizable;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -88,7 +90,7 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
      *
      * @param listener The listener to add.
      */
-    public final void addInstanceListener(final CacheListener listener) {
+    public final void addInstanceListener(final CacheListener<String> listener) {
 
         if (listener == null || isLocallyRegistered(listener)) {
             throw new IllegalArgumentException("Cannot add null or already registered listener");
@@ -385,7 +387,7 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
      * @param adminMessageMessage received message
      */
     @Override
-    @SuppressWarnings("PMD.UnusedLocalVariable")
+    @SuppressWarnings(value = {"PMD.UnusedLocalVariable", "unchecked", "rawtypes"})
     public void onMessage(final Message<AdminMessage> adminMessageMessage) {
 
         final AdminMessage message = adminMessageMessage.getMessageObject();
@@ -510,6 +512,16 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
                 throw new UnsupportedOperationException("AdminMessage command [" + message.getCommand()
                         + "] not yet supported.");
         }
+    }
+
+    /**
+     * Retrieves a ReadOnlyIterator for the shared cache map of this AbstractHazelcastInstanceWrapper instance.
+     * <p/>
+     * {@inheritDoc}
+     */
+    @Override
+    public Iterator<String> iterator() {
+        return new ReadOnlyIterator<String>(getSharedMap().keySet().iterator());
     }
 
     /**
