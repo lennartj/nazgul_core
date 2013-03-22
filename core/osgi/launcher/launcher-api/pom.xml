@@ -58,6 +58,8 @@
             <version>1.4.3-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- External dependencies -->
         <dependency>
             <groupId>se.jguru.nazgul.test.bundles.hello.impl.plain</groupId>
             <artifactId>nazgul-test-hello-impl-plain</artifactId>
@@ -70,8 +72,6 @@
             <version>${test.bundles.version}</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- External dependencies -->
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
