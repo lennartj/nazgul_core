@@ -27,6 +27,8 @@ import org.junit.Test;
 import se.jguru.nazgul.core.cache.api.transaction.AbstractTransactedAction;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -106,5 +108,24 @@ public class LocalEhCacheTest extends AbstractCacheTest {
 
         // Assert
         Assert.assertNull(result);
+    }
+
+    @Test
+    public void validateIteration() {
+
+        // Assemble
+        final NonDistributedEhCache unitUnderTest = getCache();
+        final Map<String, String> data = new HashMap<String, String>();
+        data.put("fooo", "bar");
+        data.put("gnat", "baz");
+
+        for(String current : data.keySet()) {
+            unitUnderTest.put(current, data.get(current));
+        }
+
+        // Act & Assert
+        for(String current : unitUnderTest) {
+            Assert.assertEquals(unitUnderTest.get(current), data.get(current));
+        }
     }
 }

@@ -29,11 +29,13 @@ import java.util.List;
 
 /**
  * Service interface definition for a cache with a parameterized key type. Since all keys may be sent across a
- * distributed system, KeyType must be Serializable.
+ * distributed system, KeyType must be Serializable. While this Cache is Iterable, iterating
+ * over all keys within a Cache may be a very expensive operation - use such operations with
+ * restraint and temperance.
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public interface Cache<KeyType extends Serializable> extends Clusterable {
+public interface Cache<KeyType extends Serializable> extends Clusterable, Iterable<KeyType> {
 
     /**
      * Retrieves an object from this Cache.

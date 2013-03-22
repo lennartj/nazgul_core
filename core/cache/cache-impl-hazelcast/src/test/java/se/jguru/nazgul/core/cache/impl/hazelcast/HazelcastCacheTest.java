@@ -33,6 +33,7 @@ import se.jguru.nazgul.core.cache.impl.hazelcast.grid.AdminMessage;
 import se.jguru.nazgul.core.cache.impl.hazelcast.grid.GridOperations;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -208,4 +209,21 @@ public class HazelcastCacheTest extends AbstractHazelcastCacheTest {
         Assert.assertEquals(expectedErrorMessage, errorMessage);
     }
 
+    @Test
+    public void validateIterable() {
+
+        // Assemble
+        final Map<String, String> data = new HashMap<String, String>();
+        data.put("fooo", "bar");
+        data.put("gnat", "baz");
+
+        for(String current : data.keySet()) {
+            hzCache1.put(current, data.get(current));
+        }
+
+        // Act & Assert
+        for(String current : hzCache1) {
+            Assert.assertEquals(hzCache1.get(current), data.get(current));
+        }
+    }
 }

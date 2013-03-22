@@ -41,7 +41,7 @@
     <packaging>bundle</packaging>
 
     <properties>
-        <ehcache.version>2.6.3</ehcache.version>
+        <ehcache.version>2.6.5</ehcache.version>
     </properties>
 
     <!--
