@@ -54,8 +54,14 @@ public class T_AbstractClusterableTest {
         idGenerator.idAvailable = true;
 
         // Assert
+        String firstClusterId = null;
         for(int i = 0; i < 10; i++) {
-            Assert.assertEquals("goo_1", unitUnderTest.getClusterId());
+            Assert.assertTrue(unitUnderTest.getClusterId().startsWith("goo_"));
+            if(firstClusterId == null) {
+                firstClusterId = unitUnderTest.getClusterId();
+            }
+
+            Assert.assertEquals(firstClusterId, unitUnderTest.getClusterId());
         }
         Assert.assertNotNull(unitUnderTest.getIdGenerator());
     }

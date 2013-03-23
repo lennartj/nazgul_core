@@ -94,12 +94,12 @@
             <artifactId>logback-classic</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
+        <!-- dependency>
             <groupId>org.apache.aries.blueprint</groupId>
             <artifactId>org.apache.aries.blueprint.core</artifactId>
             <version>${aries.blueprintcore.version}</version>
             <scope>test</scope>
-        </dependency>
+        </dependency -->
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
@@ -257,25 +257,31 @@
                                     <groupId>org.apache.aries.blueprint</groupId>
                                     <artifactId>org.apache.aries.blueprint.api</artifactId>
                                     <outputDirectory>target/downloadedBundles</outputDirectory>
-                                    <version>${aries.blueprint.version}</version>
+                                    <version>1.0.0</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.apache.aries</groupId>
                                     <artifactId>org.apache.aries.util</artifactId>
                                     <outputDirectory>target/downloadedBundles</outputDirectory>
-                                    <version>${aries.blueprint.version}</version>
+                                    <version>${aries.blueprintcore.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.apache.aries.proxy</groupId>
                                     <artifactId>org.apache.aries.proxy.api</artifactId>
                                     <outputDirectory>target/downloadedBundles</outputDirectory>
-                                    <version>${aries.blueprint.version}</version>
+                                    <version>1.0.0</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.aries.proxy</groupId>
+                                    <artifactId>org.apache.aries.proxy.impl</artifactId>
+                                    <outputDirectory>target/downloadedBundles</outputDirectory>
+                                    <version>1.0.1</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.apache.aries.quiesce</groupId>
                                     <artifactId>org.apache.aries.quiesce.api</artifactId>
                                     <outputDirectory>target/downloadedBundles</outputDirectory>
-                                    <version>${aries.blueprint.version}</version>
+                                    <version>1.0.0</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.slf4j</groupId>
