@@ -274,7 +274,7 @@
                                     <groupId>org.apache.aries.blueprint</groupId>
                                     <artifactId>org.apache.aries.blueprint.api</artifactId>
                                     <outputDirectory>target/downloadedBundles</outputDirectory>
-                                    <version>${aries.blueprint.version}</version>
+                                    <version>1.0.0</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.apache.aries</groupId>
@@ -284,15 +284,15 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.apache.aries.proxy</groupId>
-                                    <artifactId>org.apache.aries.proxy.api</artifactId>
+                                    <artifactId>org.apache.aries.proxy</artifactId>
                                     <outputDirectory>target/downloadedBundles</outputDirectory>
-                                    <version>${aries.blueprint.version}</version>
+                                    <version>1.0.1</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.apache.aries.quiesce</groupId>
                                     <artifactId>org.apache.aries.quiesce.api</artifactId>
                                     <outputDirectory>target/downloadedBundles</outputDirectory>
-                                    <version>${aries.blueprint.version}</version>
+                                    <version>1.0.0</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.slf4j</groupId>
