@@ -22,21 +22,18 @@
 
 package se.jguru.nazgul.core.cache.impl.ehcache;
 
-import junit.framework.Assert;
 import net.sf.ehcache.CacheManager;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import se.jguru.nazgul.core.cache.impl.ehcache.helpers.DirectoryParserAgent;
 import se.jguru.nazgul.core.parser.api.DefaultTokenParser;
-import se.jguru.nazgul.core.parser.api.agent.DefaultParserAgent;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
