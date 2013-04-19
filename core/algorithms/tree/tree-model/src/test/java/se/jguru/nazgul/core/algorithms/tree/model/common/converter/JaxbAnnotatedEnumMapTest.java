@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import se.jguru.nazgul.core.algorithms.tree.model.common.helpers.Adjustment;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.JaxbXmlBinder;
+import se.jguru.nazgul.test.xmlbinding.XmlTestUtils;
 
 import java.util.EnumMap;
 
@@ -60,22 +61,10 @@ public class JaxbAnnotatedEnumMapTest {
     }
 
     @Test
-    public void validateMarshalling() {
+    public void validateMarshalling() throws Exception {
 
         // Assemble
-        final String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-                "<core:entityTransporter xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:core=\"http://www.jguru.se/nazgul/core\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
-                "    <entityClasses>\n" +
-                "        <entityClass>se.jguru.nazgul.core.algorithms.tree.model.common.converter.JaxbAnnotatedEnumMap</entityClass>\n" +
-                "        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter</entityClass>\n" +
-                "    </entityClasses>\n" +
-                "    <items>\n" +
-                "        <item xsi:type=\"core:jaxbAnnotatedEnumMap\" enumType=\"se.jguru.nazgul.core.algorithms.tree.model.common.helpers.Adjustment\">\n" +
-                "            <values xsi:type=\"xs:string\">Left!</values>\n" +
-                "            <values xsi:type=\"xs:string\">Center!</values>\n" +
-                "        </item>\n" +
-                "    </items>\n" +
-                "</core:entityTransporter>\n";
+        final String expected = XmlTestUtils.readFully("testdata/aJaxbAnnotatedEnumMapPath.xml");
 
         final JaxbAnnotatedEnumMap<Adjustment> unitUnderTest = new JaxbAnnotatedEnumMap<Adjustment>(
                 enumMap, Adjustment.class);
@@ -84,8 +73,7 @@ public class JaxbAnnotatedEnumMapTest {
         final String result = binder.marshal(unitUnderTest);
 
         // Assert
-        Assert.assertNotNull(result);
-        Assert.assertEquals(expected, result);
+        Assert.assertTrue(XmlTestUtils.compareXmlIgnoringWhitespace(expected, result).identical());
     }
 
     /*
