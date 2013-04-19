@@ -30,11 +30,8 @@ import se.jguru.nazgul.core.algorithms.tree.model.common.helpers.AdjustmentPath;
 import se.jguru.nazgul.core.algorithms.tree.model.common.helpers.ProcessPathSegments;
 import se.jguru.nazgul.core.algorithms.tree.model.common.helpers.ProcessStringPath;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.JaxbXmlBinder;
+import se.jguru.nazgul.test.xmlbinding.XmlTestUtils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -218,25 +215,10 @@ public class EnumMapPathTest {
     }
 
     @Test
-    public void validateMarshalling() {
+    public void validateMarshalling() throws Exception {
 
         // Assemble
-        final String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-                "<core:entityTransporter xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:core=\"http://www.jguru.se/nazgul/core\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
-                "    <entityClasses>\n" +
-                "        <entityClass>se.jguru.nazgul.core.algorithms.tree.model.common.helpers.AdjustmentPath</entityClass>\n" +
-                "        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter</entityClass>\n" +
-                "    </entityClasses>\n" +
-                "    <items>\n" +
-                "        <item xsi:type=\"core:adjustmentPath\" enumType=\"se.jguru.nazgul.core.algorithms.tree.model.common.helpers.Adjustment\" version=\"0\">\n" +
-                "            <mapPathSegments enumType=\"se.jguru.nazgul.core.algorithms.tree.model.common.helpers.Adjustment\">\n" +
-                "                <values xsi:type=\"xs:string\">Left</values>\n" +
-                "                <values xsi:type=\"xs:string\">Center</values>\n" +
-                "                <values xsi:nil=\"true\"/>\n" +
-                "            </mapPathSegments>\n" +
-                "        </item>\n" +
-                "    </items>\n" +
-                "</core:entityTransporter>\n";
+        final String expected = XmlTestUtils.readFully("testdata/anEnumMapPath.xml");
 
         final AdjustmentPath toMarshal = AdjustmentPath.create(Arrays.asList("Left", "Center"));
         final JaxbXmlBinder binder = new JaxbXmlBinder();
@@ -245,8 +227,7 @@ public class EnumMapPathTest {
         final String result = binder.marshal(toMarshal);
 
         // Assert
-        Assert.assertNotNull(result);
-        Assert.assertEquals(expected, result);
+        Assert.assertTrue(XmlTestUtils.compareXmlIgnoringWhitespace(expected, result).identical());
     }
 
     @Test
@@ -255,7 +236,7 @@ public class EnumMapPathTest {
         // Assemble
         final AdjustmentPath expected = AdjustmentPath.create(Arrays.asList("Left", "Center"));
         final JaxbXmlBinder binder = new JaxbXmlBinder();
-        final String marshalled = readFully("testdata/jaxbAnnotatedEnumMap.xml");
+        final String marshalled = XmlTestUtils.readFully("testdata/jaxbAnnotatedEnumMap.xml");
 
         // Act
         final List<Object> unmarshalled = binder.unmarshal(new StringReader(marshalled));
@@ -272,28 +253,5 @@ public class EnumMapPathTest {
         Assert.assertEquals(expected.get(Adjustment.LEFT), resurrected.get(Adjustment.LEFT));
         Assert.assertEquals(expected.get(Adjustment.CENTER), resurrected.get(Adjustment.CENTER));
         Assert.assertEquals(expected.get(Adjustment.RIGHT), resurrected.get(Adjustment.RIGHT));
-    }
-
-    //
-    // Private helpers
-    //
-
-    private String readFully(final String path) {
-
-        final InputStream resource = getClass().getClassLoader().getResourceAsStream(path);
-
-        final BufferedReader tmp = new BufferedReader(new InputStreamReader(resource));
-        final StringBuilder toReturn = new StringBuilder(50);
-
-        try {
-            for (String line = tmp.readLine(); line != null; line = tmp.readLine()) {
-                toReturn.append(line).append('\n');
-            }
-        } catch (final IOException e) {
-            throw new IllegalArgumentException("Problem reading data from Reader", e);
-        }
-
-        // All done.
-        return toReturn.toString();
     }
 }
