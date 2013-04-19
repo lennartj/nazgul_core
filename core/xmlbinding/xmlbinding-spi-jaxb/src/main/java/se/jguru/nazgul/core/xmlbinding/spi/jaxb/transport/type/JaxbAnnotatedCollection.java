@@ -44,6 +44,7 @@ import java.util.TreeSet;
  */
 @XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"originalCollectionType", "items"})
 @XmlAccessorType(XmlAccessType.FIELD)
+@SuppressWarnings("rawtypes")
 public class JaxbAnnotatedCollection<T extends Collection> extends AbstractJaxbAnnotatedTransportType<T> {
 
     /**
@@ -100,6 +101,7 @@ public class JaxbAnnotatedCollection<T extends Collection> extends AbstractJaxbA
      * @return The contained value.
      */
     @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public T getValue() {
 
         if (value == null) {
@@ -129,6 +131,7 @@ public class JaxbAnnotatedCollection<T extends Collection> extends AbstractJaxbA
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     public int compareTo(final Object that) {
 
         int result;

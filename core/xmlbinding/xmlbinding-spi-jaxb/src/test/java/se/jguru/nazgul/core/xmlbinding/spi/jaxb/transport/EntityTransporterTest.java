@@ -27,6 +27,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Person;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.inheritance.Sausage;
 
 import java.util.List;
 import java.util.SortedSet;
@@ -82,6 +83,32 @@ public class EntityTransporterTest {
         // Assert
         Assert.assertTrue(originalRegistry instanceof DefaultJaxbConverterRegistry);
         Assert.assertNotSame(originalRegistry, afterSetRegistry);
+    }
+
+    @Test
+    public void validateClassInformationForArrayTypes() {
+
+        // Assemble
+        final char[] primitiveTypeArray = new char[]{'1', '2', '3'};
+        final Sausage[] objectTypeArray = new Sausage[]{new Sausage("falukorv", "sweden", "vegetable")};
+
+        final EntityTransporter<Object> primitiveTypeArrayEntity = new EntityTransporter<Object>();
+        primitiveTypeArrayEntity.addItem(primitiveTypeArray);
+
+        final EntityTransporter<Object> objectTypeArrayEntity = new EntityTransporter<Object>();
+        objectTypeArrayEntity.addItem(objectTypeArray);
+
+        // Act
+        final SortedSet<String> primitiveTypeArrayClassInfo = primitiveTypeArrayEntity.getClassInformation();
+        final SortedSet<String> objectTypeArrayClassInfo = objectTypeArrayEntity.getClassInformation();
+
+        // Assert
+        Assert.assertEquals(1, primitiveTypeArrayClassInfo.size());
+        Assert.assertEquals(EntityTransporter.class.getName(), primitiveTypeArrayClassInfo.first());
+
+        Assert.assertEquals(2, objectTypeArrayClassInfo.size());
+        Assert.assertTrue(objectTypeArrayClassInfo.contains(Sausage.class.getName()));
+        Assert.assertTrue(objectTypeArrayClassInfo.contains(EntityTransporter.class.getName()));
     }
 
     //

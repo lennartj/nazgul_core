@@ -26,7 +26,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Account;
-import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Beverage;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Person;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.ThreePartCereal;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter;
@@ -62,7 +61,7 @@ public class JaxbUtilsTest {
         final EntityTransporter<Object> transporter = new EntityTransporter<Object>();
 
         // Act
-        final JAXBContext jaxbContext = JaxbUtils.getJaxbContext(transporter);
+        final JAXBContext jaxbContext = JaxbUtils.getJaxbContext(transporter, true);
         final Schema schema = JaxbUtils.generateTransientXSD(jaxbContext, defaultResolver);
         final Marshaller marshaller = JaxbUtils.getHumanReadableStandardMarshaller(jaxbContext,
                 defaultResolver, defaultResolver, true);
@@ -91,9 +90,9 @@ public class JaxbUtilsTest {
         transporter3.addItem(account);
 
         // Act
-        final JAXBContext ctx1 = JaxbUtils.getJaxbContext(transporter1);
-        final JAXBContext ctx2 = JaxbUtils.getJaxbContext(transporter2);
-        final JAXBContext ctx3 = JaxbUtils.getJaxbContext(transporter3);
+        final JAXBContext ctx1 = JaxbUtils.getJaxbContext(transporter1, true);
+        final JAXBContext ctx2 = JaxbUtils.getJaxbContext(transporter2, true);
+        final JAXBContext ctx3 = JaxbUtils.getJaxbContext(transporter3, true);
 
         // Assert
         Assert.assertSame(ctx1, ctx2);
@@ -106,7 +105,7 @@ public class JaxbUtilsTest {
         // Assemble
         final ThreePartCereal cereal = new ThreePartCereal("barley", "strawberry", "blueberry", 3, 4);
         final EntityTransporter<ThreePartCereal> transporter = new EntityTransporter<ThreePartCereal>(cereal);
-        final JAXBContext context = JaxbUtils.getJaxbContext(transporter);
+        final JAXBContext context = JaxbUtils.getJaxbContext(transporter, true);
         final JaxbNamespacePrefixResolver resolver = new JaxbNamespacePrefixResolver();
 
         // Act

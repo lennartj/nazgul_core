@@ -50,6 +50,7 @@ import java.util.TreeSet;
  */
 @XmlType(namespace = XmlBinder.CORE_NAMESPACE)
 @XmlAccessorType(XmlAccessType.FIELD)
+@SuppressWarnings("rawtypes")
 public abstract class AbstractJaxbAnnotatedTransportType<T>
         implements ClassInformationHolder, Serializable, Comparable {
 

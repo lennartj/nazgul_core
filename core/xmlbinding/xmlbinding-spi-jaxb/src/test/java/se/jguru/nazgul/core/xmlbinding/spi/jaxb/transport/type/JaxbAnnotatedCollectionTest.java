@@ -21,8 +21,8 @@
  */
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type;
 
-import org.junit.Assert;
 import org.joda.time.DateTime;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,6 +36,7 @@ import java.util.SortedSet;
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
+@SuppressWarnings("rawtypes")
 public class JaxbAnnotatedCollectionTest {
 
     // Shared state
@@ -84,12 +85,12 @@ public class JaxbAnnotatedCollectionTest {
         // Assert
         final List result = unitUnderTest.getValue();
         Assert.assertEquals(data1D.size(), result.size());
-        for(int i = 0; i < result.size(); i++) {
+        for (int i = 0; i < result.size(); i++) {
             Assert.assertEquals(data1D.get(i), result.get(i));
         }
 
         Assert.assertEquals(expectedClasses.size(), classInformation.size());
-        for(Class<? extends Serializable> current : expectedClasses) {
+        for (Class<? extends Serializable> current : expectedClasses) {
             Assert.assertTrue(classInformation.contains(current.getName()));
         }
     }
@@ -107,12 +108,12 @@ public class JaxbAnnotatedCollectionTest {
         // Assert
         final List result = unitUnderTest.getValue();
         Assert.assertEquals(data2D.size(), result.size());
-        for(int i = 0; i < result.size(); i++) {
+        for (int i = 0; i < result.size(); i++) {
             Assert.assertEquals(data2D.get(i), result.get(i));
         }
 
         Assert.assertEquals(expectedClasses.size(), classInformation.size());
-        for(Class<? extends Serializable> current : expectedClasses) {
+        for (Class<? extends Serializable> current : expectedClasses) {
             Assert.assertTrue(classInformation.contains(current.getName()));
         }
     }
@@ -173,7 +174,7 @@ public class JaxbAnnotatedCollectionTest {
 
         // Assert
         Assert.assertEquals(expectedClasses.size(), classInformation.size());
-        for(Class<? extends Serializable> current : expectedClasses) {
+        for (Class<? extends Serializable> current : expectedClasses) {
             Assert.assertTrue(classInformation.contains(current.getName()));
         }
     }

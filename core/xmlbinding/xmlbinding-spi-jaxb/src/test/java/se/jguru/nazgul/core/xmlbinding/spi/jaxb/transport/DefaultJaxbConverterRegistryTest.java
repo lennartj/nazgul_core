@@ -172,6 +172,8 @@ public class DefaultJaxbConverterRegistryTest {
         final String result = binder.marshal(transportForm);
 
         // Assert
+        System.out.println("Expected: " + expectedResult);
+        System.out.println("Result: " + result);
         Assert.assertNotNull("Received null transportForm:\n" + unitUnderTest.toString(), transportForm);
         Assert.assertTrue(XmlTestUtils.compareXmlIgnoringWhitespace(expectedResult, result).identical());
     }

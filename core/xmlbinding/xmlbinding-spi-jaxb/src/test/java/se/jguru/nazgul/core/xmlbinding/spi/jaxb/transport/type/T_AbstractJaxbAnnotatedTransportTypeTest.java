@@ -22,7 +22,7 @@
 
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,8 +49,8 @@ public class T_AbstractJaxbAnnotatedTransportTypeTest {
         EntityTransporter.setTransportTypeConverterRegistry(new DefaultJaxbConverterRegistry());
     }
 
-    @Test
-    public void validateNoExceptionOnUnknownClassInformationOnPopulation() {
+    @Test(expected = IllegalArgumentException.class)
+    public void validateExceptionOnUnknownClassInformationOnPopulation() {
 
         // Assemble
         final StringBuffer buf = new StringBuffer();
