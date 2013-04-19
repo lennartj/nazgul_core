@@ -143,6 +143,8 @@ public class JaxbXmlBinderTest {
         final String result = unitUnderTest.marshal(ale, "FooBar!", person, aFoo);
 
         // Assert
+        System.out.println("Result: " + result);
+        System.out.println("Data: " + data);
         Assert.assertTrue(XmlTestUtils.compareXmlIgnoringWhitespace(data, result).identical());
     }
 

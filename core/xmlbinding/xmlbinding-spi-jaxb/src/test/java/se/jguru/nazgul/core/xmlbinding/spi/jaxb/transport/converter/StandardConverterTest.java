@@ -21,7 +21,7 @@
  */
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.converter;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import se.jguru.nazgul.core.reflection.api.conversion.registry.DefaultConverterRegistry;

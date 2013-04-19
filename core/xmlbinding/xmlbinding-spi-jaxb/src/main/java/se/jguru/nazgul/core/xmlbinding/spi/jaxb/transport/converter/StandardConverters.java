@@ -34,6 +34,7 @@ import java.util.Collection;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
+@SuppressWarnings("rawtypes")
 public class StandardConverters {
 
     /**

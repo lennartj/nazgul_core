@@ -24,8 +24,6 @@ package se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper;
 
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.ls.LSInput;
 import org.w3c.dom.ls.LSResourceResolver;
 import se.jguru.nazgul.core.xmlbinding.api.DefaultNamespacePrefixResolver;
@@ -43,9 +41,6 @@ import java.util.Set;
  */
 public class JaxbNamespacePrefixResolver extends NamespacePrefixMapper
         implements NamespacePrefixResolver, LSResourceResolver {
-
-    // Our Log
-    // private static final Logger log = LoggerFactory.getLogger(JaxbNamespacePrefixResolver.class);
 
     // Internal state
     private NamespacePrefixResolver namespacePrefixResolver;

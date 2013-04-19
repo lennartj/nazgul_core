@@ -40,6 +40,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.SchemaOutputResolver;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -48,9 +49,12 @@ import javax.xml.validation.SchemaFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -70,7 +74,7 @@ public abstract class JaxbUtils {
     /**
      * The namespace prefix key for external JAXB distribution.
      */
-    private static String EXTERNAL_JAXB_NAMESPACEPREFIXMAPPER_KEY = "com.sun.xml.bind.namespacePrefixMapper";
+    private static final String EXTERNAL_JAXB_NAMESPACEPREFIXMAPPER_KEY = "com.sun.xml.bind.namespacePrefixMapper";
     private static final ClassnameToClassTransformer THREADLOCAL_TRANSFORMER = new ClassnameToClassTransformer();
     private static final SchemaFactory DEFAULT_SCHEMA_FACTORY =
             SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -135,17 +139,23 @@ public abstract class JaxbUtils {
      * Retrieves a JAXBContext instance, geared to converting all class types found within the
      * provided transporter.
      *
-     * @param transporter The EntityTransporter which should be marshalled to XML.
+     * @param transporter   The EntityTransporter which should be marshalled to XML.
+     * @param isMarshalling {@code true} if the supplied JAXBContext is going to be used for marshalling,
+     *                      as opposed to unmarshalling.
      * @return A JAXBContext able to marshal the provided transporter.
      * @throws NullPointerException if the transporter argument was {@code null}.
      */
-    public static JAXBContext getJaxbContext(final EntityTransporter transporter) throws NullPointerException {
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public static JAXBContext getJaxbContext(final EntityTransporter transporter,
+                                             final boolean isMarshalling)
+            throws NullPointerException {
 
         // Check sanity
         Validate.notNull(transporter, "Cannot handle null transporter argument.");
 
         // Does a cached JAXBContext exist?
-        final Tuple<SortedClassNameSetKey, JAXBContext> cachedContext = getCachedJaxbContext(transporter.getClassInformation());
+        final Tuple<SortedClassNameSetKey, JAXBContext> cachedContext
+                = getCachedJaxbContext(transporter.getClassInformation());
         if (cachedContext.getValue() != null) {
             return cachedContext.getValue();
         }
@@ -153,7 +163,19 @@ public abstract class JaxbUtils {
         // Load all relevant classes
         Set<Class<?>> loadedClasses = new HashSet<Class<?>>();
         for (Object current : transporter.getClassInformation()) {
-            loadedClasses.add(THREADLOCAL_TRANSFORMER.transform((String) current));
+
+            final Class<?> classType = THREADLOCAL_TRANSFORMER.transform((String) current);
+            addNonTransientInternalClass(loadedClasses, classType);
+        }
+
+        // If we are marshalling, acquire the non-transient internal
+        // field types for the
+        if (isMarshalling) {
+
+            // The items List should be fully populated here.
+            for (Object currentItem : transporter.getItems()) {
+                addNonTransientInternalFieldTypes(loadedClasses, currentItem);
+            }
         }
 
         try {
@@ -264,7 +286,8 @@ public abstract class JaxbUtils {
                 ? JaxbAnnotatedNull.class
                 : registry.getTransportType(toWrapAndPackageForTransport.getClass());
 
-        if (added == null || added.getClass() != transportType) {
+        final boolean wrapInTransportType = added == null || added.getClass() != transportType;
+        if (wrapInTransportType) {
             added = registry.packageForTransport(toWrapAndPackageForTransport);
         }
 
@@ -282,16 +305,161 @@ public abstract class JaxbUtils {
             }
         }
 
-        // ### 4) Add the class of the added object itself.
-        String addedClass = added.getClass().getName();
-        if (!resultingTransportTypes.contains(addedClass)) {
-            resultingTransportTypes.add(addedClass);
+        // ### 4) Add the class of the added object itself. Handle Array types.
+        final Class<?> addedClass = added.getClass();
+        final boolean addedClassIsArray = addedClass.isArray();
+        final String addedClassName = addedClassIsArray
+                ? addedClass.getComponentType().getName()
+                : addedClass.getName();
+        if (!resultingTransportTypes.contains(addedClassName)
+                && !(addedClassIsArray && addedClass.getComponentType().isPrimitive())) {
+            resultingTransportTypes.add(addedClassName);
+        }
+
+        // ### 5) Only add internal structure if the current class is not a AbstractJaxbAnnotatedTransportType.
+        //        Acquire internal reflected state as well.
+        if (!wrapInTransportType) {
+
+            final Set<Class<?>> internalReflectedTypes = new HashSet<Class<?>>();
+            final Set<Class<?>> transportTypes = new HashSet<Class<?>>();
+
+            addNonTransientInternalFieldTypes(internalReflectedTypes, toWrapAndPackageForTransport);
+            for (Class<?> current : internalReflectedTypes) {
+
+                // Don't add a null transport type.
+                final Class<?> transportTypeOrNull = registry.getTransportType(current);
+                final Class<?> toAdd = transportTypeOrNull == null ? current : transportTypeOrNull;
+                addNonTransientInternalClass(transportTypes, toAdd);
+            }
+
+            // Fire the internally found reflected types through the JaxbConverter
+            for (Class<?> current : transportTypes) {
+                final String fullyQualifiedClassName = current.getName();
+                if (!resultingTransportTypes.contains(fullyQualifiedClassName)) {
+                    resultingTransportTypes.add(fullyQualifiedClassName);
+                }
+            }
         }
     }
 
     //
     // Private helpers
     //
+
+    /**
+     * Adds all field types found in the {@code toReflect} object to the provided types Set.
+     * Should any Field in the {@code toReflect} instance be a Collection, Array or Map, any
+     * classes found within the collections are added as well.
+     *
+     * @param types     The resulting types set.
+     * @param toReflect The object from whose internal Fields the type information should be extracted.
+     */
+    @SuppressWarnings("rawtypes")
+    private static void addNonTransientInternalFieldTypes(final Set<Class<?>> types, final Object toReflect) {
+
+        // Check sanity
+        if (toReflect == null) {
+            return;
+        }
+
+        // First, add the current Class to the types Set
+        final Class<?> theType = toReflect.getClass();
+        addNonTransientInternalClass(types, theType);
+
+        // Don't reflect EntityTransporter classes
+        if (theType == EntityTransporter.class) {
+            return;
+        }
+
+        for (Field current : XmlMarshallableFieldFilter.getMarshallableFields(toReflect)) {
+
+            // Get the type of the object stored within the current field
+            Object currentValue = get(current, toReflect);
+            if (currentValue != null) {
+
+                // Add the class of the currentValue
+                final Class<?> currentType = currentValue.getClass();
+                addNonTransientInternalClass(types, currentType);
+
+                // Handle Collections, Arrays and Maps, which may contain
+                // implementation types which should be included.
+
+                if (currentType.getClass().isArray()) {
+                    addNonTransientInternalClass(types, currentType.getComponentType());
+                } else if (Collection.class.isAssignableFrom(currentType)) {
+
+                    // This is a collection. Dig out the types of all Elements.
+                    for (Object currentElement : Collection.class.cast(get(current, toReflect))) {
+                        addNonTransientInternalFieldTypes(types, currentElement);
+                    }
+                } else if (Map.class.isAssignableFrom(currentType)) {
+
+                    // This is a map. Dig out the types of all Keys and Value.
+                    final Map theMap = Map.class.cast(get(current, toReflect));
+                    for (Object currentKey : theMap.keySet()) {
+
+                        addNonTransientInternalClass(types, currentKey.getClass());
+
+                        final Object currentMapValue = theMap.get(currentKey);
+                        if (currentMapValue != null) {
+                            addNonTransientInternalClass(types, currentMapValue.getClass());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Retrieves the value of the supplied Field from the given instance.
+     *
+     * @param aField   The Field whose value should be retrieved.
+     * @param anObject The instance whose class contains the supplied Field, and
+     *                 from which the value should be retrieved.
+     * @return the value of the supplied Field from the given instance.
+     */
+    private static Object get(final Field aField, final Object anObject) {
+
+        aField.setAccessible(true);
+        try {
+            return aField.get(anObject);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * Adds the given candidate Class to the supplied set of types, given that the candidate
+     * passes some trivial checks.
+     * <p/>
+     * TODO: Convert from source types to JAXB annotated transport types here?
+     *
+     * @param types     The types set to which the candidate could be added.
+     * @param candidate The type to [possibly] add to the given types Set.
+     */
+    private static void addNonTransientInternalClass(final Set<Class<?>> types, final Class<?> candidate) {
+
+        if (candidate == null) {
+            return;
+        }
+
+        // Don't add XmlTransient classes
+        final boolean isXmlTransient = candidate.getAnnotation(XmlTransient.class) != null;
+
+        // Ignore interfaces
+        final boolean isInterface = candidate.isInterface();
+
+        // Ignore primitives and Object
+        final boolean isPrimitive = candidate.isPrimitive();
+        final boolean isObject = candidate == Object.class;
+
+        // Ignore array types
+        final boolean isArray = candidate.isArray();
+
+        if (!isXmlTransient && !isInterface && !isPrimitive && !isObject && !isArray) {
+            types.add(candidate);
+        }
+    }
 
     /**
      * Creating new JAXBContexts is an expensive operation; caching a few pre-created ones and re-using

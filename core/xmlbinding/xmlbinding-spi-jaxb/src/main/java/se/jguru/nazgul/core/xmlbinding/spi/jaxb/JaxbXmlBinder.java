@@ -124,7 +124,7 @@ public class JaxbXmlBinder implements XmlBinder<Object> {
         // validate(transporter);
 
         // Acquire a Marshaller for the provided EntityTransporter
-        final JAXBContext ctx = JaxbUtils.getJaxbContext(transporter);
+        final JAXBContext ctx = JaxbUtils.getJaxbContext(transporter, true);
         final Marshaller marshaller = JaxbUtils.getHumanReadableStandardMarshaller(ctx,
                 namespacePrefixResolver, namespacePrefixResolver, true);
 
@@ -164,7 +164,7 @@ public class JaxbXmlBinder implements XmlBinder<Object> {
             final EntityTransporter transporter = (EntityTransporter) unmarshaller.unmarshal(new StringReader(content));
 
             // Now we know all classes inside the EntityTransporter.
-            final JAXBContext ctx = JaxbUtils.getJaxbContext(transporter);
+            final JAXBContext ctx = JaxbUtils.getJaxbContext(transporter, false);
             unmarshaller = ctx.createUnmarshaller();
 
             // Generate and assign the Schema to enable XSD validation.
