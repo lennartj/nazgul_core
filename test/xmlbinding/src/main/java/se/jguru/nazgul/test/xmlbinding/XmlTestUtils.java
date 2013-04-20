@@ -108,6 +108,7 @@ public abstract class XmlTestUtils {
         Validate.notNull(diff, "Cannot handle null diff argument.");
 
         final SortedMap<String, List<Difference>> toReturn = new TreeMap<String, List<Difference>>();
+        @SuppressWarnings("unchecked")
         final List<Difference> allDifferences = (List<Difference>) new DetailedDiff(diff).getAllDifferences();
 
         for (Difference current : allDifferences) {

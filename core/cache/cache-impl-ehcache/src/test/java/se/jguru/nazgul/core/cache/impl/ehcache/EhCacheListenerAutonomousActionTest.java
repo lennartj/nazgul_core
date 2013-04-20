@@ -30,7 +30,6 @@ import se.jguru.nazgul.test.xmlbinding.XmlTestUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.Serializable;
 import java.io.StringReader;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -78,13 +77,13 @@ public class EhCacheListenerAutonomousActionTest extends AbstractCacheTest {
     }
 
     @Test
-    public void validateEhCacheSignalsEvictionOnNextGet() throws InterruptedException {
+    public void validateEhCacheSignalsEvictionOnFirstOverflow() throws InterruptedException {
 
         // Assemble
         final String valuePrefix = "value_";
         final String keyPrefix = "key_";
         final NonDistributedEhCache unitUnderTest = getCache();
-        final CountDownLatch evictionLatch = new CountDownLatch(1);
+        final CountDownLatch evictionLatch = new CountDownLatch(maxNumElements);
 
         final MockCacheListener listener = new MockCacheListener("testListener");
         unitUnderTest.addListener(listener);
@@ -95,13 +94,16 @@ public class EhCacheListenerAutonomousActionTest extends AbstractCacheTest {
             unitUnderTest.put(keyPrefix + i, valuePrefix + i);
         }
 
-        // Act #2: Put one more element in the cache.
-        //         This should evict an existing element.
-        unitUnderTest.put("foo", "bar");
-        boolean onAutonomousEvictCalled1Time = evictionLatch.await(5, TimeUnit.SECONDS);
+        // Act #2: Put more element in the cache.
+        //         This should evict existing elements in FIFO order, as configured.
+        for(int i = 0; i < maxNumElements; i++) {
+            unitUnderTest.put("newKey_" + i, "newValue_" + i);
+        }
+
+        boolean onAutonomousEvictCalledMaxNumTimes = evictionLatch.await(5, TimeUnit.SECONDS);
 
         // Assert
-        Assert.assertTrue(onAutonomousEvictCalled1Time);
+        Assert.assertTrue(onAutonomousEvictCalledMaxNumTimes);
         final List<String> callTrace = listener.callStack;
 
         // The callTrace should be similar to the following:
@@ -109,18 +111,34 @@ public class EhCacheListenerAutonomousActionTest extends AbstractCacheTest {
          * onPut [key_0]: value_0,
          * onPut [key_1]: value_1,
          * onPut [key_2]: value_2,
-         * onAutonomousEvict [key_0]: [B@451c0d60,
-         * onPut [foo]: bar
+         * onAutonomousEvict [key_0]: [B@c569c60,
+         * onPut [newKey_0]: newValue_0,
+         * onAutonomousEvict [key_1]: [B@76d67067,
+         * onPut [newKey_1]: newValue_1,
+         * onAutonomousEvict [key_2]: [B@6b12da40,
+         * onPut [newKey_2]: newValue_2
          */
 
-        Assert.assertEquals(maxNumElements + 2, callTrace.size());
+        Assert.assertEquals(maxNumElements * 3, callTrace.size());
 
+        // Validate the first put operations
         for(int i = 0; i < maxNumElements; i++) {
             Assert.assertEquals("onPut [key_" + i + "]: value_" + i, callTrace.get(i));
         }
 
-        Assert.assertTrue(callTrace.get(callTrace.size()-2).startsWith("onAutonomousEvict [key_0]:"));
-        Assert.assertEquals("onPut [foo]: bar", callTrace.get(callTrace.size() - 1));
+        // Validate the onAutonomousEvict/onPut pairs of operations.
+        for(int i = 0; i < maxNumElements; i++) {
+            int autonomousEvictIndex = maxNumElements + 2 * i;
+            int putIndex = autonomousEvictIndex + 1;
+
+            // Setup expectations
+            final String autonomusEvictTrace = "onAutonomousEvict [key_" + i + "]:";
+            final String putTrace = "onPut [newKey_" + i + "]: newValue_" + i;
+
+            // Assert
+            Assert.assertTrue(callTrace.get(autonomousEvictIndex).startsWith(autonomusEvictTrace));
+            Assert.assertEquals(putTrace, callTrace.get(putIndex));
+        }
     }
 
     @Test
@@ -147,21 +165,9 @@ public class EhCacheListenerAutonomousActionTest extends AbstractCacheTest {
         // Assert
         Assert.assertFalse(reachedCountdownLimit);
 
-        for(int i = 0; i < maxNumElements; i++) {
-            Assert.assertNull(unitUnderTest.get(keyPrefix + i));
-        }
-
-        final List<String> callTrace = listener.callStack;
-        Assert.assertEquals(2 * maxNumElements, callTrace.size());
-        for(int i = 0; i < maxNumElements; i++) {
-            Assert.assertEquals("onPut [key_" + i + "]: value_" + i, callTrace.get(i));
-        }
-        for(int i = maxNumElements; i < 2 * maxNumElements; i++) {
-            Assert.assertEquals("onAutonomousEvict [key_" + (i - maxNumElements) + "]: null", callTrace.get(i));
-        }
-        System.out.println("CallTrace: " + callTrace);
-
         /*
+        Expected behaviour:
+
         onPut [key_0]: value_0,
         onPut [key_1]: value_1,
         onPut [key_2]: value_2,
@@ -169,58 +175,21 @@ public class EhCacheListenerAutonomousActionTest extends AbstractCacheTest {
         onAutonomousEvict [key_1]: null,
         onAutonomousEvict [key_2]: null
          */
-    }
-
-    @Test
-    public void validateEvictionActions() throws InterruptedException {
-
-        // Assemble
-        final NonDistributedEhCache unitUnderTest = getCache();
-        final String key = "Nyckel";
-        final String value = "åäöÅÄÖ";
-        final CountDownLatch evictionLatch = new CountDownLatch(3);
-
-        final MockCacheListener listener = new MockCacheListener("testListener");
-        unitUnderTest.addListener(listener);
-        listener.setEvictionLatch(evictionLatch);
-
-        // Act
-        for (int i = 0; i < maxNumElements + 1; i++) {
-            unitUnderTest.put(key + "_" + i, value + "_" + i);
+        for(int i = 0; i < maxNumElements; i++) {
+            // Validate that all elements are expired from the cache.
+            Assert.assertNull(unitUnderTest.get(keyPrefix + i));
         }
 
-        boolean onAutonomousEvictCalled3Times = evictionLatch.await(2, TimeUnit.SECONDS);
-
-        // Assert
         final List<String> callTrace = listener.callStack;
-
-        for (int i = 0; i < maxNumElements; i++) {
-            Assert.assertEquals("onPut [" + key + "_" + i + "]: " + value + "_" + i, callTrace.get(i));
+        Assert.assertEquals(2 * maxNumElements, callTrace.size());
+        for(int i = 0; i < maxNumElements; i++) {
+            // Validate the first put operations
+            Assert.assertEquals("onPut [key_" + i + "]: value_" + i, callTrace.get(i));
         }
-
-        // The next elements inserted causes EhCache to perform eviction.
-        for (int i = maxNumElements; i < callTrace.size() - maxNumElements; i += 2) {
-
-            Assert.assertEquals("onAutonomousEvict [" + key + "_" + (i - 1) + "]: ", callTrace.get(i));
-            Assert.assertEquals("onPut [" + key + "_" + i + "]: " + value + "_" + i, callTrace.get(i + 1));
+        for(int i = maxNumElements; i < 2 * maxNumElements; i++) {
+            // Validate the autonomousEvict events
+            Assert.assertEquals("onAutonomousEvict [key_" + (i - maxNumElements) + "]: null", callTrace.get(i));
         }
-
-        // The last element is expired, yielding a null value.
-        Assert.assertTrue(onAutonomousEvictCalled3Times);
-        Assert.assertTrue(callTrace.get(callTrace.size() - 1).startsWith("onAutonomousEvict [" + key + "_"));
-        Assert.assertTrue(callTrace.get(callTrace.size() - 1).endsWith("]: null"));
-
-        /*
-         * onPut [Nyckel_0]: åäöÅÄÖ_0,
-         * onPut [Nyckel_1]: åäöÅÄÖ_1,
-         * onPut [Nyckel_2]: åäöÅÄÖ_2,
-         * onPut [Nyckel_3]: åäöÅÄÖ_3,
-         * onPut [Nyckel_4]: åäöÅÄÖ_4,
-         * onPut [Nyckel_5]: åäöÅÄÖ_5,
-         * onAutonomousEvict [Nyckel_4]: null,
-         * onAutonomousEvict [Nyckel_5]: null,
-         * onAutonomousEvict [Nyckel_2]: null
-         */
     }
 
     @Test
