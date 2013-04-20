@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='UTF-8'?>
 <!--
   ~ #%L
   Nazgul Project: nazgul-core-cache-impl-ehcache
@@ -20,8 +21,8 @@
   limitations under the License.
   #L%
   -->
-
-<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ehcache.xsd">
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="ehcache.xsd">
 
     <!--
     The ehcache-failsafe.xml is a default configuration for ehcache, if an ehcache.xml is not configured.
@@ -49,14 +50,14 @@
 
     <!--
     Mandatory Default Cache configuration. These settings will be applied to caches
-    created programmtically using CacheManager.add(String cacheName)
+    created programmatically using CacheManager.add(String cacheName)
     -->
     <defaultCache
-            maxElementsInMemory="5"
+            maxElementsInMemory="3"
             eternal="false"
             timeToIdleSeconds="1"
             timeToLiveSeconds="1"
-            overflowToDisk="true"
+            overflowToDisk="false"
             maxElementsOnDisk="10"
             diskPersistent="false"
             diskExpiryThreadIntervalSeconds="2"

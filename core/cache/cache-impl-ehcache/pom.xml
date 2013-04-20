@@ -41,7 +41,7 @@
     <packaging>bundle</packaging>
 
     <properties>
-        <ehcache.version>2.6.5</ehcache.version>
+        <ehcache.version>2.7.0</ehcache.version>
     </properties>
 
     <!--
@@ -62,6 +62,12 @@
             <version>1.4.3-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>se.jguru.nazgul.test.xmlbinding</groupId>
+            <artifactId>nazgul-core-xmlbinding-test</artifactId>
+            <version>1.4.3-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
 
         <!-- External dependencies -->
         <dependency>
@@ -70,7 +76,7 @@
         </dependency>
         <dependency>
             <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache-core</artifactId>
+            <artifactId>ehcache</artifactId>
             <version>${ehcache.version}</version>
         </dependency>
         <dependency>

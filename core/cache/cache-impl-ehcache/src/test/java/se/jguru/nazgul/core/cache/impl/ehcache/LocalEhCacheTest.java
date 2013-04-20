@@ -74,7 +74,7 @@ public class LocalEhCacheTest extends AbstractCacheTest {
     }
 
     @Test
-    public void validateCacheNotChangedWhenTransactionRollsBack() {
+    public void validateCacheNotChangedonTransactionRollback() {
 
         // Assemble
         final NonDistributedEhCache unitUnderTest = getCache();
@@ -111,7 +111,7 @@ public class LocalEhCacheTest extends AbstractCacheTest {
     }
 
     @Test
-    public void validateIteration() {
+    public void validateIterationOverAllKnownKeys() {
 
         // Assemble
         final NonDistributedEhCache unitUnderTest = getCache();

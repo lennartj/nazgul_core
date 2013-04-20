@@ -60,7 +60,12 @@ public abstract class AbstractCacheTest {
         final CacheManager cacheManager = getTokenizedCacheManager(getEhCacheConfiguration());
         cache = new NonDistributedEhCache(cacheManager);
         Assert.assertNotNull("Created null cache.", cache);
+
+        // Delegate
+        performCustomSetup();
     }
+
+    protected void performCustomSetup() {}
 
     @After
     public void shutdownLocalEhCache() {
