@@ -22,15 +22,20 @@
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.enumerations;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.w3c.dom.ls.LSResourceResolver;
+import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.JaxbXmlBinder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbNamespacePrefixResolver;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbUtils;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter;
+import se.jguru.nazgul.test.xmlbinding.XmlTestUtils;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.validation.Schema;
+import java.io.StringReader;
 import java.util.Locale;
 
 /**
@@ -60,16 +65,33 @@ public class TextSectionTest {
     }
 
     @Test
-    public void validateMarshallingAndUnmarshalling() {
+    public void validateMarshalling() throws Exception {
 
         // Assemble
         final TextSection unitUnderTest = new TextSection(Adjustment.LEFT, "this is a foo");
+        final String expected = XmlTestUtils.readFully("data/xml/textSection.xml");
 
         // Act
         final String result = binder.marshal(unitUnderTest);
 
         // Assert
-        System.out.println("Got: " + result);
+        Assert.assertTrue(XmlTestUtils.compareXmlIgnoringWhitespace(expected, result).identical());
+    }
+
+    @Test
+    public void validateUnmarshalling() throws Exception {
+
+        // Assemble
+        final TextSection expected = new TextSection(Adjustment.LEFT, "this is a foo");
+        final String data = XmlTestUtils.readFully("data/xml/textSection.xml");
+
+        // Act
+        final TextSection result = binder.unmarshalInstance(new StringReader(data));
+
+        // Assert
+        Assert.assertNotSame(expected, result);
+        Assert.assertEquals(expected.getAdjustment(), result.getAdjustment());
+        Assert.assertEquals(expected.getText(), result.getText());
     }
 
     @Test
@@ -81,8 +103,10 @@ public class TextSectionTest {
         final JAXBContext context = JaxbUtils.getJaxbContext(wrapper, true);
 
         // Act
-        final Schema schema = JaxbUtils.generateTransientXSD(context).getKey();
+        final Tuple<Schema, LSResourceResolver> tuple = JaxbUtils.generateTransientXSD(context);
 
         // Assert
+        Assert.assertNotNull(tuple.getKey());
+        Assert.assertNotNull(tuple.getValue());
     }
 }
