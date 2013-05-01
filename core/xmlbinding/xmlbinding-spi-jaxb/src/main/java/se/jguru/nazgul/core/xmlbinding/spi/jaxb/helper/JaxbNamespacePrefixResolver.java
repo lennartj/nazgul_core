@@ -39,8 +39,7 @@ import java.util.Set;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class JaxbNamespacePrefixResolver extends NamespacePrefixMapper
-        implements NamespacePrefixResolver, LSResourceResolver {
+public class JaxbNamespacePrefixResolver extends NamespacePrefixMapper implements NamespacePrefixResolver {
 
     // Internal state
     private NamespacePrefixResolver namespacePrefixResolver;
@@ -149,7 +148,7 @@ public class JaxbNamespacePrefixResolver extends NamespacePrefixMapper
 
     /**
      * {@inheritDoc}
-     */
+
     @Override
     public LSInput resolveResource(final String type,
                                    final String namespaceURI,
@@ -159,4 +158,5 @@ public class JaxbNamespacePrefixResolver extends NamespacePrefixMapper
 
         return new LocalLSInput(type, namespaceURI, publicId, systemId, baseURI);
     }
+     */
 }

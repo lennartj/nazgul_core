@@ -50,13 +50,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -76,8 +77,6 @@ public abstract class JaxbUtils {
      */
     private static final String EXTERNAL_JAXB_NAMESPACEPREFIXMAPPER_KEY = "com.sun.xml.bind.namespacePrefixMapper";
     private static final ClassnameToClassTransformer THREADLOCAL_TRANSFORMER = new ClassnameToClassTransformer();
-    private static final SchemaFactory DEFAULT_SCHEMA_FACTORY =
-            SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
     // Internal state
     private static ConcurrentMap<SortedClassNameSetKey, JAXBContext> jaxbContextCache =
@@ -101,7 +100,6 @@ public abstract class JaxbUtils {
      * @param ctx                   The properly set up JAXBContext, holding all required class definitions.
      * @param namespacePrefixMapper A JAXB NamespacePrefixMapper to be used by the provided marshaller.
      *                              Cannot be {@code null}.
-     * @param resourceResolver      The LSResourceResolver used to resolve XSD resources in the generated Schema.
      * @param validate              if {@code true}, performs validation - implying that the resourceResolver
      *                              must be non-null.
      * @return A standard JAXB Marshaller for human-readable (as opposed to extreme compactness) XML marshalling.
@@ -109,7 +107,6 @@ public abstract class JaxbUtils {
      */
     public static Marshaller getHumanReadableStandardMarshaller(final JAXBContext ctx,
                                                                 final NamespacePrefixMapper namespacePrefixMapper,
-                                                                final LSResourceResolver resourceResolver,
                                                                 final boolean validate)
             throws NullPointerException {
 
@@ -125,8 +122,7 @@ public abstract class JaxbUtils {
 
             // Should we validate what we write?
             if (validate) {
-                Validate.notNull(resourceResolver, "Cannot handle null resourceResolver argument if validating.");
-                toReturn.setSchema(generateTransientXSD(ctx, resourceResolver));
+                toReturn.setSchema(generateTransientXSD(ctx).getKey());
             }
 
             return toReturn;
@@ -193,20 +189,20 @@ public abstract class JaxbUtils {
     /**
      * Acquires a JAXB Schema from the provided JAXBContext.
      *
-     * @param ctx              The context for which am XSD should be constructed.
-     * @param resourceResolver The LSResourceResolver used to resolve XSD resources in the generated Schema.
-     * @return The constructed XSD from the provided JAXBContext.
+     * @param ctx The context for which am XSD should be constructed.
+     * @return A tuple holding the constructed XSD from the provided JAXBContext, and
+     *         the LSResourceResolver synthesized during the way.
      * @throws NullPointerException     if ctx was {@code null}.
      * @throws IllegalArgumentException if a JAXB-related exception occurred while extracting the schema.
      */
-    public static Schema generateTransientXSD(final JAXBContext ctx, final LSResourceResolver resourceResolver)
+    public static Tuple<Schema, LSResourceResolver> generateTransientXSD(final JAXBContext ctx)
             throws NullPointerException, IllegalArgumentException {
 
         // Check sanity
         Validate.notNull(ctx, "Cannot handle null ctx argument.");
-        Validate.notNull(resourceResolver, "Cannot handle null resourceResolver argument.");
 
-        final List<ByteArrayOutputStream> schemaSnippets = new ArrayList<ByteArrayOutputStream>();
+        final SortedMap<String, ByteArrayOutputStream> namespace2SchemaMap
+                = new TreeMap<String, ByteArrayOutputStream>();
 
         try {
             ctx.generateSchema(new SchemaOutputResolver() {
@@ -214,33 +210,49 @@ public abstract class JaxbUtils {
                 public Result createOutput(final String namespaceUri, final String suggestedFileName)
                         throws IOException {
 
-                    // Create the result ByteArrayOutputStream
-                    ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    schemaSnippets.add(out);
+                    // The types should really be annotated with @XmlType(namespace = "... something ...")
+                    // to avoid using the default ("") namespace.
+                    if (namespaceUri.isEmpty()) {
+                        log.warn("Received empty namespaceUri while resolving a generated schema. "
+                                + "Did you forget to add a @XmlType(namespace = \"... something ...\") annotation "
+                                + "to your class?");
+                    }
 
-                    // Target the result to the generated ByteArrayOutputStream.
-                    StreamResult streamResult = new StreamResult(out);
-                    streamResult.setSystemId("");
+                    // Create the result ByteArrayOutputStream
+                    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    final StreamResult toReturn = new StreamResult(out);
+                    toReturn.setSystemId("");
+
+                    // Map the namespaceUri to the schemaResult.
+                    namespace2SchemaMap.put(namespaceUri, out);
 
                     // All done.
-                    return streamResult;
+                    return toReturn;
                 }
             });
         } catch (IOException e) {
             throw new IllegalArgumentException("Could not acquire Schema snippets.", e);
         }
 
-        // Convert to an array of Source.
-        StreamSource[] schemaSources = new StreamSource[schemaSnippets.size()];
-        for (int i = 0; i < schemaSources.length; i++) {
-            ByteArrayOutputStream tmp = schemaSnippets.get(i);
+        // Convert to an array of StreamSource.
+        final MappedSchemaResourceResolver resourceResolver = new MappedSchemaResourceResolver();
+        final StreamSource[] schemaSources = new StreamSource[namespace2SchemaMap.size()];
+        int counter = 0;
+        for (String current : namespace2SchemaMap.keySet()) {
+
+            final byte[] schemaSnippetAsBytes = namespace2SchemaMap.get(current).toByteArray();
+            resourceResolver.addNamespace2SchemaEntry(current, new String(schemaSnippetAsBytes));
 
             if (log.isDebugEnabled()) {
-                log.info("Generated schema [" + (i + 1) + "/" + schemaSources.length + "]:\n "
-                        + new String(tmp.toByteArray()));
+                log.info("Generated schema [" + (counter + 1) + "/" + schemaSources.length + "]:\n "
+                        + new String(schemaSnippetAsBytes));
             }
 
-            schemaSources[i] = new StreamSource(new ByteArrayInputStream(tmp.toByteArray()), "");
+            // Copy the schema source to the schemaSources array.
+            schemaSources[counter] = new StreamSource(new ByteArrayInputStream(schemaSnippetAsBytes), "");
+
+            // Increase the counter
+            counter++;
         }
 
         try {
@@ -248,7 +260,10 @@ public abstract class JaxbUtils {
             // All done.
             final SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
             schemaFactory.setResourceResolver(resourceResolver);
-            return DEFAULT_SCHEMA_FACTORY.newSchema(schemaSources);
+            final Schema transientSchema = schemaFactory.newSchema(schemaSources);
+
+            // All done.
+            return new Tuple<Schema, LSResourceResolver>(transientSchema, resourceResolver);
 
         } catch (final SAXException e) {
             throw new IllegalArgumentException("Could not create Schema from snippets.", e);

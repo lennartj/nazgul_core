@@ -23,6 +23,8 @@
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb;
 
 import org.apache.commons.lang3.Validate;
+import org.w3c.dom.ls.LSResourceResolver;
+import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
 import se.jguru.nazgul.core.xmlbinding.api.NamespacePrefixResolver;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbNamespacePrefixResolver;
@@ -125,8 +127,7 @@ public class JaxbXmlBinder implements XmlBinder<Object> {
 
         // Acquire a Marshaller for the provided EntityTransporter
         final JAXBContext ctx = JaxbUtils.getJaxbContext(transporter, true);
-        final Marshaller marshaller = JaxbUtils.getHumanReadableStandardMarshaller(ctx,
-                namespacePrefixResolver, namespacePrefixResolver, true);
+        final Marshaller marshaller = JaxbUtils.getHumanReadableStandardMarshaller(ctx, namespacePrefixResolver, true);
 
         try {
             StringWriter resultWriter = new StringWriter();
@@ -168,10 +169,11 @@ public class JaxbXmlBinder implements XmlBinder<Object> {
             unmarshaller = ctx.createUnmarshaller();
 
             // Generate and assign the Schema to enable XSD validation.
-            final Schema schema = JaxbUtils.generateTransientXSD(ctx, namespacePrefixResolver);
+            final Tuple<Schema, LSResourceResolver> transientTuple = JaxbUtils.generateTransientXSD(ctx);
+            final Schema schema = transientTuple.getKey();
             unmarshaller.setSchema(schema);
             final Validator validator = schema.newValidator();
-            validator.setResourceResolver(namespacePrefixResolver);
+            validator.setResourceResolver(transientTuple.getValue());
 
             @SuppressWarnings("unchecked")
             final EntityTransporter<Object> toReturn = (EntityTransporter<Object>)

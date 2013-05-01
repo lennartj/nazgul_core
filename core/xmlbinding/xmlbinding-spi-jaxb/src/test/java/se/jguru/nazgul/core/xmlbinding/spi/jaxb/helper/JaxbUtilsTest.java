@@ -25,6 +25,9 @@ package se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Account;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Person;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.ThreePartCereal;
@@ -32,9 +35,16 @@ import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.Validator;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -62,9 +72,8 @@ public class JaxbUtilsTest {
 
         // Act
         final JAXBContext jaxbContext = JaxbUtils.getJaxbContext(transporter, true);
-        final Schema schema = JaxbUtils.generateTransientXSD(jaxbContext, defaultResolver);
-        final Marshaller marshaller = JaxbUtils.getHumanReadableStandardMarshaller(jaxbContext,
-                defaultResolver, defaultResolver, true);
+        final Schema schema = JaxbUtils.generateTransientXSD(jaxbContext).getKey();
+        final Marshaller marshaller = JaxbUtils.getHumanReadableStandardMarshaller(jaxbContext, defaultResolver, true);
 
         // Assert
         Assert.assertNotNull(jaxbContext);
@@ -100,19 +109,60 @@ public class JaxbUtilsTest {
     }
 
     @Test
-    public void validateGenerateTransientXSDs() {
+    public void validateGenerateTransientXSDs() throws Exception {
 
         // Assemble
         final ThreePartCereal cereal = new ThreePartCereal("barley", "strawberry", "blueberry", 3, 4);
         final EntityTransporter<ThreePartCereal> transporter = new EntityTransporter<ThreePartCereal>(cereal);
         final JAXBContext context = JaxbUtils.getJaxbContext(transporter, true);
-        final JaxbNamespacePrefixResolver resolver = new JaxbNamespacePrefixResolver();
+        final Map<String, List<SAXParseException>> schemaValidationErrors =
+                new TreeMap<String, List<SAXParseException>>();
+
+        final ErrorHandler loggingSaxErrorHandler = new ErrorHandler() {
+
+            private void addException(final SAXParseException exception, final String key) {
+                List<SAXParseException> exceptionList = schemaValidationErrors.get(key);
+                if(exceptionList == null) {
+                    exceptionList = new ArrayList<SAXParseException>();
+                    schemaValidationErrors.put(key, exceptionList);
+                }
+
+                exceptionList.add(exception);
+            }
+
+            @Override
+            public void warning(final SAXParseException exception) throws SAXException {
+                addException(exception, "warning");
+            }
+
+            @Override
+            public void error(final SAXParseException exception) throws SAXException {
+                addException(exception, "error");
+            }
+
+            @Override
+            public void fatalError(final SAXParseException exception) throws SAXException {
+                addException(exception, "fatalError");
+            }
+        };
 
         // Act
-        final Schema result = JaxbUtils.generateTransientXSD(context, resolver);
+        final Schema result = JaxbUtils.generateTransientXSD(context).getKey();
+
         final Validator schemaValidator = result.newValidator();
+        schemaValidator.setErrorHandler(loggingSaxErrorHandler);
+
+        final Marshaller marshaller = context.createMarshaller();
+        marshaller.setSchema(result);
+        marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+        final StringWriter xmlResult = new StringWriter();
+        marshaller.marshal(transporter, xmlResult);
+
+        schemaValidator.validate(new StreamSource(new StringReader(xmlResult.toString())));
 
         // Assert
-        System.out.println("Got: " + result);
+        Assert.assertEquals(0, schemaValidationErrors.size());
     }
 }

@@ -138,9 +138,14 @@
                                 <lineRate>0</lineRate>
                             </regex>
                             <regex>
-                                <pattern>se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.LocalLSInput</pattern>
+                                <pattern>se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.MappedSchemaResourceResolver</pattern>
                                 <branchRate>50</branchRate>
                                 <lineRate>80</lineRate>
+                            </regex>
+                            <regex>
+                                <pattern>se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.MappedSchemaResourceResolver\$ConstantValueLSInput</pattern>
+                                <branchRate>50</branchRate>
+                                <lineRate>50</lineRate>
                             </regex>
                             <regex>
                                 <pattern>
