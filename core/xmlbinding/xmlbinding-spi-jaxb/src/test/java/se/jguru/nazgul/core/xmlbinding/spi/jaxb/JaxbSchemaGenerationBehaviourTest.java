@@ -28,7 +28,6 @@ import org.custommonkey.xmlunit.Difference;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.w3c.dom.ls.LSResourceResolver;
 import org.xml.sax.SAXParseException;
 import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
@@ -110,7 +109,7 @@ public class JaxbSchemaGenerationBehaviourTest {
         marshaller.setProperty(PREFIXMAPPER, resolver);
 
         // Act
-        final Schema schema = JaxbUtils.generateTransientXSD(fullContext, resolver);
+        final Schema schema = JaxbUtils.generateTransientXSD(fullContext).getKey();
         marshaller.setSchema(schema);
         marshaller.marshal(cereal, resultWriter);
 
@@ -134,7 +133,7 @@ public class JaxbSchemaGenerationBehaviourTest {
         marshaller.setProperty(PREFIXMAPPER, resolver);
 
         // Act & Assert
-        final Schema schema = JaxbUtils.generateTransientXSD(fullContext, resolver);
+        final Schema schema = JaxbUtils.generateTransientXSD(fullContext).getKey();
         marshaller.setSchema(schema);
 
         try {
@@ -168,7 +167,7 @@ public class JaxbSchemaGenerationBehaviourTest {
         final StringWriter resultWriter = new StringWriter();
         marshaller.marshal(cereal, resultWriter);
 
-        final Schema transientSchema = JaxbUtils.generateTransientXSD(ctx, resolver);
+        final Schema transientSchema = JaxbUtils.generateTransientXSD(ctx).getKey();
         final Validator validator = transientSchema.newValidator();
         marshaller.setSchema(transientSchema);
 
@@ -194,8 +193,8 @@ public class JaxbSchemaGenerationBehaviourTest {
         final String xPathToDiffElement = "/schema[1]/complexType[1]/sequence[1]/element[3]";
 
         // Act
-        final List<String> schema1 = generateSchemas(ctx1, resolver);
-        final List<String> schema2 = generateSchemas(ctx2, resolver);
+        final List<String> schema1 = generateSchemas(ctx1);
+        final List<String> schema2 = generateSchemas(ctx2);
 
         final List<String> relevantSchema1 = CollectionAlgorithms.filter(schema1, new Filter<String>() {
             @Override
@@ -263,7 +262,7 @@ public class JaxbSchemaGenerationBehaviourTest {
     // Private helpers
     //
 
-    private List<String> generateSchemas(final JAXBContext ctx, final LSResourceResolver resourceResolver) {
+    private List<String> generateSchemas(final JAXBContext ctx) {
 
         final List<String> toReturn = new ArrayList<String>();
         final List<ByteArrayOutputStream> schemaSnippets = new ArrayList<ByteArrayOutputStream>();
