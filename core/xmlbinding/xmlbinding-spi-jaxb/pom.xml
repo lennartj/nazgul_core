@@ -198,7 +198,7 @@
                     <dependency>
                         <groupId>se.jguru.nazgul.tools.codestyle</groupId>
                         <artifactId>nazgul-codestyle</artifactId>
-                        <version>${nazgul-codestyle.version}</version>
+                        <version>${nazgul.tools.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
