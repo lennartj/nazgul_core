@@ -1,6 +1,6 @@
 /*
  * #%L
- * Nazgul Project: nazgul-core-reflection-api
+ * Nazgul Project: nazgul-core-persistence-test
  * %%
  * Copyright (C) 2010 - 2013 jGuru Europe AB
  * %%
@@ -19,7 +19,7 @@
  * limitations under the License.
  * #L%
  */
-package se.jguru.nazgul.core.reflection.api.classloading;
+package se.jguru.nazgul.test.persistence.classloader;
 
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;

@@ -1,6 +1,6 @@
 /*
  * #%L
- * Nazgul Project: nazgul-core-reflection-api
+ * Nazgul Project: nazgul-core-persistence-test
  * %%
  * Copyright (C) 2010 - 2013 jGuru Europe AB
  * %%
@@ -19,7 +19,7 @@
  * limitations under the License.
  * #L%
  */
-package se.jguru.nazgul.core.reflection.api.classloading;
+package se.jguru.nazgul.test.persistence.classloading;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
@@ -28,6 +28,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
+import se.jguru.nazgul.test.persistence.classloader.PersistenceRedirectionClassLoader;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -137,8 +138,8 @@ public class PersistenceRedirectionClassLoaderTest {
         final JoranConfigurator configurator = new JoranConfigurator();
         configurator.setContext(context);
 
-        // Call context.reset() to clear any previous configuration, e.g. default
-        // configuration. For multi-step configuration, omit calling context.reset().
+        // Call context.reset() to clear any previous configuration, e.g. default configuration.
+        // For multi-step configuration, omit calling context.reset().
         context.reset();
         final URL quietLogbackConfig = getClass().getClassLoader().getResource("logback-test-quiet.xml");
         configurator.doConfigure(quietLogbackConfig);

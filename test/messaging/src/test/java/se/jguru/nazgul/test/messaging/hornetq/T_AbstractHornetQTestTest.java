@@ -22,8 +22,8 @@
 
 package se.jguru.nazgul.test.messaging.hornetq;
 
-import junit.framework.Assert;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import se.jguru.nazgul.test.messaging.MessageBroker;
@@ -33,8 +33,6 @@ import javax.jms.MessageProducer;
 import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.TextMessage;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 
 /**

@@ -21,7 +21,7 @@
  */
 package se.jguru.nazgul.core.cache.impl.ehcache.helpers;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import se.jguru.nazgul.core.parser.api.agent.AbstractParserAgent;
 
 import java.io.File;
