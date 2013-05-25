@@ -22,7 +22,7 @@
 
 package se.jguru.nazgul.test.messaging;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.apache.activemq.broker.BrokerService;
 import org.junit.After;
 import org.junit.Before;

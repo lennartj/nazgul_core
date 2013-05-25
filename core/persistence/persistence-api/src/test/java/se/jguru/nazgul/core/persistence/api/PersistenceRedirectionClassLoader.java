@@ -51,7 +51,7 @@ public final class PersistenceRedirectionClassLoader extends ClassLoader {
 
     /**
      * Creates a new PersistenceRedirectionClassLoader delegating all class loads to the
-     * provided parent, except loading of "META-INF/persistence.xml", which is redirected
+     * provided parent, except loading of "META-INF/persistence.xml", which is REDIRECTED
      * to the provided persistenceXmlRedirection.
      *
      * @param parent                    The normal classloader, used for all resource loading

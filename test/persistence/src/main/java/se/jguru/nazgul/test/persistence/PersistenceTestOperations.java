@@ -1,6 +1,6 @@
 /*
  * #%L
- * Nazgul Project: nazgul-core-messaging-test
+ * Nazgul Project: nazgul-core-persistence-test
  * %%
  * Copyright (C) 2010 - 2013 jGuru Europe AB
  * %%
@@ -19,27 +19,24 @@
  * limitations under the License.
  * #L%
  */
+package se.jguru.nazgul.test.persistence;
 
-package se.jguru.nazgul.test.messaging.activemq;
+import se.jguru.nazgul.core.persistence.api.PersistenceOperations;
 
-import org.junit.Assert;
-import org.junit.Test;
+import java.util.List;
 
 /**
+ * Specification for JPA operations useable in tests only.
+ *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class ActiveMQBrokerTest {
+public interface PersistenceTestOperations extends PersistenceOperations {
 
-    @Test
-    public void validateDefaultNameGivenOnDefaultInitialization() {
-
-        // Assemble
-        final ActiveMQBroker unitUnderTest = new ActiveMQBroker();
-
-        // Act
-        final String brokerName = unitUnderTest.getName();
-
-        // Assert
-        Assert.assertEquals(ActiveMQBroker.DEFAULT_BROKERNAME, brokerName);
-    }
+    /**
+     * Fires an arbitrary JPA Query, returning the results as a List.
+     *
+     * @param query The JPA Query to fire.
+     * @return The List of resulting Entities.
+     */
+    <T> List<T> fireJpaQuery(String query);
 }

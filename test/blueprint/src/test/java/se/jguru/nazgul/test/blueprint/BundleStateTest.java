@@ -21,7 +21,7 @@
  */
 package se.jguru.nazgul.test.blueprint;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.osgi.framework.Bundle;

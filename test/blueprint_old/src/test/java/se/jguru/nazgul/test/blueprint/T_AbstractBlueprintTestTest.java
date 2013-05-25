@@ -22,7 +22,7 @@
 
 package se.jguru.nazgul.test.blueprint;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.apache.commons.lang3.ClassUtils;
 import org.junit.Ignore;
 import org.junit.Test;

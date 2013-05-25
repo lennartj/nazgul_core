@@ -1,6 +1,6 @@
 <!--
   ~ #%L
-  Nazgul Project: nazgul-core-reflection-api
+  Nazgul Project: nazgul-core-persistence-test
   %%
   Copyright (C) 2010 - 2013 jGuru Europe AB
   ~
@@ -8,11 +8,8 @@
   Licensed under the jGuru Europe AB license (the "License"), based
   on Apache License, Version 2.0; you may not use this file except
   in compliance with the License.
-
   You may obtain a copy of the License at
-
         http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
-
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,7 +33,7 @@
 
     <!-- Lower the logging level for relevant classes -->
     <logger name="se.jguru.nazgul" level="WARN"/>
-    <logger name="se.jguru.nazgul.core.reflection.api" level="WARN"/>
+    <logger name="se.jguru.nazgul.test.persistence" level="WARN"/>
 
     <!-- Make the frameworks shut up. -->
     <logger name="org.springframework" level="WARN"/>
