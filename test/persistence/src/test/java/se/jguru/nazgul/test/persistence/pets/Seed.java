@@ -19,6 +19,10 @@
  * limitations under the License.
  * #L%
  */
+/*
+ * Copyright (c) jGuru Europe AB
+ * All rights reserved.
+ */
 package se.jguru.nazgul.test.persistence.pets;
 
 import se.jguru.nazgul.core.persistence.model.NazgulEntity;
@@ -27,10 +31,12 @@ import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationExc
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-
-import static se.jguru.nazgul.test.persistence.pets.Bird.GET_BIRDS_BY_CATEGORY;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -38,16 +44,16 @@ import static se.jguru.nazgul.test.persistence.pets.Bird.GET_BIRDS_BY_CATEGORY;
 @Entity
 @NamedQueries({
         @NamedQuery(
-                name = Bird.GET_BIRDS_BY_CATEGORY,
-                query = "select b from Bird b where b.category like ?1 order by b.name"),
+                name = Seed.GET_SEEDS_BY_CATEGORY,
+                query = "select s from Seed s where s.category like ?1 order by s.name"),
         @NamedQuery(
-                name = Bird.GET_ALL_BIRDS,
-                query = "select b from Bird b")
+                name = Seed.GET_SEEDS_BY_BIRD_NAME,
+                query = "select s from Seed s join s.eatenBy b where b.name like ?1 order by s.name"),
 })
-public class Bird extends NazgulEntity {
+public class Seed extends NazgulEntity {
 
-    public static final String GET_BIRDS_BY_CATEGORY = "getBirdsByCategory";
-    public static final String GET_ALL_BIRDS = "getAllBirds";
+    public static final String GET_SEEDS_BY_CATEGORY = "getSeedsByCategory";
+    public static final String GET_SEEDS_BY_BIRD_NAME = "getSeedsByBirdName";
 
     @Basic(optional = false)
     @Column(nullable = false, length = 64)
@@ -57,21 +63,43 @@ public class Bird extends NazgulEntity {
     @Column(nullable = false, length = 128)
     private String category;
 
-    public Bird() {
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<Bird> eatenBy;
+
+    public Seed() {
     }
 
-    public Bird(final String name, final String category) {
-        super();
+    public Seed(final String name, final String category) {
         this.name = name;
         this.category = category;
+
+        this.eatenBy = new ArrayList<Bird>();
+    }
+
+    public Seed(final String name, final String category, final List<Bird> eatenBy) {
+        this.name = name;
+        this.category = category;
+        this.eatenBy = eatenBy;
+    }
+
+    public List<Bird> getEatenBy() {
+        return eatenBy;
+    }
+
+    public String getCategory() {
+        return category;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getCategory() {
-        return category;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "Seed: [" + getName() + ", " + getCategory() + "], eaten by: " + getEatenBy();
     }
 
     /**
@@ -83,14 +111,7 @@ public class Bird extends NazgulEntity {
         InternalStateValidationException.create()
                 .notNullOrEmpty(name, "name")
                 .notNullOrEmpty(category, "category")
+                .notNull(eatenBy, "eatenBy")
                 .endExpressionAndValidate();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return "Bird: [" + getName() + ", " + getCategory() + "]";
     }
 }

@@ -19,9 +19,10 @@
  * limitations under the License.
  * #L%
  */
-package se.jguru.nazgul.test.persistence;
+package se.jguru.nazgul.test.persistence.helpers;
 
 import se.jguru.nazgul.core.persistence.api.JpaPersistenceOperations;
+import se.jguru.nazgul.test.persistence.PersistenceTestOperations;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -49,10 +50,12 @@ public class JpaPersistenceTestOperations extends JpaPersistenceOperations imple
     /**
      * Fires an arbitrary JPA Query, returning the results as a List.
      *
+     * @param <T>   The type of entity retrieved.
      * @param query The JPA Query to fire.
      * @return The List of resulting Entities.
      */
     @Override
+    @SuppressWarnings("unchecked")
     public <T> List<T> fireJpaQuery(final String query) {
 
         // Fire the provided query.

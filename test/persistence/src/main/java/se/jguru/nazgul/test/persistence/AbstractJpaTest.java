@@ -24,6 +24,7 @@ package se.jguru.nazgul.test.persistence;
 import org.junit.After;
 import org.junit.Before;
 import se.jguru.nazgul.test.persistence.classloader.PersistenceRedirectionClassLoader;
+import se.jguru.nazgul.test.persistence.helpers.JpaPersistenceTestOperations;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -43,7 +44,7 @@ public abstract class AbstractJpaTest {
     /**
      * The unit-test scoped access to JpaOperations, created by this AbstractJpaTest.
      */
-    protected JpaPersistenceTestOperations jpa;
+    protected PersistenceTestOperations jpa;
 
     /**
      * The currently active EntityTransaction.

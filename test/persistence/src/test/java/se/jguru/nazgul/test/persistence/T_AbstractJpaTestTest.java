@@ -136,4 +136,38 @@ public class T_AbstractJpaTestTest {
         // Act & Assert
         unitUnderTest.tearDown();
     }
+
+    @Test
+    public void validateFireQuery() throws Exception {
+
+        // Assemble
+        final String persistenceXmlFile = "testdata/mockjpa/mockpersistence.xml";
+        final String persistenceUnit = "birdPU";
+        final MockAbstractJpaTest unitUnderTest = new MockAbstractJpaTest(
+                persistenceXmlFile,
+                persistenceUnit,
+                PersistenceProviderType.OPENJPA_2);
+
+        final Bird bird = new Bird("birdName", "cool birds");
+
+        // Act & Assert #1: Persist a Bird instance
+        unitUnderTest.setUp();
+        EntityTransaction userTransaction = unitUnderTest.transaction;
+        userTransaction.begin();
+
+        unitUnderTest.entityManager.persist(bird);
+        unitUnderTest.commitAndStartNewTransaction();
+        userTransaction = unitUnderTest.transaction;
+
+        // Act & Assert #2: Fire an arbitrary JPQL query
+        final List<Bird> birds = unitUnderTest.jpa.fireJpaQuery("select a from Bird a order by a.name");
+        Assert.assertEquals(1, birds.size());
+
+        final Bird retrieved = birds.get(0);
+        Assert.assertEquals("birdName", retrieved.getName());
+
+        // Act & Assert #3: Teardown
+        unitUnderTest.tearDown();
+        Assert.assertNull(unitUnderTest.transaction);
+    }
 }

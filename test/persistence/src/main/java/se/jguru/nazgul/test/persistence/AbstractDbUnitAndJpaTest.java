@@ -30,14 +30,19 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.junit.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Map;
 
 /**
@@ -48,6 +53,9 @@ import java.util.Map;
  */
 public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
 
+    // Our Log
+    private static final Logger log = LoggerFactory.getLogger(AbstractDbUnitAndJpaTest.class);
+
     /**
      * The OpenJpa username property.
      */
@@ -57,11 +65,6 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
      * The OpenJpa password property.
      */
     public static final String OPENJPA_CONNECTION_PASSWORD_KEY = "openjpa.ConnectionPassword";
-
-    /**
-     * The classpath-relative path to the standard Manifest file.
-     */
-    public static final String MANIFEST_PATH = "META-INF/MANIFEST.MF";
 
     /**
      * The dbUnit IDatabaseConnection, hooked up to the same
@@ -127,13 +130,14 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
      */
     protected File getTargetDirectory() {
 
-        final URL resource = getClass().getClassLoader().getResource(MANIFEST_PATH);
+        // Use CodeSource
+        final URL location = getClass().getProtectionDomain().getCodeSource().getLocation();
 
         // Check sanity
-        Validate.notNull(resource, "Manifest file not found.");
+        Validate.notNull(location, "CodeSource location not found for class [" + getClass().getSimpleName() + "]");
 
         // All done.
-        return new File(resource.getPath()).getParentFile().getParentFile();
+        return new File(location.getPath()).getParentFile();
     }
 
     /**
@@ -182,6 +186,35 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
         return out.toString();
     }
 
+    /**
+     * Drops all the Database Objects in the public schema of the active database.
+     */
+    protected final void dropAllDbObjectsInPublicSchema() {
+
+        try {
+
+            // Revert to plain-old JDBC to drop all DB objects in the public schema.
+            final DatabaseMetaData metaData = jpaUnitTestConnection.getMetaData();
+            final ResultSet dbObjects = metaData.getTables(null, getDatabaseType().getPublicSchemaName(), "%", null);
+            final Statement dropStatement = jpaUnitTestConnection.createStatement();
+
+            while (dbObjects.next()) {
+                final String schemaAndTableName = dbObjects.getString(2) + "." + dbObjects.getString(3);
+                final String dbObjectType = dbObjects.getString(4);
+                log.debug(" Dropping [" + schemaAndTableName + "] ... ");
+
+                // Add the drop statement to the batch.
+                dropStatement.addBatch("DROP " + dbObjectType + " " + schemaAndTableName);
+            }
+            final int[] results = dropStatement.executeBatch();
+
+            log.debug(" ... Done dropping [" + results.length + "] table(s).");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     //
     // Private helpers
     //
@@ -217,9 +250,11 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
 
         try {
 
+            final String unitTestJdbcURL = getDatabaseType().getUnitTestJdbcURL(databaseName, targetDirectory);
+
             // All done.
             return DriverManager.getConnection(
-                    getDatabaseType().getUnitTestJdbcURL(databaseName, targetDirectory),
+                    unitTestJdbcURL,
                     userName,
                     password);
         } catch (SQLException e) {

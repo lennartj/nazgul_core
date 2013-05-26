@@ -35,6 +35,7 @@ public interface PersistenceTestOperations extends PersistenceOperations {
     /**
      * Fires an arbitrary JPA Query, returning the results as a List.
      *
+     * @param <T>   The type of entity retrieved.
      * @param query The JPA Query to fire.
      * @return The List of resulting Entities.
      */

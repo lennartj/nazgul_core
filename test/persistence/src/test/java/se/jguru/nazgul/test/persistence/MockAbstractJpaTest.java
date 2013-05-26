@@ -62,14 +62,11 @@ public class MockAbstractJpaTest extends AbstractJpaTest {
     @Override
     protected void cleanupTestSchema() {
 
-        // We are using an in-memory HSQLDB here; the default schema is called "PUBLIC".
-        final String publicSchema = "PUBLIC";
-
         if (cleanupSchemaInTeardown) {
 
             try {
                 final DatabaseMetaData metaData = jpaUnitTestConnection.getMetaData();
-                final ResultSet tables = metaData.getTables(null, publicSchema, "%", null);
+                final ResultSet tables = metaData.getTables(null, DatabaseType.HSQL.getPublicSchemaName(), "%", null);
                 final Statement dropStatement = jpaUnitTestConnection.createStatement();
                 while (tables.next()) {
                     final String schemaAndTableName = tables.getString(2) + "." + tables.getString(3);
