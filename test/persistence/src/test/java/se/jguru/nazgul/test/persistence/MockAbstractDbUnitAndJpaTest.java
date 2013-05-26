@@ -21,11 +21,6 @@
  */
 package se.jguru.nazgul.test.persistence;
 
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
@@ -37,17 +32,20 @@ public class MockAbstractDbUnitAndJpaTest extends AbstractDbUnitAndJpaTest {
     private String persistenceUnit;
     private String databaseName;
     private PersistenceProviderType persistenceProviderType;
+    private boolean separateConnectionForDbUnit;
 
     public MockAbstractDbUnitAndJpaTest(final PersistenceProviderType persistenceProviderType,
                                         final String persistenceUnit,
                                         final String persistenceXmlFile,
                                         final boolean cleanupSchemaInTeardown,
-                                        final String databaseName) {
+                                        final String databaseName,
+                                        final boolean separateConnectionForDbUnit) {
         this.persistenceProviderType = persistenceProviderType;
         this.persistenceUnit = persistenceUnit;
         this.persistenceXmlFile = persistenceXmlFile;
         this.cleanupSchemaInTeardown = cleanupSchemaInTeardown;
         this.databaseName = databaseName;
+        this.separateConnectionForDbUnit = separateConnectionForDbUnit;
     }
 
     /**
@@ -62,31 +60,17 @@ public class MockAbstractDbUnitAndJpaTest extends AbstractDbUnitAndJpaTest {
      * {@inheritDoc}
      */
     @Override
+    protected boolean isSeparateConnectionsUsedForDbUnitAndJPA() {
+        super.isSeparateConnectionsUsedForDbUnitAndJPA();
+        return separateConnectionForDbUnit;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     protected void cleanupTestSchema() {
-
-        // We are using an in-memory HSQLDB here; the default schema is called "PUBLIC".
-        final String publicSchema = "PUBLIC";
-
-        if (cleanupSchemaInTeardown) {
-
-            try {
-                final DatabaseMetaData metaData = jpaUnitTestConnection.getMetaData();
-                final ResultSet tables = metaData.getTables(null, publicSchema, "%", null);
-                final Statement dropStatement = jpaUnitTestConnection.createStatement();
-                while (tables.next()) {
-                    final String schemaAndTableName = tables.getString(2) + "." + tables.getString(3);
-                    System.out.println(" Dropping [" + schemaAndTableName + "] ... ");
-
-                    dropStatement.addBatch("drop table " + schemaAndTableName);
-                }
-                final int[] results = dropStatement.executeBatch();
-
-                System.out.println(" ... Done dropping [" + results.length + "] table(s).");
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+        dropAllDbObjectsInPublicSchema();
     }
 
     /**

@@ -48,7 +48,8 @@ public enum DatabaseType {
             "jdbc:hsqldb:mem:{0}",
             0,
             "org.apache.openjpa.jdbc.sql.HSQLDictionary",
-            "org.eclipse.persistence.platform.database.HSQLPlatform"),
+            "org.eclipse.persistence.platform.database.HSQLPlatform",
+            "PUBLIC"),
 
     /**
      * H2 database definitions.
@@ -56,10 +57,11 @@ public enum DatabaseType {
     H2(new H2DataTypeFactory(),
             "org.h2.Driver",
             0,
-            "jdbc:h2{0}",
+            "jdbc:h2:{0}",
             -1,
             "org.apache.openjpa.jdbc.sql.H2Dictionary",
-            "org.eclipse.persistence.platform.database.H2Platform"),
+            "org.eclipse.persistence.platform.database.H2Platform",
+            "public"),
 
     /**
      * PostgreSQL database definitions for a postgresql database running on localhost and port 5432.
@@ -70,7 +72,8 @@ public enum DatabaseType {
             "jdbc:postgresql:{0}",
             0,
             "org.apache.openjpa.jdbc.sql.PostgresDictionary",
-            "org.eclipse.persistence.platform.database.PostgreSQLPlatform");
+            "org.eclipse.persistence.platform.database.PostgreSQLPlatform",
+            "public");
 
     // Internal state
     private int uniqueDirectoryParameterIndex;
@@ -80,6 +83,7 @@ public enum DatabaseType {
     private String jdbcDriverClass;
     private String unitTestJdbcUrlPattern;
     private String hibernatePlatformClass;
+    private String publicSchemaName;
 
     /**
      * Creates a new DatabaseType wrapping the given properties assisting
@@ -93,6 +97,7 @@ public enum DatabaseType {
      *                                       if possible) JDBC URL for the supplied database.
      * @param openJpaDatabaseDictionaryClass The class name realizing the OpenJPA database dictionary for the
      *                                       active DatabaseType.
+     * @param publicSchemaName               The name of the public schema for the active DatabaseType.
      */
     private DatabaseType(final IDataTypeFactory dataTypeFactory,
                          final String jdbcDriverClass,
@@ -100,7 +105,8 @@ public enum DatabaseType {
                          final String unitTestJdbcUrlPattern,
                          final int dbNameParameterIndex,
                          final String openJpaDatabaseDictionaryClass,
-                         final String hibernatePlatformClass) {
+                         final String hibernatePlatformClass,
+                         final String publicSchemaName) {
 
         // Assign internal state
         this.dataTypeFactory = dataTypeFactory;
@@ -110,6 +116,7 @@ public enum DatabaseType {
         this.dbNameParameterIndex = dbNameParameterIndex;
         this.openJpaDatabaseDictionaryClass = openJpaDatabaseDictionaryClass;
         this.hibernatePlatformClass = hibernatePlatformClass;
+        this.publicSchemaName = publicSchemaName;
     }
 
     /**
@@ -190,11 +197,20 @@ public enum DatabaseType {
         if (parameterMap.size() == 0) {
             toReturn = unitTestJdbcUrlPattern;
         } else {
-            toReturn = MessageFormat.format(unitTestJdbcUrlPattern, parameterMap.keySet().toArray());
+            toReturn = MessageFormat.format(unitTestJdbcUrlPattern, parameterMap.values().toArray());
         }
 
         // All done.
         return toReturn;
+    }
+
+    /**
+     * Acquires the [default] name of the public schema for this DatabaseType.
+     *
+     * @return the [default] name of the public schema for this DatabaseType.
+     */
+    public String getPublicSchemaName() {
+        return publicSchemaName;
     }
 
     //

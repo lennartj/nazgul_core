@@ -21,6 +21,10 @@
  */
 package se.jguru.nazgul.test.persistence;
 
+import org.apache.commons.lang3.Validate;
+import org.dbunit.dataset.IDataSet;
+import org.dbunit.operation.DatabaseOperation;
+
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -31,7 +35,7 @@ import java.util.TreeMap;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
+public abstract class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
 
     /**
      * The name of the standard persistence unit.
@@ -52,6 +56,26 @@ public class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
      * The default password within the in-memory unit test database.
      */
     public static final String DEFAULT_DB_PASSWORD = "";
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void setUp() throws Exception {
+
+        // Perform standard setup
+        super.setUp();
+
+        // Delegate to custom setup
+        doCustomSetup();
+    }
+
+    /**
+     * Override this method to perform any custom setup.
+     */
+    protected void doCustomSetup() {
+        // Do nothing here; override to include custom behavior.
+    }
 
     /**
      * Retrieves the DatabaseType used by this AbstractJpaPersistenceDbUnitTest.
@@ -170,6 +194,7 @@ public class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
      */
     @Override
     protected void cleanupTestSchema() {
+        dropAllDbObjectsInPublicSchema();
     }
 
     /**
@@ -180,5 +205,92 @@ public class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
     @Override
     protected String getDatabaseName() {
         return DEFAULT_DB_NAME;
+    }
+
+    /**
+     * Standardized version of the setupDatabaseState method, using {@code DatabaseOperation#CLEAN_INSERT}
+     * for operation and synthesizing the setupDataSetLocation from the testMethodName given.
+     *
+     * @param testMethodName The name of the active test method, such as {@code validateFoo}.
+     * @see #setupDatabaseState(boolean, String)
+     */
+    protected final void setupDatabaseState(final String testMethodName) {
+
+        // Check sanity
+        Validate.notEmpty("Cannot handle null or empty testMethodName argument.");
+
+        // Delegate
+        setupDatabaseState(true, "testdata/" + getClass().getSimpleName() + "/setup_" + testMethodName + ".xml");
+    }
+
+    /**
+     * Sets up state within the database using the data provided.
+     *
+     * @param cleanBeforeInsert    if {@code true}, performs a {@code DatabaseOperation#CLEAN_INSERT} and otherwise
+     *                             performs a {@code DatabaseOperation#INSERT}.
+     * @param setupDataSetLocation The resource path to the FlatXMLDataSet used to setup database data.
+     */
+    protected final void setupDatabaseState(final boolean cleanBeforeInsert,
+                                            final String setupDataSetLocation) {
+
+        // Check sanity
+        Validate.notEmpty("Cannot handle null or empty setupDataSetLocation argument.");
+
+        // Get the appropriate DatabaseOperation from dbUnit.
+        final DatabaseOperation dbOp = cleanBeforeInsert ? DatabaseOperation.CLEAN_INSERT : DatabaseOperation.INSERT;
+
+        try {
+
+            // Fire the DatabaseOperation
+            final IDataSet setup = getDataSet(setupDataSetLocation);
+            dbOp.execute(iDatabaseConnection, setup);
+        } catch (Exception e) {
+            throw new IllegalStateException("Could not setup database state.", e);
+        }
+    }
+
+    /**
+     * Retrieves an IDataSet holding expected Database state for the supplied testMethodName.
+     *
+     * @param testMethodName The name of the active test method, such as {@code validateFoo}.
+     * @return An IDataSet holding the DataSet with expected data.
+     */
+    protected final IDataSet getExpectedDatabaseState(final String testMethodName) {
+
+        // Check sanity
+        Validate.notEmpty(testMethodName, "Cannot handle null or empty testMethodName argument.");
+
+        final String resourcePath = "testdata/" + getClass().getSimpleName() + "/expected_" + testMethodName + ".xml";
+
+        try {
+            return getDataSet(resourcePath);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Could not acquire IDataSet from resourcePath ["
+                    + resourcePath + "]", e);
+        }
+    }
+
+    /**
+     * Convenience method performing standardized setup of the in-memory database and retrieving the
+     * IDataSet pointing to the expected state following the test. Also begins the transaction, by
+     * calling the {@code transaction.begin()} method.
+     *
+     * @param testMethodName The name of the testMethod, such as {@code validateCreatePersonEntity}.
+     * @return the IDataSet pointing to the expected state following the test.
+     */
+    protected final IDataSet performStandardTestDbSetup(final String testMethodName) {
+
+        // Check sanity
+        Validate.notEmpty(testMethodName, "Cannot handle null or empty testMethodName argument.");
+
+        // Perform standard setup
+        setupDatabaseState(testMethodName);
+        final IDataSet toReturn = getExpectedDatabaseState(testMethodName);
+
+        // Start a transaction
+        transaction.begin();
+
+        // All done.
+        return toReturn;
     }
 }
