@@ -39,7 +39,12 @@
     <groupId>se.jguru.nazgul.core</groupId>
     <artifactId>nazgul-core-reactor</artifactId>
     <version>1.4.3-SNAPSHOT</version>
+    <name>${project.artifactId}</name>
     <packaging>pom</packaging>
+    <url>http://bitbucket.org/lennartj/nazgul_core</url>
+    <description>The Nazgul Framework: Core project holds a collection of library-style Software Components adhering
+        to the Nazgul-style component patterns, aimed at boosting productivity. All Software Components
+        are compliant with Java SE, OSGi and JEE standards.</description>
 
     <!--
     ################################################

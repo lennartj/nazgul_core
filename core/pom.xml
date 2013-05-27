@@ -37,6 +37,7 @@
 
     <groupId>se.jguru.nazgul.core</groupId>
     <artifactId>nazgul-core-core-reactor</artifactId>
+    <name>${project.artifactId}</name>
     <packaging>pom</packaging>
 
     <!--
