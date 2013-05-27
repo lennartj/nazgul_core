@@ -79,6 +79,3 @@ The test-scope dependencies are shown below:
 
 5. **nazgul-core-xmlbinding-test**. Contains utility methods to simplify testing and validating XML and
     XML-based tests, including calculating and visualizing diffs for XML trees.
-
-
-

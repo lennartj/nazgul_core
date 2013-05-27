@@ -106,6 +106,18 @@
         </plugins>
     </build>
 
+    <!--
+        Define repository settings for Maven's deploy and release plugins.
+        Moved to settings.xml, as per recommendation within Maven specs.
+    -->
+    <distributionManagement>
+        <site>
+            <id>jGuru_NazgulCoreSite</id>
+            <name>jGuru_NazgulCoreSite</name>
+            <url>${nazgul-core.sitedeploy.url}/version/${project.version}/core/algorithms/algorithms-api</url>
+        </site>
+    </distributionManagement>
+
     <scm>
         <developerConnection>scm:hg:file://${basedir}/../../../</developerConnection>
         <tag>HEAD</tag>

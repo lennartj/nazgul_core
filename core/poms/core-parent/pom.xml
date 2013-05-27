@@ -38,7 +38,11 @@
     <groupId>se.jguru.nazgul.core.poms.core-parent</groupId>
     <artifactId>nazgul-core-parent</artifactId>
     <version>1.4.3-SNAPSHOT</version>
+    <name>${project.artifactId}</name>
     <packaging>pom</packaging>
+    <description>The Nazgul Framework: Core project holds a collection of library-style Software Components
+        adhering to the Nazgul-style component patterns, aimed at boosting productivity.
+        All Software Components are compliant with Java SE, OSGi and JEE standards.</description>
 
     <licenses>
         <license>
@@ -101,6 +105,12 @@
                 <groupId>org.apache.geronimo.specs</groupId>
                 <artifactId>geronimo-jms_1.1_spec</artifactId>
                 <version>1.1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>1</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>javax.transaction</groupId>
@@ -278,6 +288,126 @@
                     </dependency>
                 </dependencies>
             </plugin>
+
+            <!--
+                To deploy a Staged site for the Nazgul Tools reactor, perform the following:
+
+                a) Define a settings.xml server setting with the id jGuru_NazgulToolsSite:
+
+                    <server>
+                        <id>jGuru_NazgulToolsSite</id>
+                        <username>yourUserName</username>
+                        <privateKey>[path to your SSH private key]</privateKey>
+                        <passphrase>[password for your SSH private key]</passphrase>
+                        <filePermissions>664</filePermissions>
+                        <directoryPermissions>755</directoryPermissions>
+                    </server>
+
+                   There are other security options than a certificate, as explained in
+                   http://maven.apache.org/settings.html#Servers
+
+                b) If you use certificate security as illustrated above, ensure that your *public* SSH key is
+                   copied to the target server's SSH daemon's recognitioning file.
+
+                   For example, on a Linux server this is typically done by appending your public SSH key to
+                   the ${HOME}/.ssh/authorized_keys file of the account you want to use to deploy your staged site.
+
+                   This process is better described on the net:
+
+                   Linux:       http://www.csua.berkeley.edu/~ranga/notes/ssh_nopass.html
+                   Mac OS X:    http://xiix.wordpress.com/2007/03/31/how-to-set-up-public-key-authentication-pka-on-your-mac/
+                   Windows:     http://comptb.cects.com/1439-openssh-rsa-authentication-for-windows-and-linux
+
+                d) Ensure that all the distributionManagement/site/url's relate to the topSiteURL value as the
+                   staged project site should relate to the top of the site. Assuming that the topSiteURL is
+                   ${nazgul-tools.sitedeploy.url}/version/${project.version}/ and your project Foo should reside
+                   immediately below the root, the distributionManagement/site/url in that project should be defined
+                   as ${nazgul-tools.sitedeploy.url}/version/${project.version}/foo.
+
+                   Also, ensure that the distributionManagement/site/id is "jGuru_NazgulToolsSite", as illustrated
+                   below:
+
+                    <distributionManagement>
+                        <site>
+                            <id>jGuru_NazgulToolsSite</id>
+                            <name>jGuru_NazgulToolsSite</name>
+                            <url>${nazgul-tools.sitedeploy.url}/version/${project.version}/path/to/project</url>
+                        </site>
+                    </distributionManagement>
+
+                e) Fire the two commands after one another:
+
+                   mvn clean site
+
+                   mvn -Dnazgul-tools.sitedeploy.url=scp://yourhost/path/to/deployment/root site:stage-deploy
+
+                   where "yourhost" is the same server you uploaded the ssh certificate to in step (b).
+                   The staged site should now reside in the directory
+                   /path/to/deployment/root/version/${project.version}/staging
+                   on the "yourhost" server.
+
+                f) For simplicity, if you upload the site to the same host and location most of the time,
+                   you are recommended to create a Maven profile within the settings.xml file defining the
+                   property nazgul-tools.sitedeploy.url. Such a profile is created by adding the following
+                   to the ${HOME}/.m2/settings.xml file:
+
+                   ...
+                   <profiles>
+                        <profile>
+                            <id>siteDeploy</id>
+                            <properties>
+                                <nazgul-tools.sitedeploy.url>[your url here]</nazgul-tools.sitedeploy.url>
+                            </properties>
+                        </profile>
+                   </profiles>
+
+
+                   This way you need not submit it on the command line as
+                   illustrated in (e) above, but instead use the command:
+
+                   mvn -PsiteDeploy site:stage-deploy
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.3</version>
+                <executions>
+                    <execution>
+                        <id>attach-descriptor</id>
+                        <goals>
+                            <goal>attach-descriptor</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <topSiteURL>${nazgul-core.sitedeploy.url}/version/${project.version}/</topSiteURL>
+                    <generateSitemap>true</generateSitemap>
+                    <inputEncoding>UTF-8</inputEncoding>
+                    <outputEncoding>UTF-8</outputEncoding>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.wagon</groupId>
+                        <artifactId>wagon-ssh</artifactId>
+                        <version>2.4</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.maven.wagon</groupId>
+                        <artifactId>wagon-file</artifactId>
+                        <version>2.4</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.maven.doxia</groupId>
+                        <artifactId>doxia-module-markdown</artifactId>
+                        <version>1.3</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.maven.doxia</groupId>
+                        <artifactId>doxia-module-xhtml</artifactId>
+                        <version>1.3</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
         </plugins>
     </build>
 
@@ -286,6 +416,18 @@
     # Section 4:  External systems
     ################################################
     -->
+    <!--
+        Define repository settings for Maven's deploy and release plugins.
+        Moved to settings.xml, as per recommendation within Maven specs.
+    -->
+    <distributionManagement>
+        <site>
+            <id>jGuru_NazgulCoreSite</id>
+            <name>jGuru_NazgulCoreSite</name>
+            <url>${nazgul-core.sitedeploy.url}/version/${project.version}/core/poms/core-parent</url>
+        </site>
+    </distributionManagement>
+
     <scm>
         <url>https://bitbucket.org/lennartj/nazgul_core</url>
         <connection>scm:hg:https://bitbucket.org/lennartj/nazgul_core</connection>
@@ -298,16 +440,4 @@
         <url>https://bitbucket.org/lennartj/nazgul_core/issues</url>
     </issueManagement>
 
-    <distributionManagement>
-        <repository>
-            <id>jGuru_Artifactory</id>
-            <name>jGuru_Artifactory-releases</name>
-            <url>http://www.jguru.se/artifactory/libs-releases-local</url>
-        </repository>
-        <snapshotRepository>
-            <id>jGuru_Artifactory</id>
-            <name>jGuru_Artifactory-snapshots</name>
-            <url>http://www.jguru.se/artifactory/libs-snapshots-local</url>
-        </snapshotRepository>
-    </distributionManagement>
 </project>
