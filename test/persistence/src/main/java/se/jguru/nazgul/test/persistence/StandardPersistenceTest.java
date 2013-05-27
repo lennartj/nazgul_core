@@ -25,6 +25,8 @@ import org.apache.commons.lang3.Validate;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.operation.DatabaseOperation;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -157,10 +159,19 @@ public abstract class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
 
                 // OpenJPA properties
                 {"openjpa.jdbc.DBDictionary", getDatabaseType().getDatabaseDialectClass()},
-                {"openjpa.ConnectionDriverName", jdbcDriverClass},
-                {"openjpa.ConnectionURL", jdbcURL},
-                {"openjpa.ConnectionUserName", DEFAULT_DB_UID},
-                {"openjpa.ConnectionPassword", DEFAULT_DB_PASSWORD},
+
+                // Note!
+                // These OpenJPA provider properties are now replaced by the standardized
+                // properties, "javax.persistence....".
+                // It is now an exception to define both the standardized property and the
+                // corresponding legacy openjpa property for the commented-out properties
+                // below. These properties will remain commented-out to indicate which openjpa
+                // properties are now replaced by javax.persistence properties.
+                //
+                // {"openjpa.ConnectionDriverName", jdbcDriverClass},
+                // {"openjpa.ConnectionURL", jdbcURL},
+                // {"openjpa.ConnectionUserName", DEFAULT_DB_UID},
+                // {"openjpa.ConnectionPassword", DEFAULT_DB_PASSWORD},
                 {"openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true)"},
                 {"openjpa.InverseManager", "true"},
                 {"openjpa.Log", "DefaultLevel=WARN, Tool=INFO, RUNTIME=WARN, SQL=WARN"},
@@ -181,8 +192,17 @@ public abstract class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
         for (String[] current : persistenceProviderProps) {
             toReturn.put(current[0], current[1]);
         }
+
+        // Now, overwrite with appropriate system properties
+        final List<String> overridablePrefixes = Arrays.asList("javax.persistence.", "openjpa.", "eclipselink.");
         for (Object current : System.getProperties().keySet()) {
-            toReturn.put("" + current, System.getProperty("" + current));
+
+            final String currentPropertyName = "" + current;
+            for(String currentPrefix : overridablePrefixes) {
+                if(currentPropertyName.trim().toLowerCase().startsWith(currentPrefix)) {
+                    toReturn.put("" + current, System.getProperty("" + current));
+                }
+            }
         }
 
         // All done.

@@ -23,6 +23,8 @@ package se.jguru.nazgul.test.persistence;
 
 import org.junit.After;
 import org.junit.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.test.persistence.classloader.PersistenceRedirectionClassLoader;
 import se.jguru.nazgul.test.persistence.helpers.JpaPersistenceTestOperations;
 
@@ -40,6 +42,9 @@ import java.util.Map;
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 public abstract class AbstractJpaTest {
+
+    // Our Log
+    private static final Logger log = LoggerFactory.getLogger(AbstractJpaTest.class);
 
     /**
      * The unit-test scoped access to JpaOperations, created by this AbstractJpaTest.
@@ -82,6 +87,8 @@ public abstract class AbstractJpaTest {
 
         // Create a JpaPersistenceOperations and a corresponding Transaction.
         final Map<String, String> props = getEntityManagerFactoryProperties();
+
+        log.debug("Got props: " + props);
         final EntityManagerFactory factory = Persistence.createEntityManagerFactory(getPersistenceUnitName(), props);
         entityManager = factory.createEntityManager();
         jpa = new JpaPersistenceTestOperations(entityManager);

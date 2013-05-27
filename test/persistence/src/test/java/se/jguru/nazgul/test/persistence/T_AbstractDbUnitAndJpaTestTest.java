@@ -175,7 +175,6 @@ public class T_AbstractDbUnitAndJpaTestTest {
         // Act & Assert #4: Dig out the database using dbUnit methods.
         final IDataSet dataSet = unitUnderTest.iDatabaseConnection.createDataSet();
         final String flatXmlDataSet = unitUnderTest.extractFlatXmlDataSet(dataSet);
-        System.out.println("Got: " + flatXmlDataSet);
 
         Assert.assertTrue(
                 flatXmlDataSet.contains("<BIRD ID=\"0\" CATEGORY=\"cool birds\" NAME=\"birdName\" VERSION=\"1\"/>")
