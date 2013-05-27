@@ -39,6 +39,7 @@
     <groupId>se.jguru.nazgul.test.messaging</groupId>
     <artifactId>nazgul-core-messaging-test</artifactId>
     <packaging>bundle</packaging>
+    <name>${project.artifactId}</name>
 
     <properties>
         <activemq.version>5.7.0</activemq.version>

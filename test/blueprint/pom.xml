@@ -39,6 +39,7 @@
     <groupId>se.jguru.nazgul.test.blueprint</groupId>
     <artifactId>nazgul-core-blueprint-test</artifactId>
     <packaging>bundle</packaging>
+    <name>${project.artifactId}</name>
 
     <properties>
         <pax.exam.version>3.0.0</pax.exam.version>

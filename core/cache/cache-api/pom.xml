@@ -39,6 +39,7 @@
     <groupId>se.jguru.nazgul.core.cache.api</groupId>
     <artifactId>nazgul-core-cache-api</artifactId>
     <packaging>bundle</packaging>
+    <name>${project.artifactId}</name>
 
     <!--
     ################################################

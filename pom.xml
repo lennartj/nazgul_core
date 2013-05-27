@@ -84,12 +84,12 @@
             </plugin>
 
             <!--
-                To deploy a Staged site for the Nazgul Tools reactor, perform the following:
+                To deploy a Staged site for the Nazgul Core reactor, perform the following:
 
-                a) Define a settings.xml server setting with the id jGuru_NazgulToolsSite:
+                a) Define a settings.xml server setting with the id jGuru_NazgulCoreSite:
 
                     <server>
-                        <id>jGuru_NazgulToolsSite</id>
+                        <id>jGuru_NazgulCoreSite</id>
                         <username>yourUserName</username>
                         <privateKey>[path to your SSH private key]</privateKey>
                         <passphrase>[password for your SSH private key]</passphrase>
@@ -114,26 +114,26 @@
 
                 d) Ensure that all the distributionManagement/site/url's relate to the topSiteURL value as the
                    staged project site should relate to the top of the site. Assuming that the topSiteURL is
-                   ${nazgul-tools.sitedeploy.url}/version/${project.version}/ and your project Foo should reside
+                   ${nazgul-core.sitedeploy.url}/version/${project.version}/ and your project Foo should reside
                    immediately below the root, the distributionManagement/site/url in that project should be defined
-                   as ${nazgul-tools.sitedeploy.url}/version/${project.version}/foo.
+                   as ${nazgul-core.sitedeploy.url}/version/${project.version}/foo.
 
-                   Also, ensure that the distributionManagement/site/id is "jGuru_NazgulToolsSite", as illustrated
+                   Also, ensure that the distributionManagement/site/id is "jGuru_NazgulCoreSite", as illustrated
                    below:
 
                     <distributionManagement>
                         <site>
-                            <id>jGuru_NazgulToolsSite</id>
-                            <name>jGuru_NazgulToolsSite</name>
-                            <url>${nazgul-tools.sitedeploy.url}/version/${project.version}/path/to/project</url>
+                            <id>jGuru_NazgulCoreSite</id>
+                            <name>jGuru_NazgulCoreSite</name>
+                            <url>${nazgul-core.sitedeploy.url}/version/${project.version}/path/to/project</url>
                         </site>
                     </distributionManagement>
 
                 e) Fire the two commands after one another:
 
-                   mvn clean site
+                   mvn clean site -Dnazgul-tools.sitedeploy.url=scp://yourhost/path/to/deployment/root
 
-                   mvn -Dnazgul-tools.sitedeploy.url=scp://yourhost/path/to/deployment/root site:stage-deploy
+                   mvn -Dnazgul-core.sitedeploy.url=scp://yourhost/path/to/deployment/root site:stage-deploy
 
                    where "yourhost" is the same server you uploaded the ssh certificate to in step (b).
                    The staged site should now reside in the directory
@@ -142,7 +142,7 @@
 
                 f) For simplicity, if you upload the site to the same host and location most of the time,
                    you are recommended to create a Maven profile within the settings.xml file defining the
-                   property nazgul-tools.sitedeploy.url. Such a profile is created by adding the following
+                   property nazgul-core.sitedeploy.url. Such a profile is created by adding the following
                    to the ${HOME}/.m2/settings.xml file:
 
                    ...
@@ -150,7 +150,7 @@
                         <profile>
                             <id>siteDeploy</id>
                             <properties>
-                                <nazgul-tools.sitedeploy.url>[your url here]</nazgul-tools.sitedeploy.url>
+                                <nazgul-core.sitedeploy.url>[your url here]</nazgul-core.sitedeploy.url>
                             </properties>
                         </profile>
                    </profiles>

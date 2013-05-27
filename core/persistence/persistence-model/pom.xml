@@ -39,6 +39,7 @@
     <groupId>se.jguru.nazgul.core.persistence.model</groupId>
     <artifactId>nazgul-core-persistence-model</artifactId>
     <packaging>bundle</packaging>
+    <name>${project.artifactId}</name>
 
     <!--
     ################################################

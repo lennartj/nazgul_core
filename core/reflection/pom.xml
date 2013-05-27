@@ -38,6 +38,7 @@
     <groupId>se.jguru.nazgul.core.reflection</groupId>
     <artifactId>nazgul-core-reflection-reactor</artifactId>
     <packaging>pom</packaging>
+    <name>${project.artifactId}</name>
 
     <!--
     ################################################

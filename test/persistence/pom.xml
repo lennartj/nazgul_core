@@ -18,6 +18,7 @@
     <groupId>se.jguru.nazgul.test.persistence</groupId>
     <artifactId>nazgul-core-persistence-test</artifactId>
     <packaging>jar</packaging>
+    <name>${project.artifactId}</name>
 
     <!--
     ################################################

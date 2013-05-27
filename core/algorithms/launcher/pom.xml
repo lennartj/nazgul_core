@@ -38,6 +38,7 @@
     <groupId>se.jguru.nazgul.core.algorithms.launcher</groupId>
     <artifactId>nazgul-core-launcher-reactor</artifactId>
     <packaging>pom</packaging>
+    <name>${project.artifactId}</name>
 
     <!--
     ################################################

@@ -38,6 +38,7 @@
     <groupId>se.jguru.nazgul.core.parser</groupId>
     <artifactId>nazgul-core-parser-reactor</artifactId>
     <packaging>pom</packaging>
+    <name>${project.artifactId}</name>
 
     <!--
     ################################################

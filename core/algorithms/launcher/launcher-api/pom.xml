@@ -39,6 +39,7 @@
     <groupId>se.jguru.nazgul.core.algorithms.launcher.api</groupId>
     <artifactId>nazgul-core-launcher-api</artifactId>
     <packaging>bundle</packaging>
+    <name>${project.artifactId}</name>
 
     <!--
     ################################################

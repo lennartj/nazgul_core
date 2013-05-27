@@ -39,6 +39,7 @@
     <groupId>se.jguru.nazgul.core.parser.api</groupId>
     <artifactId>nazgul-core-parser-api</artifactId>
     <packaging>bundle</packaging>
+    <name>${project.artifactId}</name>
 
     <!--
     ################################################

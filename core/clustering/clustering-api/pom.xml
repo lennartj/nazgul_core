@@ -39,6 +39,7 @@
     <groupId>se.jguru.nazgul.core.clustering.api</groupId>
     <artifactId>nazgul-core-clustering-api</artifactId>
     <packaging>bundle</packaging>
+    <name>${project.artifactId}</name>
 
     <!--
     ################################################

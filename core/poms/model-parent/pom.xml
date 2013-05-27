@@ -38,6 +38,7 @@
     <groupId>se.jguru.nazgul.core.poms.model-parent</groupId>
     <artifactId>nazgul-core-model-parent</artifactId>
     <packaging>pom</packaging>
+    <name>${project.artifactId}</name>
 
     <!--
     ################################################

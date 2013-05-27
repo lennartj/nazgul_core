@@ -39,6 +39,7 @@
     <groupId>se.jguru.nazgul.core.xmlbinding.spi.jaxb</groupId>
     <artifactId>nazgul-core-xmlbinding-spi-jaxb</artifactId>
     <packaging>bundle</packaging>
+    <name>${project.artifactId}</name>
 
     <!--
     ################################################
