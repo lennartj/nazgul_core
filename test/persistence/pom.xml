@@ -94,9 +94,14 @@
                         <haltOnFailure>true</haltOnFailure>
                         <regexes>
                             <regex>
-                                <pattern>se.jguru.nazgul.test.osgi.MockBundleContext\$3</pattern>
-                                <branchRate>50</branchRate>
-                                <lineRate>50</lineRate>
+                                <pattern>se.jguru.nazgul.test.persistence.AbstractJpaTest</pattern>
+                                <branchRate>65</branchRate>
+                                <lineRate>75</lineRate>
+                            </regex>
+                            <regex>
+                                <pattern>se.jguru.nazgul.test.persistence.AbstractDbUnitAndJpaTest</pattern>
+                                <branchRate>65</branchRate>
+                                <lineRate>75</lineRate>
                             </regex>
                         </regexes>
                     </check>

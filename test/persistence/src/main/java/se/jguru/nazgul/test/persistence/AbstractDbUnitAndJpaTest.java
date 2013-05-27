@@ -106,6 +106,7 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
      * @throws Exception if an error occurred.
      */
     @Before
+    @SuppressWarnings("PMD.CloseResource")
     public void setUp() throws Exception {
 
         // Delegate
@@ -191,12 +192,15 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
      */
     protected final void dropAllDbObjectsInPublicSchema() {
 
+        ResultSet dbObjects = null;
+        Statement dropStatement = null;
+
         try {
 
             // Revert to plain-old JDBC to drop all DB objects in the public schema.
             final DatabaseMetaData metaData = jpaUnitTestConnection.getMetaData();
-            final ResultSet dbObjects = metaData.getTables(null, getDatabaseType().getPublicSchemaName(), "%", null);
-            final Statement dropStatement = jpaUnitTestConnection.createStatement();
+            dbObjects = metaData.getTables(null, getDatabaseType().getPublicSchemaName(), "%", null);
+            dropStatement = jpaUnitTestConnection.createStatement();
 
             while (dbObjects.next()) {
                 final String schemaAndTableName = dbObjects.getString(2) + "." + dbObjects.getString(3);
@@ -212,6 +216,19 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+
+            try {
+                if(dropStatement != null) {
+                    dropStatement.close();
+                }
+
+                if(dbObjects != null) {
+                    dbObjects.close();
+                }
+            } catch (SQLException e) {
+                log.error("Could not close DB resource", e);
+            }
         }
     }
 
