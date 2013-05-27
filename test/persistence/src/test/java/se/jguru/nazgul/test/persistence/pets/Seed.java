@@ -19,10 +19,6 @@
  * limitations under the License.
  * #L%
  */
-/*
- * Copyright (c) jGuru Europe AB
- * All rights reserved.
- */
 package se.jguru.nazgul.test.persistence.pets;
 
 import se.jguru.nazgul.core.persistence.model.NazgulEntity;

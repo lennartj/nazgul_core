@@ -29,8 +29,6 @@
 
     <persistence-unit name="InMemoryTestPU">
 
-        <!-- provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider -->
-
         <class>se.jguru.nazgul.core.persistence.model.NazgulEntity</class>
         <class>se.jguru.nazgul.test.persistence.pets.Bird</class>
         <class>se.jguru.nazgul.test.persistence.pets.Seed</class>
