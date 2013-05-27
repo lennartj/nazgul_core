@@ -26,9 +26,9 @@ inherited from the choices within the Nazgul Framework.
 
 The following roadmap is recommended:
 
-1. Read [a brief overview of the Nazgul Tools reactor](nazgul_tools.html).
+1. Read [a brief overview of the Nazgul Core reactor](nazgul_core.html).
 
-2. Read through the thoughs and structure of [Nazgul Software Components](nazgul_tools.html).
+2. Read through the thoughs and structure of [Nazgul Software Components](software_components.html).
 
 3. Import some components from Nazgul Framework: Core for direct use - or use the `nazgul-tools-external-parent` as a
-   parent within your development project as shown in [Nazgul Software Components](nazgul_tools.html).
+   parent within your development project.

@@ -38,6 +38,7 @@
     <groupId>se.jguru.nazgul.core.test</groupId>
     <artifactId>nazgul-core-test-reactor</artifactId>
     <packaging>pom</packaging>
+    <name>${project.artifactId}</name>
 
     <!--
     ################################################
