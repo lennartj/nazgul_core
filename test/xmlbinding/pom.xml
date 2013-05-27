@@ -39,6 +39,7 @@
     <groupId>se.jguru.nazgul.test.xmlbinding</groupId>
     <artifactId>nazgul-core-xmlbinding-test</artifactId>
     <packaging>bundle</packaging>
+    <name>${project.artifactId}</name>
 
     <!--
     ################################################

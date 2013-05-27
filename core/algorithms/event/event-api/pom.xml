@@ -39,6 +39,7 @@
     <groupId>se.jguru.nazgul.core.algorithms.event.api</groupId>
     <artifactId>nazgul-core-algorithms-event-api</artifactId>
     <packaging>bundle</packaging>
+    <name>${project.artifactId}</name>
 
     <!--
     ################################################

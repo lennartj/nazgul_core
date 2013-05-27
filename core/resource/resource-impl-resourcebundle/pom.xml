@@ -39,6 +39,7 @@
     <groupId>se.jguru.nazgul.core.resource.impl.resourcebundle</groupId>
     <artifactId>nazgul-core-resource-impl-resourcebundle</artifactId>
     <packaging>bundle</packaging>
+    <name>${project.artifactId}</name>
 
     <!--
     ################################################

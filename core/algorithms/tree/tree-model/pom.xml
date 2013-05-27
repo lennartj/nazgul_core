@@ -39,6 +39,7 @@
     <groupId>se.jguru.nazgul.core.algorithms.tree.model</groupId>
     <artifactId>nazgul-core-tree-model</artifactId>
     <packaging>bundle</packaging>
+    <name>${project.artifactId}</name>
 
     <!--
     ################################################

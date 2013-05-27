@@ -38,6 +38,7 @@
     <groupId>se.jguru.nazgul.core.osgi.launcher</groupId>
     <artifactId>nazgul-core-osgi-launcher-reactor</artifactId>
     <packaging>pom</packaging>
+    <name>${project.artifactId}</name>
 
     <!--
     ################################################

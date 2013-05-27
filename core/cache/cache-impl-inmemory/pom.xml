@@ -39,6 +39,7 @@
     <groupId>se.jguru.nazgul.core.cache.impl.inmemory</groupId>
     <artifactId>nazgul-core-cache-impl-inmemory</artifactId>
     <packaging>bundle</packaging>
+    <name>${project.artifactId}</name>
 
     <!--
     ################################################

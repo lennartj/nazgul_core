@@ -38,6 +38,7 @@
     <groupId>se.jguru.nazgul.core.algorithms.event</groupId>
     <artifactId>nazgul-core-event-reactor</artifactId>
     <packaging>pom</packaging>
+    <name>${project.artifactId}</name>
 
     <!--
     ################################################

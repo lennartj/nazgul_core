@@ -38,6 +38,7 @@
     <groupId>se.jguru.nazgul.core.resource</groupId>
     <artifactId>nazgul-core-resource-reactor</artifactId>
     <packaging>pom</packaging>
+    <name>${project.artifactId}</name>
 
     <!--
     ################################################

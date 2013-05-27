@@ -38,6 +38,7 @@
     <groupId>se.jguru.nazgul.core.persistence</groupId>
     <artifactId>nazgul-core-persistence-reactor</artifactId>
     <packaging>pom</packaging>
+    <name>${project.artifactId}</name>
 
     <!--
     ################################################

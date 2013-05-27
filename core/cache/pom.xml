@@ -38,6 +38,7 @@
     <groupId>se.jguru.nazgul.core.cache</groupId>
     <artifactId>nazgul-core-cache-reactor</artifactId>
     <packaging>pom</packaging>
+    <name>${project.artifactId}</name>
 
     <!--
     ################################################

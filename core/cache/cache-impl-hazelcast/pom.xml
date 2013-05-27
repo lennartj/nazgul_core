@@ -40,6 +40,7 @@
     <groupId>se.jguru.nazgul.core.cache.impl.hazelcast</groupId>
     <artifactId>nazgul-core-cache-impl-hazelcast</artifactId>
     <packaging>bundle</packaging>
+    <name>${project.artifactId}</name>
 
     <properties>
         <hazelcast.version>2.5</hazelcast.version>

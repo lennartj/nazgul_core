@@ -38,6 +38,7 @@
     <groupId>se.jguru.nazgul.core.algorithms.tree</groupId>
     <artifactId>nazgul-core-tree-reactor</artifactId>
     <packaging>pom</packaging>
+    <name>${project.artifactId}</name>
 
     <!--
     ################################################
