@@ -46,6 +46,15 @@
         to the Nazgul-style component patterns, aimed at boosting productivity. All Software Components
         are compliant with Java SE, OSGi and JEE standards.</description>
 
+    <licenses>
+        <license>
+            <name>jGuru Europe Corporate Source License, based on The Apache Software License, Version 2.0</name>
+            <url>http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+
     <!--
     ################################################
     # Section 2:  Module definitions
@@ -82,9 +91,16 @@
     ################################################
     -->
     <scm>
+        <url>https://bitbucket.org/lennartj/nazgul_core</url>
+        <connection>scm:hg:https://bitbucket.org/lennartj/nazgul_core</connection>
         <developerConnection>scm:hg:file://${basedir}/</developerConnection>
         <tag>HEAD</tag>
     </scm>
+
+    <issueManagement>
+        <system>bitbucket</system>
+        <url>https://bitbucket.org/lennartj/nazgul_core/issues</url>
+    </issueManagement>
 
     <distributionManagement>
         <repository>
