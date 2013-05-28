@@ -32,7 +32,7 @@
     <parent>
         <groupId>se.jguru.nazgul.core.poms.core-parent</groupId>
         <artifactId>nazgul-core-parent</artifactId>
-        <version>1.4.3-SNAPSHOT</version>
+        <version>1.4.3</version>
         <relativePath>../../../poms/core-parent</relativePath>
     </parent>
 
@@ -51,12 +51,12 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.algorithms.event.api</groupId>
             <artifactId>nazgul-core-algorithms-event-api</artifactId>
-            <version>1.4.3-SNAPSHOT</version>
+            <version>1.4.3</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.test.osgi</groupId>
             <artifactId>nazgul-core-osgi-test</artifactId>
-            <version>1.4.3-SNAPSHOT</version>
+            <version>1.4.3</version>
             <scope>test</scope>
         </dependency>
 
@@ -329,6 +329,6 @@
 
     <scm>
         <developerConnection>scm:hg:file://${basedir}/../../../../</developerConnection>
-        <tag>HEAD</tag>
+        <tag>nazgul-core-1.4.3</tag>
     </scm>
 </project>

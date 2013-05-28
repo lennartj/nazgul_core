@@ -32,7 +32,7 @@
     <parent>
         <groupId>se.jguru.nazgul.core.poms.model-parent</groupId>
         <artifactId>nazgul-core-model-parent</artifactId>
-        <version>1.4.3-SNAPSHOT</version>
+        <version>1.4.3</version>
         <relativePath>../../../poms/model-parent/pom.xml</relativePath>
     </parent>
 
@@ -51,12 +51,12 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.persistence.model</groupId>
             <artifactId>nazgul-core-persistence-model</artifactId>
-            <version>1.4.3-SNAPSHOT</version>
+            <version>1.4.3</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.xmlbinding.spi.jaxb</groupId>
             <artifactId>nazgul-core-xmlbinding-spi-jaxb</artifactId>
-            <version>1.4.3-SNAPSHOT</version>
+            <version>1.4.3</version>
             <scope>test</scope>
         </dependency>
 
@@ -96,7 +96,7 @@
         <dependency>
             <groupId>se.jguru.nazgul.test.xmlbinding</groupId>
             <artifactId>nazgul-core-xmlbinding-test</artifactId>
-            <version>1.4.3-SNAPSHOT</version>
+            <version>1.4.3</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -181,6 +181,6 @@
 
     <scm>
         <developerConnection>scm:hg:file://${basedir}/../../../../</developerConnection>
-        <tag>HEAD</tag>
+        <tag>nazgul-core-1.4.3</tag>
     </scm>
 </project>

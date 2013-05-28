@@ -31,7 +31,7 @@
     <parent>
         <groupId>se.jguru.nazgul.core.poms.core-parent</groupId>
         <artifactId>nazgul-core-parent</artifactId>
-        <version>1.4.3-SNAPSHOT</version>
+        <version>1.4.3</version>
         <relativePath>../core-parent</relativePath>
     </parent>
 
@@ -50,12 +50,12 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.reflection.api</groupId>
             <artifactId>nazgul-core-reflection-api</artifactId>
-            <version>1.4.3-SNAPSHOT</version>
+            <version>1.4.3</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.xmlbinding.api</groupId>
             <artifactId>nazgul-core-xmlbinding-api</artifactId>
-            <version>1.4.3-SNAPSHOT</version>
+            <version>1.4.3</version>
         </dependency>
     </dependencies>
 
@@ -318,6 +318,6 @@
 
     <scm>
         <developerConnection>scm:hg:file://${basedir}/../../../</developerConnection>
-        <tag>HEAD</tag>
+        <tag>nazgul-core-1.4.3</tag>
     </scm>
 </project>

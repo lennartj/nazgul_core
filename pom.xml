@@ -33,12 +33,12 @@
         <groupId>se.jguru.nazgul.tools.poms.external</groupId>
         <artifactId>nazgul-tools-external-reactor-parent</artifactId>
         <version>2.0.6</version>
-        <relativePath/>
+        <relativePath />
     </parent>
 
     <groupId>se.jguru.nazgul.core</groupId>
     <artifactId>nazgul-core-reactor</artifactId>
-    <version>1.4.3-SNAPSHOT</version>
+    <version>1.4.3</version>
     <name>${project.artifactId}</name>
     <packaging>pom</packaging>
     <url>http://bitbucket.org/lennartj/nazgul_core</url>
@@ -242,7 +242,7 @@
         <url>https://bitbucket.org/lennartj/nazgul_core</url>
         <connection>scm:hg:https://bitbucket.org/lennartj/nazgul_core</connection>
         <developerConnection>scm:hg:file://${basedir}/</developerConnection>
-        <tag>HEAD</tag>
+        <tag>nazgul-core-1.4.3</tag>
     </scm>
 
     <issueManagement>
