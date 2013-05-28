@@ -38,7 +38,7 @@
 
     <groupId>se.jguru.nazgul.core</groupId>
     <artifactId>nazgul-core-reactor</artifactId>
-    <version>1.4.3</version>
+    <version>1.4.4-SNAPSHOT</version>
     <name>${project.artifactId}</name>
     <packaging>pom</packaging>
     <url>http://bitbucket.org/lennartj/nazgul_core</url>
@@ -242,7 +242,7 @@
         <url>https://bitbucket.org/lennartj/nazgul_core</url>
         <connection>scm:hg:https://bitbucket.org/lennartj/nazgul_core</connection>
         <developerConnection>scm:hg:file://${basedir}/</developerConnection>
-        <tag>nazgul-core-1.4.3</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <issueManagement>

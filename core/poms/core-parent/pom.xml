@@ -37,7 +37,7 @@
 
     <groupId>se.jguru.nazgul.core.poms.core-parent</groupId>
     <artifactId>nazgul-core-parent</artifactId>
-    <version>1.4.3</version>
+    <version>1.4.4-SNAPSHOT</version>
     <name>${project.artifactId}</name>
     <packaging>pom</packaging>
     <description>The Nazgul Framework: Core project holds a collection of library-style Software Components
@@ -432,7 +432,7 @@
         <url>https://bitbucket.org/lennartj/nazgul_core</url>
         <connection>scm:hg:https://bitbucket.org/lennartj/nazgul_core</connection>
         <developerConnection>scm:hg:file://${basedir}/../../../</developerConnection>
-        <tag>nazgul-core-1.4.3</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
