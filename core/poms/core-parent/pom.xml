@@ -38,9 +38,9 @@
     <groupId>se.jguru.nazgul.core.poms.core-parent</groupId>
     <artifactId>nazgul-core-parent</artifactId>
     <version>1.4.4-SNAPSHOT</version>
+    <packaging>pom</packaging>
     <name>${project.artifactId}</name>
     <url>${url.prefix}/${path.in.reactor}</url>
-    <packaging>pom</packaging>
     <description>The Nazgul Framework: Core project holds a collection of library-style Software Components adhering to the Nazgul-style component patterns, aimed at boosting productivity. All Software Components are compliant with Java SE, OSGi and JEE standards.</description>
 
     <licenses>
