@@ -41,7 +41,7 @@
     <artifactId>nazgul-core-blueprint-test</artifactId>
     <version>1.4.1-SNAPSHOT</version>
     <name>${project.groupId}.${project.artifactId}</name>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
 
     <properties>
         <pax.exam.version>3.0.0</pax.exam.version>

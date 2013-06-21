@@ -184,6 +184,7 @@ public abstract class CollectionAlgorithms {
      * @param <C>         The Collection type.
      * @return A new Collection holding the transformed instances from the source.
      */
+    @SuppressWarnings("unchecked")
     public static <T, R, C extends Collection<R>> C transform(final Collection<T> source,
                                                               final Transformer<T, R> transformer) {
 
@@ -192,7 +193,7 @@ public abstract class CollectionAlgorithms {
         Validate.notNull(transformer, CANNOT_HANDLE_NULL_TRANSFORMER_ARGUMENT);
 
         // Create a return instance
-        Collection<R> toReturn = cloneEmptyFromType(source.getClass());
+		Collection<R> toReturn = cloneEmptyFromType(source.getClass());
 
         for (T current : source) {
             toReturn.add(transformer.transform(current));
@@ -325,7 +326,8 @@ public abstract class CollectionAlgorithms {
     // Private helpers
     //
 
-    private static <T, C extends Collection<T>> C cloneEmptyFromType(final Class<C> type) {
+    @SuppressWarnings("unchecked")
+	private static <T, C extends Collection<T>> C cloneEmptyFromType(final Class<C> type) {
 
         Validate.notNull(type, "Cannot handle null type argument.");
         C toReturn = null;
@@ -356,7 +358,8 @@ public abstract class CollectionAlgorithms {
         return toReturn;
     }
 
-    private static <T, C extends Collection<T>> C cloneEmpty(final C source) {
+    @SuppressWarnings("unchecked")
+	private static <T, C extends Collection<T>> C cloneEmpty(final C source) {
         return (C) cloneEmptyFromType(source.getClass());
     }
 }

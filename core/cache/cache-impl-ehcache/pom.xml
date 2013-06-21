@@ -38,10 +38,12 @@
 
     <groupId>se.jguru.nazgul.core.cache.impl.ehcache</groupId>
     <artifactId>nazgul-core-cache-impl-ehcache</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>${project.artifactId}</name>
+    <url>${url.prefix}/${path.in.reactor}</url>
 
     <properties>
+        <path.in.reactor>core/cache/cache-api</path.in.reactor>
         <ehcache.version>2.7.0</ehcache.version>
     </properties>
 
@@ -150,6 +152,7 @@
     # Section 4:  External systems
     ################################################
     -->
+
     <!--
         Define repository settings for Maven's deploy and release plugins.
         Moved to settings.xml, as per recommendation within Maven specs.
@@ -158,12 +161,17 @@
         <site>
             <id>jGuru_NazgulCoreSite</id>
             <name>jGuru_NazgulCoreSite</name>
-            <url>${nazgul-core.sitedeploy.url}/version/${project.version}/core/cache/cache-impl-ehcache</url>
+            <url>${distro.url.prefix}/${path.in.reactor}</url>
         </site>
     </distributionManagement>
 
+    <!--
+       Define connections for Maven's VCS integration.
+    -->
     <scm>
-        <developerConnection>scm:hg:file://${basedir}/../../../</developerConnection>
+        <connection>${scm.url.prefix}/${reactor.name}</connection>
+        <developerConnection>${scm.url.prefix}/${reactor.name}</developerConnection>
+        <url>${reactor.url.remote.prefix}/${reactor.name}</url>
         <tag>HEAD</tag>
     </scm>
 </project>

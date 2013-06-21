@@ -38,8 +38,13 @@
 
     <groupId>se.jguru.nazgul.core.algorithms.tree.model</groupId>
     <artifactId>nazgul-core-tree-model</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>${project.artifactId}</name>
+    <url>${url.prefix}/${path.in.reactor}</url>
+
+    <properties>
+        <path.in.reactor>core/algorithms/tree/tree-model</path.in.reactor>
+    </properties>
 
     <!--
     ################################################
@@ -164,9 +169,10 @@
 
     <!--
     ################################################
-    # Section 3:  External systems
+    # Section 4:  External systems
     ################################################
     -->
+
     <!--
         Define repository settings for Maven's deploy and release plugins.
         Moved to settings.xml, as per recommendation within Maven specs.
@@ -175,12 +181,17 @@
         <site>
             <id>jGuru_NazgulCoreSite</id>
             <name>jGuru_NazgulCoreSite</name>
-            <url>${nazgul-core.sitedeploy.url}/version/${project.version}/core/algorithms/tree/tree-model</url>
+            <url>${distro.url.prefix}/${path.in.reactor}</url>
         </site>
     </distributionManagement>
 
+    <!--
+       Define connections for Maven's VCS integration.
+    -->
     <scm>
-        <developerConnection>scm:hg:file://${basedir}/../../../../</developerConnection>
+        <connection>${scm.url.prefix}/${reactor.name}</connection>
+        <developerConnection>${scm.url.prefix}/${reactor.name}</developerConnection>
+        <url>${reactor.url.remote.prefix}/${reactor.name}</url>
         <tag>HEAD</tag>
     </scm>
 </project>
