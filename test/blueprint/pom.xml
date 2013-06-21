@@ -38,10 +38,12 @@
 
     <groupId>se.jguru.nazgul.test.blueprint</groupId>
     <artifactId>nazgul-core-blueprint-test</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>${project.artifactId}</name>
+    <url>${url.prefix}/${path.in.reactor}</url>
 
     <properties>
+        <path.in.reactor>test/blueprint</path.in.reactor>
         <pax.exam.version>3.0.0</pax.exam.version>
         <pax.url.version>1.5.2</pax.url.version>
     </properties>
@@ -221,6 +223,7 @@ and
     # Section 4:  External systems
     ################################################
     -->
+
     <!--
         Define repository settings for Maven's deploy and release plugins.
         Moved to settings.xml, as per recommendation within Maven specs.
@@ -229,12 +232,17 @@ and
         <site>
             <id>jGuru_NazgulCoreSite</id>
             <name>jGuru_NazgulCoreSite</name>
-            <url>${nazgul-core.sitedeploy.url}/version/${project.version}/test/blueprint</url>
+            <url>${distro.url.prefix}/${path.in.reactor}</url>
         </site>
     </distributionManagement>
 
+    <!--
+       Define connections for Maven's VCS integration.
+    -->
     <scm>
-        <developerConnection>scm:hg:file://${basedir}/../../</developerConnection>
+        <connection>${scm.url.prefix}/${reactor.name}</connection>
+        <developerConnection>${scm.url.prefix}/${reactor.name}</developerConnection>
+        <url>${reactor.url.remote.prefix}/${reactor.name}</url>
         <tag>HEAD</tag>
     </scm>
 </project>
