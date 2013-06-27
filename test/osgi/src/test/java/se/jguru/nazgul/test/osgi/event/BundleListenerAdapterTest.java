@@ -24,14 +24,16 @@ package se.jguru.nazgul.test.osgi.event;
 
 import org.junit.Assert;
 import org.junit.Test;
+
 import se.jguru.nazgul.test.osgi.TracingBundleListener;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class BundleListenerAdapterTest {
 
-    @Test
+	@Test
     public void validateEqualityAndComparison() {
 
         // Assemble

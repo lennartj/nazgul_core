@@ -24,6 +24,7 @@ package se.jguru.nazgul.core.reflection.api.conversion.registry;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
@@ -47,6 +48,7 @@ import java.util.TreeMap;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class DefaultConverterRegistry implements ConverterRegistry {
 
     // Our Log
@@ -138,7 +140,7 @@ public class DefaultConverterRegistry implements ConverterRegistry {
     /**
      * {@inheritDoc}
      */
-    @Override
+	@Override
     public <From, To> To convert(final From source, final Class<To> desiredType)
             throws IllegalArgumentException {
 

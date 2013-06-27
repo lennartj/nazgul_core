@@ -25,8 +25,10 @@ package se.jguru.nazgul.core.cache.impl.hazelcast;
 import com.hazelcast.core.ICollection;
 import com.hazelcast.core.IMap;
 import com.hazelcast.core.Instance;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import se.jguru.nazgul.core.cache.api.CacheListener;
 import se.jguru.nazgul.core.cache.api.distributed.async.DestinationProvider;
 import se.jguru.nazgul.core.cache.api.transaction.AbstractTransactedAction;
@@ -49,6 +51,7 @@ import java.util.TreeSet;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
+@SuppressWarnings({"rawtypes", "unchecked", "serial"})
 public abstract class AbstractHazelcastCacheListenerManager extends AbstractClusterable
         implements GridOperations, DestinationProvider<String> {
 

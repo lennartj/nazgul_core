@@ -41,7 +41,7 @@ public class T_AbstractCacheListenerTest {
     public void validateDefaultIdentityOnCreation() {
 
         // Assemble
-        final AbstractCacheListener unitUnderTest = new DebugCacheListener();
+        final AbstractCacheListener<?> unitUnderTest = new DebugCacheListener();
 
         // Act
         final String id = unitUnderTest.getClusterId();
@@ -85,7 +85,7 @@ public class T_AbstractCacheListenerTest {
         final String id = "testID";
         final String name = "testName";
         final int age = 42;
-        final AbstractCacheListener unitUnderTest = new DebugCacheListener(id, name, age);
+        final AbstractCacheListener<?> unitUnderTest = new DebugCacheListener(id, name, age);
 
         final ByteArrayOutputStream transportChannelSimulator = new ByteArrayOutputStream();
         final ObjectOutputStream out = new ObjectOutputStream(transportChannelSimulator);
@@ -118,7 +118,7 @@ public class T_AbstractCacheListenerTest {
         final String id = "testID";
         final String name = "testName";
         final int age = 42;
-        final AbstractCacheListener unitUnderTest = new DebugCacheListener(id, name, age);
+        final AbstractCacheListener<String> unitUnderTest = new DebugCacheListener(id, name, age);
 
         // Act
         unitUnderTest.onPut("foo", "bar");

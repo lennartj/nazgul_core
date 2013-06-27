@@ -38,12 +38,13 @@ import java.util.Properties;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class MockServiceReference implements ServiceReference {
 
     // Internal state
     private final Bundle bundle;
     private final List<String> classes;
-    private Dictionary registrationProperties;
+    private Dictionary<String, Object> registrationProperties;
 
     /**
      * Creates a new MockServiceReference for use in test cases.
@@ -68,7 +69,7 @@ public class MockServiceReference implements ServiceReference {
      * @param serviceID              The service ID of this ServiceReference.
      * @param serviceRanking         The service ranking of this ServiceReference.
      */
-    public MockServiceReference(final Bundle bundle,
+	public MockServiceReference(final Bundle bundle,
                                 final List<String> classNames,
                                 final Dictionary registrationProperties,
                                 final String serviceID,
