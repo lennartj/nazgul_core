@@ -130,7 +130,7 @@ public interface DistributedCache<KeyType extends Serializable> extends Cache<Ke
      *                                  registering a CacheListener (i.e. incorrect type
      *                                  for the underlying cache implementation).
      */
-    boolean addListenerFor(Object distributedObject, CacheListener listener)
+    boolean addListenerFor(Object distributedObject, CacheListener<?> listener)
             throws IllegalArgumentException;
 
     /**

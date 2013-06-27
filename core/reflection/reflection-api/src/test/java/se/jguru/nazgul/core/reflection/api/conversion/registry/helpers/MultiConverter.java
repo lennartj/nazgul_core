@@ -28,7 +28,6 @@ import se.jguru.nazgul.core.reflection.api.conversion.Converter;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;

@@ -30,6 +30,7 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
+
 import se.jguru.nazgul.core.algorithms.event.api.producer.EventConsumerCallback;
 import se.jguru.nazgul.test.osgi.event.BundleListenerAdapter;
 
@@ -267,13 +268,14 @@ public class MockBundle implements Bundle, Serializable {
      *                               Environment supports permissions.
      * @see #start(int)
      */
-    @Override
+    @SuppressWarnings({ "serial", "rawtypes" })
+	@Override
     public void start() throws BundleException {
 
         final BundleEvent startEvent = new BundleEvent(BundleEvent.STARTED, this, this);
 
         bundleContext.fireBundleEvent(new EventConsumerCallback<BundleListenerAdapter>() {
-            @Override
+			@Override
             public void onEvent(final BundleListenerAdapter eventConsumer) {
                 eventConsumer.bundleChanged(startEvent);
             }
@@ -381,7 +383,8 @@ public class MockBundle implements Bundle, Serializable {
      *                               Environment supports permissions.
      * @see #start(int)
      */
-    @Override
+    @SuppressWarnings({ "serial", "rawtypes" })
+	@Override
     public void stop() throws BundleException {
 
         final BundleEvent stopEvent = new BundleEvent(BundleEvent.STOPPED, this, this);
@@ -1201,7 +1204,8 @@ public class MockBundle implements Bundle, Serializable {
      *                           Environment supports permissions.
      * @since 1.6
      */
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public <A> A adapt(final Class<A> type) {
         if (type != null && type.isAssignableFrom(this.getClass())) {
             return (A) this;

@@ -51,7 +51,7 @@ public class CollectionsConverter {
     }
 
     @Converter
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public List convertSetToList(final Set set) {
 
         final List toReturn = new ArrayList();

@@ -22,24 +22,22 @@
 
 package se.jguru.nazgul.core.reflection.api.conversion.registry;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
 import se.jguru.nazgul.core.reflection.api.conversion.Converter;
 import se.jguru.nazgul.core.reflection.api.conversion.TypeConverter;
 import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.FakeConverter;
 import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.MultiConverter;
-
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid, jGuru Europe AB</a>
@@ -99,7 +97,8 @@ public class PrioritizedTypeConverterTest {
         Assert.assertEquals(convertersSizeBeforeReAdd, unitUnderTest.getTypeConverters(StringBuffer.class).size());
     }
 
-    @Test
+    @SuppressWarnings("unchecked")
+	@Test
     public void validateNullValuePermittedConverter() {
 
         // Assemble
@@ -119,7 +118,8 @@ public class PrioritizedTypeConverterTest {
         Assert.assertEquals("nothing!", result.toString());
     }
 
-    @Test
+    @SuppressWarnings("unused")
+	@Test
     public void validateAddingConverters() {
 
         // Assemble

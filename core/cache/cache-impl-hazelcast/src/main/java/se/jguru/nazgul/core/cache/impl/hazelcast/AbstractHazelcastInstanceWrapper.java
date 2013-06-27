@@ -31,8 +31,10 @@ import com.hazelcast.core.Instance;
 import com.hazelcast.core.Message;
 import com.hazelcast.core.MessageListener;
 import com.hazelcast.core.Transaction;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import se.jguru.nazgul.core.cache.api.CacheListener;
 import se.jguru.nazgul.core.cache.api.ReadOnlyIterator;
 import se.jguru.nazgul.core.cache.api.distributed.DistributedCache;
@@ -414,7 +416,8 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
 
                 performTransactedAction(new AbstractTransactedAction(rollbackMessage) {
 
-                    @Override
+                    @SuppressWarnings({ "incomplete-switch", "unused" })
+					@Override
                     public void doInTransaction() throws RuntimeException {
 
                         Instance distributedObject = null;

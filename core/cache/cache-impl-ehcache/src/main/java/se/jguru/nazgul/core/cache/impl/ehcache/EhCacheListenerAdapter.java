@@ -36,6 +36,7 @@ import java.io.Serializable;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
+@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
 public class EhCacheListenerAdapter implements CacheEventListener, Serializable {
 
     // Internal state
@@ -46,7 +47,6 @@ public class EhCacheListenerAdapter implements CacheEventListener, Serializable 
      *
      * @param listener The CacheListener to wrap.
      */
-    @SuppressWarnings("unchecked")
     public EhCacheListenerAdapter(final CacheListener listener) {
 
         // Check sanity

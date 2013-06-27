@@ -37,6 +37,7 @@ import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
+
 import se.jguru.nazgul.core.algorithms.event.api.producer.AbstractEventProducer;
 import se.jguru.nazgul.core.algorithms.event.api.producer.EventConsumerCallback;
 import se.jguru.nazgul.core.algorithms.event.api.producer.EventProducer;
@@ -59,6 +60,7 @@ import java.util.Properties;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
+@SuppressWarnings({"rawtypes", "unchecked", "serial"})
 public class MockBundleContext implements BundleContext {
 
     // Internal state

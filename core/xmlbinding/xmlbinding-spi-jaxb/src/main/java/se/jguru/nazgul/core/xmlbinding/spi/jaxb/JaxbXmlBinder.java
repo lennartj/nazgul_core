@@ -24,6 +24,7 @@ package se.jguru.nazgul.core.xmlbinding.spi.jaxb;
 
 import org.apache.commons.lang3.Validate;
 import org.w3c.dom.ls.LSResourceResolver;
+
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
 import se.jguru.nazgul.core.xmlbinding.api.NamespacePrefixResolver;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
@@ -39,6 +40,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
 import javax.xml.validation.Validator;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -149,7 +151,8 @@ public class JaxbXmlBinder implements XmlBinder<Object> {
      * @throws se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException
      *                                  if any object resurrected was a Validatable which did not pass validation.
      */
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     public List<Object> unmarshal(final Reader transportReader)
             throws IllegalArgumentException, InternalStateValidationException {
 

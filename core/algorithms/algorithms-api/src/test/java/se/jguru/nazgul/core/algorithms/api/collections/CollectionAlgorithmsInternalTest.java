@@ -39,14 +39,15 @@ import java.util.TreeSet;
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class CollectionAlgorithmsInternalTest {
 
     @Test
     public void validateCloningEmptyCollectionsFromASourceType() {
 
         // Act
-        final LinkedList linkedList = cloneEmptyFromType(LinkedList.class);
-        final HashSet hashSet = cloneEmptyFromType(HashSet.class);
+        final LinkedList<?> linkedList = cloneEmptyFromType(LinkedList.class);
+        final HashSet<?> hashSet = cloneEmptyFromType(HashSet.class);
         final TreeSet treeSet = cloneEmptyFromType(TreeSet.class);
         final ArrayList arrayList = cloneEmptyFromType(ArrayList.class);
 
@@ -69,8 +70,8 @@ public class CollectionAlgorithmsInternalTest {
     public void validateDefaultFallbackForAbstractTypes() {
 
         // Act
-        final AbstractList abstractList = cloneEmptyFromType(AbstractList.class);
-        final AbstractSet abstractSet = cloneEmptyFromType(AbstractSet.class);
+		final AbstractList<?> abstractList = cloneEmptyFromType(AbstractList.class);
+        final AbstractSet<?> abstractSet = cloneEmptyFromType(AbstractSet.class);
 
         // Assert
         Assert.assertNotNull(abstractList);
@@ -85,7 +86,8 @@ public class CollectionAlgorithmsInternalTest {
         // Assemble
         class CollectionWithoutDefaultConstructor extends AbstractList<String> {
 
-            CollectionWithoutDefaultConstructor(int size) {
+            @SuppressWarnings("unused")
+			CollectionWithoutDefaultConstructor(final int size) {
                 super();
             }
 
@@ -105,7 +107,8 @@ public class CollectionAlgorithmsInternalTest {
         Assert.assertEquals(ArrayList.class, instance.getClass());
 
         // Act & Assert #2
-        final CollectionWithoutDefaultConstructor willNotWork
+        @SuppressWarnings("unused")
+		final CollectionWithoutDefaultConstructor willNotWork
                 = cloneEmptyFromType(CollectionWithoutDefaultConstructor.class);
     }
 

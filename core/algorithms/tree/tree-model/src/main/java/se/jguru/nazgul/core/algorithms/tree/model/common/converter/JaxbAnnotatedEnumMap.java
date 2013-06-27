@@ -23,6 +23,7 @@
 package se.jguru.nazgul.core.algorithms.tree.model.common.converter;
 
 import org.apache.commons.lang3.Validate;
+
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 
 import javax.persistence.Access;
@@ -31,6 +32,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -45,9 +47,11 @@ import java.util.Map;
 @XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"enumType", "values"})
 @XmlAccessorType(XmlAccessType.FIELD)
 @Access(value = AccessType.FIELD)
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class JaxbAnnotatedEnumMap<E extends Enum<E>> implements Serializable {
 
-    // Internal state
+	// Internal state
+	private static final long serialVersionUID = -2855580334177490534L;
     private List values;
 
     @XmlAttribute(required = true)
@@ -67,7 +71,7 @@ public class JaxbAnnotatedEnumMap<E extends Enum<E>> implements Serializable {
      * @param value    The EnumMap value whose state should be retained/internally mapped.
      * @param enumType The Enum type used for keys within the provided EnumMap.
      */
-    public JaxbAnnotatedEnumMap(final EnumMap<E, ?> value, final Class<E> enumType) {
+	public JaxbAnnotatedEnumMap(final EnumMap<E, ?> value, final Class<E> enumType) {
 
         // Check sanity
         Validate.notNull(value, "Cannot handle null value argument.");
@@ -75,7 +79,7 @@ public class JaxbAnnotatedEnumMap<E extends Enum<E>> implements Serializable {
 
         // Assign internal state
         this.enumType = enumType;
-        values = new ArrayList();
+        values = new ArrayList<Object>();
 
         for (Map.Entry<E, ?> current : value.entrySet()) {
             values.add(current.getValue());
