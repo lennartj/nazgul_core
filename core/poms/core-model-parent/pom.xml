@@ -30,13 +30,13 @@
     ################################################
     -->
     <parent>
-        <groupId>se.jguru.nazgul.core.poms.api-parent</groupId>
+        <groupId>se.jguru.nazgul.core.poms.core-api-parent</groupId>
         <artifactId>nazgul-core-api-parent</artifactId>
         <version>1.4.4-SNAPSHOT</version>
         <relativePath>../core-api-parent</relativePath>
     </parent>
 
-    <groupId>se.jguru.nazgul.core.poms.model-parent</groupId>
+    <groupId>se.jguru.nazgul.core.poms.core-model-parent</groupId>
     <artifactId>nazgul-core-model-parent</artifactId>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
