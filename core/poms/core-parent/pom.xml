@@ -20,7 +20,8 @@
   ~   limitations under the License.
   ~   #L%
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <!--
@@ -32,7 +33,7 @@
         <groupId>se.jguru.nazgul.tools.poms.external</groupId>
         <artifactId>nazgul-tools-external-parent</artifactId>
         <version>2.0.7</version>
-        <relativePath />
+        <relativePath/>
     </parent>
 
     <groupId>se.jguru.nazgul.core.poms.core-parent</groupId>
@@ -41,7 +42,10 @@
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
     <url>${url.prefix}/${path.in.reactor}</url>
-    <description>The Nazgul Framework: Core project holds a collection of library-style Software Components adhering to the Nazgul-style component patterns, aimed at boosting productivity. All Software Components are compliant with Java SE, OSGi and JEE standards.</description>
+    <description>The Nazgul Framework: Core project holds a collection of library-style Software Components adhering to
+        the Nazgul-style component patterns, aimed at boosting productivity. All Software Components are compliant with
+        Java SE, OSGi and JEE standards.
+    </description>
 
     <licenses>
         <license>
@@ -85,8 +89,6 @@
         <aries.blueprintcore.version>1.1.0</aries.blueprintcore.version>
         <aries.blueprint.version>1.1.0</aries.blueprint.version>
         <test.bundles.version>2.0.0</test.bundles.version>
-
-        <surefire.argLine>-Dfile.encoding=UTF-8 -Xmx1024m -XX:MaxPermSize=512m -javaagent:${basedir}/target/openjpa.jar</surefire.argLine>
 
         <!--
             Define the URL prefixes for Site Deployment and DistributionManagement.
@@ -189,15 +191,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <dependencies>
-        <!-- TODO: Split into API-parent and MODEL-parent, move to MODEL-parent. -->
-        <dependency>
-            <groupId>org.apache.openjpa</groupId>
-            <artifactId>openjpa</artifactId>
-            <version>${openjpa.version}</version><!--$NO-MVN-MAN-VER$-->
-            <scope>runtime</scope>
-        </dependency>
-    </dependencies>
 
     <!--
     ################################################
@@ -217,61 +210,22 @@
             </resource>
         </resources>
 
-        <plugins>
-
-            <!--
-                Use the dependency plugin to copy the OpenJPA runtime
-                to the target directory.
-            -->
-            <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.apache.openjpa</groupId>
-                                    <artifactId>openjpa</artifactId>
-                                    <version>${openjpa.version}</version>
-                                    <outputDirectory>${project.build.directory}</outputDirectory>
-                                    <destFileName>openjpa.jar</destFileName>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!--
-                Configure the Surefire plugin to run all JPA unit tests
-                with the OpenJPA javaagent enabled
-            -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <forkMode>pertest</forkMode>
-                    <argLine>${surefire.argLine}</argLine>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jaxb2-maven-plugin</artifactId>
-                <version>1.5</version><!--$NO-MVN-MAN-VER$-->
-                <configuration>
-                    <includes>
-                        <include>**/*.java</include>
-                    </includes>
-                    <outputDirectory>${project.build.directory}/jaxb2/transformed/generated-schema</outputDirectory>
-                </configuration>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>jaxb2-maven-plugin</artifactId>
+                    <version>1.5</version>
+                    <!--$NO-MVN-MAN-VER$-->
+                    <configuration>
+                        <includes>
+                            <include>**/*.java</include>
+                        </includes>
+                        <outputDirectory>${project.build.directory}/jaxb2/transformed/generated-schema</outputDirectory>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 
     <!--
