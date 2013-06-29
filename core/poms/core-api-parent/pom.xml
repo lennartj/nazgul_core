@@ -35,7 +35,7 @@
         <relativePath>../core-parent</relativePath>
     </parent>
 
-    <groupId>se.jguru.nazgul.core.poms.api-parent</groupId>
+    <groupId>se.jguru.nazgul.core.poms.core-api-parent</groupId>
     <artifactId>nazgul-core-api-parent</artifactId>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
