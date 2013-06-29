@@ -31,7 +31,7 @@
     <parent>
         <groupId>se.jguru.nazgul.tools.poms.external</groupId>
         <artifactId>nazgul-tools-external-parent</artifactId>
-        <version>2.0.7-SNAPSHOT</version>
+        <version>2.0.7</version>
         <relativePath />
     </parent>
 
@@ -70,7 +70,7 @@
         <!--
             Supply the version of the Nazgul Tools framework as a Property.
         -->
-        <nazgul.tools.version>2.0.7-SNAPSHOT</nazgul.tools.version>
+        <nazgul.tools.version>2.0.7</nazgul.tools.version>
 
         <!--
             Other, external version properties.
@@ -190,6 +190,7 @@
         </dependencies>
     </dependencyManagement>
     <dependencies>
+        <!-- TODO: Split into API-parent and MODEL-parent, move to MODEL-parent. -->
         <dependency>
             <groupId>org.apache.openjpa</groupId>
             <artifactId>openjpa</artifactId>
