@@ -30,10 +30,10 @@
     ################################################
     -->
     <parent>
-        <groupId>se.jguru.nazgul.core.poms.core-parent</groupId>
-        <artifactId>nazgul-core-parent</artifactId>
+        <groupId>se.jguru.nazgul.core.poms.core-model-parent</groupId>
+        <artifactId>nazgul-core-model-parent</artifactId>
         <version>1.4.4-SNAPSHOT</version>
-        <relativePath>../../poms/core-parent</relativePath>
+        <relativePath>../../poms/core-model-parent</relativePath>
     </parent>
 
     <groupId>se.jguru.nazgul.core.persistence.api</groupId>
@@ -95,51 +95,6 @@
     # Section 3:  Build settings
     ################################################
     -->
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.openjpa</groupId>
-                <artifactId>openjpa-maven-plugin</artifactId>
-                <version>${openjpa.version}</version>
-                <executions>
-                    <!-- execution>
-                        <id>enhancer</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>enhance</goal>
-                        </goals>
-                        <configuration>
-                            <includes>**/*.class</includes>
-                            <persistenceXmlFile>${basedir}/src/main/weaving/openjpa/persistence-model-persistence.xml</persistenceXmlFile>
-                        </configuration>
-                    </execution -->
-                    <execution>
-                        <id>test-enchancer</id>
-                        <phase>process-test-classes</phase>
-                        <goals>
-                            <goal>test-enhance</goal>
-                        </goals>
-                        <configuration>
-                            <includes>**/*.class</includes>
-                            <persistenceXmlFile>${basedir}/src/test/resources/testdata/JpaOperationsPersistence.xml
-                            </persistenceXmlFile>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Export-Package>{local-packages}</Export-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
     <!--
     ################################################
@@ -168,4 +123,53 @@
         <url>${reactor.url.remote.prefix}/${reactor.name}</url>
         <tag>HEAD</tag>
     </scm>
+
+    <!--
+    ################################################
+    # Section 5:  Profiles
+    ################################################
+    -->
+
+    <profiles>
+        <profile>
+            <id>openjpa2</id>
+
+            <activation>
+                <property>
+                    <name>jpaSpec</name>
+                    <value>openjpa2</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.openjpa</groupId>
+                        <artifactId>openjpa-maven-plugin</artifactId>
+                        <executions>
+                            <!-- execution>
+                                <id>weave-openjpa-classes</id>
+                                <phase>process-classes</phase>
+                                <goals>
+                                    <goal>enhance</goal>
+                                </goals>
+                                <configuration>
+                                    <persistenceXmlFile>${openjpa.persistenceXmlFile}</persistenceXmlFile>
+                                </configuration>
+                            </execution -->
+                            <execution>
+                                <id>weave-openjpa-test-classes</id>
+                                <phase>process-test-classes</phase>
+                                <goals>
+                                    <goal>test-enhance</goal>
+                                </goals>
+                                <configuration>
+                                    <persistenceXmlFile>${openjpa.persistenceXmlTestFile}</persistenceXmlFile>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

@@ -168,9 +168,7 @@
                 <openjpa.persistenceXmlFile>${project.basedir}/src/main/${openjpa.persistenceXmlPath}</openjpa.persistenceXmlFile>
                 <openjpa.persistenceXmlTestFile>${project.basedir}/src/test/${openjpa.persistenceXmlPath}</openjpa.persistenceXmlTestFile>
                 <jpa.provider.class>org.apache.openjpa.persistence.PersistenceProviderImpl</jpa.provider.class>
-                <surefire.argLine>-Dfile.encoding=UTF-8 -Xmx1024m -XX:MaxPermSize=512m
-                    -javaagent:${basedir}/target/openjpa.jar
-                </surefire.argLine>
+                <surefire.argLine>-javaagent:${basedir}/target/openjpa.jar -Dfile.encoding=UTF-8 -Xmx1024m -XX:MaxPermSize=512m</surefire.argLine>
             </properties>
 
             <dependencies>
@@ -281,16 +279,13 @@
                 <openjpa.persistenceXmlFile>${project.basedir}/src/main/${openjpa.persistenceXmlPath}</openjpa.persistenceXmlFile>
                 <openjpa.persistenceXmlTestFile>${project.basedir}/src/test/${openjpa.persistenceXmlPath}</openjpa.persistenceXmlTestFile>
                 <jpa.provider.class>org.apache.openjpa.persistence.PersistenceProviderImpl</jpa.provider.class>
-                <surefire.argLine>-Dfile.encoding=UTF-8 -Xmx1024m -XX:MaxPermSize=512m
-                    -javaagent:${basedir}/target/openjpa.jar
-                </surefire.argLine>
+                <surefire.argLine>-javaagent:${basedir}/target/openjpa.jar -Dfile.encoding=UTF-8 -Xmx1024m -XX:MaxPermSize=512m</surefire.argLine>
             </properties>
 
             <dependencies>
                 <dependency>
                     <groupId>org.apache.geronimo.specs</groupId>
                     <artifactId>geronimo-jpa_2.0_spec</artifactId>
-                    <version>1.1</version>
                     <scope>provided</scope>
                 </dependency>
             </dependencies>

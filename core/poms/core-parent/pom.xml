@@ -112,10 +112,29 @@
                 <artifactId>nazgul-tools-validation-aspect</artifactId>
                 <version>${nazgul.tools.version}</version>
             </dependency>
+            <!--
+                Specifications for
+                geronimo-jms_1.1_spec-1.1.1.jar
+                geronimo-jpa_2.0_spec-1.1.jar
+                geronimo-jta_1.1_spec-1.1.1.jar
+            -->
             <dependency>
                 <groupId>org.apache.geronimo.specs</groupId>
                 <artifactId>geronimo-jms_1.1_spec</artifactId>
                 <version>1.1.1</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-jpa_2.0_spec</artifactId>
+                <version>1.1</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-jta_1.1_spec</artifactId>
+                <version>1.1.1</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>javax.inject</groupId>
@@ -222,6 +241,28 @@
                             <include>**/*.java</include>
                         </includes>
                         <outputDirectory>${project.build.directory}/jaxb2/transformed/generated-schema</outputDirectory>
+                    </configuration>
+                </plugin>
+
+                <!--
+                    Configures the maven surefire plugin, which runs the unit tests invoking JUnit.
+                    Surefire's argument line is overridable in subprojects using the property "surefire.argLine".
+
+                    Why:  Supply required encoding (UTF-8), as well as memory sizing definitions.
+                    Used: Standard lifecycle, mvn test.
+                -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.15</version>
+                    <configuration combine.self="override">
+                        <systemPropertyVariables>
+                            <nazgul_tools_version>${nazgul.tools.version}</nazgul_tools_version>
+                        </systemPropertyVariables>
+                        <argLine>${surefire.argLine}</argLine>
+                        <!-- forkCount>2C</forkCount -->
+                        <runOrder>failedfirst</runOrder>
+                        <trimStackTrace>false</trimStackTrace>
                     </configuration>
                 </plugin>
             </plugins>
