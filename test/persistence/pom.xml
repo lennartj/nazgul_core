@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+    ################################################
+    # Section 1:  Project information
+    ################################################
+    -->
+    <parent>
+        <groupId>se.jguru.nazgul.core.poms.core-model-parent</groupId>
+        <artifactId>nazgul-core-model-parent</artifactId>
+        <version>1.4.4-SNAPSHOT</version>
+        <relativePath>../../core/poms/core-model-parent</relativePath>
+    </parent>
+
+    <groupId>se.jguru.nazgul.test.persistence</groupId>
+    <artifactId>nazgul-core-persistence-test</artifactId>
+    <packaging>jar</packaging>
+    <name>${project.artifactId}</name>
+    <url>${url.prefix}/${path.in.reactor}</url>
+
+    <properties>
+        <path.in.reactor>test/persistence</path.in.reactor>
+    </properties>
+
+    <!--
+    ################################################
+    # Section 2:  Dependency (management) settings
+    ################################################
+    -->
+    <dependencies>
+        <!-- Internal dependencies -->
+        <dependency>
+            <groupId>se.jguru.nazgul.core.persistence.api</groupId>
+            <artifactId>nazgul-core-persistence-api</artifactId>
+            <version>1.4.4-SNAPSHOT</version>
+        </dependency>
+
+        <!-- External dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.dbunit</groupId>
+            <artifactId>dbunit</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <!--
+    ################################################
+    # Section 3:  Build settings
+    ################################################
+    -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>${cobertura.plugin.version}</version>
+                <configuration>
+                    <instrumentation>
+                        <includes>
+                            <include>se/jguru/nazgul/**/*.class</include>
+                        </includes>
+                        <excludes>
+
+                            <!-- Don't check Exception classes -->
+                            <exclude>se/jguru/nazgul/**/*Exception.class</exclude>
+
+                        </excludes>
+                    </instrumentation>
+                    <check>
+                        <branchRate>65</branchRate>
+                        <lineRate>80</lineRate>
+                        <haltOnFailure>true</haltOnFailure>
+                        <regexes>
+                            <regex>
+                                <pattern>se.jguru.nazgul.test.persistence.AbstractJpaTest</pattern>
+                                <branchRate>65</branchRate>
+                                <lineRate>75</lineRate>
+                            </regex>
+                            <regex>
+                                <pattern>se.jguru.nazgul.test.persistence.AbstractDbUnitAndJpaTest</pattern>
+                                <branchRate>65</branchRate>
+                                <lineRate>75</lineRate>
+                            </regex>
+                        </regexes>
+                    </check>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!--
+    ################################################
+    # Section 4:  External systems
+    ################################################
+    -->
+
+    <!--
+        Define repository settings for Maven's deploy and release plugins.
+        Moved to settings.xml, as per recommendation within Maven specs.
+    -->
+    <distributionManagement>
+        <site>
+            <id>jGuru_NazgulCoreSite</id>
+            <name>jGuru_NazgulCoreSite</name>
+            <url>${distro.url.prefix}/${path.in.reactor}</url>
+        </site>
+    </distributionManagement>
+
+    <!--
+       Define connections for Maven's VCS integration.
+    -->
+    <scm>
+        <connection>${scm.url.prefix}/${reactor.name}</connection>
+        <developerConnection>${scm.url.prefix}/${reactor.name}</developerConnection>
+        <url>${reactor.url.remote.prefix}/${reactor.name}</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <!--
+    ################################################
+    # Section 5:  Profiles
+    ################################################
+    -->
+
+    <profiles>
+        <profile>
+            <id>openjpa2</id>
+
+            <activation>
+                <property>
+                    <name>jpaSpec</name>
+                    <value>openjpa2</value>
+                </property>
+            </activation>
+            <dependencies>
+                <!--
+                    These dependencies are required to run the OpenJPA for JSE environments,
+                    such as is the case when running unit tests out-of-container.
+
+                    C.f: http://openjpa.apache.org/build-and-runtime-dependencies.html
+                -->
+                <dependency>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-jpa_2.0_spec</artifactId>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-jta_1.1_spec</artifactId>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-jms_1.1_spec</artifactId>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.openjpa</groupId>
+                    <artifactId>openjpa</artifactId>
+                    <version>${openjpa.version}</version>
+                    <scope>compile</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.openjpa</groupId>
+                        <artifactId>openjpa-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>weave-openjpa-classes</id>
+                                <phase>none</phase>
+                            </execution>
+                            <execution>
+                                <id>weave-openjpa-test-classes</id>
+                                <phase>process-test-classes</phase>
+                                <goals>
+                                    <goal>test-enhance</goal>
+                                </goals>
+                                <configuration>
+                                    <persistenceXmlFile>${openjpa.persistenceXmlTestFile}</persistenceXmlFile>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
