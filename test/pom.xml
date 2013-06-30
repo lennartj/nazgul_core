@@ -55,7 +55,7 @@
         <module>messaging</module>
         <module>xmlbinding</module>
         <module>blueprint</module>
-        <module>persistence</module>
+        <!-- module>persistence</module -->
     </modules>
 
     <!--
