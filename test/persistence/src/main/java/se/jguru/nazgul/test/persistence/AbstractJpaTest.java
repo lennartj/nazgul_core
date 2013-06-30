@@ -88,9 +88,24 @@ public abstract class AbstractJpaTest {
         // Create a JpaPersistenceOperations and a corresponding Transaction.
         final Map<String, String> props = getEntityManagerFactoryProperties();
 
-        log.debug("Got props: " + props);
+        if (log.isDebugEnabled()) {
+            final StringBuilder builder = new StringBuilder();
+            for (String current : props.keySet()) {
+                builder.append("  [").append(current).append("]: ").append(props.get(current)).append("\n");
+            }
+            log.debug("Testcase " + getClass().getSimpleName() + " - EntityManagerFactoryProperties:\n"
+                    + builder.toString() + "\n");
+        }
+
         final EntityManagerFactory factory = Persistence.createEntityManagerFactory(getPersistenceUnitName(), props);
-        entityManager = factory.createEntityManager();
+        try {
+            entityManager = factory.createEntityManager();
+        } catch (Exception e) {
+
+            // Could not create the entityManager
+            log.error("Could not create EntityManager from factory [" + factory.getClass().getName() + "]", e);
+        }
+
         jpa = new JpaPersistenceTestOperations(entityManager);
         transaction = entityManager.getTransaction();
 
@@ -120,29 +135,32 @@ public abstract class AbstractJpaTest {
     @After
     public void tearDown() {
 
-        // Clean up the test schema
-        cleanupTestSchema();
+        try {
+            // Clean up the test schema
+            cleanupTestSchema();
 
-        // Restore ClassLoader
-        Thread.currentThread().setContextClassLoader(originalClassLoader);
-
-        // rollback
-        if (transaction != null && transaction.isActive()) {
-            try {
-                transaction.rollback();
-            } catch (Exception e) {
-                throw new IllegalStateException("Could not rollback active EntityTransaction.", e);
+            // rollback
+            if (transaction != null && transaction.isActive()) {
+                try {
+                    transaction.rollback();
+                } catch (Exception e) {
+                    throw new IllegalStateException("Could not rollback active EntityTransaction.", e);
+                }
             }
-        }
-        transaction = null;
+            transaction = null;
 
-        // close
-        if (entityManager != null && entityManager.isOpen()) {
-            try {
-                entityManager.close();
-            } catch (Exception e) {
-                throw new IllegalStateException("Could not close EntityManager.", e);
+            // close
+            if (entityManager != null && entityManager.isOpen()) {
+                try {
+                    entityManager.close();
+                } catch (Exception e) {
+                    throw new IllegalStateException("Could not close EntityManager.", e);
+                }
             }
+        } finally {
+
+            // Restore ClassLoader
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
     }
 

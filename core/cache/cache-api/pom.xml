@@ -30,10 +30,10 @@
     ################################################
     -->
     <parent>
-        <groupId>se.jguru.nazgul.core.poms.core-parent</groupId>
-        <artifactId>nazgul-core-parent</artifactId>
+        <groupId>se.jguru.nazgul.core.poms.core-api-parent</groupId>
+        <artifactId>nazgul-core-api-parent</artifactId>
         <version>1.4.4-SNAPSHOT</version>
-        <relativePath>../../poms/core-parent</relativePath>
+        <relativePath>../../poms/core-api-parent</relativePath>
     </parent>
 
     <groupId>se.jguru.nazgul.core.cache.api</groupId>
@@ -85,20 +85,6 @@
     # Section 3:  Build settings
     ################################################
     -->
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Export-Package>{local-packages}</Export-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
     <!--
     ################################################
