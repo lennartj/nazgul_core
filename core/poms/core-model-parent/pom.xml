@@ -197,7 +197,7 @@
                                 <enforcePropertyRestrictions>true</enforcePropertyRestrictions>
                             </configuration>
                             <executions>
-                                <execution>
+                                <!-- execution>
                                     <id>weave-openjpa-classes</id>
                                     <phase>process-classes</phase>
                                     <goals>
@@ -206,7 +206,7 @@
                                     <configuration>
                                         <persistenceXmlFile>${openjpa.persistenceXmlFile}</persistenceXmlFile>
                                     </configuration>
-                                </execution>
+                                </execution -->
                                 <execution>
                                     <id>weave-openjpa-test-classes</id>
                                     <phase>process-test-classes</phase>
@@ -307,7 +307,7 @@
                                 <enforcePropertyRestrictions>true</enforcePropertyRestrictions>
                             </configuration>
                             <executions>
-                                <execution>
+                                <!-- execution>
                                     <id>weave-openjpa-classes</id>
                                     <phase>process-classes</phase>
                                     <goals>
@@ -316,7 +316,7 @@
                                     <configuration>
                                         <persistenceXmlFile>${openjpa.persistenceXmlFile}</persistenceXmlFile>
                                     </configuration>
-                                </execution>
+                                </execution -->
                                 <execution>
                                     <id>weave-openjpa-test-classes</id>
                                     <phase>process-test-classes</phase>
