@@ -177,6 +177,7 @@ public abstract class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
                 {"openjpa.Log", "DefaultLevel=WARN, Tool=INFO, RUNTIME=WARN, SQL=WARN"},
                 {"openjpa.jdbc.SchemaFactory", "native(ForeignKeys=true)"},
                 {"openjpa.jdbc.TransactionIsolation", "serializable"},
+                {"openjpa.RuntimeUnenhancedClasses", "supported"},
 
                 // Eclipselink properties
                 {"eclipselink.target-database", getDatabaseType().getHibernatePlatformClass()},
