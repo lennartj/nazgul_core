@@ -261,7 +261,7 @@
                         </systemPropertyVariables>
                         <argLine>${surefire.argLine}</argLine>
                         <!-- forkCount>2C</forkCount -->
-                        <runOrder>failedfirst</runOrder>
+                        <!-- runOrder>failedfirst</runOrder -->
                         <trimStackTrace>false</trimStackTrace>
                     </configuration>
                 </plugin>
