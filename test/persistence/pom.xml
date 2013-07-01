@@ -189,22 +189,6 @@
                     <plugin>
                         <groupId>org.apache.openjpa</groupId>
                         <artifactId>openjpa-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>weave-openjpa-classes</id>
-                                <phase>none</phase>
-                            </execution>
-                            <execution>
-                                <id>weave-openjpa-test-classes</id>
-                                <phase>none</phase>
-                                <goals>
-                                    <goal>test-enhance</goal>
-                                </goals>
-                                <!-- configuration>
-                                    <persistenceXmlFile>${openjpa.persistenceXmlTestFile}</persistenceXmlFile>
-                                </configuration -->
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>
