@@ -97,7 +97,7 @@
                             <regex>
                                 <pattern>se.jguru.nazgul.test.persistence.AbstractJpaTest</pattern>
                                 <branchRate>65</branchRate>
-                                <lineRate>75</lineRate>
+                                <lineRate>73</lineRate>
                             </regex>
                             <regex>
                                 <pattern>se.jguru.nazgul.test.persistence.AbstractDbUnitAndJpaTest</pattern>
@@ -196,13 +196,13 @@
                             </execution>
                             <execution>
                                 <id>weave-openjpa-test-classes</id>
-                                <phase>process-test-classes</phase>
+                                <phase>none</phase>
                                 <goals>
                                     <goal>test-enhance</goal>
                                 </goals>
-                                <configuration>
+                                <!-- configuration>
                                     <persistenceXmlFile>${openjpa.persistenceXmlTestFile}</persistenceXmlFile>
-                                </configuration>
+                                </configuration -->
                             </execution>
                         </executions>
                     </plugin>
