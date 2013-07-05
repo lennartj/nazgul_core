@@ -32,7 +32,7 @@
     <parent>
         <groupId>se.jguru.nazgul.core.poms.core-parent</groupId>
         <artifactId>nazgul-core-parent</artifactId>
-        <version>1.4.4-SNAPSHOT</version>
+        <version>1.5.0</version>
         <relativePath>../../poms/core-parent</relativePath>
     </parent>
 
@@ -56,17 +56,17 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.cache.impl.hazelcast</groupId>
             <artifactId>nazgul-core-cache-impl-hazelcast</artifactId>
-            <version>1.4.4-SNAPSHOT</version>
+            <version>1.5.0</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.cache.impl.ehcache</groupId>
             <artifactId>nazgul-core-cache-impl-ehcache</artifactId>
-            <version>1.4.4-SNAPSHOT</version>
+            <version>1.5.0</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.parser.api</groupId>
             <artifactId>nazgul-core-parser-api</artifactId>
-            <version>1.4.4-SNAPSHOT</version>
+            <version>1.5.0</version>
         </dependency>
 
         <!-- External dependencies -->
@@ -169,6 +169,6 @@
         <connection>${scm.url.prefix}/${reactor.name}</connection>
         <developerConnection>${scm.url.prefix}/${reactor.name}</developerConnection>
         <url>${reactor.url.remote.prefix}/${reactor.name}</url>
-        <tag>HEAD</tag>
+        <tag>nazgul-core-1.5.0</tag>
     </scm>
 </project>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <!--
@@ -12,7 +11,7 @@
     <parent>
         <groupId>se.jguru.nazgul.core.poms.core-model-parent</groupId>
         <artifactId>nazgul-core-model-parent</artifactId>
-        <version>1.4.4-SNAPSHOT</version>
+        <version>1.5.0</version>
         <relativePath>../../core/poms/core-model-parent</relativePath>
     </parent>
 
@@ -36,7 +35,7 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.persistence.api</groupId>
             <artifactId>nazgul-core-persistence-api</artifactId>
-            <version>1.4.4-SNAPSHOT</version>
+            <version>1.5.0</version>
         </dependency>
 
         <!-- External dependencies -->
@@ -136,7 +135,7 @@
         <connection>${scm.url.prefix}/${reactor.name}</connection>
         <developerConnection>${scm.url.prefix}/${reactor.name}</developerConnection>
         <url>${reactor.url.remote.prefix}/${reactor.name}</url>
-        <tag>HEAD</tag>
+        <tag>nazgul-core-1.5.0</tag>
     </scm>
 
     <!--
