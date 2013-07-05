@@ -32,7 +32,7 @@
     <parent>
         <groupId>se.jguru.nazgul.core.poms.core-model-parent</groupId>
         <artifactId>nazgul-core-model-parent</artifactId>
-        <version>1.5.0</version>
+        <version>1.5.1-SNAPSHOT</version>
         <relativePath>../../poms/core-model-parent</relativePath>
     </parent>
 
@@ -56,7 +56,7 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.persistence.model</groupId>
             <artifactId>nazgul-core-persistence-model</artifactId>
-            <version>1.5.0</version>
+            <version>1.5.1-SNAPSHOT</version>
         </dependency>
 
         <!-- External dependencies -->
@@ -116,7 +116,7 @@
         <connection>${scm.url.prefix}/${reactor.name}</connection>
         <developerConnection>${scm.url.prefix}/${reactor.name}</developerConnection>
         <url>${reactor.url.remote.prefix}/${reactor.name}</url>
-        <tag>nazgul-core-1.5.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <!--
