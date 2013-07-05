@@ -21,7 +21,8 @@
   ~   #L%
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <!--
@@ -32,8 +33,8 @@
     <parent>
         <groupId>se.jguru.nazgul.tools.poms.external</groupId>
         <artifactId>nazgul-tools-external-reactor-parent</artifactId>
-        <version>2.0.7</version>
-        <relativePath />
+        <version>2.0.8</version>
+        <relativePath/>
     </parent>
 
     <groupId>se.jguru.nazgul.core</groupId>
@@ -42,7 +43,10 @@
     <name>${project.artifactId}</name>
     <packaging>pom</packaging>
     <url>${url.prefix}/${path.in.reactor}</url>
-    <description>The Nazgul Framework: Core project holds a collection of library-style Software Components adhering to the Nazgul-style component patterns, aimed at boosting productivity. All Software Components are compliant with Java SE, OSGi and JEE standards.</description>
+    <description>The Nazgul Framework: Core project holds a collection of library-style Software Components adhering to
+        the Nazgul-style component patterns, aimed at boosting productivity. All Software Components are compliant with
+        Java SE, OSGi and JEE standards.
+    </description>
 
     <properties>
         <!--
@@ -70,6 +74,21 @@
     # Section 3:  Build settings
     ################################################
     -->
+    <build>
+        <plugins>
+            <!--
+                Don't deploy reactor poms.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 
     <!--
     ################################################
