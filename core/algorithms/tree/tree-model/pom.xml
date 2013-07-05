@@ -21,8 +21,7 @@
   ~   #L%
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <!--
@@ -33,7 +32,7 @@
     <parent>
         <groupId>se.jguru.nazgul.core.poms.core-model-parent</groupId>
         <artifactId>nazgul-core-model-parent</artifactId>
-        <version>1.4.4-SNAPSHOT</version>
+        <version>1.5.1-SNAPSHOT</version>
         <relativePath>../../../poms/core-model-parent</relativePath>
     </parent>
 
@@ -57,12 +56,12 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.persistence.model</groupId>
             <artifactId>nazgul-core-persistence-model</artifactId>
-            <version>1.4.4-SNAPSHOT</version>
+            <version>1.5.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.xmlbinding.spi.jaxb</groupId>
             <artifactId>nazgul-core-xmlbinding-spi-jaxb</artifactId>
-            <version>1.4.4-SNAPSHOT</version>
+            <version>1.5.1-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
 
@@ -102,7 +101,7 @@
         <dependency>
             <groupId>se.jguru.nazgul.test.xmlbinding</groupId>
             <artifactId>nazgul-core-xmlbinding-test</artifactId>
-            <version>1.4.4-SNAPSHOT</version>
+            <version>1.5.1-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

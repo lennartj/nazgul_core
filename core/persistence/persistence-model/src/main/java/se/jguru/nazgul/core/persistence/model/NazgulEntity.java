@@ -140,6 +140,9 @@ public abstract class NazgulEntity implements Serializable, Cloneable, Validatab
 
     /**
      * Performs validation of the internal state of this Validatable.
+     * <p/>
+     * <strong>Note!</strong> This method should <strong>not</strong> be overridden in subclasses.
+     * Instead, override the {@code validateEntityState} method, and supply your local implementations there.
      *
      * @throws InternalStateValidationException
      *          if the state of this Validatable was in an incorrect
@@ -148,7 +151,7 @@ public abstract class NazgulEntity implements Serializable, Cloneable, Validatab
     @PostConstruct
     @PrePersist
     @Override
-    public final void validateInternalState() throws InternalStateValidationException {
+    public void validateInternalState() throws InternalStateValidationException {
 
         // Delegate
         validateEntityState();

@@ -36,6 +36,8 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -45,20 +47,38 @@ public class JpaPersistenceOperationsTest {
     // Our log
     private static final Logger log = LoggerFactory.getLogger(JpaPersistenceOperationsTest.class);
 
+    private static final String JPA_SPECIFICATION_PROPERTY = "jpaSpec";
     private ClassLoader originalClassLoader;
     private EntityManager unitTestEM;
     private EntityTransaction trans;
     private JpaPersistenceOperations unitUnderTest;
+    private String persistenceXmlFile;
+    private String jpaSpecification;
 
     @Before
     public void stashOriginalClassLoader() {
+
         originalClassLoader = getClass().getClassLoader();
 
-        final String persistenceXmlFile = "testdata/JpaOperationsPersistence.xml";
+        // Find the JPA specification used, and use openjpa2 as the default.
+        jpaSpecification = System.getProperty(JPA_SPECIFICATION_PROPERTY, "openjpa2");
+        persistenceXmlFile = "testdata/JpaOperationsPersistence_" + jpaSpecification + ".xml";
+        System.out.println("jpaSpec: [" + jpaSpecification + "]  ==> persistenceXmlFile: [" + persistenceXmlFile + "]");
+
         final PersistenceRedirectionClassLoader redirectionClassLoader =
                 new PersistenceRedirectionClassLoader(getClass().getClassLoader(), persistenceXmlFile);
 
         Thread.currentThread().setContextClassLoader(redirectionClassLoader);
+
+        /*
+        try {
+            for (URL current : Collections.list(redirectionClassLoader.getResources("META-INF/MANIFEST.MF"))) {
+                System.out.println("  [" + current + "]");
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not acquire ClassLoader resource list.", e);
+        }
+        */
 
         // Create EntityManager and Transaction.
         unitTestEM = getEntityManager("InmemoryPU");
@@ -79,11 +99,22 @@ public class JpaPersistenceOperationsTest {
             //
             // Be paranoid.
             //
-            Query q = unitTestEM.createNativeQuery("DROP TABLE " + MockNazgulEntity.class.getSimpleName());
-            int affectedRows = q.executeUpdate();
-            log.info("Removed table. Rows affected [" + affectedRows + "]");
 
-            trans.commit();
+            Query infoQ = unitTestEM.createNativeQuery("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES " +
+                    "WHERE TABLE_NAME = 'MOCKNAZGULENTITY'");
+            final List resultList = infoQ.getResultList();
+            if (resultList.size() == 1) {
+
+                Query q = unitTestEM.createNativeQuery("DROP TABLE MOCKNAZGULENTITY");
+                int affectedRows = q.executeUpdate();
+                log.info("Removed table. Rows affected [" + affectedRows + "]");
+
+                if (trans.getRollbackOnly()) {
+                    trans.rollback();
+                } else {
+                    trans.commit();
+                }
+            }
         } catch (final Exception e) {
 
             log.info("Could not commit the Transaction.", e);
@@ -92,10 +123,11 @@ public class JpaPersistenceOperationsTest {
         try {
 
             // Close all the JPA resources.
-            if (trans.isActive()) {
+            if (trans.isActive() && !trans.getRollbackOnly()) {
                 trans.commit();
             }
             if (unitTestEM.isOpen()) {
+                unitTestEM.flush();
                 unitTestEM.close();
             }
 
@@ -119,9 +151,25 @@ public class JpaPersistenceOperationsTest {
 
         // Act & Assert
         unitUnderTest.create(null);
-        unitUnderTest.update(null);
         unitUnderTest.refresh(null);
         unitUnderTest.delete(null);
+    }
+
+    @Test
+    public void validateJpaMergeOperationOnNullEntity() throws Exception {
+
+        // This case is handled differently by the different JPA providers...
+        if (jpaSpecification.equals("eclipselink2")) {
+            try {
+                unitUnderTest.update(null);
+                Assert.fail("The EclipseLink2 throws a IllegalArgumentException when "
+                        + "attempting to update (i.e. JPA merge) a null value.");
+            } catch (PersistenceOperationException e) {
+                Assert.assertTrue(e.getCause() instanceof IllegalArgumentException);
+            }
+        } else {
+            unitUnderTest.update(null);
+        }
     }
 
     @Test(expected = PersistenceOperationException.class)
@@ -188,7 +236,9 @@ public class JpaPersistenceOperationsTest {
         // Assert
         Assert.assertNotNull(result);
         Assert.assertEquals(1, result.size());
-        Assert.assertEquals(testChars, ((MockNazgulEntity) result.get(0)).getValue());
+        final String value = ((MockNazgulEntity) result.get(0)).getValue();
+        Assert.assertEquals("Expected [" + testChars + "], Actual [" + value + "]",
+                testChars, value);
     }
 
     //
@@ -197,7 +247,13 @@ public class JpaPersistenceOperationsTest {
 
     private EntityManager getEntityManager(final String persistenceUnitName) {
 
-        final EntityManagerFactory emf = Persistence.createEntityManagerFactory(persistenceUnitName);
+        // Add Eclipselink special settings
+        final Map<String, String> extraProperties = new TreeMap<String, String>();
+        extraProperties.put("eclipselink.persistencexml", persistenceXmlFile);
+        System.out.println("extraProperties [" + extraProperties + "]");
+
+        // Create an EntityManager factory.
+        final EntityManagerFactory emf = Persistence.createEntityManagerFactory(persistenceUnitName, extraProperties);
         return emf.createEntityManager();
     }
 }

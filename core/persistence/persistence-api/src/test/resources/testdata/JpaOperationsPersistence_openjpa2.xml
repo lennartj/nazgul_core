@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ #%L
-  Nazgul Project: nazgul-core-persistence-model
+  Nazgul Project: nazgul-core-persistence-api
   %%
   Copyright (C) 2010 - 2013 jGuru Europe AB
   ~
@@ -22,18 +22,20 @@
   #L%
   -->
 
-<persistence xmlns="http://java.sun.com/xml/ns/persistence"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
-             version="1.0">
+<persistence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
 
-    <persistence-unit name="persistence_model_enhancement" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="InmemoryPU" transaction-type="RESOURCE_LOCAL">
 
-        <description>PersistenceUnit containing the Entity classes.</description>
+        <description>
+            PersistenceUnit containing the Entity classes.
+        </description>
 
         <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
 
         <class>se.jguru.nazgul.core.persistence.model.NazgulEntity</class>
+        <class>se.jguru.nazgul.core.persistence.api.MockNazgulEntity</class>
 
         <!--
             When set to true then only listed classes and jars will
@@ -44,17 +46,6 @@
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
 
         <properties>
-            <property name="openjpa.ConnectionDriverName" value="org.postgresql.Driver"/>
-            <property name="openjpa.jdbc.DBDictionary" value="org.apache.openjpa.jdbc.sql.PostgresDictionary"/>
-            <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
-            <property name="openjpa.ConnectionURL" value="jdbc:postgresql://localhost:5432/research"/>
-            <property name="openjpa.ConnectionUserName" value="research"/>
-            <property name="openjpa.ConnectionPassword" value="research"/>
-            <property name="openjpa.InverseManager" value="true"/>
-            <property name="openjpa.Log" value="slf4j"/>
-        </properties>
-
-        <!-- properties>
             <property name="openjpa.jdbc.DBDictionary" value="hsql(SimulateLocking=true, SchemaCase=upper)"/>
             <property name="openjpa.ConnectionDriverName" value="org.hsqldb.jdbcDriver"/>
             <property name="openjpa.ConnectionURL" value="jdbc:hsqldb:mem:unittestDatabaseID"/>
@@ -62,9 +53,10 @@
             <property name="openjpa.ConnectionPassword" value=""/>
             <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
             <property name="openjpa.InverseManager" value="true"/>
-            <property name="openjpa.Log" value="DefaultLevel=WARN, Tool=INFO, SQL=TRACE"/>
+            <property name="openjpa.Log" value="DefaultLevel=WARN, Tool=INFO, SQL=WARN"/>
             <property name="openjpa.RuntimeUnenhancedClasses" value="supported"/>
-        </properties -->
+            <property name="openjpa.DynamicEnhancementAgent" value="true"/>
+        </properties>
 
     </persistence-unit>
 </persistence>

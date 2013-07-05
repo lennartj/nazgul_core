@@ -32,7 +32,7 @@
     <parent>
         <groupId>se.jguru.nazgul.core.poms.core-parent</groupId>
         <artifactId>nazgul-core-parent</artifactId>
-        <version>1.4.4-SNAPSHOT</version>
+        <version>1.5.1-SNAPSHOT</version>
         <relativePath>../../poms/core-parent</relativePath>
     </parent>
 
@@ -56,12 +56,12 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.resource.api</groupId>
             <artifactId>nazgul-core-resource-api</artifactId>
-            <version>1.4.4-SNAPSHOT</version>
+            <version>1.5.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.parser.api</groupId>
             <artifactId>nazgul-core-parser-api</artifactId>
-            <version>1.4.4-SNAPSHOT</version>
+            <version>1.5.1-SNAPSHOT</version>
         </dependency>
 
         <!-- External dependencies -->
@@ -86,7 +86,7 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.algorithms.api</groupId>
             <artifactId>nazgul-core-algorithms-api</artifactId>
-            <version>1.4.4-SNAPSHOT</version>
+            <version>1.5.1-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
