@@ -130,7 +130,7 @@
     ################################################
     -->
 
-    <profiles>
+    <!-- profiles>
         <profile>
             <id>openjpa2</id>
 
@@ -149,5 +149,5 @@
                 </plugins>
             </build>
         </profile>
-    </profiles>
+    </profiles -->
 </project>

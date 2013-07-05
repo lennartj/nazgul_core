@@ -192,14 +192,13 @@
     ################################################
     -->
 
-    <profiles>
+    <!-- profiles>
         <profile>
             <id>openjpa2</id>
 
             <activation>
                 <property>
-                    <name>jpaSpec</name>
-                    <value>openjpa2</value>
+                    <name>!jpaSpec</name>
                 </property>
             </activation>
             <dependencies>
@@ -243,5 +242,5 @@
                 </plugins>
             </build>
         </profile>
-    </profiles>
+    </profiles -->
 </project>

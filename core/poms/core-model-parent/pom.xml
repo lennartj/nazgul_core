@@ -266,8 +266,7 @@
 
             <activation>
                 <property>
-                    <name>jpaSpec</name>
-                    <value>openjpa2</value>
+                    <name>!jpaSpec</name>
                 </property>
             </activation>
 
@@ -286,6 +285,12 @@
                 <dependency>
                     <groupId>org.apache.geronimo.specs</groupId>
                     <artifactId>geronimo-jpa_2.0_spec</artifactId>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.openjpa</groupId>
+                    <artifactId>openjpa</artifactId>
+                    <version>${openjpa.version}</version>
                     <scope>provided</scope>
                 </dependency>
             </dependencies>
@@ -307,16 +312,6 @@
                                 <enforcePropertyRestrictions>true</enforcePropertyRestrictions>
                             </configuration>
                             <executions>
-                                <!-- execution>
-                                    <id>weave-openjpa-classes</id>
-                                    <phase>process-classes</phase>
-                                    <goals>
-                                        <goal>enhance</goal>
-                                    </goals>
-                                    <configuration>
-                                        <persistenceXmlFile>${openjpa.persistenceXmlFile}</persistenceXmlFile>
-                                    </configuration>
-                                </execution -->
                                 <execution>
                                     <id>weave-openjpa-test-classes</id>
                                     <phase>process-test-classes</phase>
