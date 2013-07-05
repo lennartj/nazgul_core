@@ -21,8 +21,7 @@
   ~   #L%
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <!--
@@ -33,7 +32,7 @@
     <parent>
         <groupId>se.jguru.nazgul.core.poms.core-model-parent</groupId>
         <artifactId>nazgul-core-model-parent</artifactId>
-        <version>1.4.4-SNAPSHOT</version>
+        <version>1.5.1-SNAPSHOT</version>
         <relativePath>../../poms/core-model-parent</relativePath>
     </parent>
 
@@ -57,7 +56,7 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.xmlbinding.api</groupId>
             <artifactId>nazgul-core-xmlbinding-api</artifactId>
-            <version>1.4.4-SNAPSHOT</version>
+            <version>1.5.1-SNAPSHOT</version>
         </dependency>
 
         <!-- External dependencies -->
@@ -186,62 +185,4 @@
         <tag>HEAD</tag>
     </scm>
 
-    <!--
-    ################################################
-    # Section 5:  Profiles
-    ################################################
-    -->
-
-    <profiles>
-        <profile>
-            <id>openjpa2</id>
-
-            <activation>
-                <property>
-                    <name>jpaSpec</name>
-                    <value>openjpa2</value>
-                </property>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jpa_2.0_spec</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.openjpa</groupId>
-                    <artifactId>openjpa</artifactId>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.openjpa</groupId>
-                        <artifactId>openjpa-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>weave-openjpa-classes</id>
-                                <phase>process-classes</phase>
-                                <goals>
-                                    <goal>enhance</goal>
-                                </goals>
-                                <configuration>
-                                    <persistenceXmlFile>${openjpa.persistenceXmlFile}</persistenceXmlFile>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>weave-openjpa-test-classes</id>
-                                <phase>process-test-classes</phase>
-                                <goals>
-                                    <goal>test-enhance</goal>
-                                </goals>
-                                <configuration>
-                                    <persistenceXmlFile>${openjpa.persistenceXmlTestFile}</persistenceXmlFile>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

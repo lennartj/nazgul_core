@@ -32,17 +32,20 @@
     <parent>
         <groupId>se.jguru.nazgul.tools.poms.external</groupId>
         <artifactId>nazgul-tools-external-reactor-parent</artifactId>
-        <version>2.0.7</version>
+        <version>2.0.8</version>
         <relativePath />
     </parent>
 
     <groupId>se.jguru.nazgul.core</groupId>
     <artifactId>nazgul-core-reactor</artifactId>
-    <version>1.4.4-SNAPSHOT</version>
+    <version>1.5.1-SNAPSHOT</version>
     <name>${project.artifactId}</name>
     <packaging>pom</packaging>
     <url>${url.prefix}/${path.in.reactor}</url>
-    <description>The Nazgul Framework: Core project holds a collection of library-style Software Components adhering to the Nazgul-style component patterns, aimed at boosting productivity. All Software Components are compliant with Java SE, OSGi and JEE standards.</description>
+    <description>The Nazgul Framework: Core project holds a collection of library-style Software Components adhering to
+        the Nazgul-style component patterns, aimed at boosting productivity. All Software Components are compliant with
+        Java SE, OSGi and JEE standards.
+    </description>
 
     <properties>
         <!--
@@ -52,7 +55,7 @@
         <reactor.name>nazgul_core</reactor.name>
         <url.prefix>${reactor.url.remote.prefix}/${reactor.name}/${project.version}</url.prefix>
         <distro.url.prefix>${site.url.prefix}/${reactor.name}/${project.version}</distro.url.prefix>
-        <path.in.reactor></path.in.reactor>
+        <path.in.reactor />
     </properties>
 
     <!--
@@ -84,6 +87,7 @@
             </plugin>
         </plugins>
     </build>
+
 
     <!--
     ################################################

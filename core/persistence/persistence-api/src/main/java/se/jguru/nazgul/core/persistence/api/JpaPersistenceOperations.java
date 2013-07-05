@@ -82,8 +82,10 @@ public class JpaPersistenceOperations implements PersistenceOperations {
         try {
             return entityManager.merge(entity);
         } catch (Exception e) {
+
+            final String entityTypeName = entity == null ? "unknown" : entity.getClass().getName();
             throw new PersistenceOperationException("Could not update (JPA merge) object of type ["
-                    + entity.getClass().getName() + "]", e);
+                    + entityTypeName + "]", e);
         }
     }
 
