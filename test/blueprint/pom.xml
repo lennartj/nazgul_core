@@ -32,7 +32,7 @@
     <parent>
         <groupId>se.jguru.nazgul.core.poms.core-parent</groupId>
         <artifactId>nazgul-core-parent</artifactId>
-        <version>1.5.1</version>
+        <version>1.5.2-SNAPSHOT</version>
         <relativePath>../../core/poms/core-parent</relativePath>
     </parent>
 
@@ -58,7 +58,7 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.reflection.api</groupId>
             <artifactId>nazgul-core-reflection-api</artifactId>
-            <version>1.5.1</version>
+            <version>1.5.2-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
 
@@ -243,6 +243,6 @@ and
         <connection>${scm.url.prefix}/${reactor.name}</connection>
         <developerConnection>${scm.url.prefix}/${reactor.name}</developerConnection>
         <url>${reactor.url.remote.prefix}/${reactor.name}</url>
-        <tag>nazgul-core-1.5.1</tag>
+        <tag>HEAD</tag>
     </scm>
 </project>
