@@ -32,7 +32,7 @@
     <parent>
         <groupId>se.jguru.nazgul.core</groupId>
         <artifactId>nazgul-core-core-reactor</artifactId>
-        <version>1.5.1-SNAPSHOT</version>
+        <version>1.5.1</version>
     </parent>
 
     <groupId>se.jguru.nazgul.core.resource</groupId>
@@ -80,6 +80,6 @@
         <connection>${scm.url.prefix}/${reactor.name}</connection>
         <developerConnection>${scm.url.prefix}/${reactor.name}</developerConnection>
         <url>${reactor.url.remote.prefix}/${reactor.name}</url>
-        <tag>HEAD</tag>
+        <tag>nazgul-core-1.5.1</tag>
     </scm>
 </project>
