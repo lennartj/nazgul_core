@@ -31,7 +31,7 @@
     <parent>
         <groupId>se.jguru.nazgul.tools.poms.external</groupId>
         <artifactId>nazgul-tools-external-parent</artifactId>
-        <version>2.0.8</version>
+        <version>2.0.9</version>
         <relativePath />
     </parent>
 
@@ -73,7 +73,7 @@
         <!--
             Supply the version of the Nazgul Tools framework as a Property.
         -->
-        <nazgul.tools.version>2.0.8</nazgul.tools.version>
+        <nazgul.tools.version>2.0.9</nazgul.tools.version>
 
         <!--
             Other, external version properties.
