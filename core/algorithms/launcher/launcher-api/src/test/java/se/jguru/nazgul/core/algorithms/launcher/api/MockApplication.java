@@ -35,7 +35,6 @@ public class MockApplication extends AbstractApplicationLauncher {
     // State
     public List<String> callTrace = new ArrayList<String>();
     public String exceptionMessageOnApplicationRun = null;
-    // public String exceptionMessageOnApplicationRun = null;
 
     /**
      * {@inheritDoc}
