@@ -106,7 +106,7 @@
                             <regex>
                                 <pattern>se.jguru.nazgul.core.parser.api.agent.HostNameParserAgent</pattern>
                                 <branchRate>55</branchRate>
-                                <lineRate>75</lineRate>
+                                <lineRate>65</lineRate>
                             </regex>
                         </regexes>
                     </check>
