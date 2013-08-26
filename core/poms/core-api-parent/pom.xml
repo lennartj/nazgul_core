@@ -23,11 +23,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!--
-    ################################################
-    # Section 1:  Project information
-    ################################################
-    -->
+    <!-- +=============================================== -->
+    <!-- | Section 1:  Project information                -->
+    <!-- +=============================================== -->
     <parent>
         <groupId>se.jguru.nazgul.core.poms.core-parent</groupId>
         <artifactId>nazgul-core-parent</artifactId>
@@ -45,17 +43,13 @@
         <path.in.reactor>core/poms/api-parent</path.in.reactor>
     </properties>
 
-    <!--
-    ################################################
-    # Section 2:  Dependency (management) settings
-    ################################################
-    -->
+    <!-- +=============================================== -->
+    <!-- | Section 2:  Dependency (management) settings   -->
+    <!-- +=============================================== -->
 
-    <!--
-    ################################################
-    # Section 3:  Build settings
-    ################################################
-    -->
+    <!-- +=============================================== -->
+    <!-- | Section 3:  Build settings                     -->
+    <!-- +=============================================== -->
     <build>
         <plugins>
 
@@ -76,11 +70,9 @@
     </build>
 
 
-    <!--
-    ################################################
-    # Section 4:  External systems
-    ################################################
-    -->
+    <!-- +=============================================== -->
+    <!-- | Section 4:  External systems                   -->
+    <!-- +=============================================== -->
 
     <!--
         Define repository settings for Maven's deploy and release plugins.
