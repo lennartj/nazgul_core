@@ -21,7 +21,8 @@
   ~   #L%
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <!-- +=============================================== -->
@@ -29,35 +30,25 @@
     <!-- +=============================================== -->
     <parent>
         <groupId>se.jguru.nazgul.core</groupId>
-        <artifactId>nazgul-core-reactor</artifactId>
+        <artifactId>nazgul-core-core-reactor</artifactId>
         <version>1.5.2-SNAPSHOT</version>
     </parent>
 
-    <groupId>se.jguru.nazgul.core</groupId>
-    <artifactId>nazgul-core-core-reactor</artifactId>
+    <groupId>se.jguru.nazgul.core.quickstart</groupId>
+    <artifactId>nazgul-core-quickstart-reactor</artifactId>
+    <packaging>pom</packaging>
     <name>${project.artifactId}</name>
     <url>${url.prefix}/${path.in.reactor}</url>
-    <packaging>pom</packaging>
 
     <properties>
-        <path.in.reactor>core</path.in.reactor>
+        <path.in.reactor>core/quickstart</path.in.reactor>
     </properties>
 
     <!-- +=============================================== -->
     <!-- | Section 2:  Module definitions                 -->
     <!-- +=============================================== -->
     <modules>
-        <module>poms</module>
-        <module>algorithms</module>
-        <module>quickstart</module>
-        <module>reflection</module>
-        <module>resource</module>
-        <module>parser</module>
-        <module>xmlbinding</module>
-        <module>persistence</module>
-        <module>clustering</module>
-        <module>cache</module>
-        <module>osgi</module>
+        <module>analyzer</module>
     </modules>
 
     <!-- +=============================================== -->
@@ -85,5 +76,4 @@
         <url>${reactor.url.remote.prefix}/${reactor.name}</url>
         <tag>HEAD</tag>
     </scm>
-
 </project>
