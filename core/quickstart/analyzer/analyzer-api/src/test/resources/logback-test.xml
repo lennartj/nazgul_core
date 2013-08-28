@@ -1,7 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ #%L
-  Nazgul Project: nazgul-core-parser-api
+  Nazgul Project: nazgul-core-analyzer-api
   %%
   Copyright (C) 2010 - 2013 jGuru Europe AB
   ~
@@ -22,21 +21,24 @@
   #L%
   -->
 
-<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
+<configuration>
 
-    <bannerLeft>
-        <name>${project.artifactId}</name>
-    </bannerLeft>
+    <appender name="Stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%c{1}::%M]: %msg%n</pattern>
+        </encoder>
+    </appender>
 
-    <bannerRight>
-        <name>Nazgul Framework: Core</name>
-    </bannerRight>
+    <!-- By default, make the logging keep quiet -->
+    <root level="DEBUG">
+        <appender-ref ref="Stdout"/>
+    </root>
 
-    <body>
-        <menu name="Overview">
-            <item name="Introduction" href="index.html"/>
-        </menu>
-    </body>
-</project>
+    <!-- Lower the logging level for relevant classes -->
+    <logger name="se.jguru.nazgul" level="WARN"/>
+    <logger name="se.jguru.nazgul.core.quickstart.analyzer" level="DEBUG"/>
+
+    <!-- Make the frameworks shut up. -->
+    <logger name="org.springframework" level="WARN"/>
+
+</configuration>
