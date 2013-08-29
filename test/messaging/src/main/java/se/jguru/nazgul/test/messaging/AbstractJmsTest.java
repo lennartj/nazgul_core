@@ -214,7 +214,6 @@ public abstract class AbstractJmsTest {
     private void validateInitialized(final String description) {
         if (this.connectionFactory == null) {
             throw new IllegalStateException("Cannot acquire " + description
-
                     + " before initializing the MessageBroker. ConnectionFactory: " + this.connectionFactory);
         }
     }

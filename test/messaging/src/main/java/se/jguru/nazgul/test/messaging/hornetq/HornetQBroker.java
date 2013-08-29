@@ -37,6 +37,8 @@ import org.hornetq.jms.server.embedded.EmbeddedJMS;
 import se.jguru.nazgul.test.messaging.MessageBroker;
 
 import javax.jms.ConnectionFactory;
+import java.io.File;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -125,6 +127,8 @@ public class HornetQBroker implements MessageBroker {
         final Configuration configuration = new ConfigurationImpl();
         configuration.setPersistenceEnabled(false);
         configuration.setSecurityEnabled(false);
+        configuration.setJournalDirectory(
+                getTargetDirectory().getAbsolutePath() + File.separatorChar + configurationDirectory);
 
         // b) Add a transport.
         //    Map it as an acceptor and a connector (using the same id).
@@ -172,6 +176,23 @@ public class HornetQBroker implements MessageBroker {
      */
     public final EmbeddedJMS getJmsServer() {
         return jmsServer;
+    }
+
+    /**
+     * Retrieves a File to the target directory.
+     *
+     * @return the project target directory path, wrapped in a File object.
+     */
+    protected File getTargetDirectory() {
+
+        // Use CodeSource
+        final URL location = getClass().getProtectionDomain().getCodeSource().getLocation();
+
+        // Check sanity
+        Validate.notNull(location, "CodeSource location not found for class [" + getClass().getSimpleName() + "]");
+
+        // All done.
+        return new File(location.getPath()).getParentFile();
     }
 
     /**
