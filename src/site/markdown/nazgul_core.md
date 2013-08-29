@@ -17,6 +17,9 @@ The core components are:
     java, as well as simplifying creating standalone applications ("executable JARs"),
     and modeling data in Tree structures.
 
+1. **nazgul-core-analyzer**. Sports an API for interacting with the reactor to validate that projects, directories
+    and POM files comply with given naming standards.
+
 2. **nazgul-core-cache**. The nazgul-core-cache reactor contains API and several implementation projects
     defining generic-use algorithms for working with caches. In this context, a cache can
     be standalone or distributed (i.e. clustered). The complexities of managing data in
