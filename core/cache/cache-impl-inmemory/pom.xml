@@ -30,7 +30,7 @@
     <parent>
         <groupId>se.jguru.nazgul.core.poms.core-parent</groupId>
         <artifactId>nazgul-core-parent</artifactId>
-        <version>1.4.3-SNAPSHOT</version>
+        <version>1.5.2-SNAPSHOT</version>
         <relativePath>../../poms/core-parent</relativePath>
     </parent>
 
@@ -106,6 +106,18 @@
                         <branchRate>65</branchRate>
                         <lineRate>80</lineRate>
                         <haltOnFailure>${cobertura.haltOnFailure}</haltOnFailure>
+                        <regexes>
+                            <regex>
+                                <pattern>se.jguru.nazgul.core.cache.impl.inmemory.InMemoryMapCache\$CacheListenerNotificationWorker</pattern>
+                                <branchRate>60</branchRate>
+                                <lineRate>70</lineRate>
+                            </regex>
+                            <regex>
+                                <pattern>se.jguru.nazgul.core.cache.impl.inmemory.InMemoryMapCache\$1</pattern>
+                                <branchRate>0</branchRate>
+                                <lineRate>0</lineRate>
+                            </regex>
+                        </regexes>
                     </check>
                 </configuration>
             </plugin>

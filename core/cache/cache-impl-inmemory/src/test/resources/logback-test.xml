@@ -1,6 +1,6 @@
 <!--
   ~ #%L
-  Nazgul Project: nazgul-core-cache-impl-ehcache
+  Nazgul Project: nazgul-core-cache-impl-inmemory
   %%
   Copyright (C) 2010 - 2013 jGuru Europe AB
   ~
