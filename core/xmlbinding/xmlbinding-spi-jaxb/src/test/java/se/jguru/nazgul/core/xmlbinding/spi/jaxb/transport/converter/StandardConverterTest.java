@@ -66,6 +66,20 @@ public class StandardConverterTest {
         }
     }
 
+    @Test
+    public void validateNullStandardConverters() {
+
+        // Assemble
+        final DefaultConverterRegistry registry = new DefaultConverterRegistry();
+        registry.add(new StandardConverters());
+
+        // Act
+        final JaxbAnnotatedNull result = registry.convert(null, JaxbAnnotatedNull.class);
+
+        // Assert
+        Assert.assertNotNull(result);
+    }
+
     //
     // Private helpers
     //
