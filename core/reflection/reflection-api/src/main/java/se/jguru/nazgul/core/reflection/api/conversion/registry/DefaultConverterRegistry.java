@@ -145,7 +145,7 @@ public class DefaultConverterRegistry implements ConverterRegistry {
             throws IllegalArgumentException {
 
         // Find the best PrioritizedTypeConverter instance for the supplied source.
-        final Class<From> sourceType = (Class<From>) source.getClass();
+        final Class<From> sourceType = source == null ? null : (Class<From>) source.getClass();
         PrioritizedTypeConverter<From> typeConverter = sourceTypeToTypeConvertersMap.get(sourceType);
 
         if (typeConverter == null) {
@@ -322,8 +322,20 @@ public class DefaultConverterRegistry implements ConverterRegistry {
                         @Override
                         public boolean accept(final Tuple<Class<?>, PrioritizedTypeConverter> candidate) {
 
-                            // Only accept candidates able to convert from the supplied sourceType/fromType.
-                            return candidate.getKey().isAssignableFrom(sourceType);
+                            // The sourceType can be null, which generates an exception in the isAssignableFrom method.
+                            // Perform normal sanity checking to handle null sourceType values.
+                            if(sourceType != null) {
+
+                                // Only accept candidates able to convert from the supplied sourceType/fromType.
+                                return candidate.getKey().isAssignableFrom(sourceType);
+
+                            } else {
+
+                                // sourceType is null here, so the candidate should only 'accept'
+                                // here if the internal TypeConverter can handle nulls.
+                                final PrioritizedTypeConverter converter = candidate.getValue();
+                                return converter.getSourceType() == Object.class;
+                            }
                         }
                     });
 
@@ -340,7 +352,8 @@ public class DefaultConverterRegistry implements ConverterRegistry {
         }
 
         // Debug somewhat
-        log.debug("Source type [" + sourceType.getSimpleName() + "] yields converters: " + toReturn);
+        final String sourceTypeSimpleName = sourceType == null ? "<null>" : sourceType.getSimpleName();
+        log.debug("Source type [" + sourceTypeSimpleName + "] yields converters: " + toReturn);
 
         // All done.
         return toReturn;
@@ -409,7 +422,10 @@ public class DefaultConverterRegistry implements ConverterRegistry {
 
             // Find the current priority
             try {
-                final int priority = TypeExtractor.getRelationDifference(current, requestedToType);
+                // The requestedToType can be null; handle this situation.
+                final int priority = requestedToType == null
+                        ? -1
+                        : TypeExtractor.getRelationDifference(current, requestedToType);
 
                 List<Class<?>> currentPriorityTypes = prioritizedTypes.get(priority);
                 if (currentPriorityTypes == null) {

@@ -33,6 +33,7 @@ import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.MultiConv
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -142,6 +143,26 @@ public class DefaultConverterRegistryTest {
             Assert.assertTrue("Expected type [" + current.getSimpleName() + "] was not found.",
                     convertersMap.keySet().contains(current));
         }
+    }
+
+    @Test
+    public void validateClosestConversionAlgorithm() {
+
+        // Assemble
+        final ArrayList<String> list3StepsAwayFromCollection = new ArrayList<String>();
+        final HashSet<String> set3StepsAwayFromCollection = new HashSet<String>();
+        set3StepsAwayFromCollection.add("foobar!");
+        set3StepsAwayFromCollection.add(null);
+
+        unitUnderTest.add(new CollectionsConverter());
+
+        // Act
+        final Collection<?> result1 = unitUnderTest.convert(list3StepsAwayFromCollection, Collection.class);
+        final Collection<?> result2 = unitUnderTest.convert(set3StepsAwayFromCollection, Collection.class);
+
+        // Assert
+        Assert.assertNotNull(result1);
+        Assert.assertNotNull(result2);
     }
 
     @Test
