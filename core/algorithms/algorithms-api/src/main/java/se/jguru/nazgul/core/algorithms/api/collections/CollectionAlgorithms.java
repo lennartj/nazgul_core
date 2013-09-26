@@ -252,9 +252,9 @@ public abstract class CollectionAlgorithms {
         // Create a return instance
         Map<K2, V2> toReturn = new HashMap<K2, V2>();
 
-        for (K1 current : source.keySet()) {
+        for (Map.Entry<K1, V1> current : source.entrySet()) {
 
-            final Tuple<K1, V1> sourceTuple = new Tuple<K1, V1>(current, source.get(current));
+            final Tuple<K1, V1> sourceTuple = new Tuple<K1, V1>(current.getKey(), source.get(current.getKey()));
             final Tuple<K2, V2> resultTuple = transformer.transform(sourceTuple);
 
             if (resultTuple != null) {

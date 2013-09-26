@@ -92,8 +92,8 @@ public abstract class AbstractJpaTest {
 
             // Log the EntityManagerFactory properties used.
             final StringBuilder builder = new StringBuilder();
-            for (String current : props.keySet()) {
-                builder.append("  [").append(current).append("]: ").append(props.get(current)).append("\n");
+            for (Map.Entry<String, String> current : props.entrySet()) {
+                builder.append("  [").append(current.getKey()).append("]: ").append(current.getValue()).append("\n");
             }
 
             log.debug("Testcase " + getClass().getSimpleName() + " - EntityManagerFactoryProperties:\n"

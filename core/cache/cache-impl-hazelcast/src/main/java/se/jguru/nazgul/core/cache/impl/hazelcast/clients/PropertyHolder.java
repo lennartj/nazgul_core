@@ -87,10 +87,8 @@ public class PropertyHolder {
     public PropertyHolder() throws IllegalArgumentException {
 
         TreeMap<String, String> sysPropCopy = new TreeMap<String, String>();
-        for (Object current : System.getProperties().keySet()) {
-
-            final String currentKey = "" + current;
-            sysPropCopy.put(currentKey, System.getProperty(currentKey));
+        for (Map.Entry<Object, Object> current : System.getProperties().entrySet()) {
+            sysPropCopy.put("" + current.getKey(), "" + current.getValue());
         }
 
         validateRequiredProperties(sysPropCopy);

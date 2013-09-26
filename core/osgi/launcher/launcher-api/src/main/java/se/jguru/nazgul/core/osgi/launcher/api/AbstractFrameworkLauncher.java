@@ -300,15 +300,16 @@ public abstract class AbstractFrameworkLauncher<T extends OsgiFrameworkListener>
                 // All seems OK. Proceed with registering.
                 this.toRegister = new HashMap<String, BundleContextHolder>();
 
-                for (String current : containerEventListeners.keySet()) {
+                for (Map.Entry<String, BundleContextHolder> current : containerEventListeners.entrySet()) {
 
                     // Register the ContainerEventListener
-                    BundleContextHolder bundleContextHolder = containerEventListeners.get(current);
+                    BundleContextHolder bundleContextHolder = current.getValue();
 
                     try {
                         bundleContextHolder.register(ctx);
                     } catch (Exception e) {
-                        log.error("Could not add [" + bundleContextHolder.getClusterId() + "] as a ServiceListener. Abandoning.", e);
+                        log.error("Could not add [" + bundleContextHolder.getClusterId()
+                                + "] as a ServiceListener. Abandoning.", e);
 
                         // Rollback this particular listener.
                         bundleContextHolder.unregister(ctx);
@@ -343,9 +344,9 @@ public abstract class AbstractFrameworkLauncher<T extends OsgiFrameworkListener>
                 // All seems OK. Proceed with deregistering.
                 this.toDeregister = new HashMap<String, BundleContextHolder>();
 
-                for (String current : containerEventListeners.keySet()) {
+                for (Map.Entry<String, BundleContextHolder> current : containerEventListeners.entrySet()) {
 
-                    final BundleContextHolder wrapper = containerEventListeners.get(current);
+                    final BundleContextHolder wrapper = current.getValue();
 
                     try {
                         wrapper.unregister(ctx);

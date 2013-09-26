@@ -196,12 +196,12 @@ public abstract class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
 
         // Now, overwrite with appropriate system properties
         final List<String> overridablePrefixes = Arrays.asList("javax.persistence.", "openjpa.", "eclipselink.");
-        for (Object current : System.getProperties().keySet()) {
+        for (Map.Entry<Object, Object> current : System.getProperties().entrySet()) {
 
-            final String currentPropertyName = "" + current;
+            final String currentPropertyName = "" + current.getKey();
             for(String currentPrefix : overridablePrefixes) {
                 if(currentPropertyName.trim().toLowerCase().startsWith(currentPrefix)) {
-                    toReturn.put("" + current, System.getProperty("" + current));
+                    toReturn.put(currentPropertyName, "" + current.getValue());
                 }
             }
         }

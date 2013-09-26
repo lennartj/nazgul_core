@@ -23,6 +23,7 @@
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import se.jguru.nazgul.core.xmlbinding.api.NamespacePrefixResolver;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbNamespacePrefixResolver;
@@ -37,6 +38,10 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -45,6 +50,12 @@ public class JaxbXmlBinderTest {
 
     // Shared state
     final JaxbXmlBinder unitUnderTest = new JaxbXmlBinder();
+
+    @Before
+    public void setupSharedState() throws Exception {
+        System.setProperty("jaxp.debug", "1");
+        //  System.setProperty("javax.xml.bind.context.factory", "org.eclipse.persistence.jaxb.JAXBContextFactory");
+    }
 
     @Test(expected = NullPointerException.class)
     public void validateExceptionOnNullNamespacePrefixResolver() {
@@ -168,13 +179,46 @@ public class JaxbXmlBinderTest {
     @Test(expected = IllegalArgumentException.class)
     public void validateExceptionOnUnmarshallingInstanceYieldingMoreThanOneInstance() {
 
+        // TODO: Check out the code here.
+        //
+        // XmlFactory.createParserFactory()
+        /*
+        validateUnmarshallingFromXml(se.jguru.nazgul.core.xmlbinding.spi.jaxb.JaxbXmlBinderTest)  Time elapsed: 0.004 sec  <<< ERROR!
+        java.lang.IllegalStateException: org.xml.sax.SAXNotRecognizedException: Feature 'http://javax.xml.XMLConstants/feature/secure-processing' is not recognized.
+            at com.sun.xml.bind.v2.util.XmlFactory.createParserFactory(XmlFactory.java:128)
+            at com.sun.xml.bind.v2.runtime.unmarshaller.UnmarshallerImpl.getXMLReader(UnmarshallerImpl.java:154)
+            at javax.xml.bind.helpers.AbstractUnmarshallerImpl.unmarshal(AbstractUnmarshallerImpl.java:157)
+            at javax.xml.bind.helpers.AbstractUnmarshallerImpl.unmarshal(AbstractUnmarshallerImpl.java:214)
+            at se.jguru.nazgul.core.xmlbinding.spi.jaxb.JaxbXmlBinder.unmarshal(JaxbXmlBinder.java:187)
+            at se.jguru.nazgul.core.xmlbinding.spi.jaxb.JaxbXmlBinderTest.validateUnmarshallingFromXml(JaxbXmlBinderTest.java:101)
+         */
+
         // Assemble
         final String data = "data/xml/unmarshallingWithTypeConversion.xml";
         final Reader input = new BufferedReader(new InputStreamReader(
                 getClass().getClassLoader().getResourceAsStream(data)));
 
         // Act & Assert
-        unitUnderTest.unmarshalInstance(input);
+        try {
+            unitUnderTest.unmarshalInstance(input);
+        } catch (IllegalStateException e) {
+            // This is thrown in the Cobertura instrumentation phase
+            // and only when running through Maven.
+            //
+            // Seems like a JDK 7 thing.
+            e.printStackTrace();
+
+            final Properties properties = System.getProperties();
+            final SortedMap<String, String> sysProps = new TreeMap<String, String>();
+            for(Map.Entry<Object, Object> current : properties.entrySet()) {
+                final String currentKey = "" + current.getKey();
+                sysProps.put(currentKey, "" + current.getValue());
+            }
+
+            for(Map.Entry<String, String> current : sysProps.entrySet()) {
+                System.out.println(" [" + current.getKey() + "]: " + current.getValue());
+            }
+        }
     }
 
     @Test(expected = IllegalArgumentException.class)

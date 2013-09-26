@@ -67,15 +67,23 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
+@SuppressWarnings("PMD.UnusedPrivateField")
 public abstract class JaxbUtils {
 
     // Our log
     private static final Logger log = LoggerFactory.getLogger(JaxbUtils.class.getName());
 
     /**
-     * The namespace prefix key for external JAXB distribution.
+     * The namespace prefix key for external (i.e. non-JDK-internal) JAXB distribution.
      */
     private static final String EXTERNAL_JAXB_NAMESPACEPREFIXMAPPER_KEY = "com.sun.xml.bind.namespacePrefixMapper";
+
+    /**
+     * The namespace prefix key for JDK-internal JAXB distribution.
+     */
+    private static final String INTERNAL_JAXB_NAMESPACEPREFIXMAPPER_KEY
+            = "com.sun.xml.internal.bind.namespacePrefixMapper";
+
     private static final ClassnameToClassTransformer THREADLOCAL_TRANSFORMER = new ClassnameToClassTransformer();
 
     // Internal state
@@ -238,10 +246,10 @@ public abstract class JaxbUtils {
         final MappedSchemaResourceResolver resourceResolver = new MappedSchemaResourceResolver();
         final StreamSource[] schemaSources = new StreamSource[namespace2SchemaMap.size()];
         int counter = 0;
-        for (String current : namespace2SchemaMap.keySet()) {
+        for (Map.Entry<String, ByteArrayOutputStream> current : namespace2SchemaMap.entrySet()) {
 
-            final byte[] schemaSnippetAsBytes = namespace2SchemaMap.get(current).toByteArray();
-            resourceResolver.addNamespace2SchemaEntry(current, new String(schemaSnippetAsBytes));
+            final byte[] schemaSnippetAsBytes = current.getValue().toByteArray();
+            resourceResolver.addNamespace2SchemaEntry(current.getKey(), new String(schemaSnippetAsBytes));
 
             if (log.isDebugEnabled()) {
                 log.info("Generated schema [" + (counter + 1) + "/" + schemaSources.length + "]:\n "
@@ -503,9 +511,9 @@ public abstract class JaxbUtils {
         // Search for matching/compatible SortedClassNameSetKeys.
         // The first matching one can be used for JAXBContext.
         Tuple<SortedClassNameSetKey, JAXBContext> toReturn = null;
-        for (SortedClassNameSetKey current : jaxbContextCache.keySet()) {
-            if (current.containsAll(copy)) {
-                toReturn = new Tuple<SortedClassNameSetKey, JAXBContext>(current, jaxbContextCache.get(current));
+        for (Map.Entry<SortedClassNameSetKey, JAXBContext> current : jaxbContextCache.entrySet()) {
+            if (current.getKey().containsAll(copy)) {
+                toReturn = new Tuple<SortedClassNameSetKey, JAXBContext>(current.getKey(), current.getValue());
             }
         }
 

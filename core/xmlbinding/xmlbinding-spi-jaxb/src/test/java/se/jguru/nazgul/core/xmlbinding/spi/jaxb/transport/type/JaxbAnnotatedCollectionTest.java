@@ -22,9 +22,10 @@
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.AbstractStandardizedTimezoneTest;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -37,18 +38,18 @@ import java.util.SortedSet;
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 @SuppressWarnings("rawtypes")
-public class JaxbAnnotatedCollectionTest {
+public class JaxbAnnotatedCollectionTest extends AbstractStandardizedTimezoneTest {
 
     // Shared state
     private String fooBar = "FooBar!";
-    private DateTime firstAprilThreePm = new DateTime(2012, 4, 1, 15, 0);
+    private DateTime firstAprilThreePm = new DateTime(2012, 4, 1, 15, 0, DateTimeZone.UTC);
     private int meaningOfLife = 42;
 
     private List<Object> data1D;
     private List<Object> data2D;
     private List<Object> data3D;
 
-    @Before
+    @Override
     public void setupSharedState() {
 
         // Create the data structures

@@ -260,10 +260,11 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
 
         final List<TypeConverter<From, To>> toReturn = new ArrayList<TypeConverter<From, To>>();
 
-        for (Integer current : prioritizedTypeConverterMap.keySet()) {
+        for (Map.Entry<Integer, Map<Class<?>, TypeConverter<From, ?>>> current
+                : prioritizedTypeConverterMap.entrySet()) {
 
             // Acquire the TypeConverter to return.
-            final Map<Class<?>, TypeConverter<From, ?>> from2TypeConvMap = prioritizedTypeConverterMap.get(current);
+            final Map<Class<?>, TypeConverter<From, ?>> from2TypeConvMap = current.getValue();
 
             // Exact match?
             final TypeConverter<From, ?> candidate = from2TypeConvMap.get(targetType);
@@ -272,10 +273,11 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
             }
         }
 
-        for (Integer current : prioritizedTypeConverterMap.keySet()) {
+        for (Map.Entry<Integer, Map<Class<?>, TypeConverter<From, ?>>> current
+                : prioritizedTypeConverterMap.entrySet()) {
 
             // Acquire the TypeConverter to return.
-            final Map<Class<?>, TypeConverter<From, ?>> from2TypeConvMap = prioritizedTypeConverterMap.get(current);
+            final Map<Class<?>, TypeConverter<From, ?>> from2TypeConvMap = current.getValue();
 
             // Fuzzy matches go after exact matches
             for(Map.Entry<Class<?>, TypeConverter<From, ?>> currentSourceClass2TypeConverter : from2TypeConvMap.entrySet()) {

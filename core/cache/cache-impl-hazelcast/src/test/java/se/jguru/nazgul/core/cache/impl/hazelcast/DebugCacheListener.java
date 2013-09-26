@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.Serializable;
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -225,9 +226,9 @@ public class DebugCacheListener extends AbstractCacheListener<String> {
 
         // Write the eventId2KeyValueMap
         out.writeInt(eventId2KeyValueMap.size());
-        for (Integer current : eventId2KeyValueMap.keySet()) {
-            out.writeInt(current);
-            eventId2KeyValueMap.get(current).writeExternal(out);
+        for (Map.Entry<Integer, EventInfo> current : eventId2KeyValueMap.entrySet()) {
+            out.writeInt(current.getKey());
+            current.getValue().writeExternal(out);
         }
     }
 

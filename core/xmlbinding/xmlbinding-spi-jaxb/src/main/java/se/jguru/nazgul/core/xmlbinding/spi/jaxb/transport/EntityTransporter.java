@@ -45,6 +45,7 @@ import java.util.TreeSet;
  * Entity holder used to convert and transport object instances over network connections.
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
+ * @see ConditionalTransportTypeConverter
  */
 @XmlRootElement(namespace = XmlBinder.CORE_NAMESPACE)
 @XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"entityClasses", "items"})

@@ -64,8 +64,8 @@ public class CollectionsConverter {
     public <K, V> List<Tuple<K, V>> convertToList(final Map<K, V> map) {
 
         List<Tuple<K, V>> toReturn = new ArrayList<Tuple<K, V>>();
-        for(K current : map.keySet()) {
-            toReturn.add(new Tuple<K, V>(current, map.get(current)));
+        for(Map.Entry<K, V> current : map.entrySet()) {
+            toReturn.add(new Tuple<K, V>(current.getKey(), current.getValue()));
         }
 
         return toReturn;

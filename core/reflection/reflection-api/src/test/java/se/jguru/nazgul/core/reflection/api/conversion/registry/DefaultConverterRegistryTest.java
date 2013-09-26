@@ -169,8 +169,8 @@ public class DefaultConverterRegistryTest {
     public void validateNormalConversion() {
 
         // Assemble
-        final String hourMinuteDateForm = "2012-05-06T07:08";
-        final String isoDateTimeDateForm = "20120506T070809+0100";
+        final String hourMinuteDateForm = "2012-05-06T20:08";
+        final String isoDateTimeDateForm = "20120506T200809+0100";
 
         // Act
         unitUnderTest.add(multiConverter);
