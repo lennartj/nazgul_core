@@ -34,7 +34,7 @@
         </menu>
         <links>
             <item name="Maven" href="http://maven.apache.org/"/>
-            <item name="Bitbucket" href="http://maven.apache.org/"/>
+            <item name="Bitbucket" href="http://bitbucket.org/lennartj"/>
         </links>
 
         <menu ref="parent" />
