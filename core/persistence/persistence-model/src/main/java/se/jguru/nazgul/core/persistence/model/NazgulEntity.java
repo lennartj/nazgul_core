@@ -21,8 +21,6 @@
  */
 package se.jguru.nazgul.core.persistence.model;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.tools.validation.api.Validatable;
 import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException;
@@ -57,12 +55,6 @@ public abstract class NazgulEntity implements Serializable, Cloneable, Validatab
 
     // Internal state
     private static final long serialVersionUID = 8829990002L;
-    private static final String[] EQUALITY_DISREGARD_FIELDS = {
-            "version",
-            "id",
-            "pcVersionInit",
-            "pcStateManager",
-            "pcDetachedState"};
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -97,8 +89,9 @@ public abstract class NazgulEntity implements Serializable, Cloneable, Validatab
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("all")
     public boolean equals(final Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj, false, NazgulEntity.class, EQUALITY_DISREGARD_FIELDS);
+        return Entities.equals(this, obj, Object.class);
     }
 
     /**
@@ -106,7 +99,7 @@ public abstract class NazgulEntity implements Serializable, Cloneable, Validatab
      */
     @Override
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(17, 37, this, false, NazgulEntity.class, EQUALITY_DISREGARD_FIELDS);
+        return Entities.hashCode(this, Object.class);
     }
 
     /**

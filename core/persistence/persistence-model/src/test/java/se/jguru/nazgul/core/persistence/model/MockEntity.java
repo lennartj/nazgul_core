@@ -46,6 +46,8 @@ import java.util.ArrayList;
 @Access(value = AccessType.FIELD)
 public class MockEntity extends NazgulEntity {
 
+    public transient boolean throwExceptionOnClone = false;
+
     // Internal state
     @XmlElement(nillable = false, required = true)
     private String name;
@@ -71,6 +73,16 @@ public class MockEntity extends NazgulEntity {
 
     public Long getValue() {
         return value;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+
+        if(throwExceptionOnClone) {
+            throw new CloneNotSupportedException("Nah... don't wanna.");
+        }
+
+        return super.clone();
     }
 
     /**

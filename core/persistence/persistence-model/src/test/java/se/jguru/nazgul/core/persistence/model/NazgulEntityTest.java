@@ -82,4 +82,15 @@ public class NazgulEntityTest {
         Assert.assertEquals(mockEntity, mockEntity.clone());
         Assert.assertNotSame(mockEntity, mockEntity.copy());
     }
+
+    @Test(expected = IllegalStateException.class)
+    public void validateHandlingCloneException() {
+
+        // Assemble
+        final MockEntity mockEntity = new MockEntity("gnat", 15L);
+        mockEntity.throwExceptionOnClone = true;
+
+        // Act & Assert
+        mockEntity.copy();
+    }
 }
