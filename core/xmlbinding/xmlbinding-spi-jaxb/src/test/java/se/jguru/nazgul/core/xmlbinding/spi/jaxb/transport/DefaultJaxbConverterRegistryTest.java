@@ -26,11 +26,11 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Assert;
 import org.junit.Test;
-import se.jguru.nazgul.core.xmlbinding.spi.jaxb.AbstractStandardizedTimezoneTest;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.JaxbXmlBinder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedCollection;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedDateTime;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedNull;
+import se.jguru.nazgul.test.xmlbinding.AbstractStandardizedTimezoneTest;
 import se.jguru.nazgul.test.xmlbinding.XmlTestUtils;
 
 import java.io.Serializable;

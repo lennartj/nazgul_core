@@ -26,7 +26,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Assert;
 import org.junit.Test;
-import se.jguru.nazgul.core.xmlbinding.spi.jaxb.AbstractStandardizedTimezoneTest;
+import se.jguru.nazgul.test.xmlbinding.AbstractStandardizedTimezoneTest;
 
 import java.util.Date;
 import java.util.SortedSet;
