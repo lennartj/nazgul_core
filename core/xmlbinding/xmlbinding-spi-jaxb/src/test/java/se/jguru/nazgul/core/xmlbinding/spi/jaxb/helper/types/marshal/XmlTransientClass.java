@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-@XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"value"})
+@XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"xmlElementAnnotatedList"})
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlTransient
 public class XmlTransientClass {

@@ -110,8 +110,8 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
         final Set<String> tmp = new TreeSet<String>();
         final IMap<String, TreeSet<String>> listenersIdMap = getCacheListenersIDMap();
 
-        for (final String current : listenersIdMap.keySet()) {
-            for (final String currentListenerID : listenersIdMap.get(current)) {
+        for (final Map.Entry<String, TreeSet<String>> current : listenersIdMap.entrySet()) {
+            for (final String currentListenerID : current.getValue()) {
                 tmp.add(currentListenerID);
             }
         }

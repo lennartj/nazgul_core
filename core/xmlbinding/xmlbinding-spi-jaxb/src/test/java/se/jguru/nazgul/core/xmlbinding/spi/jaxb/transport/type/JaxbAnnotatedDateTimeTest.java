@@ -22,10 +22,11 @@
 
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type;
 
-import org.junit.Assert;
 import org.joda.time.DateTime;
-import org.junit.Before;
+import org.joda.time.DateTimeZone;
+import org.junit.Assert;
 import org.junit.Test;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.AbstractStandardizedTimezoneTest;
 
 import java.util.Date;
 import java.util.SortedSet;
@@ -33,15 +34,14 @@ import java.util.SortedSet;
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class JaxbAnnotatedDateTimeTest {
+public class JaxbAnnotatedDateTimeTest extends AbstractStandardizedTimezoneTest {
 
     // Shared state
     private DateTime value;
 
-    @Before
+    @Override
     public void setupSharedState() {
-
-        value = new DateTime(2012, 7, 6, 5, 4, 3);
+        value = new DateTime(2012, 7, 6, 5, 4, 3, DateTimeZone.UTC);
     }
 
     @Test
@@ -64,8 +64,8 @@ public class JaxbAnnotatedDateTimeTest {
     public void validateComparisonAndEquality() {
 
         // Assemble
-        final DateTime valueCopy = new DateTime(2012, 7, 6, 5, 4, 3);
-        final DateTime anotherValue = new DateTime(2012, 8, 7, 6, 5, 4);
+        final DateTime valueCopy = new DateTime(2012, 7, 6, 5, 4, 3, DateTimeZone.UTC);
+        final DateTime anotherValue = new DateTime(2012, 8, 7, 6, 5, 4, DateTimeZone.UTC);
         final JaxbAnnotatedDateTime unitUnderTest = new JaxbAnnotatedDateTime(value);
 
         // Act & Assert

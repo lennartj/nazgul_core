@@ -23,9 +23,10 @@
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.AbstractStandardizedTimezoneTest;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.JaxbXmlBinder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedCollection;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedDateTime;
@@ -35,7 +36,6 @@ import se.jguru.nazgul.test.xmlbinding.XmlTestUtils;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,26 +44,20 @@ import java.util.Map;
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid, jGuru Europe AB</a>
  */
-public class DefaultJaxbConverterRegistryTest {
+public class DefaultJaxbConverterRegistryTest extends AbstractStandardizedTimezoneTest {
 
     // Shared state
     private JaxbXmlBinder binder;
 
     private String fooBar = "FooBar!";
-    private DateTime firstAprilThreePm = new DateTime(2012, 4, 1, 15, 0);
+    private DateTime firstAprilThreePm = new DateTime(2012, 4, 1, 15, 0, DateTimeZone.UTC);
     private int meaningOfLife = 42;
 
     private List<Object> data1D;
     private List<Object> data2D;
-
-    private List<? extends Class<? extends Serializable>> standardTransportTypes = Arrays.asList(
-            JaxbAnnotatedNull.class, JaxbAnnotatedCollection.class,
-            JaxbAnnotatedDateTime.class);
-    private List<Object> sourceObjects = Arrays.asList(null, data2D, firstAprilThreePm, fooBar);
-
     private DefaultJaxbConverterRegistry unitUnderTest;
 
-    @Before
+    @Override
     public void setupSharedState() {
 
         // Create the xml binder.
@@ -121,10 +115,10 @@ public class DefaultJaxbConverterRegistryTest {
         expectedTransportTypeMap.put(firstAprilThreePm, JaxbAnnotatedDateTime.class);
 
         // Act & Assert
-        for(Object current : expectedTransportTypeMap.keySet()) {
+        for(Map.Entry<Object, Class<? extends Serializable>> current : expectedTransportTypeMap.entrySet()) {
 
-            final Class<?> expectedType = expectedTransportTypeMap.get(current);
-            final Class<?> actualType = unitUnderTest.getTransportType(current.getClass());
+            final Class<?> expectedType = expectedTransportTypeMap.get(current.getKey());
+            final Class<?> actualType = unitUnderTest.getTransportType(current.getKey().getClass());
 
             Assert.assertEquals("JaxbConverterRegistry: " + unitUnderTest,
                     expectedType, actualType);
@@ -172,8 +166,6 @@ public class DefaultJaxbConverterRegistryTest {
         final String result = binder.marshal(transportForm);
 
         // Assert
-        System.out.println("Expected: " + expectedResult);
-        System.out.println("Result: " + result);
         Assert.assertNotNull("Received null transportForm:\n" + unitUnderTest.toString(), transportForm);
         Assert.assertTrue(XmlTestUtils.compareXmlIgnoringWhitespace(expectedResult, result).identical());
     }

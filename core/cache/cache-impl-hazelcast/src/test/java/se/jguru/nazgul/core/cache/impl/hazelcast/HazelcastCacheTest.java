@@ -217,8 +217,8 @@ public class HazelcastCacheTest extends AbstractHazelcastCacheTest {
         data.put("fooo", "bar");
         data.put("gnat", "baz");
 
-        for(String current : data.keySet()) {
-            hzCache1.put(current, data.get(current));
+        for(Map.Entry<String, String> current : data.entrySet()) {
+            hzCache1.put(current.getKey(), current.getValue());
         }
 
         // Act & Assert

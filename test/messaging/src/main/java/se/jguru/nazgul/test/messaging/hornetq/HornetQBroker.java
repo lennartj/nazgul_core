@@ -151,15 +151,15 @@ public class HornetQBroker implements MessageBroker {
         jmsConfig.getConnectionFactoryConfigurations().add(cfConfig);
 
         final List<JMSQueueConfiguration> queueConfigurations = jmsConfig.getQueueConfigurations();
-        for(String current : PERSISTENT_QUEUES.keySet()) {
+        for(Map.Entry<String, String> current : PERSISTENT_QUEUES.entrySet()) {
 
             // Create a non-persistent queue without any selectors.
             queueConfigurations.add(
                     new JMSQueueConfigurationImpl(
-                            current,    // name
-                            null,       // selector
-                            false,      // persistent
-                            PERSISTENT_QUEUES.get(current)) // binding
+                            current.getKey(),    // name
+                            null,                // selector
+                            false,               // persistent
+                            current.getValue())  // binding
             );
         }
 

@@ -49,7 +49,7 @@ public class TextSectionTest {
     private Locale originalDefault;
 
     @Before
-    public void setupSharedState() {
+    public void setupSharedState() throws Exception {
 
         resolver = new JaxbNamespacePrefixResolver();
         resolver.put("http://some.other.namespace", "someOther");
@@ -73,6 +73,7 @@ public class TextSectionTest {
 
         // Act
         final String result = binder.marshal(unitUnderTest);
+        // System.out.println("Got: " + result);
 
         // Assert
         Assert.assertTrue(XmlTestUtils.compareXmlIgnoringWhitespace(expected, result).identical());

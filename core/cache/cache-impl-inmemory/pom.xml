@@ -52,7 +52,7 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.cache.api</groupId>
             <artifactId>nazgul-core-cache-api</artifactId>
-            <version>1.4.3-SNAPSHOT</version>
+            <version>1.5.2-SNAPSHOT</version>
         </dependency>
 
         <!-- External dependencies -->

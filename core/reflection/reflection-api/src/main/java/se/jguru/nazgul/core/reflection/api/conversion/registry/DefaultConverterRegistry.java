@@ -116,14 +116,13 @@ public class DefaultConverterRegistry implements ConverterRegistry {
         }
 
         // Create PrioritizedTypeConverters for all source types.
-        for (Class<?> current : sourceTypeToConverterInstanceMap.keySet()) {
+        for (Map.Entry<Class<?>, Set<Object>> current : sourceTypeToConverterInstanceMap.entrySet()) {
 
             PrioritizedTypeConverter prioritizedTypeConverter = new PrioritizedTypeConverter(
-                    current,
-                    sourceTypeToConverterInstanceMap.get(current).toArray());
+                    current.getKey(), current.getValue().toArray());
 
             // Finally, add the PrioritizedTypeConverter instance.
-            sourceTypeToTypeConvertersMap.put(current, prioritizedTypeConverter);
+            sourceTypeToTypeConvertersMap.put(current.getKey(), prioritizedTypeConverter);
         }
     }
 

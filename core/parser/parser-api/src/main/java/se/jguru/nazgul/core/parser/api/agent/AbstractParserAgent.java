@@ -93,9 +93,9 @@ public abstract class AbstractParserAgent implements ParserAgent {
         }
 
         // This should be a static token.
-        for (String current : staticTokens.keySet()) {
-            if (Pattern.compile(current).matcher(token).matches()) {
-                return staticTokens.get(current);
+        for (Map.Entry<String, String> current : staticTokens.entrySet()) {
+            if (Pattern.compile(current.getKey()).matcher(token).matches()) {
+                return current.getValue();
             }
         }
 

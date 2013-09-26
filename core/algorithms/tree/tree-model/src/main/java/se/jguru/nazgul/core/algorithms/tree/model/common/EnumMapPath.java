@@ -73,6 +73,7 @@ public class EnumMapPath<E extends Enum<E>, SegmentType extends Serializable & C
     @XmlAttribute(required = true)
     private Class<E> enumType;
 
+    // TODO: Check for move to other internal representation. Does JPA accept an EnumMap?
     @XmlJavaTypeAdapter(EnumMapTypeConverter.class)
     @OneToMany
     @MapKeyEnumerated(EnumType.STRING)
@@ -112,8 +113,8 @@ public class EnumMapPath<E extends Enum<E>, SegmentType extends Serializable & C
 
         // Check sanity
         boolean noNullsFound = true;
-        for (E current : this.mapPathSegments.keySet()) {
-            if (this.mapPathSegments.get(current) == null) {
+        for (Map.Entry<E, SegmentType> current : this.mapPathSegments.entrySet()) {
+            if (current.getValue() == null) {
                 noNullsFound = false;
             } else {
                 Validate.isTrue(noNullsFound, "Paths cannot contain null elements. Got: " + this.mapPathSegments);
@@ -145,8 +146,8 @@ public class EnumMapPath<E extends Enum<E>, SegmentType extends Serializable & C
 
         int toReturn = 0;
 
-        for (E current : mapPathSegments.keySet()) {
-            if (mapPathSegments.get(current) == null) {
+        for (Map.Entry<E, SegmentType> current : mapPathSegments.entrySet()) {
+            if (current.getValue() == null) {
                 return toReturn;
             }
 
@@ -172,11 +173,11 @@ public class EnumMapPath<E extends Enum<E>, SegmentType extends Serializable & C
 
         // Perform a deep clone on the mapPathSegments map.
         final EnumMap<E, SegmentType> clone = TreeAlgorithms.getEmptyEnumMap(enumType);
-        for (E current : mapPathSegments.keySet()) {
+        for (Map.Entry<E, SegmentType> current : mapPathSegments.entrySet()) {
 
-            final SegmentType segmentType = mapPathSegments.get(current);
+            final SegmentType segmentType = current.getValue();
             final SegmentType toPut = segmentType == null ? null : (SegmentType) deepClone(segmentType);
-            clone.put(current, toPut);
+            clone.put(current.getKey(), toPut);
         }
 
         // Add the new element and create a new EnumMapPath instance to return.
@@ -255,9 +256,9 @@ public class EnumMapPath<E extends Enum<E>, SegmentType extends Serializable & C
 
         final String separator = "\n";
         StringBuilder builder = new StringBuilder("EnumMapPath { \n");
-        for (E current : mapPathSegments.keySet()) {
-            if (mapPathSegments.get(current) != null) {
-                builder.append("  ").append(current).append("=").append(mapPathSegments.get(current)).append(separator);
+        for (Map.Entry<E, SegmentType> current : mapPathSegments.entrySet()) {
+            if (current.getValue() != null) {
+                builder.append("  ").append(current.getKey()).append("=").append(current.getValue()).append(separator);
             }
         }
         return builder.delete(builder.length() - separator.length(), builder.length()).append(" }").toString();

@@ -470,9 +470,9 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
 
                     final Set<String> listenerIDs = getListenerIDsFor(current);
                     for (final String currentID : getLocallyRegisteredListeners().keySet()) {
-                        if (listenerIDs.contains(currentID)) {
-                            listenerIDs.remove(currentID);
-                        }
+
+                        // Just remove to save the extra processing in checking if the key exists.
+                        listenerIDs.remove(currentID);
                     }
                 }
 

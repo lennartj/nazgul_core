@@ -583,8 +583,8 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
 
         log.info(" logging eventInfoMap ");
 
-        for (final Integer current : map.keySet()) {
-            log.info("[" + current + "]: " + map.get(current));
+        for (final Map.Entry<Integer, DebugCacheListener.EventInfo> current : map.entrySet()) {
+            log.info("[" + current.getKey() + "]: " + current.getValue());
         }
     }
 }

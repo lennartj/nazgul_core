@@ -24,8 +24,6 @@ package se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper;
 
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 import org.apache.commons.lang3.Validate;
-import org.w3c.dom.ls.LSInput;
-import org.w3c.dom.ls.LSResourceResolver;
 import se.jguru.nazgul.core.xmlbinding.api.DefaultNamespacePrefixResolver;
 import se.jguru.nazgul.core.xmlbinding.api.NamespacePrefixResolver;
 
@@ -33,8 +31,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * NamespacePrefixResolver adapter of a JAXB NamespacePrefixMapper implementation; all relevant
- * calls are delegated to an internal NamespacePrefixResolver instance.
+ * NamespacePrefixResolver adapter of a JAXB NamespacePrefixMapper implementation; all
+ * relevant calls are delegated to an internal NamespacePrefixResolver instance.
  * Must extend the JAXB NamespacePrefixMapper class due to poor JAXB design.
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -145,18 +143,4 @@ public class JaxbNamespacePrefixResolver extends NamespacePrefixMapper implement
     public Set<String> getRegisteredPrefixes() {
         return namespacePrefixResolver.getRegisteredPrefixes();
     }
-
-    /**
-     * {@inheritDoc}
-
-    @Override
-    public LSInput resolveResource(final String type,
-                                   final String namespaceURI,
-                                   final String publicId,
-                                   final String systemId,
-                                   final String baseURI) {
-
-        return new LocalLSInput(type, namespaceURI, publicId, systemId, baseURI);
-    }
-     */
 }

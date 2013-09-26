@@ -114,6 +114,7 @@ public class JaxbSchemaGenerationBehaviourTest {
         marshaller.marshal(cereal, resultWriter);
 
         final String result = resultWriter.toString();
+        System.out.println("result: " + result);
 
         // Assert
         final Diff diff = XmlTestUtils.compareXmlIgnoringWhitespace(expected, result);

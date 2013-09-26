@@ -55,6 +55,7 @@ import java.util.List;
 public class JaxbXmlBinder implements XmlBinder<Object> {
 
     private static final int STREAM_BUFFER_INITIAL_CAPACITY = 5000;
+
     // Internal state
     private JaxbNamespacePrefixResolver namespacePrefixResolver;
     private JAXBContext initialTransportContext;
