@@ -32,10 +32,6 @@
         <menu name="Overview">
             <item name="Introduction" href="index.html"/>
         </menu>
-        <links>
-            <item name="Maven" href="http://maven.apache.org/"/>
-            <item name="Bitbucket" href="http://maven.apache.org/"/>
-        </links>
 
         <menu ref="parent" />
         <menu ref="modules" inherit="bottom"/>
