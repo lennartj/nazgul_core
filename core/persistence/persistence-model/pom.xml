@@ -89,39 +89,25 @@
     <!-- +=============================================== -->
     <build>
         <plugins>
-            <!-- plugin>
-                <groupId>org.apache.openjpa</groupId>
-                <artifactId>openjpa-maven-plugin</artifactId>
-                <version>${openjpa.version}</version>
-                <executions>
-                    <execution>
-                        <id>enhancer</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>enhance</goal>
-                        </goals>
-                        <configuration>
-                            <includes>**/*.class</includes>
-                            <persistenceXmlFile>${basedir}/src/main/weaving/openjpa/persistence-model-persistence.xml
-                            </persistenceXmlFile>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>test-enchancer</id>
-                        <phase>process-test-classes</phase>
-                        <goals>
-                            <goal>test-enhance</goal>
-                        </goals>
-                        <configuration>
-                            <includes>**/*.class</includes>
-                            <persistenceXmlFile>
-                                ${basedir}/src/test/weaving/openjpa/persistence-model-test-persistence.xml
-                            </persistenceXmlFile>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin -->
-
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <configuration>
+                    <maxmem>256m</maxmem>
+                    <check>
+                        <branchRate>65</branchRate>
+                        <lineRate>80</lineRate>
+                        <haltOnFailure>true</haltOnFailure>
+                        <regexes>
+                            <regex>
+                                <pattern>se.jguru.nazgul.core.persistence.model.Entities</pattern>
+                                <branchRate>65</branchRate>
+                                <lineRate>70</lineRate>
+                            </regex>
+                        </regexes>
+                    </check>
+                </configuration>
+            </plugin>
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
