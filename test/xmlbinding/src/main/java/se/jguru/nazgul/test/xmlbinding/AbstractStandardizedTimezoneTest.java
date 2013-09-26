@@ -1,6 +1,6 @@
 /*
  * #%L
- * Nazgul Project: nazgul-core-xmlbinding-spi-jaxb
+ * Nazgul Project: nazgul-core-xmlbinding-test
  * %%
  * Copyright (C) 2010 - 2013 jGuru Europe AB
  * %%
@@ -19,7 +19,7 @@
  * limitations under the License.
  * #L%
  */
-package se.jguru.nazgul.core.xmlbinding.spi.jaxb;
+package se.jguru.nazgul.test.xmlbinding;
 
 import org.joda.time.DateTimeZone;
 import org.junit.After;
