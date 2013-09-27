@@ -72,6 +72,10 @@
             <item name="Software Components" href="software_components.html"/>
         </menu>
 
+        <breadcrumbs>
+            <item name="Nazgul_Tools" href="http://www.jguru.se/nazgul/tools/"/>
+        </breadcrumbs>
+
         <!-- menu ref="modules" />
         <menu ref="reports" / -->
 
