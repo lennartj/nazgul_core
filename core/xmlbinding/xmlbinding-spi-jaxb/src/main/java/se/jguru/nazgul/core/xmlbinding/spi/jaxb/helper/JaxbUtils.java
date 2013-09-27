@@ -454,8 +454,6 @@ public abstract class JaxbUtils {
     /**
      * Adds the given candidate Class to the supplied set of types, given that the candidate
      * passes some trivial checks.
-     * <p/>
-     * TODO: Convert from source types to JAXB annotated transport types here?
      *
      * @param types     The types set to which the candidate could be added.
      * @param candidate The type to [possibly] add to the given types Set.

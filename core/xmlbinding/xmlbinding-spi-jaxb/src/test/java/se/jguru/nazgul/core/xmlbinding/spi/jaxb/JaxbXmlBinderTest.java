@@ -36,6 +36,7 @@ import se.jguru.nazgul.test.xmlbinding.XmlTestUtils;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -154,8 +155,8 @@ public class JaxbXmlBinderTest {
         final String result = unitUnderTest.marshal(ale, "FooBar!", person, aFoo);
 
         // Assert
-        System.out.println("Result: " + result);
-        System.out.println("Data: " + data);
+        // System.out.println("Result: " + result);
+        // System.out.println("Data: " + data);
         Assert.assertTrue(XmlTestUtils.compareXmlIgnoringWhitespace(data, result).identical());
     }
 
@@ -202,6 +203,7 @@ public class JaxbXmlBinderTest {
         try {
             unitUnderTest.unmarshalInstance(input);
         } catch (IllegalStateException e) {
+
             // This is thrown in the Cobertura instrumentation phase
             // and only when running through Maven.
             //
@@ -243,5 +245,25 @@ public class JaxbXmlBinderTest {
 
         // Act & Assert
         unitUnderTest.unmarshal(input);
+    }
+
+    @Test
+    public void validateUnmarshallingXmlMissingMetadataForJavaLangPrimitiveTypeWrappers() {
+
+        // Assemble
+        final String input = XmlTestUtils.readFully("data/xml/javaLangMetadataRemoved.xml");
+
+        final List<Object> expected = new ArrayList<Object>();
+        expected.add(new Person("Lennart", 44));
+        expected.add("FooBar!");
+        expected.add(null);
+        expected.add(2);
+        expected.add(32.5D);
+
+        // Act
+        final List<Object> result = unitUnderTest.unmarshal(new StringReader(input));
+
+        // Assert
+        Assert.assertEquals(expected, result);
     }
 }

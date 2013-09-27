@@ -31,7 +31,11 @@ import org.xml.sax.SAXParseException;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Account;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Person;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.ThreePartCereal;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.DefaultJaxbConverterRegistry;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.helper.JaxbAnnotatedTrivialCharSequence;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.helper.TrivialCharSequence;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.helper.TrivialCharSequenceConverter;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -44,7 +48,9 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -164,5 +170,30 @@ public class JaxbUtilsTest {
 
         // Assert
         Assert.assertEquals(0, schemaValidationErrors.size());
+    }
+
+    @Test
+    public void validateOnlyTransportTypesAreEmittedAsMoxyChokesOtherwise() {
+
+        // Assemble
+        final TrivialCharSequence toWrapForTransport = new TrivialCharSequence(new StringBuffer("FooBar!"));
+        final DefaultJaxbConverterRegistry registry = new DefaultJaxbConverterRegistry();
+        registry.addConverters(new TrivialCharSequenceConverter());
+
+        final List<Object> transportableObjects = new ArrayList<Object>();
+        final SortedSet<String> transportTypes = new TreeSet<String>();
+
+        // Act
+        JaxbUtils.extractJaxbTransportData(toWrapForTransport, registry, transportableObjects, transportTypes);
+
+        // Assert
+        Assert.assertEquals(1, transportableObjects.size());
+        Assert.assertEquals(JaxbAnnotatedTrivialCharSequence.class, transportableObjects.get(0).getClass());
+
+        // TODO: Fix this; should be sufficient with a JaxbAnnotatedTransportType which is not a ClassInformationHolder
+        /*
+        Assert.assertEquals(1, transportTypes.size());
+        Assert.assertEquals(JaxbAnnotatedTrivialCharSequence.class.getName(), transportableObjects.get(0));
+        */
     }
 }
