@@ -159,7 +159,7 @@
                 <openjpa.version>2.2.2</openjpa.version>
                 <openjpa.includes>se/jguru/nazgul/**/*.class</openjpa.includes>
                 <openjpa.excludes>se/jguru/nazgul/core/xmlbinding/spi/jaxb/transport/EntityWrapper.class</openjpa.excludes>
-                <openjpa.persistenceXmlPath>weaving/openjpa/1/${project.artifactId}-persistence.xml</openjpa.persistenceXmlPath>
+                <openjpa.persistenceXmlPath>weaving/openjpa/v1/${project.artifactId}-persistence.xml</openjpa.persistenceXmlPath>
                 <openjpa.persistenceXmlFile>${project.basedir}/src/main/${openjpa.persistenceXmlPath}</openjpa.persistenceXmlFile>
                 <openjpa.persistenceXmlTestFile>${project.basedir}/src/test/${openjpa.persistenceXmlPath}</openjpa.persistenceXmlTestFile>
                 <jpa.provider.class>org.apache.openjpa.persistence.PersistenceProviderImpl</jpa.provider.class>
@@ -269,7 +269,7 @@
                 <openjpa.version>2.2.2</openjpa.version>
                 <openjpa.includes>se/jguru/nazgul/**/*.class</openjpa.includes>
                 <openjpa.excludes>se/jguru/nazgul/core/xmlbinding/spi/jaxb/transport/EntityWrapper.class</openjpa.excludes>
-                <openjpa.persistenceXmlPath>weaving/openjpa/2/${project.artifactId}-persistence.xml</openjpa.persistenceXmlPath>
+                <openjpa.persistenceXmlPath>weaving/openjpa/v2/${project.artifactId}-persistence.xml</openjpa.persistenceXmlPath>
                 <openjpa.persistenceXmlFile>${project.basedir}/src/main/${openjpa.persistenceXmlPath}</openjpa.persistenceXmlFile>
                 <openjpa.persistenceXmlTestFile>${project.basedir}/src/test/${openjpa.persistenceXmlPath}</openjpa.persistenceXmlTestFile>
                 <jpa.provider.class>org.apache.openjpa.persistence.PersistenceProviderImpl</jpa.provider.class>
@@ -325,7 +325,6 @@
                                     <version>${openjpa.version}</version>
                                 </dependency>
                             </dependencies>
-
                         </plugin>
                     </plugins>
                 </pluginManagement>
