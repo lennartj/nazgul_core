@@ -21,7 +21,9 @@
  */
 package se.jguru.nazgul.test.persistence.pets;
 
+import org.dbunit.Assertion;
 import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.ITable;
 import org.junit.Assert;
 import org.junit.Test;
 import se.jguru.nazgul.test.persistence.StandardPersistenceTest;
@@ -36,6 +38,8 @@ import java.util.TreeMap;
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 public class JpaRelationsTest extends StandardPersistenceTest {
+
+    private static final String[] birdTableName = new String[] {"BIRD"};
 
     @Test
     public void validateCreateJpaRelationEntities() throws Exception {
@@ -66,8 +70,8 @@ public class JpaRelationsTest extends StandardPersistenceTest {
         entityManager.flush();
         commitAndStartNewTransaction();
 
-        final IDataSet dbDataSet = iDatabaseConnection.createDataSet(new String[]{"BIRD, SEED, SEED_BIRD"});
-        System.out.println("Got: " + extractFlatXmlDataSet(dbDataSet));
+        // final IDataSet dbDataSet = iDatabaseConnection.createDataSet(new String[]{"BIRD", "SEED", "SEED_BIRD"});
+        // System.out.println("Got: " + extractFlatXmlDataSet(dbDataSet));
 
         final List<Seed> seeds = jpa.fireNamedQuery(Seed.GET_SEEDS_BY_BIRD_NAME, "Hawk");
 
@@ -95,7 +99,6 @@ public class JpaRelationsTest extends StandardPersistenceTest {
         }
     }
 
-    /*
     @Test
     public void validateDeleteEntity() throws Exception {
 
@@ -114,7 +117,12 @@ public class JpaRelationsTest extends StandardPersistenceTest {
         commitAndStartNewTransaction();
 
         // Assert
-        Assertion.assertEquals(expected, iDatabaseConnection.createDataSet(new String[]{"BIRD"}));
+        final IDataSet dbDataSet2 = iDatabaseConnection.createDataSet(birdTableName);
+        final ITable birdTable = dbDataSet2.getTable(birdTableName[0]);
+
+        Assert.assertEquals(1, birdTable.getRowCount());
+        Assert.assertEquals("Hawk", "" + birdTable.getValue(0, "NAME"));
+        Assertion.assertEquals(expected, dbDataSet2);
     }
 
     @Test
@@ -123,12 +131,8 @@ public class JpaRelationsTest extends StandardPersistenceTest {
         // Assemble
         final IDataSet expected = performStandardTestDbSetup("validateUpdateEntity");
 
-        // final IDataSet dataSet = iDatabaseConnection.createDataSet(new String[]{"BIRD"});
-        // System.out.println("...> " + extractFlatXmlDataSet(dataSet));
-
         // Act & Assert #1: Readout some Bird records from the DB.
         final List<Bird> result = jpa.fireNamedQuery(Bird.GET_BIRDS_BY_CATEGORY, "Pred%");
-        System.out.println(" ===> " + result);
         Assert.assertEquals(2, result.size());
 
         // Since the NamedQuery is sorted by name, the first bird should be the Eagle.
@@ -143,7 +147,6 @@ public class JpaRelationsTest extends StandardPersistenceTest {
 
         // Assert
         Assert.assertEquals("Falcon", updatedEntity.getName());
-        Assertion.assertEquals(expected, iDatabaseConnection.createDataSet(new String[]{"BIRD"}));
+        Assertion.assertEquals(expected, iDatabaseConnection.createDataSet(birdTableName));
     }
-    */
 }

@@ -259,14 +259,19 @@ public abstract class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
 
         // Get the appropriate DatabaseOperation from dbUnit.
         final DatabaseOperation dbOp = cleanBeforeInsert ? DatabaseOperation.CLEAN_INSERT : DatabaseOperation.INSERT;
+        IDataSet setupDataSet = null;
 
         try {
 
             // Fire the DatabaseOperation
-            final IDataSet setup = getDataSet(setupDataSetLocation);
-            dbOp.execute(iDatabaseConnection, setup);
+            setupDataSet = getDataSet(setupDataSetLocation);
+            dbOp.execute(iDatabaseConnection, setupDataSet);
         } catch (Exception e) {
-            throw new IllegalStateException("Could not setup database state.", e);
+            String dataSetContent = "<no content>";
+            if(setupDataSet != null) {
+                dataSetContent = extractFlatXmlDataSet(setupDataSet);
+            }
+            throw new IllegalStateException("Could not setup database state. SetupDataSet: " + dataSetContent, e);
         }
     }
 
