@@ -22,7 +22,5 @@
   #L%
   -->
 <dataset>
-    <SEED id="0" version="1" name="Oats" />
-    <BIRD id="0" version="1" name="Hawk" category="Predator" />
-    <BIRD id="1" version="1" name="Eagle" category="Predator" />
+    <BIRD ID="1" CATEGORY="Predator" NAME="Hawk" VERSION="1"/>
 </dataset>

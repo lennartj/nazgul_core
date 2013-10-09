@@ -22,7 +22,11 @@
   #L%
   -->
 <dataset>
-    <SEED id="0" version="1" name="Oats" />
-    <BIRD id="0" version="1" name="Hawk" category="Predator" />
-    <BIRD id="1" version="1" name="Eagle" category="Predator" />
+    <BIRD ID="0" CATEGORY="Predator" NAME="Eagle" VERSION="1"/>
+    <BIRD ID="1" CATEGORY="Predator" NAME="Hawk" VERSION="1"/>
+    <SEED ID="0" CATEGORY="Grain" NAME="Oats" VERSION="1"/>
+    <SEED ID="1" CATEGORY="Grain" NAME="Barley" VERSION="1"/>
+    <SEED_BIRD SEED_ID="0" EATENBY_ID="0"/>
+    <SEED_BIRD SEED_ID="0" EATENBY_ID="1"/>
+    <SEED_BIRD SEED_ID="1" EATENBY_ID="1"/>
 </dataset>
