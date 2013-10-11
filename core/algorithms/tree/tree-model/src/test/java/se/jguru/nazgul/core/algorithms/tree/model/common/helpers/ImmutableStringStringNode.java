@@ -24,7 +24,7 @@ package se.jguru.nazgul.core.algorithms.tree.model.common.helpers;
 
 import se.jguru.nazgul.core.algorithms.tree.model.Node;
 import se.jguru.nazgul.core.algorithms.tree.model.Path;
-import se.jguru.nazgul.core.algorithms.tree.model.common.ListPath;
+import se.jguru.nazgul.core.algorithms.tree.model.common.StringPath;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -110,15 +110,15 @@ public class ImmutableStringStringNode implements Node<String, String> {
 
     /**
      * Override this method to create (and use) a custom Path
-     * implementation for this ListMutableNode instance.
-     * The default implementation uses {@code ListPath}.
+     * implementation for this AbstractMutableNode instance.
+     * The default implementation uses {@code AbstractListPath}.
      *
      * @param key The key to convert to a Path.
      * @param <X> The Path type (or subtype thereof, such as {@code SemanticPath}) returned.
      * @return The Path made from the provided key.
      */
     protected <X extends Path<String>> X makePath(final String key) {
-        return (X) new ListPath<String>(key);
+        return (X) new StringPath(key);
     }
 
     /**

@@ -25,7 +25,7 @@ package se.jguru.nazgul.core.algorithms.tree.model.common.helpers;
 import se.jguru.nazgul.core.algorithms.tree.model.MutableNode;
 import se.jguru.nazgul.core.algorithms.tree.model.Node;
 import se.jguru.nazgul.core.algorithms.tree.model.Path;
-import se.jguru.nazgul.core.algorithms.tree.model.common.ListMutableNode;
+import se.jguru.nazgul.core.algorithms.tree.model.common.AbstractMutableNode;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +35,7 @@ import java.util.List;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class ProcessNode extends ListMutableNode<String, String> {
+public class ProcessNode extends AbstractMutableNode<String, String> {
 
     /**
      * {@inheritDoc}
@@ -63,8 +63,8 @@ public class ProcessNode extends ListMutableNode<String, String> {
 
     /**
      * Override this method to create (and use) a custom Path
-     * implementation for this ListMutableNode instance.
-     * The default implementation uses {@code ListPath}.
+     * implementation for this AbstractMutableNode instance.
+     * The default implementation uses {@code AbstractListPath}.
      *
      * @param key The key to convert to a Path.
      * @param <X> The Path type (or subtype thereof, such as {@code SemanticPath}) returned.

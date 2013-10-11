@@ -24,14 +24,14 @@ package se.jguru.nazgul.core.algorithms.tree.model.common.helpers;
 
 import se.jguru.nazgul.core.algorithms.tree.model.MutableNode;
 import se.jguru.nazgul.core.algorithms.tree.model.Node;
-import se.jguru.nazgul.core.algorithms.tree.model.common.ListMutableNode;
+import se.jguru.nazgul.core.algorithms.tree.model.common.StringKeyNode;
 
 import java.util.List;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class StringStringNode extends ListMutableNode<String, String> {
+public class StringStringNode extends StringKeyNode<String> {
 
     /**
      * {@inheritDoc}

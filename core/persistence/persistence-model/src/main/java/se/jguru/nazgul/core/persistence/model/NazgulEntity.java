@@ -86,12 +86,26 @@ public abstract class NazgulEntity implements Serializable, Cloneable, Validatab
     }
 
     /**
+     * Equality comparison definition which, by choice, ignores the
+     * id and version fields in performing the comparison - only the
+     * business fields should be included in performing the equality check.
+     * <p/>
      * {@inheritDoc}
      */
     @Override
     @SuppressWarnings("all")
     public boolean equals(final Object obj) {
-        return Entities.equals(this, obj, Object.class);
+
+        // Check sanity; fail fast.
+        if(obj == null) {
+            return false;
+        }
+        if(obj == this) {
+            return true;
+        }
+
+        // Simply validate that the types are equal.
+        return getClass().equals(obj.getClass());
     }
 
     /**

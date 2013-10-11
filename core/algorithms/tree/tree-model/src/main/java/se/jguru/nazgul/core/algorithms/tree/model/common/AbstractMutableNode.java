@@ -41,8 +41,8 @@ import java.util.List;
  * @param <KeyType>   The key type of this Node.
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class ListMutableNode<KeyType extends Serializable & Comparable<KeyType>, ValueType extends Serializable>
-        implements MutableNode<KeyType, ValueType> {
+public abstract class AbstractMutableNode<KeyType extends Serializable & Comparable<KeyType>,
+        ValueType extends Serializable> implements MutableNode<KeyType, ValueType> {
 
     // Internal state
     private ValueType data;
@@ -60,10 +60,10 @@ public class ListMutableNode<KeyType extends Serializable & Comparable<KeyType>,
      * @param children The children of this DefaultMutableNode instance. Can be {@code null}, in which
      *                 case a new ArrayList will be created and used for the children.
      */
-    public ListMutableNode(final KeyType key,
-                           final ValueType data,
-                           final MutableNode<KeyType, ValueType> parent,
-                           final List<Node<KeyType, ValueType>> children) {
+    public AbstractMutableNode(final KeyType key,
+                               final ValueType data,
+                               final MutableNode<KeyType, ValueType> parent,
+                               final List<Node<KeyType, ValueType>> children) {
 
         // Check sanity
         Validate.notNull(key, "Cannot handle null key argument.");
@@ -80,7 +80,7 @@ public class ListMutableNode<KeyType extends Serializable & Comparable<KeyType>,
     /**
      * {@inheritDoc}
      *
-     * @return a synchronized List holding all children of this ListMutableNode.
+     * @return a synchronized List holding all children of this AbstractMutableNode.
      * @see Collections#synchronizedList(java.util.List)
      */
     @Override
@@ -130,8 +130,9 @@ public class ListMutableNode<KeyType extends Serializable & Comparable<KeyType>,
         // Remove all appropriate nodes.
         if (toRemove.size() > 0) {
             synchronized (children) {
-                for (MutableNode<KeyType, ValueType> current : toRemove)
+                for (MutableNode<KeyType, ValueType> current : toRemove) {
                     removeChild(current);
+                }
             }
         }
     }
@@ -181,9 +182,10 @@ public class ListMutableNode<KeyType extends Serializable & Comparable<KeyType>,
     }
 
     /**
-     * @return The parent of this Node.
+     * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("all")
     public <X extends Node<KeyType, ValueType>> X getParent() {
         return (X) parent;
     }
@@ -255,6 +257,7 @@ public class ListMutableNode<KeyType extends Serializable & Comparable<KeyType>,
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("all")
     public <X extends Path<KeyType>> X getPath() {
 
         List<KeyType> pathSegments = new ArrayList<KeyType>();
@@ -277,16 +280,14 @@ public class ListMutableNode<KeyType extends Serializable & Comparable<KeyType>,
 
     /**
      * Override this method to create (and use) a custom Path
-     * implementation for this ListMutableNode instance.
-     * The default implementation uses {@code ListPath}.
+     * implementation for this AbstractMutableNode instance.
+     * The default implementation uses {@code AbstractListPath}.
      *
      * @param key The key to convert to a Path.
      * @param <X> The Path type (or subtype thereof, such as {@code SemanticPath}) returned.
      * @return The Path made from the provided key.
      */
-    protected <X extends Path<KeyType>> X makePath(final KeyType key) {
-        return (X) new ListPath<KeyType>(key);
-    }
+    protected abstract <X extends Path<KeyType>> X makePath(final KeyType key);
 
     /**
      * {@inheritDoc}
@@ -303,6 +304,6 @@ public class ListMutableNode<KeyType extends Serializable & Comparable<KeyType>,
      */
     @Override
     public String toString() {
-        return "ListMutableNode {" + getKey() + " -> " + getData() + "}, " + children.size() + " children.";
+        return "AbstractMutableNode {" + getKey() + " -> " + getData() + "}, " + children.size() + " children.";
     }
 }

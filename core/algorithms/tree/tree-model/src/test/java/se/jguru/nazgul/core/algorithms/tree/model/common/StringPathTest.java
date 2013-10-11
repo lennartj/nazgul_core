@@ -34,7 +34,7 @@ import java.util.TreeSet;
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class ListPathTest {
+public class StringPathTest {
 
     @Test(expected = NullPointerException.class)
     public void validateExceptionOnNullSegments() {
@@ -43,7 +43,7 @@ public class ListPathTest {
         final List<String> segments = null;
 
         // Act & Assert
-        new ListPath<String>(segments);
+        new StringPath(segments);
     }
 
     @Test(expected = NullPointerException.class)
@@ -53,7 +53,7 @@ public class ListPathTest {
         final String segment = null;
 
         // Act & Assert
-        new ListPath<String>(segment);
+        new StringPath(segment);
     }
 
     @Test
@@ -63,7 +63,7 @@ public class ListPathTest {
         final List<String> segments = Arrays.asList("one", "two", "three");
 
         // Act
-        final ListPath<String> result = new ListPath<String>(segments);
+        final StringPath result = new StringPath(segments);
         final List<String> iterated = new ArrayList<String>();
         for (String aResult : result) {
             iterated.add(aResult);
@@ -78,7 +78,7 @@ public class ListPathTest {
     public void validateExceptionOnTooBigIndex() {
 
         // Assemble
-        final ListPath<String> unitUnderTest = new ListPath<String>("one");
+        final StringPath unitUnderTest = new StringPath("one");
 
         // Act & Assert
         unitUnderTest.get(45);
@@ -88,7 +88,7 @@ public class ListPathTest {
     public void validateExceptionOnNegativeIndex() {
 
         // Assemble
-        final ListPath<String> unitUnderTest = new ListPath<String>(Arrays.asList("one", "two", "three"));
+        final StringPath unitUnderTest = new StringPath(Arrays.asList("one", "two", "three"));
 
         // Act & Assert
         unitUnderTest.get(-2);
@@ -103,17 +103,17 @@ public class ListPathTest {
         final List<String> segments3 = Arrays.asList("one", "two");
         final List<String> segments4 = Arrays.asList("one", "two", "three", "four");
 
-        final ListPath<String> path1 = new ListPath<String>(segments1);
-        final ListPath<String> path2 = new ListPath<String>(segments2);
-        final ListPath<String> path3 = new ListPath<String>(segments3);
-        final ListPath<String> path4 = new ListPath<String>(segments4);
-        final List<ListPath<String>> paths = Arrays.asList(path1, path2, path3, path4);
+        final AbstractListPath<String> path1 = new StringPath(segments1);
+        final AbstractListPath<String> path2 = new StringPath(segments2);
+        final AbstractListPath<String> path3 = new StringPath(segments3);
+        final AbstractListPath<String> path4 = new StringPath(segments4);
+        final List<AbstractListPath<String>> paths = Arrays.asList(path1, path2, path3, path4);
 
-        final SortedSet<ListPath<String>> sortedSet = new TreeSet<ListPath<String>>(paths);
+        final SortedSet<AbstractListPath<String>> sortedSet = new TreeSet<AbstractListPath<String>>(paths);
 
         // Act
-        final List<ListPath<String>> sortedList = new ArrayList<ListPath<String>>();
-        for (ListPath<String> current : sortedSet) {
+        final List<AbstractListPath<String>> sortedList = new ArrayList<AbstractListPath<String>>();
+        for (AbstractListPath<String> current : sortedSet) {
             sortedList.add(current);
         }
 
@@ -131,10 +131,10 @@ public class ListPathTest {
     public void validateAppendingSegmentToPath() {
 
         // Assemble
-        final ListPath<String> unitUnderTest = new ListPath<String>("one");
+        final AbstractListPath<String> unitUnderTest = new StringPath("one");
 
         // Act
-        final ListPath<String> two = unitUnderTest.append("two");
+        final AbstractListPath<String> two = unitUnderTest.append("two");
 
         // Assert
         Assert.assertNotSame(unitUnderTest, two);
@@ -148,7 +148,7 @@ public class ListPathTest {
     public void validateStringConversion() {
 
         // Assemble
-        final ListPath<String> unitUnderTest = new ListPath<String>(Arrays.asList("one", "two", "three"));
+        final AbstractListPath<String> unitUnderTest = new StringPath(Arrays.asList("one", "two", "three"));
         final String expected = "{ one/two/three }";
 
         // Act
