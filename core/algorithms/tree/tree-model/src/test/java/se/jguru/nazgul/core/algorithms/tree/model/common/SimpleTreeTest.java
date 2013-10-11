@@ -52,9 +52,9 @@ public class SimpleTreeTest {
         final List<Node<String, String>> children = new ArrayList<Node<String, String>>();
         children.add(child1);
 
-        final MutableNode<String, String> root1 = new ListMutableNode<String, String>(
+        final MutableNode<String, String> root1 = new StringKeyNode<String>(
                 "root1Key", "root1Value", null, children);
-        final MutableNode<String, String> root2 = new ListMutableNode<String, String>(
+        final MutableNode<String, String> root2 = new StringKeyNode<String>(
                 "root2Key", "root2Value", null, null);
 
 
@@ -68,11 +68,11 @@ public class SimpleTreeTest {
     public void validateReassigningRoot() {
 
         // Assemble
-        final MutableNode<String, String> root1 = new ListMutableNode<String, String>(
+        final MutableNode<String, String> root1 = new StringKeyNode<String>(
                 "root1Key", "root1Value", null, null);
-        final MutableNode<String, String> root2 = new ListMutableNode<String, String>(
+        final MutableNode<String, String> root2 = new StringKeyNode<String>(
                 "root2Key", "root2Value", null, null);
-        final MutableNode<String, String> child1 = new ListMutableNode<String, String>(
+        final MutableNode<String, String> child1 = new StringKeyNode<String>(
                 "child1Key", "child1Value", null, null);
 
         // Act & Assert #1
@@ -97,9 +97,9 @@ public class SimpleTreeTest {
     public void validateAcquiringNodes() {
 
         // Assemble
-        final MutableNode<String, String> root1 = new ListMutableNode<String, String>(
+        final MutableNode<String, String> root1 = new StringKeyNode<String>(
                 "root1Key", "root1Value", null, null);
-        final MutableNode<String, String> child1 = new ListMutableNode<String, String>(
+        final MutableNode<String, String> child1 = new StringKeyNode<String>(
                 "child1Key", "child1Value", null, null);
 
         // Act
@@ -107,8 +107,8 @@ public class SimpleTreeTest {
         final MutableNode<String, String> originalRoot = unitUnderTest.getRoot();
         originalRoot.addChild(child1);
 
-        final ListPath<String> path1 = new ListPath<String>(Arrays.asList("root2Key", "child1Key"));
-        final ListPath<String> path2 = new ListPath<String>(Arrays.asList("root1Key", "child1Key"));
+        final AbstractListPath<String> path1 = new StringPath(Arrays.asList("root2Key", "child1Key"));
+        final AbstractListPath<String> path2 = new StringPath(Arrays.asList("root1Key", "child1Key"));
 
         // Assert
         Assert.assertNull(unitUnderTest.get(path1));

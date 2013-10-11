@@ -53,6 +53,7 @@ public interface Path<SegmentType extends Serializable & Comparable<SegmentType>
      * Appends the provided KeyType to this Path, returning the resulting Path.
      *
      * @param aKey The KeyType to append to this Path.
+     * @param <X> The explicit Path subtype.
      * @return The Path result from appending the provided KeyType instance to this Path.
      */
     <X extends Path<SegmentType>> X append(SegmentType aKey);

@@ -50,8 +50,8 @@ import java.util.Map;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class JaxbAnnotatedEnumMap<E extends Enum<E>> implements Serializable {
 
-	// Internal state
-	private static final long serialVersionUID = -2855580334177490534L;
+    // Internal state
+    private static final long serialVersionUID = -2855580334177490534L;
     private List values;
 
     @XmlAttribute(required = true)
@@ -71,7 +71,7 @@ public class JaxbAnnotatedEnumMap<E extends Enum<E>> implements Serializable {
      * @param value    The EnumMap value whose state should be retained/internally mapped.
      * @param enumType The Enum type used for keys within the provided EnumMap.
      */
-	public JaxbAnnotatedEnumMap(final EnumMap<E, ?> value, final Class<E> enumType) {
+    public JaxbAnnotatedEnumMap(final EnumMap<E, ?> value, final Class<E> enumType) {
 
         // Check sanity
         Validate.notNull(value, "Cannot handle null value argument.");

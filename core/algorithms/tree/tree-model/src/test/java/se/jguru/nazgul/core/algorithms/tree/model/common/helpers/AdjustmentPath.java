@@ -25,18 +25,18 @@ import se.jguru.nazgul.core.algorithms.api.trees.TreeAlgorithms;
 import se.jguru.nazgul.core.algorithms.tree.model.common.EnumMapPath;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+import javax.persistence.Entity;
 import javax.xml.bind.annotation.XmlType;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 @XmlType(namespace = XmlBinder.CORE_NAMESPACE)
-@XmlAccessorType(XmlAccessType.FIELD)
+@Entity
 public class AdjustmentPath extends EnumMapPath<Adjustment, String> {
 
     public AdjustmentPath() {
@@ -51,6 +51,23 @@ public class AdjustmentPath extends EnumMapPath<Adjustment, String> {
      */
     public AdjustmentPath(final EnumMap<Adjustment, String> segments) {
         super(segments, Adjustment.class);
+    }
+
+    /**
+     * Standard factory method.
+     *
+     * @param segments The map entry values in this AdjustmentPath.
+     * @return The fully created AdjustmentStringNode.
+     */
+    public static AdjustmentPath create(final Map<Adjustment, String> segments) {
+
+        final EnumMap<Adjustment, String> segmentMap = TreeAlgorithms.getEmptyEnumMap(Adjustment.class);
+        for(Map.Entry<Adjustment, String> current : segments.entrySet()) {
+            segmentMap.put(current.getKey(), current.getValue());
+        }
+
+        // All done.
+        return new AdjustmentPath(segmentMap);
     }
 
     /**

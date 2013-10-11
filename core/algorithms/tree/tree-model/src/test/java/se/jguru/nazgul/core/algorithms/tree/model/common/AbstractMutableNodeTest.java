@@ -35,7 +35,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class ListMutableNodeTest {
+public class AbstractMutableNodeTest {
 
     @Test(expected = NullPointerException.class)
     public void validateExceptionOnNullKey() {

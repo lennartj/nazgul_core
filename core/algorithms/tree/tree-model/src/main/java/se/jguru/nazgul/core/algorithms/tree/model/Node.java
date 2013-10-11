@@ -48,6 +48,8 @@ public interface Node<KeyType extends Serializable & Comparable<KeyType>, ValueT
     <X extends Node<KeyType, ValueType>> List<X> getChildren();
 
     /**
+     * Retrieves the parent of this Node.
+     *
      * @param <X> The Node subtype.
      * @return The parent of this Node.
      */

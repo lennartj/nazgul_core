@@ -22,25 +22,14 @@
 
 package se.jguru.nazgul.core.algorithms.tree.model.common;
 
-import org.apache.commons.lang3.Validate;
 import se.jguru.nazgul.core.algorithms.tree.model.Path;
 import se.jguru.nazgul.core.persistence.model.NazgulEntity;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlTransient;
+import javax.persistence.MappedSuperclass;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -52,86 +41,23 @@ import java.util.List;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-@Entity
-@XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"internalSegments"})
-@XmlAccessorType(XmlAccessType.FIELD)
-@Access(value = AccessType.FIELD)
+@MappedSuperclass
+@XmlType(namespace = XmlBinder.CORE_NAMESPACE)
 @SuppressWarnings("PMD.UnusedPrivateField")
-public class ListPath<SegmentType extends Serializable & Comparable<SegmentType>>
+public abstract class AbstractListPath<SegmentType extends Serializable & Comparable<SegmentType>>
         extends NazgulEntity implements Path<SegmentType> {
 
-    // Internal state
-    @XmlTransient
-    @OneToMany
-    private List<SegmentType> segments;
-
-    @XmlElementWrapper(name = "pathSegments")
-    @XmlElement(name = "pathSegment")
-    @Transient
-    private List internalSegments;
-
     /**
-     * JPA/JAXB-friendly constructor.
-     * <strong>This is for framework use only.</strong>
+     * @return The List of SegmentType instances which is this Path.
      */
-    public ListPath() {
-    }
-
-    /**
-     * Creates a ListPath holding a single segment (i.e. the provided key).
-     *
-     * @param segment The only segment within this ListPath instance.
-     */
-    public ListPath(final SegmentType segment) {
-
-        // Check sanity
-        Validate.notNull(segment, "Cannot handle null segment.");
-
-        // Assign internal state
-        segments = new ArrayList<SegmentType>();
-        segments.add(segment);
-
-        // Handle JAXB requirements for marshalling
-        internalSegments = segments;
-    }
-
-    /**
-     * Creates a ListPath object with the given segment List.
-     *
-     * @param segments The segments of the ListPath.
-     */
-    public ListPath(final List<SegmentType> segments) {
-
-        // Check sanity
-        Validate.notNull(segments, "Cannot handle null segments argument.");
-
-        // Assign internal state
-        this.segments = segments;
-
-        // Handle JAXB requirements for marshalling
-        internalSegments = segments;
-    }
+    protected abstract List<SegmentType> getSegments();
 
     /**
      * {@inheritDoc}
      */
     @Override
     public int size() {
-        return segments.size();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <X extends Path<SegmentType>> X append(final SegmentType aKey) {
-
-        // Create a segment copy List.
-        List<SegmentType> segments = new ArrayList<SegmentType>(this.segments);
-
-        // Add the provided aKey instance and return.
-        segments.add(aKey);
-        return (X) new ListPath<SegmentType>(segments);
+        return getSegments().size();
     }
 
     /**
@@ -168,8 +94,33 @@ public class ListPath<SegmentType extends Serializable & Comparable<SegmentType>
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("all")
+    public boolean equals(final Object obj) {
+
+        // Check sanity; fail fast.
+        if(obj == null || !getClass().equals(obj.getClass())) {
+            return false;
+        }
+        if(obj == this) {
+            return true;
+        }
+
+        // Delegate to comparing the properties
+        final AbstractListPath that = (AbstractListPath) obj;
+        if(!(size() == that.size())) {
+            return false;
+        }
+
+        // Delegate.
+        return this.compareTo(that) == 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Iterator<SegmentType> iterator() {
-        return Collections.unmodifiableList(segments).listIterator();
+        return Collections.unmodifiableList(getSegments()).listIterator();
     }
 
     /**
@@ -177,7 +128,7 @@ public class ListPath<SegmentType extends Serializable & Comparable<SegmentType>
      */
     @Override
     public SegmentType get(final int index) throws IndexOutOfBoundsException {
-        return segments.get(index);
+        return getSegments().get(index);
     }
 
     /**
@@ -187,10 +138,11 @@ public class ListPath<SegmentType extends Serializable & Comparable<SegmentType>
     public String toString() {
 
         StringBuilder builder = new StringBuilder("{ ");
-        for (SegmentType current : segments) {
+        for (SegmentType current : getSegments()) {
             builder.append(current).append("/");
-
         }
+
+        // Remove the trailing '/'
         return builder.delete(builder.length() - "/".length(), builder.length()).append(" }").toString();
     }
 
@@ -201,7 +153,7 @@ public class ListPath<SegmentType extends Serializable & Comparable<SegmentType>
     protected void validateEntityState() throws InternalStateValidationException {
 
         InternalStateValidationException.create()
-                .notNull(segments, "segments")
+                .notNull(getSegments(), "segments")
                 .endExpressionAndValidate();
     }
 }

@@ -220,10 +220,11 @@ public class EnumMapPathTest {
         // Assemble
         final String expected = XmlTestUtils.readFully("testdata/anEnumMapPath.xml");
 
-        final AdjustmentPath toMarshal = AdjustmentPath.create(Arrays.asList("Left", "Center"));
+        final AdjustmentPath toMarshal = AdjustmentPath.create(Arrays.asList("Left", "Center", "Right"));
         final JaxbXmlBinder binder = new JaxbXmlBinder();
 
         // Act
+        System.out.println("Got: " + toMarshal.toString());
         final String result = binder.marshal(toMarshal);
 
         // Assert
