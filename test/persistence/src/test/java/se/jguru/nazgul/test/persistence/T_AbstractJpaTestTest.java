@@ -170,4 +170,34 @@ public class T_AbstractJpaTestTest {
         unitUnderTest.tearDown();
         Assert.assertNull(unitUnderTest.transaction);
     }
+
+    @Test(expected = IllegalStateException.class)
+    public void validateExceptionOnNonexistentPersistenceUnit() throws Exception {
+
+        // Assemble
+        final String persistenceXmlFile = "testdata/mockjpa/incorrectpersistenceunit.xml";
+        final String persistenceUnit = "nonexistentPersistenceUnit";
+        final MockAbstractJpaTest unitUnderTest = new MockAbstractJpaTest(
+                persistenceXmlFile,
+                persistenceUnit,
+                PersistenceProviderType.OPENJPA_2);
+
+        // Act & Assert
+        unitUnderTest.setUp();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void validateExceptionOnIncorrectPersistenceUnit() throws Exception {
+
+        // Assemble
+        final String persistenceXmlFile = "testdata/mockjpa/incorrectpersistenceunit.xml";
+        final String persistenceUnit = "incorrectPU";
+        final MockAbstractJpaTest unitUnderTest = new MockAbstractJpaTest(
+                persistenceXmlFile,
+                persistenceUnit,
+                PersistenceProviderType.OPENJPA_2);
+
+        // Act & Assert
+        unitUnderTest.setUp();
+    }
 }

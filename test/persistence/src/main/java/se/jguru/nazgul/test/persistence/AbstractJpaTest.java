@@ -100,13 +100,16 @@ public abstract class AbstractJpaTest {
                     + builder.toString() + "\n");
         }
 
-        final EntityManagerFactory factory = Persistence.createEntityManagerFactory(getPersistenceUnitName(), props);
+        EntityManagerFactory factory = null;
         try {
+            factory = Persistence.createEntityManagerFactory(getPersistenceUnitName(), props);
             entityManager = factory.createEntityManager();
         } catch (Exception e) {
 
             // Could not create the entityManager
-            log.error("Could not create EntityManager from factory [" + factory.getClass().getName() + "]", e);
+            final String factoryType = factory == null ? "<unknown>" : factory.getClass().getName();
+            throw new IllegalStateException("Could not create EntityManager from factory of type ["
+                    + factoryType + "]", e);
         }
 
         jpa = new JpaPersistenceTestOperations(entityManager);
