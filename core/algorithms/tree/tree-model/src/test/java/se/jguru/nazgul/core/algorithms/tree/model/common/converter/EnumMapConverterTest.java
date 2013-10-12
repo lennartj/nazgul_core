@@ -47,4 +47,14 @@ public class EnumMapConverterTest {
         Assert.assertNull(marshalledResult);
         Assert.assertNull(unmarshalledResult);
     }
+
+    @Test
+    public void validateConvertEnumMap() {
+
+        // Assemble
+
+        // Act
+
+        // Assert
+    }
 }
