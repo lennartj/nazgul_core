@@ -50,7 +50,7 @@ public class StringPathPersistenceTest extends StandardPersistenceTest {
         // final IDataSet dbDataSet = iDatabaseConnection.createDataSet(new String[]{"BIRD", "SEED", "SEED_BIRD"});
         // System.out.println("Got: " + extractFlatXmlDataSet(dbDataSet));
         final Query jpql = entityManager.createQuery("select e from StringPath e");
-        final List<EnumMapPath> resultList = jpql.getResultList();
+        final List<StringPath> resultList = jpql.getResultList();
 
         // Assert
         Assert.assertEquals(1, resultList.size());
