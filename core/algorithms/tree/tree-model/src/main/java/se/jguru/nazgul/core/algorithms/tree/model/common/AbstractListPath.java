@@ -1,6 +1,6 @@
 /*
  * #%L
- * Nazgul Project: nazgul-core-tree-model
+ * Nazgul Project: nazgul-core-algorithms-tree-model
  * %%
  * Copyright (C) 2010 - 2013 jGuru Europe AB
  * %%
@@ -72,9 +72,14 @@ public abstract class AbstractListPath<SegmentType extends Serializable & Compar
         while (true) {
 
             // Unequal number of segments?
-            if (!thisIt.hasNext()) {
+            boolean thisHasNext = thisIt.hasNext();
+            boolean thatHasNext = thatIt.hasNext();
+            if(!thisHasNext && !thatHasNext) {
+                return 0;
+            }
+            if (!thisHasNext) {
                 return -1;
-            } else if (!thatIt.hasNext()) {
+            } else if (!thatHasNext) {
                 return 1;
             }
 

@@ -36,7 +36,7 @@
     </parent>
 
     <groupId>se.jguru.nazgul.core.algorithms.tree.model</groupId>
-    <artifactId>nazgul-core-tree-model</artifactId>
+    <artifactId>nazgul-core-algorithms-tree-model</artifactId>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <url>${url.prefix}/${path.in.reactor}</url>
