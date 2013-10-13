@@ -115,4 +115,41 @@ public class StandardConverters {
     public <T extends Collection> T reviveAfterTransport(final JaxbAnnotatedCollection<T> obj) {
         return obj.getValue();
     }
+
+    /**
+     * Resurrects EnumMaps from JaxbAnnotatedEnumMap instances.
+     * @param obj The object to resurrect.
+     * @param <E> The Enum subtype, used as keys in the revived EnumMap-
+     * @param <T> The Value type in the EnumMap.
+     * @return
+
+    @Converter
+    public <E extends Enum<E>, T extends Serializable>
+    EnumMap<E, T> resurrectAfterTransport(final JaxbAnnotatedEnumMap obj) {
+
+        EnumMap<E, T> toReturn = null;
+        if (obj != null) {
+            toReturn = obj.getEnumMap();
+        }
+
+        // All done.
+        return toReturn;
+    }
+
+
+    @Override
+    public JaxbAnnotatedEnumMap marshal(final EnumMap<E, KeyType> value) throws Exception {
+
+        JaxbAnnotatedEnumMap toReturn = null;
+
+        if (value != null) {
+            final Iterator<E> it = value.keySet().iterator();
+            if (it.hasNext()) {
+                toReturn = new JaxbAnnotatedEnumMap(value, it.next().getDeclaringClass());
+            }
+        }
+
+        return toReturn;
+    }
+    */
 }

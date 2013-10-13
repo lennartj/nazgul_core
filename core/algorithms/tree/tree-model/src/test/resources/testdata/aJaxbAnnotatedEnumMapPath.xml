@@ -26,7 +26,7 @@
         <entityClass>java.lang.Class</entityClass>
         <entityClass>java.lang.String</entityClass>
         <entityClass>java.lang.String$CaseInsensitiveComparator</entityClass>
-        <entityClass>se.jguru.nazgul.core.algorithms.tree.model.common.converter.JaxbAnnotatedEnumMap</entityClass>
+        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedEnumMap</entityClass>
         <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter</entityClass>
         <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedCollection</entityClass>
     </entityClasses>
