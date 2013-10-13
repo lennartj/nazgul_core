@@ -1,6 +1,6 @@
 /*
  * #%L
- * Nazgul Project: nazgul-core-tree-model
+ * Nazgul Project: nazgul-core-algorithms-tree-model
  * %%
  * Copyright (C) 2010 - 2013 jGuru Europe AB
  * %%
@@ -125,6 +125,27 @@ public class StringPathTest {
         Assert.assertSame(path2, sortedList.get(1));
         Assert.assertSame(path1, sortedList.get(2));
         Assert.assertSame(path4, sortedList.get(3));
+    }
+
+    @Test
+    public void validateEquality() {
+
+        // Assemble
+        final List<String> segments1 = Arrays.asList("one", "two", "three");
+        final List<String> segments2 = Arrays.asList("one", "two", "four");
+        final List<String> segments3 = Arrays.asList("one", "two");
+        final List<String> segments4 = Arrays.asList("one", "two", "three");
+
+        final AbstractListPath<String> path1 = new StringPath(segments1);
+        final AbstractListPath<String> path2 = new StringPath(segments2);
+        final AbstractListPath<String> path3 = new StringPath(segments3);
+        final AbstractListPath<String> path4 = new StringPath(segments4);
+
+        // Act & Assert
+        Assert.assertTrue(path1.equals(path1));
+        Assert.assertFalse(path1.equals(null));
+        Assert.assertTrue(path1.equals(path4));
+        Assert.assertFalse(path1.equals(path3));
     }
 
     @Test

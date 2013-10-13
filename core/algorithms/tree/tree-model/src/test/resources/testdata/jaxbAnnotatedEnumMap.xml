@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!--
   ~ #%L
-  Nazgul Project: nazgul-core-tree-model
+  Nazgul Project: nazgul-core-algorithms-tree-model
   %%
   Copyright (C) 2010 - 2013 jGuru Europe AB
   ~
@@ -30,8 +30,8 @@
     </entityClasses>
     <items>
         <item xsi:type="core:adjustmentPath"
-              enumType="se.jguru.nazgul.core.algorithms.tree.model.common.helpers.Adjustment" version="0">
-            <mapPathSegments enumType="se.jguru.nazgul.core.algorithms.tree.model.common.helpers.Adjustment">
+              enumType="se.jguru.nazgul.core.algorithms.tree.api.helpers.Adjustment" version="0">
+            <mapPathSegments enumType="se.jguru.nazgul.core.algorithms.tree.api.helpers.Adjustment">
                 <values xsi:type="xs:string">Left</values>
                 <values xsi:type="xs:string">Center</values>
                 <values xsi:nil="true"/>
