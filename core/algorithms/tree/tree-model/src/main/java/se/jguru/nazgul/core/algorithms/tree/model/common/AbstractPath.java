@@ -22,12 +22,16 @@
 
 package se.jguru.nazgul.core.algorithms.tree.model.common;
 
+import org.apache.commons.lang3.Validate;
 import se.jguru.nazgul.core.algorithms.tree.model.Path;
 import se.jguru.nazgul.core.persistence.model.NazgulEntity;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException;
 
+import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.Collections;
@@ -44,13 +48,84 @@ import java.util.List;
 @MappedSuperclass
 @XmlType(namespace = XmlBinder.CORE_NAMESPACE)
 @SuppressWarnings("PMD.UnusedPrivateField")
-public abstract class AbstractListPath<SegmentType extends Serializable & Comparable<SegmentType>>
+public abstract class AbstractPath<SegmentType extends Serializable & Comparable<SegmentType>>
         extends NazgulEntity implements Path<SegmentType> {
+
+    /**
+     * The separator between segments of this AbstractPath.
+     * This DEFAULT_SEGMENT_SEPARATOR is used in the default {@code toString} implementation,
+     * as glue between segments.
+     */
+    public static final String DEFAULT_SEGMENT_SEPARATOR = "/";
+
+    // Internal state
+    @Basic(optional = false)
+    @Column(nullable = false)
+    @XmlElement(required = true, nillable = false)
+    private String compoundPath;
+
+    @Basic(optional = true)
+    @Column(nullable = true)
+    @XmlElement(required = false, nillable = true)
+    private String segmentSeparator;
+
+    /**
+     * JPA/JAXB-friendly constructor.
+     */
+    public AbstractPath() {
+    }
+
+    /**
+     * Convenience constructor, creating a new AbstractPath instance with the supplied compoundPath
+     * and using the {@inheritDoc DEFAULT_SEGMENT_SEPARATOR} for separator between segments.
+     *
+     * @param compoundPath The compound path representation of this AbstractPath.
+     *                     Each segment string must be convertible to a {@code SegmentType} instance.
+     */
+    public AbstractPath(final String compoundPath) {
+        this(compoundPath, DEFAULT_SEGMENT_SEPARATOR);
+    }
+
+    /**
+     * Compound constructor, creating a new AbstractPath instance from the supplied data.
+     *
+     * @param compoundPath     The compound path representation of this AbstractPath.
+     *                         Each segment string must be convertible to a {@code SegmentType} instance.
+     * @param segmentSeparator The string separating SegmentType representations from each other.
+     */
+    public AbstractPath(final String compoundPath, final String segmentSeparator) {
+
+        // Check sanity
+        Validate.notNull(compoundPath, "Cannot handle null compoundPath argument.");
+        Validate.notEmpty(segmentSeparator, "Cannot handle nulll or empty segmentSeparator argument.");
+
+        // Assign internal state
+        this.compoundPath = compoundPath;
+        this.segmentSeparator = segmentSeparator;
+    }
 
     /**
      * @return The List of SegmentType instances which is this Path.
      */
     protected abstract List<SegmentType> getSegments();
+
+
+    /**
+     * @return A compound string representation of this AbstractPath used for JPA storage and searches.
+     *         The compoundPath is represented as the segments, separated by the {@code segmentSeparator} string,
+     *         or the {@code DEFAULT_SEGMENT_SEPARATOR} if no explicit segmentSeparator is given.
+     */
+    public String getCompoundPath() {
+        return compoundPath;
+    }
+
+    /**
+     * @return The segment separator string, or the {@code DEFAULT_SEGMENT_SEPARATOR} if no
+     *         explicit segmentSeparator string is given.
+     */
+    public String getSegmentSeparator() {
+        return segmentSeparator == null ? DEFAULT_SEGMENT_SEPARATOR : segmentSeparator;
+    }
 
     /**
      * {@inheritDoc}
@@ -74,7 +149,7 @@ public abstract class AbstractListPath<SegmentType extends Serializable & Compar
             // Unequal number of segments?
             boolean thisHasNext = thisIt.hasNext();
             boolean thatHasNext = thatIt.hasNext();
-            if(!thisHasNext && !thatHasNext) {
+            if (!thisHasNext && !thatHasNext) {
                 return 0;
             }
             if (!thisHasNext) {
@@ -103,21 +178,21 @@ public abstract class AbstractListPath<SegmentType extends Serializable & Compar
     public boolean equals(final Object obj) {
 
         // Check sanity; fail fast.
-        if(obj == null || !getClass().equals(obj.getClass())) {
+        if (obj == null || !getClass().equals(obj.getClass())) {
             return false;
         }
-        if(obj == this) {
+        if (obj == this) {
             return true;
         }
 
-        // Delegate to comparing the properties
-        final AbstractListPath that = (AbstractListPath) obj;
-        if(!(size() == that.size())) {
+        // Check sizes and types
+        final AbstractPath that = (AbstractPath) obj;
+        if(this.size() != that.size()) {
             return false;
         }
 
-        // Delegate.
-        return this.compareTo(that) == 0;
+        // Delegate
+        return this.toString().equals(that.toString());
     }
 
     /**
@@ -142,13 +217,13 @@ public abstract class AbstractListPath<SegmentType extends Serializable & Compar
     @Override
     public String toString() {
 
-        StringBuilder builder = new StringBuilder("{ ");
+        StringBuilder builder = new StringBuilder();
         for (SegmentType current : getSegments()) {
-            builder.append(current).append("/");
+            builder.append(current).append(getSegmentSeparator());
         }
 
-        // Remove the trailing '/'
-        return builder.delete(builder.length() - "/".length(), builder.length()).append(" }").toString();
+        // Remove trailing separator
+        return builder.delete(builder.length() - getSegmentSeparator().length(), builder.length()).toString();
     }
 
     /**
@@ -159,6 +234,7 @@ public abstract class AbstractListPath<SegmentType extends Serializable & Compar
 
         InternalStateValidationException.create()
                 .notNull(getSegments(), "segments")
+                .notNull(compoundPath, "compoundPath")
                 .endExpressionAndValidate();
     }
 }

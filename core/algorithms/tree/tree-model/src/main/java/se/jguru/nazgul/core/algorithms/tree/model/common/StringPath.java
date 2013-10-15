@@ -27,32 +27,37 @@ import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 /**
- * AbstractListPath implementation using Strings for path elements.
+ * AbstractPath implementation using Strings for path elements.
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 @Entity
 @Access(value = AccessType.FIELD)
+@NamedQueries({
+        @NamedQuery(
+                name = "getStringPathByCompoundPath",
+                query = "select s from StringPath s where s.compoundPath like ?1 order by s.compoundPath")
+})
 @XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"segments"})
 @XmlAccessorType(XmlAccessType.FIELD)
-public class StringPath extends AbstractListPath<String> {
+public class StringPath extends AbstractPath<String> {
 
     // Internal state
-    @ElementCollection(fetch = FetchType.EAGER)
-    @XmlElementWrapper(name = "segments")
-    @XmlElement(name = "segment")
+    @Transient
+    @XmlTransient
     private List<String> segments;
 
     /**
@@ -64,32 +69,30 @@ public class StringPath extends AbstractListPath<String> {
     }
 
     /**
-     * Creates a StringPath holding a single segment (i.e. the root node in the path).
+     * Creates a StringPath with the supplied compoundPath.
      *
-     * @param rootSegment The only/root segment within this StringPath instance.
+     * @param compoundPath The compoundPath of this StringPath instance.
      */
-    public StringPath(final String rootSegment) {
+    public StringPath(final String compoundPath) {
 
-        // Check sanity
-        Validate.notNull(rootSegment, "Cannot handle null rootSegment argument.");
-
-        // Assign internal state
-        this.segments = new ArrayList<String>();
-        this.segments.add(rootSegment);
+        // Delegate
+        this(compoundPath, DEFAULT_SEGMENT_SEPARATOR);
     }
 
     /**
-     * Creates a StringPath object with the given segment List.
+     * Compound constructor, creating a new AbstractPath instance from the supplied data.
      *
-     * @param segments The segments of the StringPath.
+     * @param compoundPath     The compound path representation of this AbstractPath.
+     *                         Each segment string must be convertible to a {@code SegmentType} instance.
+     * @param segmentSeparator The string separating SegmentType representations from each other.
      */
-    public StringPath(final List<String> segments) {
+    public StringPath(final String compoundPath, final String segmentSeparator) {
 
-        // Check sanity
-        Validate.notNull(segments, "Cannot handle null segments argument.");
+        // Delegate
+        super(compoundPath, segmentSeparator);
 
-        // Assign internal state
-        this.segments = new ArrayList<String>(segments);
+        // Parse and assign internal state
+        segments = parseCompoundPath(compoundPath, segmentSeparator);
     }
 
     /**
@@ -99,12 +102,9 @@ public class StringPath extends AbstractListPath<String> {
     @SuppressWarnings("all")
     public <X extends Path<String>> X append(final String aKey) {
 
-        // Copy the internal segments List
-        final List<String> newSegments = new ArrayList<String>(segments);
-        newSegments.add(aKey);
-
-        // Wrap and return.
-        return (X) new StringPath(newSegments);
+        // Wrap and return
+        final String newCompoundPath = getCompoundPath() + getSegmentSeparator() + aKey;
+        return (X) new StringPath(newCompoundPath);
     }
 
     /**
@@ -112,6 +112,42 @@ public class StringPath extends AbstractListPath<String> {
      */
     @Override
     protected List<String> getSegments() {
+
+        // Check sanity
+        if(segments == null && getCompoundPath() != null) {
+            segments = parseCompoundPath(getCompoundPath(), getSegmentSeparator());
+        }
+
+        // All done.
         return segments;
+    }
+
+    /**
+     * Parses the supplied compoundPath using the supplied pathSeparator, returning the resulting
+     * List of path segments.
+     *
+     * @param compoundPath  The compound path to parse into a List of segments.
+     * @param pathSeparator The pathSeparator where the given compoundPath should be split.
+     * @return The resulting List of path segments.
+     */
+    public static List<String> parseCompoundPath(final String compoundPath, final String pathSeparator) {
+
+        // Check sanity
+        Validate.notEmpty(pathSeparator, "Cannot handle null or empty pathSeparator argument.");
+        Validate.notNull(compoundPath, "Cannot handle null compoundPath argument.");
+
+        // Parse and return
+        final List<String> toReturn = new ArrayList<String>();
+        final StringTokenizer tok = new StringTokenizer(compoundPath, pathSeparator, false);
+        if (tok.countTokens() == 0) {
+            toReturn.add(compoundPath);
+        } else {
+            while (tok.hasMoreTokens()) {
+                toReturn.add(tok.nextToken());
+            }
+        }
+
+        // All done.
+        return toReturn;
     }
 }

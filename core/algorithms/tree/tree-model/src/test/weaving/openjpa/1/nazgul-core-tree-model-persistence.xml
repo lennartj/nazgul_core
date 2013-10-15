@@ -34,7 +34,7 @@
         <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
 
         <class>se.jguru.nazgul.core.persistence.model.NazgulEntity</class>
-        <class>se.jguru.nazgul.core.algorithms.tree.model.common.AbstractListPath</class>
+        <class>se.jguru.nazgul.core.algorithms.tree.model.common.AbstractPath</class>
         <class>se.jguru.nazgul.core.algorithms.tree.model.common.EnumMapPath</class>
 
         <!--

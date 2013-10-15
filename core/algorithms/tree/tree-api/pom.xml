@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ #%L
   ~   se.jguru.nazgul.core.poms.core-parent.nazgul-core-parent
@@ -28,28 +28,71 @@
     <!-- | Section 1:  Project information                -->
     <!-- +=============================================== -->
     <parent>
-        <groupId>se.jguru.nazgul.core.algorithms</groupId>
-        <artifactId>nazgul-core-algorithms-reactor</artifactId>
+        <groupId>se.jguru.nazgul.core.poms.core-api-parent</groupId>
+        <artifactId>nazgul-core-api-parent</artifactId>
         <version>1.5.2-SNAPSHOT</version>
+        <relativePath>../../../poms/core-api-parent</relativePath>
     </parent>
 
-    <groupId>se.jguru.nazgul.core.algorithms.tree</groupId>
-    <artifactId>nazgul-core-tree-reactor</artifactId>
-    <packaging>pom</packaging>
+    <groupId>se.jguru.nazgul.core.algorithms.tree.api</groupId>
+    <artifactId>nazgul-core-algorithms-tree-api</artifactId>
+    <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <url>${url.prefix}/${path.in.reactor}</url>
 
     <properties>
-        <path.in.reactor>core/algorithms/tree</path.in.reactor>
+        <path.in.reactor>core/algorithms/tree/tree-api</path.in.reactor>
     </properties>
 
     <!-- +=============================================== -->
-    <!-- | Section 2:  Module definitions                 -->
+    <!-- | Section 2:  Dependency (management) settings   -->
     <!-- +=============================================== -->
-    <modules>
-        <module>tree-model</module>
-        <module>tree-api</module>
-    </modules>
+    <dependencies>
+        <!--
+            Internal dependencies.
+        -->
+        <dependency>
+            <groupId>se.jguru.nazgul.core.algorithms.tree.model</groupId>
+            <artifactId>nazgul-core-algorithms-tree-model</artifactId>
+            <version>1.5.2-SNAPSHOT</version>
+        </dependency>
+
+        <!--
+            External dependencies.
+        -->
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jpa_2.0_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <!-- +=============================================== -->
+    <!-- | Section 3:  Build settings                     -->
+    <!-- +=============================================== -->
 
     <!-- +=============================================== -->
     <!-- | Section 4:  External systems                   -->
