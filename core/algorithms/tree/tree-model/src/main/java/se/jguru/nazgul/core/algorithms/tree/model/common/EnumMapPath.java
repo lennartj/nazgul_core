@@ -59,7 +59,10 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(
                 name = "getEnumMapPathsByEnumType",
-                query = "select s from EnumMapPath s where s.enumClassName = ?1 order by s.compoundPath")
+                query = "select s from EnumMapPath s where s.enumClassName = ?1 order by s.compoundPath"),
+        @NamedQuery(
+                name = "getEnumMapPathByCompoundPath",
+                query = "select s from EnumMapPath s where s.compoundPath like ?1 order by s.compoundPath")
 })
 @XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"enumClassName"})
 @XmlAccessorType(XmlAccessType.FIELD)
