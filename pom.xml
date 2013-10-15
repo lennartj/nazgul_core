@@ -21,8 +21,7 @@
   ~   #L%
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <!-- +=============================================== -->
@@ -32,12 +31,12 @@
         <groupId>se.jguru.nazgul.tools.poms.external</groupId>
         <artifactId>nazgul-tools-external-reactor-parent</artifactId>
         <version>2.0.9</version>
-        <relativePath/>
+        <relativePath />
     </parent>
 
     <groupId>se.jguru.nazgul.core</groupId>
     <artifactId>nazgul-core-reactor</artifactId>
-    <version>1.5.2-SNAPSHOT</version>
+    <version>1.6.0</version>
     <name>${project.artifactId}</name>
     <packaging>pom</packaging>
     <url>${url.prefix}/${path.in.reactor}</url>
@@ -54,7 +53,7 @@
         <reactor.name>nazgul_core</reactor.name>
         <url.prefix>${reactor.url.remote.prefix}/${reactor.name}/${project.version}</url.prefix>
         <distro.url.prefix>${site.url.prefix}/${reactor.name}/${project.version}</distro.url.prefix>
-        <path.in.reactor/>
+        <path.in.reactor />
     </properties>
 
     <!-- +=============================================== -->
@@ -107,6 +106,6 @@
         <connection>${scm.url.prefix}/${reactor.name}</connection>
         <developerConnection>${scm.url.prefix}/${reactor.name}</developerConnection>
         <url>${reactor.url.remote.prefix}/${reactor.name}</url>
-        <tag>HEAD</tag>
+        <tag>nazgul-core-1.6.0</tag>
     </scm>
 </project>
