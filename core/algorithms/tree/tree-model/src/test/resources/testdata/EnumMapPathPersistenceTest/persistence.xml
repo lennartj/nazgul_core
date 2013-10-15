@@ -33,9 +33,6 @@
         <class>se.jguru.nazgul.core.algorithms.tree.model.common.AbstractPath</class>
         <class>se.jguru.nazgul.core.algorithms.tree.model.common.EnumMapPath</class>
         <class>se.jguru.nazgul.core.algorithms.tree.model.common.StringPath</class>
-        <class>se.jguru.nazgul.core.algorithms.tree.model.common.EnumMapPath</class>
-        <class>se.jguru.nazgul.core.algorithms.tree.model.common.helpers.AdjustmentPath</class>
-        <class>se.jguru.nazgul.core.algorithms.tree.model.common.helpers.ProcessStringPath</class>
 
         <!--
             When set to true then only listed classes and jars will
