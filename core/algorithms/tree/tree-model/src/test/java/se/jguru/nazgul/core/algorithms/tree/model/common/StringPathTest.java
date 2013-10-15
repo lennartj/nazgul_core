@@ -40,10 +40,10 @@ public class StringPathTest {
     public void validateExceptionOnNullSegments() {
 
         // Assemble
-        final List<String> segments = null;
+        final String compoundPath = null;
 
         // Act & Assert
-        new StringPath(segments);
+        new StringPath(compoundPath);
     }
 
     @Test(expected = NullPointerException.class)
@@ -60,10 +60,10 @@ public class StringPathTest {
     public void validateSizeAndIteration() {
 
         // Assemble
-        final List<String> segments = Arrays.asList("one", "two", "three");
+        final String compoundPath = "one/two/three";
 
         // Act
-        final StringPath result = new StringPath(segments);
+        final StringPath result = new StringPath(compoundPath);
         final List<String> iterated = new ArrayList<String>();
         for (String aResult : result) {
             iterated.add(aResult);
@@ -71,7 +71,7 @@ public class StringPathTest {
 
         // Assert
         Assert.assertEquals(3, result.size());
-        Assert.assertEquals(segments, iterated);
+        Assert.assertEquals(Arrays.asList("one", "two", "three"), iterated);
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
@@ -88,7 +88,7 @@ public class StringPathTest {
     public void validateExceptionOnNegativeIndex() {
 
         // Assemble
-        final StringPath unitUnderTest = new StringPath(Arrays.asList("one", "two", "three"));
+        final StringPath unitUnderTest = new StringPath("one/two/three");
 
         // Act & Assert
         unitUnderTest.get(-2);
@@ -98,22 +98,25 @@ public class StringPathTest {
     public void validateComparison() {
 
         // Assemble
-        final List<String> segments1 = Arrays.asList("one", "two", "three");
-        final List<String> segments2 = Arrays.asList("one", "two", "four");
-        final List<String> segments3 = Arrays.asList("one", "two");
-        final List<String> segments4 = Arrays.asList("one", "two", "three", "four");
+        final String stdSeparator = AbstractPath.DEFAULT_SEGMENT_SEPARATOR;
+        final String compoundPath1 = "one/two/three";
+        final String compoundPath2 = "one/two/four";
+        final String compoundPath3 = "one/two";
+        final String compoundPath4 = "one/two/three/four";
+        final String compoundPath5 = "one#two#three#four";
 
-        final AbstractListPath<String> path1 = new StringPath(segments1);
-        final AbstractListPath<String> path2 = new StringPath(segments2);
-        final AbstractListPath<String> path3 = new StringPath(segments3);
-        final AbstractListPath<String> path4 = new StringPath(segments4);
-        final List<AbstractListPath<String>> paths = Arrays.asList(path1, path2, path3, path4);
+        final AbstractPath<String> path1 = new StringPath(compoundPath1);
+        final AbstractPath<String> path2 = new StringPath(compoundPath2);
+        final AbstractPath<String> path3 = new StringPath(compoundPath3, stdSeparator);
+        final AbstractPath<String> path4 = new StringPath(compoundPath4);
+        final AbstractPath<String> path5 = new StringPath(compoundPath5, "#");
+        final List<AbstractPath<String>> paths = Arrays.asList(path1, path2, path3, path4);
 
-        final SortedSet<AbstractListPath<String>> sortedSet = new TreeSet<AbstractListPath<String>>(paths);
+        final SortedSet<AbstractPath<String>> sortedSet = new TreeSet<AbstractPath<String>>(paths);
 
         // Act
-        final List<AbstractListPath<String>> sortedList = new ArrayList<AbstractListPath<String>>();
-        for (AbstractListPath<String> current : sortedSet) {
+        final List<AbstractPath<String>> sortedList = new ArrayList<AbstractPath<String>>();
+        for (AbstractPath<String> current : sortedSet) {
             sortedList.add(current);
         }
 
@@ -121,25 +124,21 @@ public class StringPathTest {
 
         // Assert
         Assert.assertEquals("three".compareTo("four"), cmp);
+        Assert.assertEquals(0, path4.compareTo(path5));
         Assert.assertSame(path3, sortedList.get(0));
         Assert.assertSame(path2, sortedList.get(1));
         Assert.assertSame(path1, sortedList.get(2));
         Assert.assertSame(path4, sortedList.get(3));
+        Assert.assertEquals(path4.getSegments(), path5.getSegments());
     }
 
     @Test
     public void validateEquality() {
 
         // Assemble
-        final List<String> segments1 = Arrays.asList("one", "two", "three");
-        final List<String> segments2 = Arrays.asList("one", "two", "four");
-        final List<String> segments3 = Arrays.asList("one", "two");
-        final List<String> segments4 = Arrays.asList("one", "two", "three");
-
-        final AbstractListPath<String> path1 = new StringPath(segments1);
-        final AbstractListPath<String> path2 = new StringPath(segments2);
-        final AbstractListPath<String> path3 = new StringPath(segments3);
-        final AbstractListPath<String> path4 = new StringPath(segments4);
+        final AbstractPath<String> path1 = new StringPath("one/two/three");
+        final AbstractPath<String> path3 = new StringPath("one/two");
+        final AbstractPath<String> path4 = new StringPath("one/two/three");
 
         // Act & Assert
         Assert.assertTrue(path1.equals(path1));
@@ -152,10 +151,10 @@ public class StringPathTest {
     public void validateAppendingSegmentToPath() {
 
         // Assemble
-        final AbstractListPath<String> unitUnderTest = new StringPath("one");
+        final AbstractPath<String> unitUnderTest = new StringPath("one");
 
         // Act
-        final AbstractListPath<String> two = unitUnderTest.append("two");
+        final AbstractPath<String> two = unitUnderTest.append("two");
 
         // Assert
         Assert.assertNotSame(unitUnderTest, two);
@@ -169,8 +168,8 @@ public class StringPathTest {
     public void validateStringConversion() {
 
         // Assemble
-        final AbstractListPath<String> unitUnderTest = new StringPath(Arrays.asList("one", "two", "three"));
-        final String expected = "{ one/two/three }";
+        final String expected = "one/two/three";
+        final AbstractPath<String> unitUnderTest = new StringPath(expected);
 
         // Act
         final String result = unitUnderTest.toString();

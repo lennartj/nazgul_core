@@ -21,6 +21,7 @@
  */
 package se.jguru.nazgul.core.algorithms.tree.model.common;
 
+import org.dbunit.Assertion;
 import org.dbunit.dataset.IDataSet;
 import org.junit.Assert;
 import org.junit.Test;
@@ -35,24 +36,83 @@ import java.util.List;
 public class StringPathPersistenceTest extends StandardPersistenceTest {
 
     @Test
-    public void validatePersistingStringPath() {
+    public void validatePersistingStringPath() throws Exception {
 
         // Assemble
-        final StringPath unitUnderTest = new StringPath("root");
+        StringPath unitUnderTest = new StringPath("root");
+        unitUnderTest = unitUnderTest.append("intermediate");
+        unitUnderTest = unitUnderTest.append("leaf");
         final IDataSet expected = performStandardTestDbSetup("validatePersistingStringPath");
 
         // Act
-        jpa.create(unitUnderTest);
-
+        entityManager.persist(unitUnderTest);
         entityManager.flush();
         commitAndStartNewTransaction();
 
-        // final IDataSet dbDataSet = iDatabaseConnection.createDataSet(new String[]{"BIRD", "SEED", "SEED_BIRD"});
-        // System.out.println("Got: " + extractFlatXmlDataSet(dbDataSet));
         final Query jpql = entityManager.createQuery("select e from StringPath e");
         final List<StringPath> resultList = jpql.getResultList();
 
         // Assert
+        // final IDataSet dbDataSet = iDatabaseConnection.createDataSet();
+        // System.out.println("Got: " + extractFlatXmlDataSet(dbDataSet));
         Assert.assertEquals(1, resultList.size());
+
+        final StringPath readFromDb = resultList.get(0);
+        Assert.assertEquals("root", readFromDb.get(0));
+        Assert.assertEquals("intermediate", readFromDb.get(1));
+        Assert.assertEquals("leaf", readFromDb.get(2));
+
+        Assertion.assertEquals(expected, iDatabaseConnection.createDataSet());
+    }
+
+    @Test
+    public void validateDeleteStringPath() throws Exception {
+
+        // Assemble
+        final String pathToDelete = "top/middle/cellar";
+        final IDataSet expected = performStandardTestDbSetup("validateDeleteStringPath");
+
+        // ### 1) Act & Assert: Ensure that the database contains the Entity to remove.
+        final Query getStringPathByCompoundPath = entityManager.createNamedQuery("getStringPathByCompoundPath");
+        getStringPathByCompoundPath.setParameter(1, pathToDelete);
+
+        final List<StringPath> resultList = getStringPathByCompoundPath.getResultList();
+        Assert.assertEquals(1, resultList.size());
+        entityManager.flush();
+
+        final StringPath cellarPath = resultList.get(0);
+        Assert.assertNotNull(cellarPath);
+        Assert.assertEquals(pathToDelete, cellarPath.toString());
+
+        // ### 2) Act & Assert: Delete the retrieved StringPath.
+        entityManager.remove(cellarPath);
+        entityManager.flush();
+        commitAndStartNewTransaction();
+
+        // Assert
+        Assertion.assertEquals(expected, iDatabaseConnection.createDataSet());
+        // final IDataSet dbDataSet = iDatabaseConnection.createDataSet();
+        // System.out.println("Got: " + extractFlatXmlDataSet(dbDataSet));
+    }
+
+    @Test
+    public void validateFindingStringPath() throws Exception {
+
+        // Assemble
+        final String compoundPath = "top#middle#cellar";
+        final IDataSet expected = performStandardTestDbSetup("validateFindingStringPath");
+
+        // Act
+        final Query getStringPathByCompoundPath = entityManager.createNamedQuery("getStringPathByCompoundPath");
+        getStringPathByCompoundPath.setParameter(1, compoundPath);
+
+        // Assert
+        final List<StringPath> resultList = getStringPathByCompoundPath.getResultList();
+        Assert.assertEquals(1, resultList.size());
+        entityManager.flush();
+
+        final StringPath cellarPath = resultList.get(0);
+        Assert.assertNotNull(cellarPath);
+        Assert.assertEquals(compoundPath, cellarPath.toString());
     }
 }
