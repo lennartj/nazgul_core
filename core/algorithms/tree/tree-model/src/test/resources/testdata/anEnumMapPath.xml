@@ -20,24 +20,19 @@
   limitations under the License.
   #L%
   -->
-
-<core:entityTransporter xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="http://www.jguru.se/nazgul/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<core:entityTransporter xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="http://www.jguru.se/nazgul/core"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <entityClasses>
         <entityClass>java.lang.Class</entityClass>
-        <entityClass>java.lang.String</entityClass>
-        <entityClass>java.util.EnumMap</entityClass>
         <entityClass>org.aspectj.runtime.reflect.JoinPointImpl$StaticPartImpl</entityClass>
-        <entityClass>se.jguru.nazgul.core.algorithms.tree.api.helpers.Adjustment</entityClass>
-        <entityClass>se.jguru.nazgul.core.algorithms.tree.model.common.helpers.AdjustmentPath</entityClass>
+        <entityClass>se.jguru.nazgul.core.algorithms.tree.model.common.EnumMapPath</entityClass>
         <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter</entityClass>
     </entityClasses>
     <items>
-        <item xsi:type="core:adjustmentPath" enumType="se.jguru.nazgul.core.algorithms.tree.api.helpers.Adjustment" version="0">
-            <mapPathSegments enumType="se.jguru.nazgul.core.algorithms.tree.api.helpers.Adjustment">
-                <values xsi:type="xs:string">Left</values>
-                <values xsi:type="xs:string">Center</values>
-                <values xsi:nil="true"/>
-            </mapPathSegments>
+        <item xsi:type="core:enumMapPath"
+              enumClassName="se.jguru.nazgul.core.algorithms.tree.model.common.helpers.CityIdentifier" version="0">
+            <compoundPath>Sweden/Västra Götaland/Göteborg</compoundPath>
+            <segmentSeparator>/</segmentSeparator>
         </item>
     </items>
 </core:entityTransporter>

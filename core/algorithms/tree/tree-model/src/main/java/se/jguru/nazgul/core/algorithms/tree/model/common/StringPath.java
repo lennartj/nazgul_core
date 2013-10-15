@@ -41,6 +41,8 @@ import java.util.StringTokenizer;
 
 /**
  * AbstractPath implementation using Strings for path elements.
+ * <strong>Note!</strong> This implementation is immutable, implying that the append method returns a new
+ * instance, rather than modifying this one.
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
@@ -51,7 +53,7 @@ import java.util.StringTokenizer;
                 name = "getStringPathByCompoundPath",
                 query = "select s from StringPath s where s.compoundPath like ?1 order by s.compoundPath")
 })
-@XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"segments"})
+@XmlType(namespace = XmlBinder.CORE_NAMESPACE)
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StringPath extends AbstractPath<String> {
 

@@ -40,13 +40,15 @@ import java.util.List;
 
 /**
  * Non-semantic Path implementation using List as internal storage of KeyType segments.
+ * <strong>Note!</strong> This implementation is immutable, implying that the append method returns a new
+ * instance, rather than modifying this one.
  * <p/>
  * {@inheritDoc}
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 @MappedSuperclass
-@XmlType(namespace = XmlBinder.CORE_NAMESPACE)
+@XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"compoundPath", "segmentSeparator"})
 @SuppressWarnings("PMD.UnusedPrivateField")
 public abstract class AbstractPath<SegmentType extends Serializable & Comparable<SegmentType>>
         extends NazgulEntity implements Path<SegmentType> {
