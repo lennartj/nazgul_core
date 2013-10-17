@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  ~ #%L
+  Nazgul Project: nazgul-core-xmlbinding-spi-jaxb
+  %%
+  Copyright (C) 2010 - 2013 jGuru Europe AB
+  ~
+  %%
+  Licensed under the jGuru Europe AB license (the "License"), based
+  on Apache License, Version 2.0; you may not use this file except
+  in compliance with the License.
+  
+  You may obtain a copy of the License at
+  
+        http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
+<core:entityTransporter xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="http://www.jguru.se/nazgul/core"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <entityClasses>
+        <entityClass>java.lang.String</entityClass>
+        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Person</entityClass>
+        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter</entityClass>
+        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedNull</entityClass>
+    </entityClasses>
+    <items>
+        <item xsi:type="core:person" age="44">
+            <name>Lennart</name>
+        </item>
+        <item xsi:type="xs:string">FooBar!</item>
+        <item xsi:type="core:jaxbAnnotatedNull"/>
+        <item xsi:type="core:person" age="478">
+            <name>Malin</name>
+        </item>
+    </items>
+</core:entityTransporter>
