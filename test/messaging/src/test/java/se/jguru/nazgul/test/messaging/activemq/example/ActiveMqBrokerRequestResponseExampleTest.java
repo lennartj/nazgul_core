@@ -59,12 +59,13 @@ public class ActiveMqBrokerRequestResponseExampleTest extends AbstractRequestRes
      * {@inheritDoc}
      */
     @Override
-    protected AbstractTransactionalMessageListener getServiceSideListener(
+    @SuppressWarnings("all")
+    protected <R extends AbstractTransactionalMessageListener> R getServiceSideListener(
             final List<Message> serverSideReceivedMessages,
             final Session serverSideResponseSession,
             final MessageProducer responseMessageProducer) {
 
-        return new AbstractTransactionalMessageListener(
+        return (R) new AbstractTransactionalMessageListener(
                 serverSideReceivedMessages,
                 serverSideResponseSession,
                 responseMessageProducer) {

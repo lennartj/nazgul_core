@@ -47,6 +47,7 @@ public abstract class AbstractRequestResponseJmsTest extends AbstractJmsTest {
 
     // Shared state
     protected List<Message> serverSideReceivedMessages;
+    protected Connection serverSideConnection;
 
     /**
      * Creates a new AbstractRequestResponseJmsTest instance, returning transacted JMS objects
@@ -63,7 +64,23 @@ public abstract class AbstractRequestResponseJmsTest extends AbstractJmsTest {
      */
     @Override
     public void tearDownServices() throws JMSException {
-        // Do nothing
+        // Do nothing.
+    }
+
+    /**
+     * Override this method to perform any normal tear-down
+     * before the Broker is stopped. You might cleanup any
+     * instances which should be de-registered from the broker.
+     */
+    @Override
+    protected void beforeStopJmsBroker() {
+
+        // Close the serverSideConnection.
+        try {
+            serverSideConnection.close();
+        } catch (JMSException e) {
+            throw new IllegalStateException("Could not close the serverSideConnection.", e);
+        }
     }
 
     /**
@@ -78,7 +95,7 @@ public abstract class AbstractRequestResponseJmsTest extends AbstractJmsTest {
         // These objects are created before any test cases are launched.
 
         // 1) Get a connection to the JMS broker.
-        final Connection serverSideConnection = createConnection();
+        this.serverSideConnection = createConnection();
 
         // 2) Create a server-side Session, Queue and MessageConsumer reading messages from the broker.
         final Session serverSideRequestSession = createSession(serverSideConnection);
@@ -114,7 +131,7 @@ public abstract class AbstractRequestResponseJmsTest extends AbstractJmsTest {
      *                                   serverSideResponseSession, used to send response messages from the
      * @return The service-side listener used to handle inbound messages and send out responses.
      */
-    protected abstract AbstractTransactionalMessageListener getServiceSideListener(
+    protected abstract <T extends AbstractTransactionalMessageListener> T getServiceSideListener(
             final List<Message> serverSideReceivedMessages,
             final Session serverSideResponseSession,
             final MessageProducer responseMessageProducer);
