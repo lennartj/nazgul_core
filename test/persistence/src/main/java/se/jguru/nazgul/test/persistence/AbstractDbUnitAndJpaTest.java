@@ -112,16 +112,38 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
         // Delegate
         super.setUp();
 
-        // Acquire the Connection to the database
-        final Connection dbConnection = isSeparateConnectionsUsedForDbUnitAndJPA()
-                ? getStandaloneDbConnection(getDatabaseName(), getTargetDirectory())
-                : jpaUnitTestConnection;
+        // Acquire the jUnit DatabaseConnection.
+        getDatabaseConnection(false);
+    }
 
-        // Create dbUnit connection and assign the DataTypeFactory
-        iDatabaseConnection = new DatabaseConnection(dbConnection);
-        iDatabaseConnection.getConfig().setProperty(
-                DatabaseConfig.PROPERTY_DATATYPE_FACTORY,
-                getDatabaseType().getDataTypeFactory());
+    /**
+     * Acquires the dbUnit IDatabaseConnection, and overwrites the local/protected iDatabaseConnection member
+     * with the result.
+     *
+     * @param newConnection if {@code true}, the IDatabaseConnection will be re-acquired from the
+     *                      underlying JDBC Connection even if it exists.
+     * @return The newly acquired IDatabaseConnection.
+     * @throws Exception if the underlying dbUnit DatabaseConnection could not be created.
+     */
+    @SuppressWarnings("PMD")
+    protected final IDatabaseConnection getDatabaseConnection(final boolean newConnection) throws Exception {
+
+        if (iDatabaseConnection == null || newConnection) {
+
+            // Acquire the Connection to the database
+            final Connection dbConnection = isSeparateConnectionsUsedForDbUnitAndJPA()
+                    ? getStandaloneDbConnection(getDatabaseName(), getTargetDirectory())
+                    : jpaUnitTestConnection;
+
+            // Create dbUnit connection and assign the DataTypeFactory
+            iDatabaseConnection = new DatabaseConnection(dbConnection);
+            iDatabaseConnection.getConfig().setProperty(
+                    DatabaseConfig.PROPERTY_DATATYPE_FACTORY,
+                    getDatabaseType().getDataTypeFactory());
+        }
+
+        // All done.
+        return iDatabaseConnection;
     }
 
     /**
@@ -190,6 +212,7 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
     /**
      * Drops all the Database Objects in the public schema of the active database.
      */
+    @SuppressWarnings("PMD")
     protected final void dropAllDbObjectsInPublicSchema() {
 
         ResultSet dbObjects = null;
@@ -197,10 +220,16 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
 
         try {
 
+            // In some cases when running on Windows machines, the jpaUnitTestConnection can become null here.
+            // Handle that case.
+            final Connection localJpaUnitTestConnection = jpaUnitTestConnection == null
+                    ? entityManager.unwrap(Connection.class)
+                    : jpaUnitTestConnection;
+
             // Revert to plain-old JDBC to drop all DB objects in the public schema.
-            final DatabaseMetaData metaData = jpaUnitTestConnection.getMetaData();
+            final DatabaseMetaData metaData = localJpaUnitTestConnection.getMetaData();
             dbObjects = metaData.getTables(null, getDatabaseType().getPublicSchemaName(), "%", null);
-            dropStatement = jpaUnitTestConnection.createStatement();
+            dropStatement = localJpaUnitTestConnection.createStatement();
 
             while (dbObjects.next()) {
                 final String schemaAndTableName = dbObjects.getString(2) + "." + dbObjects.getString(3);
@@ -219,11 +248,11 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
         } finally {
 
             try {
-                if(dropStatement != null) {
+                if (dropStatement != null) {
                     dropStatement.close();
                 }
 
-                if(dbObjects != null) {
+                if (dbObjects != null) {
                     dbObjects.close();
                 }
             } catch (SQLException e) {

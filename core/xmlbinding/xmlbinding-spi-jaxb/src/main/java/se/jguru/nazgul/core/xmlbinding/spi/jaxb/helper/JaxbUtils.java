@@ -84,6 +84,11 @@ public abstract class JaxbUtils {
     private static final String INTERNAL_JAXB_NAMESPACEPREFIXMAPPER_KEY
             = "com.sun.xml.internal.bind.namespacePrefixMapper";
 
+    /**
+     * The java.lang.Class class. Don't add it to transport types.
+     */
+    private static final String JAVALANGCLASS = "java.lang.Class";
+
     private static final ClassnameToClassTransformer THREADLOCAL_TRANSFORMER = new ClassnameToClassTransformer();
 
     // Internal state
@@ -322,7 +327,7 @@ public abstract class JaxbUtils {
         if (added instanceof ClassInformationHolder) {
             for (String current : ((ClassInformationHolder) added).getClassInformation()) {
 
-                if (!resultingTransportTypes.contains(current)) {
+                if (!resultingTransportTypes.contains(current) && !current.startsWith(JAVALANGCLASS)) {
                     resultingTransportTypes.add(current);
                 }
             }
@@ -334,7 +339,8 @@ public abstract class JaxbUtils {
         final String addedClassName = addedClassIsArray
                 ? addedClass.getComponentType().getName()
                 : addedClass.getName();
-        if (!resultingTransportTypes.contains(addedClassName)
+        if (!addedClassName.startsWith(JAVALANGCLASS)
+                && !resultingTransportTypes.contains(addedClassName)
                 && !(addedClassIsArray && addedClass.getComponentType().isPrimitive())) {
             resultingTransportTypes.add(addedClassName);
         }
