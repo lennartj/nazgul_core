@@ -23,7 +23,6 @@
 package se.jguru.nazgul.test.messaging;
 
 import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
 
 /**
  * Wrapper specification for a MessageBroker instance,
