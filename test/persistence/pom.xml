@@ -94,7 +94,7 @@
                             </regex>
                             <regex>
                                 <pattern>se.jguru.nazgul.test.persistence.AbstractDbUnitAndJpaTest</pattern>
-                                <branchRate>65</branchRate>
+                                <branchRate>50</branchRate>
                                 <lineRate>75</lineRate>
                             </regex>
                         </regexes>
