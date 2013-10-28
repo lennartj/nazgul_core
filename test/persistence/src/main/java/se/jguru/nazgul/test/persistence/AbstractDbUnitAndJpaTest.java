@@ -218,45 +218,47 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
         ResultSet dbObjects = null;
         Statement dropStatement = null;
 
-        try {
-
-            // In some cases when running on Windows machines, the jpaUnitTestConnection can become null here.
-            // Handle that case.
-            final Connection localJpaUnitTestConnection = jpaUnitTestConnection == null
-                    ? entityManager.unwrap(Connection.class)
-                    : jpaUnitTestConnection;
-
-            // Revert to plain-old JDBC to drop all DB objects in the public schema.
-            final DatabaseMetaData metaData = localJpaUnitTestConnection.getMetaData();
-            dbObjects = metaData.getTables(null, getDatabaseType().getPublicSchemaName(), "%", null);
-            dropStatement = localJpaUnitTestConnection.createStatement();
-
-            while (dbObjects.next()) {
-                final String schemaAndTableName = dbObjects.getString(2) + "." + dbObjects.getString(3);
-                final String dbObjectType = dbObjects.getString(4);
-                log.debug(" Dropping [" + schemaAndTableName + "] ... ");
-
-                // Add the drop statement to the batch.
-                dropStatement.addBatch("DROP " + dbObjectType + " " + schemaAndTableName);
-            }
-            final int[] results = dropStatement.executeBatch();
-
-            log.debug(" ... Done dropping [" + results.length + "] table(s).");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-
+        if (entityManager != null) {
             try {
-                if (dropStatement != null) {
-                    dropStatement.close();
-                }
 
-                if (dbObjects != null) {
-                    dbObjects.close();
+                // In some cases when running on Windows machines, the jpaUnitTestConnection can become null here.
+                // Handle that case.
+                final Connection localJpaUnitTestConnection = jpaUnitTestConnection == null
+                        ? entityManager.unwrap(Connection.class)
+                        : jpaUnitTestConnection;
+
+                // Revert to plain-old JDBC to drop all DB objects in the public schema.
+                final DatabaseMetaData metaData = localJpaUnitTestConnection.getMetaData();
+                dbObjects = metaData.getTables(null, getDatabaseType().getPublicSchemaName(), "%", null);
+                dropStatement = localJpaUnitTestConnection.createStatement();
+
+                while (dbObjects.next()) {
+                    final String schemaAndTableName = dbObjects.getString(2) + "." + dbObjects.getString(3);
+                    final String dbObjectType = dbObjects.getString(4);
+                    log.debug(" Dropping [" + schemaAndTableName + "] ... ");
+
+                    // Add the drop statement to the batch.
+                    dropStatement.addBatch("DROP " + dbObjectType + " " + schemaAndTableName);
                 }
+                final int[] results = dropStatement.executeBatch();
+
+                log.debug(" ... Done dropping [" + results.length + "] table(s).");
+
             } catch (SQLException e) {
-                log.error("Could not close DB resource", e);
+                e.printStackTrace();
+            } finally {
+
+                try {
+                    if (dropStatement != null) {
+                        dropStatement.close();
+                    }
+
+                    if (dbObjects != null) {
+                        dbObjects.close();
+                    }
+                } catch (SQLException e) {
+                    log.error("Could not close DB resource", e);
+                }
             }
         }
     }
