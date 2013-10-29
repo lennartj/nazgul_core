@@ -36,7 +36,8 @@ public interface SemanticPath<E extends Enum<E>, SegmentType extends Serializabl
         extends Path<SegmentType> {
 
     /**
-     * @return The maximum number of segments in this Path.
+     * @return The maximum number of segments in this Path, typically identical to the
+     *         number of values in the semantic definition Enum.
      */
     int getMaxSize();
 
