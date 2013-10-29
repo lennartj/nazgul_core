@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ #%L
   ~   se.jguru.nazgul.core.poms.core-parent.nazgul-core-parent
@@ -28,38 +28,57 @@
     <!-- | Section 1:  Project information                -->
     <!-- +=============================================== -->
     <parent>
-        <groupId>se.jguru.nazgul.core</groupId>
-        <artifactId>nazgul-core-reactor</artifactId>
+        <groupId>se.jguru.nazgul.core.poms.core-api-parent</groupId>
+        <artifactId>nazgul-core-api-parent</artifactId>
         <version>1.6.1-SNAPSHOT</version>
+        <relativePath>../../poms/core-api-parent</relativePath>
     </parent>
 
-    <groupId>se.jguru.nazgul.core</groupId>
-    <artifactId>nazgul-core-core-reactor</artifactId>
+    <groupId>se.jguru.nazgul.core.configuration.api</groupId>
+    <artifactId>nazgul-core-configuration-api</artifactId>
+    <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <url>${url.prefix}/${path.in.reactor}</url>
-    <packaging>pom</packaging>
 
     <properties>
-        <path.in.reactor>core</path.in.reactor>
+        <path.in.reactor>core/configuration/configuration-api</path.in.reactor>
     </properties>
 
     <!-- +=============================================== -->
-    <!-- | Section 2:  Module definitions                 -->
+    <!-- | Section 2:  Dependency (management) settings   -->
     <!-- +=============================================== -->
-    <modules>
-        <module>poms</module>
-        <module>algorithms</module>
-        <module>configuration</module>
-        <module>quickstart</module>
-        <module>reflection</module>
-        <module>resource</module>
-        <module>parser</module>
-        <module>xmlbinding</module>
-        <module>persistence</module>
-        <module>clustering</module>
-        <module>cache</module>
-        <module>osgi</module>
-    </modules>
+    <dependencies>
+        <!-- Internal dependencies -->
+        <dependency>
+            <groupId>se.jguru.nazgul.core.algorithms.tree.api</groupId>
+            <artifactId>nazgul-core-algorithms-tree-api</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+        </dependency>
+
+        <!-- External dependencies -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <!-- +=============================================== -->
+    <!-- | Section 3:  Build settings                     -->
+    <!-- +=============================================== -->
 
     <!-- +=============================================== -->
     <!-- | Section 4:  External systems                   -->
@@ -86,5 +105,4 @@
         <url>${reactor.url.remote.prefix}/${reactor.name}</url>
         <tag>HEAD</tag>
     </scm>
-
 </project>

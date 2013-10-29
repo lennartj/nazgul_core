@@ -19,5 +19,6 @@
   #L%
   -->
 <dataset>
-    <STRINGPATH ID="0" COMPOUNDPATH="Sweden/V&#228;stra G&#246;taland/G&#246;teborg" SEGMENTSEPARATOR="/" VERSION="1" ENUMCLASSNAME="se.jguru.nazgul.core.algorithms.tree.model.common.helpers.CityIdentifier"/>
+    <ENUMMAPPATH ID="0" COMPOUNDPATH="Sweden/V&#228;stra G&#246;taland/G&#246;teborg" SEGMENTSEPARATOR="/" ENUMCLASSNAME="se.jguru.nazgul.core.algorithms.tree.model.common.helpers.CityIdentifier" VERSION="1"/>
+    <STRINGPATH/>
 </dataset>

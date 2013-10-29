@@ -28,6 +28,8 @@ import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Transient;
@@ -48,6 +50,7 @@ import java.util.StringTokenizer;
  */
 @Entity
 @Access(value = AccessType.FIELD)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @NamedQueries({
         @NamedQuery(
                 name = "getStringPathByCompoundPath",
