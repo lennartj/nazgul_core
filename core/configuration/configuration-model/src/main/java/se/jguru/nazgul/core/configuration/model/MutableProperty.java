@@ -21,37 +21,23 @@
  */
 package se.jguru.nazgul.core.configuration.model;
 
-import se.jguru.nazgul.tools.validation.api.Validatable;
-
 import java.io.Serializable;
 
 /**
- * Configuration property relating a key to a value, in the spirit of Map.Entry.
- * All property implementations must sport a
+ * Specification for a mutable Property whose value can be updated.
+ * This specification is typically only used by administrative tooling,
+ * as opposed to applications (or other configuration clients) which
+ * should regard Properties are read-only.
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public interface Property<K extends Serializable & Comparable<K>, V extends Serializable>
-        extends Serializable, Validatable {
+public interface MutableProperty<K extends Serializable & Comparable<K>,
+        V extends Serializable> extends Property<K, V> {
 
     /**
-     * Retrieves the key of this Property.
+     * Assigns the supplied value to this MutableProperty.
      *
-     * @return the key of this Property. Keys are never null or empty.
+     * @param value The value of this property. {@code null} values are acceptable.
      */
-    K getKey();
-
-    /**
-     * Retrieves the value of this Property. Note that values may be {@code null}.
-     *
-     * @return the value of this Property. Note that values may be {@code null}.
-     */
-    V getValue();
-
-    /**
-     * Retrieves the type of the Value of this Property.
-     *
-     * @return the type of the Value of this Property. This method may not return {@code null}.
-     */
-    Class<V> getValueType();
+    void setValue(final V value);
 }
