@@ -21,6 +21,7 @@
  */
 package se.jguru.nazgul.core.configuration.model.common;
 
+import org.apache.commons.lang.Validate;
 import se.jguru.nazgul.core.configuration.model.AbstractStringKeyedMutableProperty;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 
@@ -33,38 +34,38 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * AbstractStringKeyedMutableProperty implementation using Strings as values.
+ * AbstractStringKeyedMutableProperty implementation using Integers as values.
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 @Entity
 @XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"value"})
 @XmlAccessorType(XmlAccessType.FIELD)
-public class StringProperty extends AbstractStringKeyedMutableProperty<String> {
+public class IntegerProperty extends AbstractStringKeyedMutableProperty<Integer> {
 
     // Internal state
     @Basic(optional = true)
     @Column(nullable = true)
     @XmlElement(required = false, nillable = true)
-    private String value;
+    private int value;
 
     /**
      * JAXB / JPA-friendly constructor.<br/>
      * <strong>Note!</strong> For framework use only.
      */
-    public StringProperty() {
+    public IntegerProperty() {
     }
 
     /**
-     * Creates a new StringProperty from the supplied key and value data.
+     * Creates a new IntegerProperty from the supplied key and value data.
      *
-     * @param key   The key of this StringProperty. Cannot be null.
-     * @param value The StringProperty value. Can be null.
+     * @param key   The key of this IntegerProperty. Cannot be null.
+     * @param value The IntegerProperty value. Can be null.
      */
-    public StringProperty(final String key, final String value) {
+    public IntegerProperty(final String key, final int value) {
 
         // Delegate
-        super(key, String.class);
+        super(key, Integer.class);
 
         // Assign internal state
         this.value = value;
@@ -74,7 +75,12 @@ public class StringProperty extends AbstractStringKeyedMutableProperty<String> {
      * {@inheritDoc}
      */
     @Override
-    public void setValue(final String value) {
+    public void setValue(final Integer value) {
+
+        // Check sanity
+        Validate.notNull("Cannot handle null value argument.");
+
+        // Assign
         this.value = value;
     }
 
@@ -82,30 +88,7 @@ public class StringProperty extends AbstractStringKeyedMutableProperty<String> {
      * {@inheritDoc}
      */
     @Override
-    public String getValue() {
+    public Integer getValue() {
         return value;
     }
-
-    /*
-     * Equality comparison definition that compares key and value.
-     * <p/>
-     * {@inheritDoc}
-
-    @Override
-    public boolean equals(final Object that) {
-
-        // Check sanity
-        if(this == that) {
-            return true;
-        }
-        if(null == that || that.getClass() != StringProperty.class) {
-            return false;
-        }
-
-        // Delegate and compare
-        final StringProperty thatProperty = (StringProperty) that;
-        return getKey().equals(thatProperty.getKey())
-                && getValue().equals(thatProperty.getValue());
-    }
-     */
 }

@@ -22,8 +22,8 @@
 
 package se.jguru.nazgul.core.algorithms.tree.api.helpers;
 
-import se.jguru.nazgul.core.algorithms.tree.api.Node;
-import se.jguru.nazgul.core.algorithms.tree.model.Path;
+import se.jguru.nazgul.core.algorithms.api.trees.Node;
+import se.jguru.nazgul.core.algorithms.api.trees.path.Path;
 import se.jguru.nazgul.core.algorithms.tree.model.common.StringPath;
 
 import java.util.ArrayList;

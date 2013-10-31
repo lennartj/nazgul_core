@@ -22,8 +22,8 @@
 
 package se.jguru.nazgul.core.algorithms.tree.api.helpers;
 
-import se.jguru.nazgul.core.algorithms.tree.api.MutableNode;
-import se.jguru.nazgul.core.algorithms.tree.api.Node;
+import se.jguru.nazgul.core.algorithms.api.trees.MutableNode;
+import se.jguru.nazgul.core.algorithms.api.trees.Node;
 import se.jguru.nazgul.core.algorithms.tree.api.common.StringKeyNode;
 
 import java.util.List;

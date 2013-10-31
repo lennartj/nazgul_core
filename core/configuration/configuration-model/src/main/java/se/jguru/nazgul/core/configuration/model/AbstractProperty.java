@@ -21,7 +21,7 @@
  */
 package se.jguru.nazgul.core.configuration.model;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import se.jguru.nazgul.core.persistence.model.NazgulEntity;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException;
@@ -32,7 +32,6 @@ import javax.persistence.MappedSuperclass;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -45,22 +44,12 @@ import java.util.List;
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 @MappedSuperclass
-@XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"valueClassName", "key", "value"})
+@XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"valueClassName"})
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractProperty<K extends Serializable & Comparable<K>, 
         V extends Serializable> extends NazgulEntity implements Property<K, V> {
 
     // Internal state
-    @Basic(optional = false)
-    @Column(nullable = false)
-    @XmlTransient
-    private K key;
-
-    @Basic(optional = true)
-    @Column(nullable = true)
-    @XmlTransient
-    protected V value;
-
     @Basic(optional = false)
     @Column(nullable = false)
     @XmlAttribute(required = true)
@@ -77,39 +66,17 @@ public abstract class AbstractProperty<K extends Serializable & Comparable<K>,
     }
 
     /**
-     * Creates a new AbstractProperty from the supplied key and non-null value data.
+     * Creates a new AbstractProperty which can hold values of the supplied valueTypeClass.
      *
-     * @param key   The key of this AbstractProperty. Cannot be null.
-     * @param value The AbstractProperty value. Cannot be null.
+     * @param valueTypeClass The class (V) of values held by this AbstractProperty.
+     *                       The valueTypeClass argument cannot be {@code null}.
      */
-    public AbstractProperty(final K key, final V value) {
+    public AbstractProperty(final Class<V> valueTypeClass) {
 
         // Check sanity
-        Validate.notNull(key, "Cannot handle null key argument.");
-        Validate.notNull(value, "Cannot handle null value argument.");
-
-        // Assign internal state
-        this.key = key;
-        this.value = value;
-        this.valueTypeClass = (Class<V>) value.getClass();
-        this.valueClassName = valueTypeClass.getName();
-    }
-
-    /**
-     * Creates a new AbstractProperty from the supplied (non-null) key and valueTypeClass parameters.
-     * The value of this AbstractProperty is {@code null}.
-     *
-     * @param key            The key of this AbstractProperty. Cannot be null.
-     * @param valueTypeClass The class of the value for this Property. Cannot be null.
-     */
-    public AbstractProperty(final K key, final Class<V> valueTypeClass) {
-
-        // Check sanity
-        Validate.notNull(key, "Cannot handle null key argument.");
         Validate.notNull(valueTypeClass, "Cannot handle null valueTypeClass argument.");
 
         // Assign internal state
-        this.key = key;
         this.valueTypeClass = valueTypeClass;
         this.valueClassName = valueTypeClass.getName();
     }
@@ -123,29 +90,13 @@ public abstract class AbstractProperty<K extends Serializable & Comparable<K>,
 
         // Do we need to re-create the valueTypeClass?
         if (valueTypeClass == null) {
-            valueTypeClass = value != null
-                    ? (Class<V>) value.getClass()
+            valueTypeClass = getValue() != null
+                    ? (Class<V>) getValue().getClass()
                     : loadValueTypeClass(valueClassName);
         }
 
         // All done
         return valueTypeClass;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public K getKey() {
-        return key;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public V getValue() {
-        return value;
     }
 
     /**
@@ -160,6 +111,7 @@ public abstract class AbstractProperty<K extends Serializable & Comparable<K>,
         // Check sanity
         Validate.notEmpty(valueTypeClassName, "Cannot handle null or empty valueTypeClassName argument.");
 
+        final V value = getValue();
         if (value != null) {
             valueTypeClass = (Class<V>) value.getClass();
         } else {
@@ -197,7 +149,6 @@ public abstract class AbstractProperty<K extends Serializable & Comparable<K>,
 
         // Check sanity
         InternalStateValidationException.create()
-                .notNull(key, "key")
                 .notNullOrEmpty(valueClassName, "valueClassName")
                 .endExpressionAndValidate();
     }

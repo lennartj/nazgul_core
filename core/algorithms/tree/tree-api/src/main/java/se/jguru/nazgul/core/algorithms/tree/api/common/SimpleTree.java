@@ -23,10 +23,10 @@
 package se.jguru.nazgul.core.algorithms.tree.api.common;
 
 import org.apache.commons.lang3.Validate;
-import se.jguru.nazgul.core.algorithms.tree.api.MutableNode;
-import se.jguru.nazgul.core.algorithms.tree.api.MutableTree;
-import se.jguru.nazgul.core.algorithms.tree.api.Node;
-import se.jguru.nazgul.core.algorithms.tree.model.Path;
+import se.jguru.nazgul.core.algorithms.api.trees.MutableNode;
+import se.jguru.nazgul.core.algorithms.api.trees.MutableTree;
+import se.jguru.nazgul.core.algorithms.api.trees.Node;
+import se.jguru.nazgul.core.algorithms.api.trees.path.Path;
 
 import java.io.Serializable;
 import java.util.ArrayList;

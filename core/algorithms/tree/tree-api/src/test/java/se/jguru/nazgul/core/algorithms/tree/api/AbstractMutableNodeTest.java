@@ -25,8 +25,9 @@ package se.jguru.nazgul.core.algorithms.tree.api;
 import org.junit.Assert;
 import org.junit.Test;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
+import se.jguru.nazgul.core.algorithms.api.trees.Node;
 import se.jguru.nazgul.core.algorithms.tree.api.helpers.StringStringNode;
-import se.jguru.nazgul.core.algorithms.tree.model.Path;
+import se.jguru.nazgul.core.algorithms.api.trees.path.Path;
 import java.util.ArrayList;
 import java.util.List;
 

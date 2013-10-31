@@ -1,6 +1,6 @@
 /*
  * #%L
- * Nazgul Project: nazgul-core-algorithms-tree-api
+ * Nazgul Project: nazgul-core-algorithms-api
  * %%
  * Copyright (C) 2010 - 2013 jGuru Europe AB
  * %%
@@ -20,7 +20,7 @@
  * #L%
  */
 
-package se.jguru.nazgul.core.algorithms.tree.api;
+package se.jguru.nazgul.core.algorithms.api.trees;
 
 import java.io.Serializable;
 

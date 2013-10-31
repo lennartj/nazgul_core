@@ -39,7 +39,7 @@ import java.io.Serializable;
 @MappedSuperclass
 @XmlType(namespace = XmlBinder.CORE_NAMESPACE)
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AbstractMutableProperty<K extends Serializable & Comparable<K>, V extends Serializable>
+public abstract class AbstractMutableProperty<K extends Serializable & Comparable<K>, V extends Serializable>
         extends AbstractProperty<K, V> implements MutableProperty<K, V> {
 
     /**
@@ -50,31 +50,12 @@ public class AbstractMutableProperty<K extends Serializable & Comparable<K>, V e
     }
 
     /**
-     * Creates a new AbstractMutableProperty from the supplied key and non-null value data.
+     * Creates a new AbstractMutableProperty which can hold values of the supplied valueTypeClass.
      *
-     * @param key   The key of this AbstractMutableProperty. Cannot be null.
-     * @param value The AbstractMutableProperty value. Cannot be null.
+     * @param valueTypeClass The class (V) of values held by this AbstractMutableProperty.
+     *                       The valueTypeClass argument cannot be {@code null}.
      */
-    public AbstractMutableProperty(final K key, final V value) {
-        super(key, value);
-    }
-
-    /**
-     * Creates a new AbstractMutableProperty from the supplied (non-null) key and valueTypeClass parameters.
-     * The value of this AbstractMutableProperty is {@code null}.
-     *
-     * @param key            The key of this AbstractMutableProperty. Cannot be null.
-     * @param valueTypeClass The class of the value for this AbstractMutableProperty. Cannot be null.
-     */
-    public AbstractMutableProperty(final K key, final Class<V> valueTypeClass) {
-        super(key, valueTypeClass);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setValue(final V value) {
-        this.value = value;
+    public AbstractMutableProperty(final Class<V> valueTypeClass) {
+        super(valueTypeClass);
     }
 }

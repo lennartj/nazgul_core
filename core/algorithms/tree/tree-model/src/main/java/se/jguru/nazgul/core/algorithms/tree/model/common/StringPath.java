@@ -22,7 +22,7 @@
 package se.jguru.nazgul.core.algorithms.tree.model.common;
 
 import org.apache.commons.lang3.Validate;
-import se.jguru.nazgul.core.algorithms.tree.model.Path;
+import se.jguru.nazgul.core.algorithms.api.trees.path.Path;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 
 import javax.persistence.Access;
