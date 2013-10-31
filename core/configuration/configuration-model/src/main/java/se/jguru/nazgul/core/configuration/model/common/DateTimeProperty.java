@@ -21,6 +21,8 @@
  */
 package se.jguru.nazgul.core.configuration.model.common;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeComparator;
 import se.jguru.nazgul.core.configuration.model.AbstractStringKeyedMutableProperty;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 
@@ -31,81 +33,94 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.Calendar;
 
 /**
- * AbstractStringKeyedMutableProperty implementation using Strings as values.
+ * AbstractStringKeyedMutableProperty implementation using DateTimes as values.
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 @Entity
 @XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"value"})
 @XmlAccessorType(XmlAccessType.FIELD)
-public class StringProperty extends AbstractStringKeyedMutableProperty<String> {
+public class DateTimeProperty extends AbstractStringKeyedMutableProperty<DateTime> {
 
     // Internal state
     @Basic(optional = true)
     @Column(nullable = true)
     @XmlElement(required = false, nillable = true)
-    private String value;
+    private Calendar value;
 
     /**
      * JAXB / JPA-friendly constructor.<br/>
      * <strong>Note!</strong> For framework use only.
      */
-    public StringProperty() {
+    public DateTimeProperty() {
     }
 
     /**
-     * Creates a new StringProperty from the supplied key and value data.
+     * Creates a new DateTimeProperty from the supplied key and value data.
      *
-     * @param key   The key of this StringProperty. Cannot be null.
-     * @param value The StringProperty value. Can be null.
+     * @param key   The key of this DateTimeProperty. Cannot be null.
+     * @param value The DateTimeProperty value. Can be null.
      */
-    public StringProperty(final String key, final String value) {
+    public DateTimeProperty(final String key, final DateTime value) {
 
         // Delegate
-        super(key, String.class);
+        super(key, DateTime.class);
 
         // Assign internal state
-        this.value = value;
+        setValue(value);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setValue(final String value) {
-        this.value = value;
+    public final void setValue(final DateTime value) {
+        this.value = value == null ? null : value.toGregorianCalendar();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getValue() {
-        return value;
+    public DateTime getValue() {
+        return value == null ? null : new DateTime(value);
     }
 
-    /*
+    /**
      * Equality comparison definition that compares key and value.
      * <p/>
      * {@inheritDoc}
-
+     */
     @Override
     public boolean equals(final Object that) {
 
         // Check sanity
+        if(that == null || !that.getClass().equals(DateTimeProperty.class)) {
+            return false;
+        }
         if(this == that) {
             return true;
         }
-        if(null == that || that.getClass() != StringProperty.class) {
-            return false;
-        }
 
-        // Delegate and compare
-        final StringProperty thatProperty = (StringProperty) that;
-        return getKey().equals(thatProperty.getKey())
-                && getValue().equals(thatProperty.getValue());
+        // Delegate
+        final DateTimeProperty thatProperty = (DateTimeProperty) that;
+        final DateTimeComparator comparator = DateTimeComparator.getInstance();
+
+        boolean valuesAreEqual = getValue() == null
+                ? thatProperty.getValue() == null
+                : comparator.compare(getValue(), thatProperty.getValue()) == 0;
+
+        return getKey().equals(thatProperty.getKey()) && valuesAreEqual;
     }
+
+    /**
+     * {@inheritDoc}
      */
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

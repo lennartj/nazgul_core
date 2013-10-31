@@ -22,8 +22,8 @@
 package se.jguru.nazgul.core.algorithms.tree.model.common;
 
 import org.apache.commons.lang3.Validate;
-import se.jguru.nazgul.core.algorithms.tree.model.Path;
-import se.jguru.nazgul.core.algorithms.tree.model.SemanticPath;
+import se.jguru.nazgul.core.algorithms.api.trees.path.Path;
+import se.jguru.nazgul.core.algorithms.api.trees.path.SemanticPath;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException;
 
@@ -38,7 +38,6 @@ import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.util.EnumMap;
 import java.util.Iterator;

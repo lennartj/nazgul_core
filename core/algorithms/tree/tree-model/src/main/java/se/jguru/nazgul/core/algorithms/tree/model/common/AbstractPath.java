@@ -23,7 +23,7 @@
 package se.jguru.nazgul.core.algorithms.tree.model.common;
 
 import org.apache.commons.lang3.Validate;
-import se.jguru.nazgul.core.algorithms.tree.model.Path;
+import se.jguru.nazgul.core.algorithms.api.trees.path.Path;
 import se.jguru.nazgul.core.persistence.model.NazgulEntity;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException;
@@ -31,6 +31,8 @@ import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationExc
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
@@ -49,6 +51,7 @@ import java.util.List;
  */
 @MappedSuperclass
 @XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"compoundPath", "segmentSeparator"})
+@XmlAccessorType(XmlAccessType.FIELD)
 @SuppressWarnings("PMD.UnusedPrivateField")
 public abstract class AbstractPath<SegmentType extends Serializable & Comparable<SegmentType>>
         extends NazgulEntity implements Path<SegmentType> {

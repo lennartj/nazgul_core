@@ -21,8 +21,8 @@
  */
 package se.jguru.nazgul.core.configuration.model.node;
 
-import se.jguru.nazgul.core.algorithms.tree.api.MutableNode;
-import se.jguru.nazgul.core.algorithms.tree.model.Path;
+import se.jguru.nazgul.core.algorithms.api.trees.MutableNode;
+import se.jguru.nazgul.core.algorithms.api.trees.path.Path;
 import se.jguru.nazgul.core.configuration.model.MutableProperty;
 
 import java.io.Serializable;
@@ -33,7 +33,7 @@ import java.io.Serializable;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-interface PropertySetNode<E extends Enum<E>, K extends Serializable & Comparable<K>, P extends Path<K>,
+public interface PropertySetNode<E extends Enum<E>, K extends Serializable & Comparable<K>, P extends Path<K>,
         V extends Serializable> extends MutableNode<Path<E>, MutableProperty<K, V>> {
 
     /**
