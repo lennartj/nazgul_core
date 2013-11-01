@@ -20,7 +20,7 @@
  * #L%
  */
 
-package se.jguru.nazgul.core.algorithms.api.trees;
+package se.jguru.nazgul.core.algorithms.api.trees.node;
 
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
 

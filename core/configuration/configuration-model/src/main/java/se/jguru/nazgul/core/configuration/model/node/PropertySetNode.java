@@ -21,7 +21,7 @@
  */
 package se.jguru.nazgul.core.configuration.model.node;
 
-import se.jguru.nazgul.core.algorithms.api.trees.MutableNode;
+import se.jguru.nazgul.core.algorithms.api.trees.node.MutableNode;
 import se.jguru.nazgul.core.algorithms.api.trees.path.Path;
 import se.jguru.nazgul.core.configuration.model.MutableProperty;
 

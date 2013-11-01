@@ -22,6 +22,8 @@
 
 package se.jguru.nazgul.core.algorithms.api.trees;
 
+import se.jguru.nazgul.core.algorithms.api.trees.node.MutableNode;
+import se.jguru.nazgul.core.algorithms.api.trees.node.Node;
 import se.jguru.nazgul.core.algorithms.api.trees.path.Path;
 
 import java.io.Serializable;

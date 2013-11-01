@@ -21,8 +21,8 @@
  */
 package se.jguru.nazgul.core.algorithms.tree.api.common;
 
-import se.jguru.nazgul.core.algorithms.api.trees.MutableNode;
-import se.jguru.nazgul.core.algorithms.api.trees.Node;
+import se.jguru.nazgul.core.algorithms.api.trees.node.MutableNode;
+import se.jguru.nazgul.core.algorithms.api.trees.node.Node;
 import se.jguru.nazgul.core.algorithms.api.trees.path.Path;
 import se.jguru.nazgul.core.algorithms.tree.model.common.StringPath;
 
