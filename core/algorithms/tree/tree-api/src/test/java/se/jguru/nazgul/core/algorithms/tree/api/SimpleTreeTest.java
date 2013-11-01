@@ -27,10 +27,10 @@ import org.junit.Test;
 import se.jguru.nazgul.core.algorithms.api.trees.node.MutableNode;
 import se.jguru.nazgul.core.algorithms.api.trees.node.Node;
 import se.jguru.nazgul.core.algorithms.tree.api.common.SimpleTree;
-import se.jguru.nazgul.core.algorithms.tree.api.common.StringKeyNode;
+import se.jguru.nazgul.core.algorithms.tree.model.node.StringKeyNode;
 import se.jguru.nazgul.core.algorithms.tree.api.helpers.ImmutableStringStringNode;
-import se.jguru.nazgul.core.algorithms.tree.model.common.AbstractPath;
-import se.jguru.nazgul.core.algorithms.tree.model.common.StringPath;
+import se.jguru.nazgul.core.algorithms.tree.model.path.AbstractPath;
+import se.jguru.nazgul.core.algorithms.tree.model.path.StringPath;
 
 import java.util.ArrayList;
 import java.util.List;

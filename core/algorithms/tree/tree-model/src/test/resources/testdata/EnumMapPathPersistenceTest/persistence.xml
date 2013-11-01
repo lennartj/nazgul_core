@@ -30,9 +30,9 @@
         <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
 
         <class>se.jguru.nazgul.core.persistence.model.NazgulEntity</class>
-        <class>se.jguru.nazgul.core.algorithms.tree.model.common.AbstractPath</class>
-        <class>se.jguru.nazgul.core.algorithms.tree.model.common.EnumMapPath</class>
-        <class>se.jguru.nazgul.core.algorithms.tree.model.common.StringPath</class>
+        <class>se.jguru.nazgul.core.algorithms.tree.model.path.AbstractPath</class>
+        <class>se.jguru.nazgul.core.algorithms.tree.model.path.EnumMapPath</class>
+        <class>se.jguru.nazgul.core.algorithms.tree.model.path.StringPath</class>
 
         <!--
             When set to true then only listed classes and jars will

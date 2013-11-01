@@ -19,7 +19,7 @@
  * limitations under the License.
  * #L%
  */
-package se.jguru.nazgul.core.algorithms.tree.model.common.helpers;
+package se.jguru.nazgul.core.algorithms.tree.model.helpers;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB

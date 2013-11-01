@@ -85,27 +85,4 @@ public class StringProperty extends AbstractStringKeyedMutableProperty<String> {
     public String getValue() {
         return value;
     }
-
-    /*
-     * Equality comparison definition that compares key and value.
-     * <p/>
-     * {@inheritDoc}
-
-    @Override
-    public boolean equals(final Object that) {
-
-        // Check sanity
-        if(this == that) {
-            return true;
-        }
-        if(null == that || that.getClass() != StringProperty.class) {
-            return false;
-        }
-
-        // Delegate and compare
-        final StringProperty thatProperty = (StringProperty) that;
-        return getKey().equals(thatProperty.getKey())
-                && getValue().equals(thatProperty.getValue());
-    }
-     */
 }

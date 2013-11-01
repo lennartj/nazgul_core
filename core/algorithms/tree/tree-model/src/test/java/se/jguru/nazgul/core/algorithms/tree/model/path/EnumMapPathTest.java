@@ -19,14 +19,15 @@
  * limitations under the License.
  * #L%
  */
-package se.jguru.nazgul.core.algorithms.tree.model.common;
+package se.jguru.nazgul.core.algorithms.tree.model.path;
 
 import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.Diff;
 import org.junit.Assert;
 import org.junit.Test;
-import se.jguru.nazgul.core.algorithms.tree.model.common.helpers.CityIdentifier;
-import se.jguru.nazgul.core.algorithms.tree.model.common.helpers.IncorrectEmptyEnum;
+import se.jguru.nazgul.core.algorithms.tree.model.helpers.CityIdentifier;
+import se.jguru.nazgul.core.algorithms.tree.model.helpers.IncorrectEmptyEnum;
+import se.jguru.nazgul.core.algorithms.tree.model.path.EnumMapPath;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.JaxbXmlBinder;
 import se.jguru.nazgul.test.xmlbinding.XmlTestUtils;
 

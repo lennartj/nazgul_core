@@ -24,7 +24,7 @@
 <core:entityTransporter xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="http://www.jguru.se/nazgul/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <entityClasses>
         <entityClass>org.aspectj.runtime.reflect.JoinPointImpl$StaticPartImpl</entityClass>
-        <entityClass>se.jguru.nazgul.core.algorithms.tree.model.common.EnumMapPath</entityClass>
+        <entityClass>se.jguru.nazgul.core.algorithms.tree.model.path.EnumMapPath</entityClass>
         <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter</entityClass>
     </entityClasses>
     <items>

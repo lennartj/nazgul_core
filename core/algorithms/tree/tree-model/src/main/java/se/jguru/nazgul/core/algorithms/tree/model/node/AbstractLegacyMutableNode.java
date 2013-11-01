@@ -20,7 +20,7 @@
  * #L%
  */
 
-package se.jguru.nazgul.core.algorithms.tree.api.common;
+package se.jguru.nazgul.core.algorithms.tree.model.node;
 
 import org.apache.commons.lang3.Validate;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
@@ -41,7 +41,7 @@ import java.util.List;
  * @param <KeyType>   The key type of this Node.
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public abstract class AbstractMutableNode<KeyType extends Serializable & Comparable<KeyType>,
+public abstract class AbstractLegacyMutableNode<KeyType extends Serializable & Comparable<KeyType>,
         ValueType extends Serializable> implements MutableNode<KeyType, ValueType> {
 
     // Internal state
@@ -60,10 +60,10 @@ public abstract class AbstractMutableNode<KeyType extends Serializable & Compara
      * @param children The children of this DefaultMutableNode instance. Can be {@code null}, in which
      *                 case a new ArrayList will be created and used for the children.
      */
-    public AbstractMutableNode(final KeyType key,
-                               final ValueType data,
-                               final MutableNode<KeyType, ValueType> parent,
-                               final List<Node<KeyType, ValueType>> children) {
+    public AbstractLegacyMutableNode(final KeyType key,
+                                     final ValueType data,
+                                     final MutableNode<KeyType, ValueType> parent,
+                                     final List<Node<KeyType, ValueType>> children) {
 
         // Check sanity
         Validate.notNull(key, "Cannot handle null key argument.");
