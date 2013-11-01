@@ -19,12 +19,13 @@
  * limitations under the License.
  * #L%
  */
-package se.jguru.nazgul.core.algorithms.tree.model.common;
+package se.jguru.nazgul.core.algorithms.tree.model.path;
 
 import org.dbunit.Assertion;
 import org.dbunit.dataset.IDataSet;
 import org.junit.Assert;
 import org.junit.Test;
+import se.jguru.nazgul.core.algorithms.tree.model.path.StringPath;
 import se.jguru.nazgul.test.persistence.StandardPersistenceTest;
 
 import javax.persistence.Query;

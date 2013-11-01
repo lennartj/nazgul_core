@@ -20,11 +20,11 @@
  * #L%
  */
 
-package se.jguru.nazgul.core.algorithms.tree.api.helpers;
+package se.jguru.nazgul.core.algorithms.tree.model.helpers;
 
 import se.jguru.nazgul.core.algorithms.api.trees.node.MutableNode;
 import se.jguru.nazgul.core.algorithms.api.trees.node.Node;
-import se.jguru.nazgul.core.algorithms.tree.api.common.StringKeyNode;
+import se.jguru.nazgul.core.algorithms.tree.model.node.StringKeyNode;
 
 import java.util.List;
 

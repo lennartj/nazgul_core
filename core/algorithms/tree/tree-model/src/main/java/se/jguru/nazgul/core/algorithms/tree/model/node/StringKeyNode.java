@@ -19,12 +19,12 @@
  * limitations under the License.
  * #L%
  */
-package se.jguru.nazgul.core.algorithms.tree.api.common;
+package se.jguru.nazgul.core.algorithms.tree.model.node;
 
 import se.jguru.nazgul.core.algorithms.api.trees.node.MutableNode;
 import se.jguru.nazgul.core.algorithms.api.trees.node.Node;
 import se.jguru.nazgul.core.algorithms.api.trees.path.Path;
-import se.jguru.nazgul.core.algorithms.tree.model.common.StringPath;
+import se.jguru.nazgul.core.algorithms.tree.model.path.StringPath;
 
 import java.io.Serializable;
 import java.util.List;
@@ -35,7 +35,7 @@ import java.util.List;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class StringKeyNode<ValueType extends Serializable> extends AbstractMutableNode<String, ValueType> {
+public class StringKeyNode<ValueType extends Serializable> extends AbstractLegacyMutableNode<String, ValueType> {
 
     /**
      * Compound constructor, creating a new StringKeyNode instance from the provided arguments.

@@ -25,12 +25,12 @@
     <entityClasses>
         <entityClass>java.lang.Class</entityClass>
         <entityClass>org.aspectj.runtime.reflect.JoinPointImpl$StaticPartImpl</entityClass>
-        <entityClass>se.jguru.nazgul.core.algorithms.tree.model.common.EnumMapPath</entityClass>
+        <entityClass>se.jguru.nazgul.core.algorithms.tree.model.path.EnumMapPath</entityClass>
         <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter</entityClass>
     </entityClasses>
     <items>
         <item xsi:type="core:enumMapPath"
-              enumClassName="se.jguru.nazgul.core.algorithms.tree.model.common.helpers.CityIdentifier" version="0">
+              enumClassName="se.jguru.nazgul.core.algorithms.tree.model.helpers.CityIdentifier" version="0">
             <compoundPath>Sweden/Västra Götaland/Göteborg</compoundPath>
             <segmentSeparator>/</segmentSeparator>
         </item>

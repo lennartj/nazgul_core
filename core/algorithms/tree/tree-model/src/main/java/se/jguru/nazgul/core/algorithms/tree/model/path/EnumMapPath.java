@@ -19,7 +19,7 @@
  * limitations under the License.
  * #L%
  */
-package se.jguru.nazgul.core.algorithms.tree.model.common;
+package se.jguru.nazgul.core.algorithms.tree.model.path;
 
 import org.apache.commons.lang3.Validate;
 import se.jguru.nazgul.core.algorithms.api.trees.path.Path;
