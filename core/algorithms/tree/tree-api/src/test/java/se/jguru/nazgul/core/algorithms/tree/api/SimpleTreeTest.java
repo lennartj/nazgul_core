@@ -24,8 +24,8 @@ package se.jguru.nazgul.core.algorithms.tree.api;
 
 import org.junit.Assert;
 import org.junit.Test;
-import se.jguru.nazgul.core.algorithms.api.trees.MutableNode;
-import se.jguru.nazgul.core.algorithms.api.trees.Node;
+import se.jguru.nazgul.core.algorithms.api.trees.node.MutableNode;
+import se.jguru.nazgul.core.algorithms.api.trees.node.Node;
 import se.jguru.nazgul.core.algorithms.tree.api.common.SimpleTree;
 import se.jguru.nazgul.core.algorithms.tree.api.common.StringKeyNode;
 import se.jguru.nazgul.core.algorithms.tree.api.helpers.ImmutableStringStringNode;
