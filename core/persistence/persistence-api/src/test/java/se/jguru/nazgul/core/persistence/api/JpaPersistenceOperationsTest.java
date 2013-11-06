@@ -22,12 +22,17 @@
 
 package se.jguru.nazgul.core.persistence.api;
 
+import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.jguru.nazgul.core.persistence.api.helpers.MockNazgulEntity;
+import se.jguru.nazgul.core.persistence.api.helpers.NamedParametersPerson;
+import se.jguru.nazgul.core.persistence.api.helpers.ParameterMapBuilder;
+import se.jguru.nazgul.core.persistence.api.helpers.QueryOperations;
 import se.jguru.nazgul.core.persistence.model.NazgulEntity;
 
 import javax.persistence.EntityManager;
@@ -35,6 +40,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -63,7 +69,7 @@ public class JpaPersistenceOperationsTest {
         // Find the JPA specification used, and use openjpa2 as the default.
         jpaSpecification = System.getProperty(JPA_SPECIFICATION_PROPERTY, "openjpa2");
         persistenceXmlFile = "testdata/JpaOperationsPersistence_" + jpaSpecification + ".xml";
-        System.out.println("jpaSpec: [" + jpaSpecification + "]  ==> persistenceXmlFile: [" + persistenceXmlFile + "]");
+        log.info("\njpaSpec: [" + jpaSpecification + "]  ==> persistenceXmlFile: [" + persistenceXmlFile + "]\n");
 
         final PersistenceRedirectionClassLoader redirectionClassLoader =
                 new PersistenceRedirectionClassLoader(getClass().getClassLoader(), persistenceXmlFile);
@@ -90,7 +96,7 @@ public class JpaPersistenceOperationsTest {
     @After
     public void cleanupAndRestoreOriginalClassLoader() {
 
-        if (!trans.isActive()) {
+        if (trans != null && !trans.isActive()) {
             trans.begin();
         }
 
@@ -99,20 +105,23 @@ public class JpaPersistenceOperationsTest {
             //
             // Be paranoid.
             //
+            final List<String> tableNames = Arrays.asList("MOCKNAZGULENTITY", "NAMEDPARAMETERSPERSON");
 
-            Query infoQ = unitTestEM.createNativeQuery("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES " +
-                    "WHERE TABLE_NAME = 'MOCKNAZGULENTITY'");
-            final List resultList = infoQ.getResultList();
-            if (resultList.size() == 1) {
+            for (String currentTable : tableNames) {
+                Query infoQ = unitTestEM.createNativeQuery("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES " +
+                        "WHERE TABLE_NAME = '" + currentTable + "'");
+                final List resultList = infoQ.getResultList();
+                if (resultList.size() == 1) {
 
-                Query q = unitTestEM.createNativeQuery("DROP TABLE MOCKNAZGULENTITY");
-                int affectedRows = q.executeUpdate();
-                log.info("Removed table. Rows affected [" + affectedRows + "]");
+                    Query q = unitTestEM.createNativeQuery("DROP TABLE " + currentTable);
+                    int affectedRows = q.executeUpdate();
+                    log.info("Removed table [" + currentTable + "]. Rows affected [" + affectedRows + "]");
 
-                if (trans.getRollbackOnly()) {
-                    trans.rollback();
-                } else {
-                    trans.commit();
+                    if (trans.getRollbackOnly()) {
+                        trans.rollback();
+                    } else {
+                        trans.commit();
+                    }
                 }
             }
         } catch (final Exception e) {
@@ -126,14 +135,13 @@ public class JpaPersistenceOperationsTest {
             if (trans.isActive() && !trans.getRollbackOnly()) {
                 trans.commit();
             }
-            if (unitTestEM.isOpen()) {
+            if (unitTestEM.isOpen() && trans.isActive()) {
                 unitTestEM.flush();
-                unitTestEM.close();
             }
-
         } catch (final Exception e) {
-
             log.info("Could not close the EntityManager.", e);
+        } finally {
+            unitTestEM.close();
         }
 
         Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -155,21 +163,11 @@ public class JpaPersistenceOperationsTest {
         unitUnderTest.delete(null);
     }
 
-    @Test
-    public void validateJpaMergeOperationOnNullEntity() throws Exception {
+    @Test(expected = NullPointerException.class)
+    public void validateExceptionOnJpaMergeOperationWithNullEntity() throws Exception {
 
-        // This case is handled differently by the different JPA providers...
-        if (jpaSpecification.equals("eclipselink2")) {
-            try {
-                unitUnderTest.update(null);
-                Assert.fail("The EclipseLink2 throws a IllegalArgumentException when "
-                        + "attempting to update (i.e. JPA merge) a null value.");
-            } catch (PersistenceOperationException e) {
-                Assert.assertTrue(e.getCause() instanceof IllegalArgumentException);
-            }
-        } else {
-            unitUnderTest.update(null);
-        }
+        // Act & Assert
+        unitUnderTest.update(null);
     }
 
     @Test(expected = PersistenceOperationException.class)
@@ -191,6 +189,25 @@ public class JpaPersistenceOperationsTest {
 
         // Act & Assert
         unitUnderTest.refresh(new IncorrectAnnotationlessEntity());
+    }
+
+    @Test(expected = PersistenceOperationException.class)
+    public void validateJpaExceptionOnFindingNonEntityByPK() throws Exception {
+
+        // Assemble
+        final Class<MockNazgulEntity> mockNazgulEntityClass = MockNazgulEntity.class;
+        final Integer mockPrimaryKey = 42;
+        final EntityManager mockEntityManager = EasyMock.createMock(EntityManager.class);
+        final MockNazgulEntity mockNazgulEntity = new MockNazgulEntity("foobar!");
+        mockNazgulEntity.throwValidationException = true;
+
+        EasyMock.expect(mockEntityManager.find(mockNazgulEntityClass, mockPrimaryKey)).andReturn(mockNazgulEntity);
+        EasyMock.replay(mockEntityManager);
+
+        final JpaPersistenceOperations jpa = new JpaPersistenceOperations(mockEntityManager);
+
+        // Act & Assert
+        jpa.findByPrimaryKey(mockNazgulEntityClass, mockPrimaryKey);
     }
 
     @Test(expected = PersistenceOperationException.class)
@@ -229,7 +246,10 @@ public class JpaPersistenceOperationsTest {
         trans.commit();
         trans.begin();
 
-        final List<NazgulEntity> result = unitUnderTest.fireNamedQuery("getMockEntityByName", testChars);
+        final List<NazgulEntity> result = unitUnderTest.fireNamedQueryWithResultLimit("getMockEntityByName",
+                5, testChars);
+
+        final List<NazgulEntity> result2 = unitUnderTest.fireNamedQuery("getMockEntityByName", testChars);
 
         trans.commit();
 
@@ -239,6 +259,42 @@ public class JpaPersistenceOperationsTest {
         final String value = ((MockNazgulEntity) result.get(0)).getValue();
         Assert.assertEquals("Expected [" + testChars + "], Actual [" + value + "]",
                 testChars, value);
+
+        Assert.assertEquals(1, result2.size());
+        final String value2 = ((MockNazgulEntity) result2.get(0)).getValue();
+        Assert.assertEquals("Expected [" + testChars + "], Actual [" + value2 + "]",
+                testChars, value);
+    }
+
+    @Test
+    public void validateNamedParametersInJpqlNamedQueries() throws Exception {
+
+        // Assemble
+        final String expected = "Lennart";
+        final Map<String, Object> namedParameters = ParameterMapBuilder.with("firstName", "Lenn%").build();
+
+        // Act
+        unitUnderTest.create(new NamedParametersPerson(expected, 45));
+        unitUnderTest.create(new NamedParametersPerson("Malin", 25));
+        unitUnderTest.create(new NamedParametersPerson("Ida", 16));
+
+        trans.commit();
+        trans.begin();
+
+        final List<NamedParametersPerson> result = unitUnderTest.fireNamedQueryWithResultLimit("getPersonsByFirstName",
+                5, namedParameters);
+
+        final NamedParametersPerson found = unitUnderTest.findByPrimaryKey(NamedParametersPerson.class, 1);
+        trans.commit();
+
+        // Assert
+        Assert.assertNotNull(result);
+        Assert.assertEquals(1, result.size());
+        final String value = result.get(0).getFirstName();
+        Assert.assertEquals("Expected [" + expected + "], Actual [" + value + "]",
+                expected, value);
+
+        Assert.assertNotNull("found null NPP by primary key.", found);
     }
 
     //
@@ -250,7 +306,7 @@ public class JpaPersistenceOperationsTest {
         // Add Eclipselink special settings
         final Map<String, String> extraProperties = new TreeMap<String, String>();
         extraProperties.put("eclipselink.persistencexml", persistenceXmlFile);
-        System.out.println("extraProperties [" + extraProperties + "]");
+        // System.out.println("extraProperties [" + extraProperties + "]");
 
         // Create an EntityManager factory.
         final EntityManagerFactory emf = Persistence.createEntityManagerFactory(persistenceUnitName, extraProperties);

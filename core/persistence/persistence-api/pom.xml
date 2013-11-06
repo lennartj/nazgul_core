@@ -57,6 +57,11 @@
 
         <!-- External dependencies -->
         <dependency>
+            <groupId>javax.ejb</groupId>
+            <artifactId>javax.ejb-api</artifactId>
+            <version>3.2</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
@@ -77,6 +82,16 @@
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymock</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -285,7 +300,7 @@
                 <openjpa.version>2.2.2</openjpa.version>
                 <openjpa.includes>se/jguru/nazgul/**/*.class</openjpa.includes>
                 <openjpa.excludes>se/jguru/nazgul/core/xmlbinding/spi/jaxb/transport/EntityWrapper.class</openjpa.excludes>
-                <openjpa.persistenceXmlPath>weaving/openjpa/2/${project.artifactId}-persistence.xml</openjpa.persistenceXmlPath>
+                <openjpa.persistenceXmlPath>weaving/openjpa/v2/${project.artifactId}-persistence.xml</openjpa.persistenceXmlPath>
                 <openjpa.persistenceXmlFile>${project.basedir}/src/main/${openjpa.persistenceXmlPath}</openjpa.persistenceXmlFile>
                 <openjpa.persistenceXmlTestFile>${project.basedir}/src/test/${openjpa.persistenceXmlPath}</openjpa.persistenceXmlTestFile>
                 <jpa.provider.class>org.apache.openjpa.persistence.PersistenceProviderImpl</jpa.provider.class>
@@ -328,9 +343,12 @@
                                     <phase>process-test-classes</phase>
                                     <goals>
                                         <goal>test-enhance</goal>
+                                        <goal>sql</goal>
                                     </goals>
                                     <configuration>
                                         <persistenceXmlFile>${openjpa.persistenceXmlTestFile}</persistenceXmlFile>
+                                        <addDefaultConstructor>true</addDefaultConstructor>
+                                        <enforcePropertyRestrictions>true</enforcePropertyRestrictions>
                                     </configuration>
                                 </execution>
                             </executions>
@@ -341,7 +359,6 @@
                                     <version>${openjpa.version}</version>
                                 </dependency>
                             </dependencies>
-
                         </plugin>
                     </plugins>
                 </pluginManagement>
@@ -374,6 +391,15 @@
                             </execution>
                         </executions>
                     </plugin>
+
+                    <!--
+                        Use dynamic enhancement during the test cases, since
+                        the persistence-model classes are not build-time enhanced.
+                    -->
+                    <!-- plugin>
+                        <groupId>org.apache.openjpa</groupId>
+                        <artifactId>openjpa-maven-plugin</artifactId>
+                    </plugin -->
                 </plugins>
             </build>
         </profile>

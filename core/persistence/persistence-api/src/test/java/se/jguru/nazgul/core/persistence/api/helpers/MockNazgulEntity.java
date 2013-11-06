@@ -20,7 +20,7 @@
  * #L%
  */
 
-package se.jguru.nazgul.core.persistence.api;
+package se.jguru.nazgul.core.persistence.api.helpers;
 
 import se.jguru.nazgul.core.persistence.model.NazgulEntity;
 import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException;
@@ -50,6 +50,8 @@ public class MockNazgulEntity extends NazgulEntity {
 
     @Transient
     public List<String> callTrace = new ArrayList<String>();
+
+    public transient boolean throwValidationException = false;
 
     @Basic
     @Column(nullable = false)
@@ -86,7 +88,12 @@ public class MockNazgulEntity extends NazgulEntity {
      */
     @Override
     protected void validateEntityState() throws InternalStateValidationException {
-
         callTrace.add("validateEntityState");
+
+        if(throwValidationException) {
+            InternalStateValidationException.create()
+                    .addDescription("Throwing ISV as instructed.")
+                    .endExpressionAndValidate();
+        }
     }
 }
