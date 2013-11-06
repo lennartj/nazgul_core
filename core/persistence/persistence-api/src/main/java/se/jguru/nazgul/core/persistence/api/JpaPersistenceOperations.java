@@ -23,12 +23,13 @@
 package se.jguru.nazgul.core.persistence.api;
 
 import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.persistence.api.helpers.JpaOperations;
+import se.jguru.nazgul.core.persistence.api.helpers.QueryOperations;
 import se.jguru.nazgul.core.persistence.model.NazgulEntity;
-import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Generic JPA implementation of the PersistenceOperations interface,
@@ -65,12 +66,8 @@ public class JpaPersistenceOperations implements PersistenceOperations {
             return;
         }
 
-        try {
-            entityManager.persist(entity);
-        } catch (Exception e) {
-            throw new PersistenceOperationException("Could not persist object of type ["
-                    + entity.getClass().getName() + "]", e);
-        }
+        // Delegate
+        JpaOperations.create(entity, entityManager);
     }
 
     /**
@@ -78,15 +75,7 @@ public class JpaPersistenceOperations implements PersistenceOperations {
      */
     @Override
     public final <T extends NazgulEntity> T update(final T entity) throws PersistenceOperationException {
-
-        try {
-            return entityManager.merge(entity);
-        } catch (Exception e) {
-
-            final String entityTypeName = entity == null ? "unknown" : entity.getClass().getName();
-            throw new PersistenceOperationException("Could not update (JPA merge) object of type ["
-                    + entityTypeName + "]", e);
-        }
+        return JpaOperations.update(entity, entityManager);
     }
 
     /**
@@ -100,13 +89,8 @@ public class JpaPersistenceOperations implements PersistenceOperations {
             return;
         }
 
-        try {
-            entityManager.refresh(validateInternalState(entity));
-        } catch (Exception e) {
-
-            throw new PersistenceOperationException("Could not refresh ["
-                    + entity.getClass().getName() + "] instance.", e);
-        }
+        // Delegate
+        JpaOperations.refresh(entity, entityManager);
     }
 
     /**
@@ -120,18 +104,8 @@ public class JpaPersistenceOperations implements PersistenceOperations {
             return;
         }
 
-        try {
-
-            // updateAuditDataAndWriteAuditTrailEntity(toDelete);
-
-            // Remove the instance
-            entityManager.remove(entity);
-
-        } catch (Exception e) {
-
-            throw new PersistenceOperationException("Could not delete ["
-                    + entity.getClass().getName() + "]", e);
-        }
+        // Delegate
+        JpaOperations.delete(entity, entityManager);
     }
 
     /**
@@ -142,11 +116,8 @@ public class JpaPersistenceOperations implements PersistenceOperations {
                                                        final Object primaryKey)
             throws PersistenceOperationException {
 
-        try {
-            return validateInternalState(entityManager.find(entityType, primaryKey));
-        } catch (InternalStateValidationException e) {
-            throw new PersistenceOperationException("Found invalid NazgulEntity", e);
-        }
+        // Delegate
+        return QueryOperations.findByPrimaryKey(entityType, entityManager, primaryKey);
     }
 
     /**
@@ -157,24 +128,46 @@ public class JpaPersistenceOperations implements PersistenceOperations {
                                                            final Object... parameters)
             throws PersistenceOperationException {
 
-        // Create the query, and assign any parameters provided.
-        Query namedQuery = entityManager.createNamedQuery(query);
-        setParameters(namedQuery, parameters);
+        // Delegate and return
+        return QueryOperations.fireNamedQuery(query, entityManager, parameters);
+    }
 
-        // Fire the query; no null Lists are returned.
-        List<T> toReturn = (List<T>) namedQuery.getResultList();
-        for (T current : toReturn) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T extends NazgulEntity> List<T> fireNamedQueryWithResultLimit(final String query,
+                                                                          final int maxResults,
+                                                                          final Object... parameters)
+            throws PersistenceOperationException {
 
-            // Validate each NazgulEntity.
-            try {
-                this.validateInternalState(current);
-            } catch (InternalStateValidationException e) {
-                throw new PersistenceOperationException("NazgulEntity state validation failed", e);
-            }
-        }
+        // Delegate
+        return QueryOperations.fireNamedQueryWithResultLimit(query, entityManager, maxResults, parameters);
+    }
 
-        // All done.
-        return toReturn;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T extends NazgulEntity> List<T> fireNamedQuery(final String query, final Map<String, Object> parameters)
+            throws PersistenceOperationException {
+
+        // Delegate
+        // return fireNamedQueryWithResultLimit(query, Integer.MIN_VALUE, parameters);
+        return QueryOperations.fireNamedQuery(query, entityManager, Integer.MIN_VALUE, parameters);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T extends NazgulEntity> List<T> fireNamedQueryWithResultLimit(final String query,
+                                                                          final int maxResults,
+                                                                          final Map<String, Object> parameters)
+            throws PersistenceOperationException {
+
+        // Delegate and return
+        return QueryOperations.fireNamedQuery(query, entityManager, maxResults, parameters);
     }
 
     /**
@@ -182,33 +175,5 @@ public class JpaPersistenceOperations implements PersistenceOperations {
      */
     protected final EntityManager getEntityManager() {
         return entityManager;
-    }
-
-    //
-    // Private helpers
-    //
-
-    private <T extends NazgulEntity> T validateInternalState(final T entity)
-            throws InternalStateValidationException {
-
-        // Validate the internal state of this entity.
-        if (entity != null) {
-            entity.validateInternalState();
-        }
-
-        // All went well.
-        return entity;
-    }
-
-    private void setParameters(final Query query, final Object... params) {
-
-        // Assign all parameters, if any.
-        if (params != null) {
-            for (int i = 0; i < params.length; i++) {
-                // Bump the parameter index value with
-                // 1, to comply with JDBC...
-                query.setParameter((i + 1), params[i]);
-            }
-        }
     }
 }

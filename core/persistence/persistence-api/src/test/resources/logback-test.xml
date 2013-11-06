@@ -30,13 +30,14 @@
     </appender>
 
     <!-- By default, make the logging keep quiet -->
-    <root level="DEBUG">
+    <root level="TRACE">
         <appender-ref ref="Stdout"/>
     </root>
 
     <!-- Lower the logging level for relevant classes -->
     <logger name="se.jguru.nazgul" level="WARN"/>
     <logger name="se.jguru.nazgul.core.persistence" level="DEBUG"/>
+    <logger name="openjpa" level="WARN"/>
 
     <!-- Make the frameworks shut up. -->
     <logger name="org.springframework" level="WARN"/>
