@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ #%L
   ~   se.jguru.nazgul.core.poms.core-parent.nazgul-core-parent
@@ -28,28 +28,57 @@
     <!-- | Section 1:  Project information                -->
     <!-- +=============================================== -->
     <parent>
-        <groupId>se.jguru.nazgul.core.algorithms</groupId>
-        <artifactId>nazgul-core-algorithms-reactor</artifactId>
+        <groupId>se.jguru.nazgul.core.poms.core-api-parent</groupId>
+        <artifactId>nazgul-core-api-parent</artifactId>
         <version>1.6.1-SNAPSHOT</version>
+        <relativePath>../../../poms/core-api-parent</relativePath>
     </parent>
 
-    <groupId>se.jguru.nazgul.core.algorithms.event</groupId>
-    <artifactId>nazgul-core-event-reactor</artifactId>
-    <packaging>pom</packaging>
+    <groupId>se.jguru.nazgul.core.algorithms.event.spi.eventbus</groupId>
+    <artifactId>nazgul-core-algorithms-event-spi-eventbus</artifactId>
+    <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <url>${url.prefix}/${path.in.reactor}</url>
 
     <properties>
-        <path.in.reactor>core/algorithms/event</path.in.reactor>
+        <path.in.reactor>core/algorithms/event/event-spi-eventbus</path.in.reactor>
     </properties>
 
     <!-- +=============================================== -->
-    <!-- | Section 2:  Module definitions                 -->
+    <!-- | Section 2:  Dependency (management) settings   -->
     <!-- +=============================================== -->
-    <modules>
-        <module>event-api</module>
-        <module>event-spi-eventbus</module>
-    </modules>
+    <dependencies>
+        <!--
+            Internal dependencies.
+        -->
+        <dependency>
+            <groupId>se.jguru.nazgul.core.algorithms.event.api</groupId>
+            <artifactId>nazgul-core-algorithms-event-api</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+        </dependency>
+
+        <!--
+            External dependencies.
+        -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <!-- +=============================================== -->
+    <!-- | Section 3:  Build settings                     -->
+    <!-- +=============================================== -->
 
     <!-- +=============================================== -->
     <!-- | Section 4:  External systems                   -->

@@ -100,7 +100,9 @@ public abstract class AbstractEventProducer<T extends EventConsumer>
      * {@inheritDoc}
      */
     @Override
-    public final void addConsumer(final T consumer) {
+    public final String addConsumer(final T consumer) {
+
+        String toReturn = null;
 
         // Check sanity
         if (consumer != null) {
@@ -109,11 +111,7 @@ public abstract class AbstractEventProducer<T extends EventConsumer>
             final String consumerID = consumer.getClusterId();
             if (consumers.containsKey(consumerID)) {
                 log.warn("Consumer with id [" + consumerID + "] already registered.");
-                return;
-            }
-
-            // Register the consumer to its EventProducers.
-            if (registerConsumerToEventProducers(consumer)) {
+            } else if (registerConsumerToEventProducers(consumer)) {
 
                 // Register the consumer
                 consumers.put(consumerID, consumer);
@@ -127,7 +125,12 @@ public abstract class AbstractEventProducer<T extends EventConsumer>
                             e);
                 }
             }
+
+            toReturn = consumerID;
         }
+
+        // All done.
+        return toReturn;
     }
 
     /**
