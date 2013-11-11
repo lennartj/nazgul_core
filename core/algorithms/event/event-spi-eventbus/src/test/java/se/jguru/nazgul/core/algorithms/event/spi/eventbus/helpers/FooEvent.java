@@ -1,6 +1,6 @@
 /*
  * #%L
- * Nazgul Project: nazgul-core-algorithms-event-api
+ * Nazgul Project: nazgul-core-algorithms-event-spi-eventbus
  * %%
  * Copyright (C) 2010 - 2013 jGuru Europe AB
  * %%
@@ -19,20 +19,21 @@
  * limitations under the License.
  * #L%
  */
-package se.jguru.nazgul.core.algorithms.event.api.consumer;
-
-import se.jguru.nazgul.core.clustering.api.Clusterable;
-
-import java.util.EventListener;
+package se.jguru.nazgul.core.algorithms.event.spi.eventbus.helpers;
 
 /**
- * EventConsumer/EventListener specification with callback methods invoked when events occur.
- * EventConsumer instances should function correctly in a clustered environment, and must also
- * be Comparable to enforce a natural ordering and comparison between instances.
- *
- * @param <E> The exact subtype of EventConsumer in effect.
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
- * @see EventListener
  */
-public interface EventConsumer<E extends EventConsumer<E>> extends EventListener, Comparable<E>, Clusterable {
+public class FooEvent {
+
+    // internal state
+    private String value;
+
+    public FooEvent(final String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }

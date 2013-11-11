@@ -19,20 +19,24 @@
  * limitations under the License.
  * #L%
  */
-package se.jguru.nazgul.core.algorithms.event.api.consumer;
+package se.jguru.nazgul.core.algorithms.event.api.publisher;
 
-import se.jguru.nazgul.core.clustering.api.Clusterable;
-
-import java.util.EventListener;
+import se.jguru.nazgul.core.algorithms.event.api.EventConsumerWrapper;
 
 /**
- * EventConsumer/EventListener specification with callback methods invoked when events occur.
- * EventConsumer instances should function correctly in a clustered environment, and must also
- * be Comparable to enforce a natural ordering and comparison between instances.
+ * Specification for an object publishing event objects (of any arbitrary class)
+ * to a bus-like structure similar to in-process MessageProducers.
+ * The specification for in-process MessageConsumers, as well as the registration
+ * process between EventPublisher and -Consumer is left to concrete implementations.
  *
- * @param <E> The exact subtype of EventConsumer in effect.
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
- * @see EventListener
  */
-public interface EventConsumer<E extends EventConsumer<E>> extends EventListener, Comparable<E>, Clusterable {
+public interface EventPublisher<E, T> extends EventConsumerWrapper<T> {
+
+    /**
+     * Publishes an event (object) for consumption by registered consumers.
+     *
+     * @param event The event to publish. Should not be {@code null}.
+     */
+    void publish(E event);
 }

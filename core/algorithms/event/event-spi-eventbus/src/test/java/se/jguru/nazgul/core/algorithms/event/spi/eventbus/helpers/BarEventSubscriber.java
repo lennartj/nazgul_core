@@ -1,6 +1,6 @@
 /*
  * #%L
- * Nazgul Project: nazgul-core-algorithms-event-api
+ * Nazgul Project: nazgul-core-algorithms-event-spi-eventbus
  * %%
  * Copyright (C) 2010 - 2013 jGuru Europe AB
  * %%
@@ -19,20 +19,38 @@
  * limitations under the License.
  * #L%
  */
-package se.jguru.nazgul.core.algorithms.event.api.consumer;
+package se.jguru.nazgul.core.algorithms.event.spi.eventbus.helpers;
 
+import com.google.common.eventbus.Subscribe;
 import se.jguru.nazgul.core.clustering.api.Clusterable;
 
-import java.util.EventListener;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * EventConsumer/EventListener specification with callback methods invoked when events occur.
- * EventConsumer instances should function correctly in a clustered environment, and must also
- * be Comparable to enforce a natural ordering and comparison between instances.
- *
- * @param <E> The exact subtype of EventConsumer in effect.
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
- * @see EventListener
  */
-public interface EventConsumer<E extends EventConsumer<E>> extends EventListener, Comparable<E>, Clusterable {
+public class BarEventSubscriber implements Clusterable {
+
+    // Internal state
+    private String clusterID;
+    public List<String> callTrace = new ArrayList<String>();
+
+    public BarEventSubscriber(final String clusterID) {
+        this.clusterID = clusterID;
+    }
+
+    @Subscribe
+    public void onBarEvent(final BarEvent event) {
+        final String name = event == null ? "<nothing>" : event.getName();
+        callTrace.add("[" + name + "]");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getClusterId() {
+        return clusterID;
+    }
 }
