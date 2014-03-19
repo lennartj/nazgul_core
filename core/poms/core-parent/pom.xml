@@ -29,7 +29,7 @@
     <parent>
         <groupId>se.jguru.nazgul.tools.poms.external</groupId>
         <artifactId>nazgul-tools-external-parent</artifactId>
-        <version>2.0.9</version>
+        <version>3.0.1</version>
         <relativePath />
     </parent>
 
@@ -71,7 +71,7 @@
         <!--
             Supply the version of the Nazgul Tools framework as a Property.
         -->
-        <nazgul.tools.version>3.0.0</nazgul.tools.version>
+        <nazgul.tools.version>3.0.1</nazgul.tools.version>
 
         <!--
             Other, external version properties.
@@ -240,7 +240,6 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>jaxb2-maven-plugin</artifactId>
-                    <version>1.5</version>
                     <!--$NO-MVN-MAN-VER$-->
                     <configuration>
                         <includes>

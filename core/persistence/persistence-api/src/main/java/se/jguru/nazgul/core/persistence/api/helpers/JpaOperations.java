@@ -23,7 +23,7 @@ package se.jguru.nazgul.core.persistence.api.helpers;
 
 import org.apache.commons.lang3.Validate;
 import se.jguru.nazgul.core.persistence.api.PersistenceOperationException;
-import se.jguru.nazgul.core.persistence.model.NazgulEntity;
+import se.jguru.nazgul.tools.validation.api.Validatable;
 import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException;
 
 import javax.ejb.TransactionAttribute;
@@ -53,7 +53,7 @@ public final class JpaOperations {
      * @throws PersistenceOperationException if the entity could not be created.
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public static <T extends NazgulEntity> void create(final T entity, final EntityManager entityManager)
+    public static <T> void create(final T entity, final EntityManager entityManager)
             throws PersistenceOperationException {
 
         // Check sanity
@@ -79,7 +79,7 @@ public final class JpaOperations {
      * @throws PersistenceOperationException if the entity could not be updated.
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public static <T extends NazgulEntity> T update(final T entity, final EntityManager entityManager)
+    public static <T> T update(final T entity, final EntityManager entityManager)
             throws PersistenceOperationException {
 
         // Check sanity
@@ -105,7 +105,7 @@ public final class JpaOperations {
      * @throws PersistenceOperationException if the entity could not be refreshed.
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public static <T extends NazgulEntity> void refresh(final T entity, final EntityManager entityManager)
+    public static <T> void refresh(final T entity, final EntityManager entityManager)
             throws PersistenceOperationException {
 
         // Check sanity
@@ -113,7 +113,12 @@ public final class JpaOperations {
         Validate.notNull(entityManager, "Cannot handle null entityManager argument.");
 
         try {
-            entityManager.refresh(validateInternalState(entity));
+
+            if(entity instanceof Validatable) {
+                entityManager.refresh(validateInternalState((Validatable) entity));
+            } else {
+                entityManager.refresh(entity);
+            }
         } catch (Exception e) {
 
             throw new PersistenceOperationException("Could not refresh ["
@@ -129,7 +134,7 @@ public final class JpaOperations {
      * @throws PersistenceOperationException if the entity could not be deleted.
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public static <T extends NazgulEntity> void delete(final T entity, final EntityManager entityManager)
+    public static <T> void delete(final T entity, final EntityManager entityManager)
             throws PersistenceOperationException {
 
         // Check sanity
@@ -155,7 +160,7 @@ public final class JpaOperations {
      * @return The entity object supplied as argument.
      * @throws InternalStateValidationException If the NazgulEntity failed validation.
      */
-    public static <T extends NazgulEntity> T validateInternalState(final T entity)
+    public static <T extends Validatable> T validateInternalState(final T entity)
             throws InternalStateValidationException {
 
         // Validate the internal state of this entity.
