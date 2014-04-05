@@ -20,7 +20,8 @@
   ~   limitations under the License.
   ~   #L%
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <!-- +=============================================== -->
@@ -29,8 +30,8 @@
     <parent>
         <groupId>se.jguru.nazgul.tools.poms.external</groupId>
         <artifactId>nazgul-tools-external-parent</artifactId>
-        <version>2.0.9</version>
-        <relativePath />
+        <version>3.0.1</version>
+        <relativePath/>
     </parent>
 
     <groupId>se.jguru.nazgul.core.poms.core-parent</groupId>
@@ -71,13 +72,14 @@
         <!--
             Supply the version of the Nazgul Tools framework as a Property.
         -->
-        <nazgul.tools.version>3.0.0</nazgul.tools.version>
+        <nazgul.tools.version>3.0.1</nazgul.tools.version>
 
         <!--
             Other, external version properties.
         -->
+        <org.eclipse.persistence.version>2.5.1</org.eclipse.persistence.version>
         <osgi.version>4.3.1</osgi.version>
-        <felix.version>4.2.1</felix.version>
+        <felix.version>4.4.0</felix.version>
         <felix.fileinstall.version>3.2.6</felix.fileinstall.version>
         <felix.gogoruntime.version>0.10.0</felix.gogoruntime.version>
         <felix.configadmin.version>1.4.0</felix.configadmin.version>
@@ -202,7 +204,7 @@
             <dependency>
                 <groupId>org.eclipse.persistence</groupId>
                 <artifactId>org.eclipse.persistence.moxy</artifactId>
-                <version>2.5.0</version>
+                <version>${org.eclipse.persistence.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.hsqldb</groupId>
@@ -214,6 +216,18 @@
                 <groupId>org.dbunit</groupId>
                 <artifactId>dbunit</artifactId>
                 <version>2.4.9</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>xalan</groupId>
+                <artifactId>xalan</artifactId>
+                <version>2.7.1</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>xerces</groupId>
+                <artifactId>xercesImpl</artifactId>
+                <version>2.11.0</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
@@ -240,7 +254,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>jaxb2-maven-plugin</artifactId>
-                    <version>1.5</version>
+                    <version>1.6</version>
                     <!--$NO-MVN-MAN-VER$-->
                     <configuration>
                         <includes>

@@ -21,7 +21,7 @@
  */
 package se.jguru.nazgul.test.persistence.pets;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import se.jguru.nazgul.core.persistence.model.NazgulEntity;
 import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException;
 

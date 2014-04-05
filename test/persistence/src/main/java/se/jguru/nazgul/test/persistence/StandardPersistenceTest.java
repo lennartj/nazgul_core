@@ -45,6 +45,19 @@ public abstract class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
     public static final String DEFAULT_PERSISTENCE_UNIT = "InMemoryTestPU";
 
     /**
+     * The system property where the JPA Provider Class is assumed to be bound.
+     */
+    public static final String JPA_PROVIDER_CLASS_SYSPROPKEY = "jpa_provider_class";
+
+    /**
+     * Fallback/default PersistenceProviderType, unless defined by the system property
+     * {@code JPA_PROVIDER_CLASS_SYSPROPKEY}.
+     *
+     * @see #JPA_PROVIDER_CLASS_SYSPROPKEY
+     */
+    public static final PersistenceProviderType DEFAULT_PERSISTENCE_PROVIDER = PersistenceProviderType.OPENJPA_2;
+
+    /**
      * The name of the standard/default (in-memory) database.
      */
     public static final String DEFAULT_DB_NAME = "inMemoryTestDatabase";
@@ -117,16 +130,6 @@ public abstract class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
     }
 
     /**
-     * Retrieves the PersistenceProviderType instance used within this AbstractJpaTest.
-     *
-     * @return The PersistenceProviderType used by this AbstractJpaTest.
-     */
-    @Override
-    protected PersistenceProviderType getPersistenceProviderType() {
-        return PersistenceProviderType.OPENJPA_2;
-    }
-
-    /**
      * Override to supply any additional EntityManagerFactory properties.
      * The properties are supplied as the latter argument to the
      * {@code Persistence.createEntityManagerFactory} method.
@@ -144,7 +147,8 @@ public abstract class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
         // Get standard properties
         final String jdbcDriverClass = getDatabaseType().getJdbcDriverClass();
         final String jdbcURL = getDatabaseType().getUnitTestJdbcURL(DEFAULT_DB_NAME, getTargetDirectory());
-        final String persistenceProviderClass = getPersistenceProviderType().getPersistenceProviderClass();
+        final String persistenceProviderClass = System.getProperty(JPA_PROVIDER_CLASS_SYSPROPKEY,
+                DEFAULT_PERSISTENCE_PROVIDER.getPersistenceProviderClass());
 
         final Map<String, String> toReturn = new TreeMap<String, String>();
 

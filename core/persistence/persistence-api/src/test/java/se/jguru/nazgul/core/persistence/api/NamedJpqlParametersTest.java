@@ -47,7 +47,7 @@ public class NamedJpqlParametersTest extends AbstractInMemoryJpaTest {
     private NamedParametersPerson ida;
 
     @Override
-    protected String getPersistenceFilePrefix() {
+    protected String getPersistenceFileName() {
         return "NamedQueryParameter";
     }
 

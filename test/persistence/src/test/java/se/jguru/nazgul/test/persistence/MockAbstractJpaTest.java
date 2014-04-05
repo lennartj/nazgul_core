@@ -36,14 +36,11 @@ public class MockAbstractJpaTest extends AbstractJpaTest {
     // Internal state
     private String persistenceXmlFile;
     private String persistenceUnit;
-    private PersistenceProviderType persistenceProviderType;
 
     public MockAbstractJpaTest(final String persistenceXmlFile,
-                               final String persistenceUnit,
-                               final PersistenceProviderType persistenceProviderType) {
+                               final String persistenceUnit) {
         this.persistenceXmlFile = persistenceXmlFile;
         this.persistenceUnit = persistenceUnit;
-        this.persistenceProviderType = persistenceProviderType;
     }
 
     /**
@@ -65,9 +62,9 @@ public class MockAbstractJpaTest extends AbstractJpaTest {
         if (cleanupSchemaInTeardown) {
 
             try {
-                final DatabaseMetaData metaData = jpaUnitTestConnection.getMetaData();
+                final DatabaseMetaData metaData = getJpaUnitTestConnection().getMetaData();
                 final ResultSet tables = metaData.getTables(null, DatabaseType.HSQL.getPublicSchemaName(), "%", null);
-                final Statement dropStatement = jpaUnitTestConnection.createStatement();
+                final Statement dropStatement = getJpaUnitTestConnection().createStatement();
                 while (tables.next()) {
                     final String schemaAndTableName = tables.getString(2) + "." + tables.getString(3);
                     System.out.println(" Dropping [" + schemaAndTableName + "] ... ");
@@ -83,15 +80,6 @@ public class MockAbstractJpaTest extends AbstractJpaTest {
             }
         }
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected PersistenceProviderType getPersistenceProviderType() {
-        return persistenceProviderType;
-    }
-
     /**
      * {@inheritDoc}
      */

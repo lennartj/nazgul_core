@@ -26,9 +26,6 @@
 package se.jguru.nazgul.test.persistence;
 
 import org.apache.commons.lang3.Validate;
-import org.apache.openjpa.jdbc.sql.H2Dictionary;
-import org.apache.openjpa.jdbc.sql.HSQLDictionary;
-import org.apache.openjpa.jdbc.sql.PostgresDictionary;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
 import org.dbunit.ext.h2.H2DataTypeFactory;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
@@ -57,7 +54,7 @@ public class DatabaseTypeTest {
 
         // Assert
         Assert.assertTrue(fooJdbcURL.startsWith("jdbc:h2:" + getTargetDirectory().getPath()));
-        Assert.assertEquals(H2Dictionary.class.getName(), databaseDialectClass);
+        Assert.assertEquals("org.apache.openjpa.jdbc.sql.H2Dictionary", databaseDialectClass);
         Assert.assertSame(H2DataTypeFactory.class, dataTypeFactory.getClass());
     }
 
@@ -74,7 +71,7 @@ public class DatabaseTypeTest {
 
         // Assert
         Assert.assertEquals("jdbc:hsqldb:mem:foo", fooJdbcURL);
-        Assert.assertEquals(HSQLDictionary.class.getName(), databaseDialectClass);
+        Assert.assertEquals("org.apache.openjpa.jdbc.sql.HSQLDictionary", databaseDialectClass);
         Assert.assertSame(HsqldbDataTypeFactory.class, dataTypeFactory.getClass());
     }
 
@@ -91,7 +88,7 @@ public class DatabaseTypeTest {
 
         // Assert
         Assert.assertEquals("jdbc:postgresql:foo", fooJdbcURL);
-        Assert.assertEquals(PostgresDictionary.class.getName(), databaseDialectClass);
+        Assert.assertEquals("org.apache.openjpa.jdbc.sql.PostgresDictionary", databaseDialectClass);
         Assert.assertSame(PostgresqlDataTypeFactory.class, dataTypeFactory.getClass());
     }
 
