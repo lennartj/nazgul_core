@@ -28,7 +28,6 @@ import se.jguru.nazgul.core.algorithms.api.trees.node.MutableNode;
 import se.jguru.nazgul.core.algorithms.api.trees.node.Node;
 import se.jguru.nazgul.core.algorithms.tree.api.common.SimpleTree;
 import se.jguru.nazgul.core.algorithms.tree.model.node.StringKeyNode;
-import se.jguru.nazgul.core.algorithms.tree.api.helpers.ImmutableStringStringNode;
 import se.jguru.nazgul.core.algorithms.tree.model.path.AbstractPath;
 import se.jguru.nazgul.core.algorithms.tree.model.path.StringPath;
 
@@ -45,26 +44,6 @@ public class SimpleTreeTest {
 
         // Act & Assert
         new SimpleTree<String, String>(null);
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void validateExceptionOnMovingNonMutableNodeChildren() {
-
-        // Assemble
-        final Node<String, String> child1 = new ImmutableStringStringNode("child1Key", "child1Value", null, null);
-        final List<Node<String, String>> children = new ArrayList<Node<String, String>>();
-        children.add(child1);
-
-        final MutableNode<String, String> root1 = new StringKeyNode<String>(
-                "root1Key", "root1Value", null, children);
-        final MutableNode<String, String> root2 = new StringKeyNode<String>(
-                "root2Key", "root2Value", null, null);
-
-
-        final SimpleTree<String, String> unitUnderTest = new SimpleTree<String, String>(root1);
-
-        // Act & Assert
-        unitUnderTest.setRoot(root2);
     }
 
     @Test

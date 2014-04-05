@@ -79,9 +79,13 @@ public class DateTimePropertyTest extends AbstractStandardizedTimezoneTest {
         final DateTimeProperty fooBar = new DateTimeProperty ("foo", dateTime1);
         final DateTimeProperty fooBaz = new DateTimeProperty ("foo", dateTime2);
         final DateTimeProperty anotherFooBar = new DateTimeProperty ("foo", dateTime1);
+        final DateTimeProperty nullValueProperty = new DateTimeProperty("foo", null);
 
         // Act & Assert
         Assert.assertFalse(fooBar.equals(null));
+        Assert.assertFalse(fooBar.equals(""));
+        Assert.assertFalse(fooBar.equals(nullValueProperty));
+        Assert.assertFalse(nullValueProperty.equals(fooBar));
         Assert.assertTrue(fooBar.equals(fooBar));
         Assert.assertFalse(fooBar.equals(fooBaz));
         Assert.assertTrue(fooBar.equals(anotherFooBar));

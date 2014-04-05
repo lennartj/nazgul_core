@@ -31,16 +31,13 @@ public class MockAbstractDbUnitAndJpaTest extends AbstractDbUnitAndJpaTest {
     private String persistenceXmlFile;
     private String persistenceUnit;
     private String databaseName;
-    private PersistenceProviderType persistenceProviderType;
     private boolean separateConnectionForDbUnit;
 
-    public MockAbstractDbUnitAndJpaTest(final PersistenceProviderType persistenceProviderType,
-                                        final String persistenceUnit,
+    public MockAbstractDbUnitAndJpaTest(final String persistenceUnit,
                                         final String persistenceXmlFile,
                                         final boolean cleanupSchemaInTeardown,
                                         final String databaseName,
                                         final boolean separateConnectionForDbUnit) {
-        this.persistenceProviderType = persistenceProviderType;
         this.persistenceUnit = persistenceUnit;
         this.persistenceXmlFile = persistenceXmlFile;
         this.cleanupSchemaInTeardown = cleanupSchemaInTeardown;
@@ -71,14 +68,6 @@ public class MockAbstractDbUnitAndJpaTest extends AbstractDbUnitAndJpaTest {
     @Override
     protected void cleanupTestSchema() {
         dropAllDbObjectsInPublicSchema();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected PersistenceProviderType getPersistenceProviderType() {
-        return persistenceProviderType;
     }
 
     /**
