@@ -33,6 +33,7 @@ import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.EntityTransaction;
 import java.io.File;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -43,6 +44,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -93,7 +96,7 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
      * but can be overridden in subclasses to use other behaviour.
      *
      * @return {@code true} if dbUnit and JPA should use separate Connections
-     *         to the test database, and {@code false} otherwise.
+     * to the test database, and {@code false} otherwise.
      */
     protected boolean isSeparateConnectionsUsedForDbUnitAndJPA() {
         return false;
@@ -133,7 +136,7 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
             // Acquire the Connection to the database
             final Connection dbConnection = isSeparateConnectionsUsedForDbUnitAndJPA()
                     ? getStandaloneDbConnection(getDatabaseName(), getTargetDirectory())
-                    : jpaUnitTestConnection;
+                    : getJpaUnitTestConnection();
 
             // Create dbUnit connection and assign the DataTypeFactory
             iDatabaseConnection = new DatabaseConnection(dbConnection);
@@ -217,15 +220,22 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
 
         ResultSet dbObjects = null;
         Statement dropStatement = null;
+        EntityTransaction currentTransaction = null;
 
         if (entityManager != null) {
             try {
 
+
+                currentTransaction = entityManager.getTransaction();
+                if(!currentTransaction.isActive()) {
+
+                    // Eclipselink requires an active transaction in order to get the Database Connection.
+                    currentTransaction.begin();
+                }
+
                 // In some cases when running on Windows machines, the jpaUnitTestConnection can become null here.
                 // Handle that case.
-                final Connection localJpaUnitTestConnection = jpaUnitTestConnection == null
-                        ? entityManager.unwrap(Connection.class)
-                        : jpaUnitTestConnection;
+                final Connection localJpaUnitTestConnection = getJpaUnitTestConnection();
 
                 // Revert to plain-old JDBC to drop all DB objects in the public schema.
                 final DatabaseMetaData metaData = localJpaUnitTestConnection.getMetaData();
@@ -238,7 +248,7 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
                     log.debug(" Dropping [" + schemaAndTableName + "] ... ");
 
                     // Add the drop statement to the batch.
-                    dropStatement.addBatch("DROP " + dbObjectType + " " + schemaAndTableName);
+                    dropStatement.addBatch("DROP " + dbObjectType + " " + schemaAndTableName + " CASCADE ");
                 }
                 final int[] results = dropStatement.executeBatch();
 
@@ -247,6 +257,10 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
             } catch (SQLException e) {
                 e.printStackTrace();
             } finally {
+
+                if(currentTransaction != null) {
+                    currentTransaction.commit();
+                }
 
                 try {
                     if (dropStatement != null) {
@@ -269,21 +283,34 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
 
     private Connection getStandaloneDbConnection(final String databaseName, final File targetDirectory) {
 
-        final ClassLoader threadClassLoader = Thread.currentThread().getContextClassLoader();
-        final ClassLoader localClassLoader = getClass().getClassLoader();
+        final List<ClassLoader> classLoaders = Arrays.asList(Thread.currentThread().getContextClassLoader(),
+                getClass().getClassLoader());
         final String jdbcDriverClass = getDatabaseType().getJdbcDriverClass();
 
         // 0) Load the DB Driver
-        try {
-            threadClassLoader.loadClass(jdbcDriverClass);
-        } catch (ClassNotFoundException e) {
-
-            // Attempt to load the class using the local class classloader
+        ClassNotFoundException classNotFoundException = null;
+        for (ClassLoader current : classLoaders) {
             try {
-                localClassLoader.loadClass(jdbcDriverClass);
-            } catch (ClassNotFoundException e1) {
-                throw new IllegalStateException("Could not load JDBC driver class '" + jdbcDriverClass + "'", e1);
+                current.loadClass(jdbcDriverClass);
+
+                if (log.isDebugEnabled()) {
+                    String classLoader = current == Thread.currentThread().getContextClassLoader()
+                            ? "ThreadLocal Context ClassLoader" : "AbstractDbUnitAndJpaTest class ClassLoader";
+                    log.debug("Loaded JDBC driver class using " + classLoader);
+                }
+
+                // The current classloader found the JDBC driver.
+                // Erase error state and continue.
+                classNotFoundException = null;
+                break;
+            } catch (ClassNotFoundException e) {
+                classNotFoundException = e;
             }
+        }
+
+        if (classNotFoundException != null) {
+            throw new IllegalStateException("Could not load JDBC driver class '" + jdbcDriverClass + "'",
+                    classNotFoundException);
         }
 
         // 1) Use the standard DriverManager-based Connection

@@ -21,8 +21,8 @@
  */
 package se.jguru.nazgul.core.persistence.api;
 
-import org.apache.openjpa.enhance.PCEnhancerAgent;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +44,8 @@ public abstract class AbstractInMemoryJpaTest {
 
     // Our log
     private static final Logger log = LoggerFactory.getLogger(AbstractInMemoryJpaTest.class);
-    private static final String JPA_SPECIFICATION_PROPERTY = "jpaSpec";
+    private static final String JPA_SPECIFICATION_PROPERTY = "jpa_provider_class";
+    private static final String ECLIPSE_JPA_PROVIDER = "org.eclipse.persistence.jpa.PersistenceProvider";
 
     /**
      * The name of the PersistenceUnit, used in all unit tests derived from this AbstractInMemoryJpaTest.
@@ -57,7 +58,7 @@ public abstract class AbstractInMemoryJpaTest {
     protected EntityTransaction trans;
     protected JpaPersistenceOperations unitUnderTest;
     protected String persistenceXmlFile;
-    protected String jpaSpecification;
+    protected String jpaPersistenceProviderClass;
 
     @Before
     public final void setupSharedState() throws Exception {
@@ -65,9 +66,12 @@ public abstract class AbstractInMemoryJpaTest {
         // Stash the original ClassLoader
         originalClassLoader = getClass().getClassLoader();
 
-        // Find the JPA specification used, and use openjpa2 as the default.
-        jpaSpecification = System.getProperty(JPA_SPECIFICATION_PROPERTY, "openjpa2");
-        persistenceXmlFile = "testdata/" + getPersistenceFilePrefix() + "_" + jpaSpecification + ".xml";
+        // Find the JPA persistence provider class.
+        jpaPersistenceProviderClass = System.getProperty(JPA_SPECIFICATION_PROPERTY);
+        Assert.assertNotEquals("The persistence provider System property [" + JPA_SPECIFICATION_PROPERTY + "] should "
+                + "be set to contain the JPA persistence provider. This is normally done in a Maven profile.",
+                jpaPersistenceProviderClass);
+        persistenceXmlFile = "testdata/" + getPersistenceFileName() + ".xml";
 
         // Debug somewhat
         log.debug("Using PersistenceXmlFile: " + persistenceXmlFile);
@@ -111,7 +115,7 @@ public abstract class AbstractInMemoryJpaTest {
         }
     }
 
-    protected abstract String getPersistenceFilePrefix();
+    protected abstract String getPersistenceFileName();
 
     protected void doCustomTeardown() {
         // Do nothing.
@@ -132,7 +136,7 @@ public abstract class AbstractInMemoryJpaTest {
 
             final String tableVerificationSql = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES "
                     + "WHERE TABLE_NAME = '" + tableName + "'";
-            final String dropTableSql = "DROP TABLE '" + tableName + "';";
+            final String dropTableSql = "DROP TABLE IF EXISTS '" + tableName + "' CASCADE ;";
 
             //
             // #1) Validate that the table actually exists.
@@ -198,6 +202,7 @@ public abstract class AbstractInMemoryJpaTest {
         // Add
         final Map<String, String> extraProperties = getEntityManagerFactoryProperties();
         extraProperties.put("eclipselink.persistencexml", persistenceXmlFile);
+        // extraProperties.put("javax.", jpaPersistenceProviderClass);
         // System.out.println("extraProperties [" + extraProperties + "]");
 
         final StringBuilder builder = new StringBuilder(" EntityManagerFactory properties\n");
@@ -234,7 +239,7 @@ public abstract class AbstractInMemoryJpaTest {
         final String[][] persistenceProviderProps = new String[][]{
 
                 // Generic properties
-                {"javax.persistence.provider", "org.apache.openjpa.persistence.PersistenceProviderImpl"},
+                {"javax.persistence.provider", jpaPersistenceProviderClass},
                 {"javax.persistence.jdbc.driver", "org.hsqldb.jdbcDriver"},
                 {"javax.persistence.jdbc.url", "jdbc:hsqldb:mem:unittestDatabaseID"},
                 {"javax.persistence.jdbc.user", "sa"},

@@ -37,7 +37,7 @@ import javax.persistence.NamedQuery;
         @NamedQuery(name = "getPersonsByFirstName",
                 query = "select a from NamedParametersPerson a where a.firstName like :firstName order by a.firstName"),
         @NamedQuery(name = "getPersonsByAge",
-                query = "select a from MockNazgulEntity a where a.age = :age order by a.firstName")})
+                query = "select a from NamedParametersPerson a where a.age = :age order by a.firstName")})
 @Entity
 public class NamedParametersPerson extends NazgulEntity {
 
