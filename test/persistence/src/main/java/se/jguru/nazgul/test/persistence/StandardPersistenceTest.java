@@ -317,8 +317,10 @@ public abstract class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
         setupDatabaseState(testMethodName);
         final IDataSet toReturn = getExpectedDatabaseState(testMethodName);
 
-        // Start a transaction
-        transaction.begin();
+        // Start a transaction, unless already started.
+        if(!transaction.isActive()) {
+            transaction.begin();
+        }
 
         // All done.
         return toReturn;

@@ -65,9 +65,9 @@ public class MockAbstractJpaTest extends AbstractJpaTest {
         if (cleanupSchemaInTeardown) {
 
             try {
-                final DatabaseMetaData metaData = getJpaUnitTestConnection().getMetaData();
+                final DatabaseMetaData metaData = getJpaUnitTestConnection(true).getMetaData();
                 final ResultSet tables = metaData.getTables(null, DatabaseType.HSQL.getPublicSchemaName(), "%", null);
-                final Statement dropStatement = getJpaUnitTestConnection().createStatement();
+                final Statement dropStatement = getJpaUnitTestConnection(true).createStatement();
                 while (tables.next()) {
                     final String schemaAndTableName = tables.getString(2) + "." + tables.getString(3);
                     System.out.println(" Dropping [" + schemaAndTableName + "] ... ");
