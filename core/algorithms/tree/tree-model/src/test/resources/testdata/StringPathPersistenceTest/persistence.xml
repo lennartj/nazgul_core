@@ -27,7 +27,7 @@
 
         <description>PersistenceUnit containing the Entity classes.</description>
 
-        <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
+        <!-- provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider -->
 
         <class>se.jguru.nazgul.core.persistence.model.NazgulEntity</class>
         <class>se.jguru.nazgul.core.algorithms.tree.model.path.AbstractPath</class>

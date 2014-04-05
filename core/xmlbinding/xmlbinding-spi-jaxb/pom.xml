@@ -101,6 +101,16 @@
             <artifactId>org.eclipse.persistence.moxy</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <!-- +=============================================== -->
@@ -147,8 +157,8 @@
                                 <pattern>
                                     se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.AbstractJaxbAnnotatedTransportType
                                 </pattern>
-                                <branchRate>60</branchRate>
-                                <lineRate>80</lineRate>
+                                <branchRate>45</branchRate>
+                                <lineRate>75</lineRate>
                             </regex>
                         </regexes>
                     </check>

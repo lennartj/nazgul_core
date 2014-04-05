@@ -25,7 +25,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import se.jguru.nazgul.test.persistence.classloader.PersistenceRedirectionClassLoader;
 import se.jguru.nazgul.test.persistence.pets.Bird;
 
 import javax.persistence.EntityTransaction;
@@ -46,6 +45,11 @@ public class T_AbstractJpaTestTest {
         // Stash the original ClassLoader
         final Thread activeThread = Thread.currentThread();
         originalClassLoader = activeThread.getContextClassLoader();
+
+        // Ensure that we have a correct Maven profile set.
+        final String jpaProvider = System.getProperty(StandardPersistenceTest.JPA_PROVIDER_CLASS_SYSPROPKEY);
+        Assert.assertNotNull("JPA Provider class is null; attempting to set manually.", jpaProvider);
+        System.out.println("Got JPA provider: " + jpaProvider);
     }
 
     @After
@@ -63,8 +67,7 @@ public class T_AbstractJpaTestTest {
         final String persistenceUnit = "birdPU";
         final MockAbstractJpaTest unitUnderTest = new MockAbstractJpaTest(
                 persistenceXmlFile,
-                persistenceUnit,
-                PersistenceProviderType.OPENJPA_2);
+                persistenceUnit);
 
         final Bird bird = new Bird("birdName", "cool birds");
 
@@ -72,7 +75,7 @@ public class T_AbstractJpaTestTest {
         unitUnderTest.setUp();
         Assert.assertNotNull(unitUnderTest.entityManager);
         Assert.assertNotNull(unitUnderTest.jpa);
-        Assert.assertNotNull(unitUnderTest.jpaUnitTestConnection);
+        Assert.assertNotNull(unitUnderTest.getJpaUnitTestConnection());
 
         EntityTransaction userTransaction = unitUnderTest.transaction;
         Assert.assertNotNull(userTransaction);
@@ -102,8 +105,7 @@ public class T_AbstractJpaTestTest {
         final String persistenceUnit = "birdPU";
         final MockAbstractJpaTest unitUnderTest = new MockAbstractJpaTest(
                 persistenceXmlFile,
-                persistenceUnit,
-                PersistenceProviderType.OPENJPA_2);
+                persistenceUnit);
 
         // Act & Assert #1: Close transaction, and check state
         unitUnderTest.setUp();
@@ -129,8 +131,7 @@ public class T_AbstractJpaTestTest {
         final String persistenceUnit = "birdPU";
         final MockAbstractJpaTest unitUnderTest = new MockAbstractJpaTest(
                 persistenceXmlFile,
-                persistenceUnit,
-                PersistenceProviderType.OPENJPA_2);
+                persistenceUnit);
         unitUnderTest.cleanupSchemaInTeardown = false;
 
         // Act & Assert
@@ -145,8 +146,7 @@ public class T_AbstractJpaTestTest {
         final String persistenceUnit = "birdPU";
         final MockAbstractJpaTest unitUnderTest = new MockAbstractJpaTest(
                 persistenceXmlFile,
-                persistenceUnit,
-                PersistenceProviderType.OPENJPA_2);
+                persistenceUnit);
 
         final Bird bird = new Bird("birdName", "cool birds");
 
@@ -179,8 +179,7 @@ public class T_AbstractJpaTestTest {
         final String persistenceUnit = "nonexistentPersistenceUnit";
         final MockAbstractJpaTest unitUnderTest = new MockAbstractJpaTest(
                 persistenceXmlFile,
-                persistenceUnit,
-                PersistenceProviderType.OPENJPA_2);
+                persistenceUnit);
 
         // Act & Assert
         unitUnderTest.setUp();
@@ -194,8 +193,7 @@ public class T_AbstractJpaTestTest {
         final String persistenceUnit = "incorrectPU";
         final MockAbstractJpaTest unitUnderTest = new MockAbstractJpaTest(
                 persistenceXmlFile,
-                persistenceUnit,
-                PersistenceProviderType.OPENJPA_2);
+                persistenceUnit);
 
         // Act & Assert
         unitUnderTest.setUp();

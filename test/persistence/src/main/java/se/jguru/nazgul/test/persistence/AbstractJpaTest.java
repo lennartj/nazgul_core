@@ -61,11 +61,6 @@ public abstract class AbstractJpaTest {
      */
     protected EntityManager entityManager;
 
-    /**
-     * The JDBC connection to the database.
-     */
-    protected Connection jpaUnitTestConnection;
-
     // Internal state
     private ClassLoader originalClassLoader;
 
@@ -114,9 +109,18 @@ public abstract class AbstractJpaTest {
 
         jpa = new JpaPersistenceTestOperations(entityManager);
         transaction = entityManager.getTransaction();
+    }
 
-        // Extract the Connection from the EntityManager.
-        jpaUnitTestConnection = entityManager.unwrap(Connection.class);
+    /**
+     * Retrieves/unwraps the SQL Connection used by the EntityManager.
+     * Note that for some JPA implementations - notably EclipseLink - unwrapping a Connection
+     * from the EntityManager will retrieve {@code null} unless the EntityManager is in
+     * a transaction.
+     *
+     * @return The SQL Connection used by the entityManager, or {@code null} if no Connection could be retrieved.
+     */
+    protected final Connection getJpaUnitTestConnection() {
+        return entityManager.unwrap(Connection.class);
     }
 
     /**
@@ -128,7 +132,7 @@ public abstract class AbstractJpaTest {
      * given in the persistence.xml file.
      *
      * @return Properties supplied to the EntityManagerFactory, implying they do not
-     *         need to be declared within the persistence.xml file.
+     * need to be declared within the persistence.xml file.
      * @see Persistence#createEntityManagerFactory(String, java.util.Map)
      */
     protected Map<String, String> getEntityManagerFactoryProperties() {
@@ -174,13 +178,6 @@ public abstract class AbstractJpaTest {
      * Invoked during teardown to clean up the schema used for test.
      */
     protected abstract void cleanupTestSchema();
-
-    /**
-     * Retrieves the PersistenceProviderType instance used within this AbstractJpaTest.
-     *
-     * @return The PersistenceProviderType used by this AbstractJpaTest.
-     */
-    protected abstract PersistenceProviderType getPersistenceProviderType();
 
     /**
      * Retrieves the classpath-relative path to the persistence.xml file used in this AbstractJpaTest.

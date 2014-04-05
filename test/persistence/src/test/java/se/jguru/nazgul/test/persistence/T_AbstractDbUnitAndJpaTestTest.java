@@ -62,7 +62,6 @@ public class T_AbstractDbUnitAndJpaTestTest {
         final String persistenceXmlFile = "testdata/mockjpa/mockdbunitpersistence.xml";
         final String persistenceUnit = "birdPU";
         final MockAbstractDbUnitAndJpaTest unitUnderTest = new MockAbstractDbUnitAndJpaTest(
-                PersistenceProviderType.OPENJPA_2,
                 persistenceUnit,
                 persistenceXmlFile,
                 true,
@@ -75,7 +74,7 @@ public class T_AbstractDbUnitAndJpaTestTest {
         unitUnderTest.setUp();
         Assert.assertNotNull(unitUnderTest.entityManager);
         Assert.assertNotNull(unitUnderTest.jpa);
-        Assert.assertNotNull(unitUnderTest.jpaUnitTestConnection);
+        Assert.assertNotNull(unitUnderTest.getJpaUnitTestConnection());
 
         EntityTransaction userTransaction = unitUnderTest.transaction;
         Assert.assertNotNull(userTransaction);
@@ -104,7 +103,8 @@ public class T_AbstractDbUnitAndJpaTestTest {
         Assertion.assertEquals(expected, dataSet);
 
         // Act & Assert #6: Validate same connection for dbUnit and JPA EntityManager
-        Assert.assertSame(unitUnderTest.iDatabaseConnection.getConnection(), unitUnderTest.jpaUnitTestConnection);
+        Assert.assertEquals(unitUnderTest.iDatabaseConnection.getConnection().hashCode(),
+                unitUnderTest.getJpaUnitTestConnection().hashCode());
 
         // Act & Assert #7: Teardown
         unitUnderTest.tearDown();
@@ -118,7 +118,6 @@ public class T_AbstractDbUnitAndJpaTestTest {
         final String persistenceXmlFile = "testdata/mockjpa/mockdbunitpersistence.xml";
         final String persistenceUnit = "birdPU";
         final MockAbstractDbUnitAndJpaTest unitUnderTest = new MockAbstractDbUnitAndJpaTest(
-                PersistenceProviderType.OPENJPA_2,
                 persistenceUnit,
                 persistenceXmlFile,
                 true,
@@ -141,7 +140,6 @@ public class T_AbstractDbUnitAndJpaTestTest {
         final String persistenceXmlFile = "testdata/mockjpa/mockdbunitpersistence.xml";
         final String persistenceUnit = "birdPU";
         final MockAbstractDbUnitAndJpaTest unitUnderTest = new MockAbstractDbUnitAndJpaTest(
-                PersistenceProviderType.OPENJPA_2,
                 persistenceUnit,
                 persistenceXmlFile,
                 true,
@@ -154,7 +152,7 @@ public class T_AbstractDbUnitAndJpaTestTest {
         unitUnderTest.setUp();
         Assert.assertNotNull(unitUnderTest.entityManager);
         Assert.assertNotNull(unitUnderTest.jpa);
-        Assert.assertNotNull(unitUnderTest.jpaUnitTestConnection);
+        Assert.assertNotNull(unitUnderTest.getJpaUnitTestConnection());
 
         EntityTransaction userTransaction = unitUnderTest.transaction;
         Assert.assertNotNull(userTransaction);
@@ -185,7 +183,7 @@ public class T_AbstractDbUnitAndJpaTestTest {
         Assertion.assertEquals(expected, dataSet);
 
         // Act & Assert #6: Validate not same connection for dbUnit and JPA EntityManager
-        Assert.assertNotSame(unitUnderTest.iDatabaseConnection.getConnection(), unitUnderTest.jpaUnitTestConnection);
+        Assert.assertNotSame(unitUnderTest.iDatabaseConnection.getConnection(), unitUnderTest.getJpaUnitTestConnection());
 
         // Act & Assert #7: Teardown
         unitUnderTest.tearDown();
