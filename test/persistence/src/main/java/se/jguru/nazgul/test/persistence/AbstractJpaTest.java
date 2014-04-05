@@ -112,14 +112,38 @@ public abstract class AbstractJpaTest {
     }
 
     /**
-     * Retrieves/unwraps the SQL Connection used by the EntityManager.
-     * Note that for some JPA implementations - notably EclipseLink - unwrapping a Connection
-     * from the EntityManager will retrieve {@code null} unless the EntityManager is in
-     * a transaction.
+     * Retrieves/unwraps the SQL Connection used by the EntityManager. Note that for some JPA implementations -
+     * notably EclipseLink - unwrapping a Connection from the EntityManager will retrieve {@code null} unless the
+     * EntityManager is in a transaction.
+     * <p/>
+     * To avoid any followup problems caused by this, an IllegalStateException will be thrown unless a non-null
+     * Connection can properly be retrieved.
      *
-     * @return The SQL Connection used by the entityManager, or {@code null} if no Connection could be retrieved.
+     * @param startTransactionIfRequired If the entityManager does not have an active EntityTransaction, and the
+     *                                   startNewTransaction parameter is {@code true},
+     *                                   the EntityManager's Transaction will be started. Otherwise,
+     *                                   an Exception will be thrown.
+     *
+     * @return The SQL Connection used by the entityManager.
+     * @throws java.lang.IllegalStateException if {@code entityManager.getTransaction().isActive()} was {@code false}.
      */
-    protected final Connection getJpaUnitTestConnection() {
+    protected final Connection getJpaUnitTestConnection(final boolean startTransactionIfRequired)
+            throws IllegalStateException {
+
+        // Check sanity
+        if (!entityManager.getTransaction().isActive()) {
+
+            if(startTransactionIfRequired) {
+                entityManager.getTransaction().begin();
+            } else {
+                throw new IllegalStateException("EclipseLink - and perhaps other JPA implementations - considers it "
+                        + "an Exception to unwrap the DB Connection from the JPA EntityManager unless there is an "
+                        + "active Transaction. Fix your testcase [" + getClass().getSimpleName()
+                        + "] to adhere to these mechanics.");
+            }
+        }
+
+        // All done.
         return entityManager.unwrap(Connection.class);
     }
 

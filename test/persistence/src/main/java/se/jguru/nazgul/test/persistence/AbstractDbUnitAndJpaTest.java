@@ -136,7 +136,7 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
             // Acquire the Connection to the database
             final Connection dbConnection = isSeparateConnectionsUsedForDbUnitAndJPA()
                     ? getStandaloneDbConnection(getDatabaseName(), getTargetDirectory())
-                    : getJpaUnitTestConnection();
+                    : getJpaUnitTestConnection(true);
 
             // Create dbUnit connection and assign the DataTypeFactory
             iDatabaseConnection = new DatabaseConnection(dbConnection);
@@ -235,7 +235,7 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
 
                 // In some cases when running on Windows machines, the jpaUnitTestConnection can become null here.
                 // Handle that case.
-                final Connection localJpaUnitTestConnection = getJpaUnitTestConnection();
+                final Connection localJpaUnitTestConnection = getJpaUnitTestConnection(true);
 
                 // Revert to plain-old JDBC to drop all DB objects in the public schema.
                 final DatabaseMetaData metaData = localJpaUnitTestConnection.getMetaData();
@@ -259,7 +259,12 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
             } finally {
 
                 if(currentTransaction != null) {
-                    currentTransaction.commit();
+                    try {
+                        currentTransaction.commit();
+                    } catch (Exception e) {
+                        log.warn("Caught exception when cleaning up unit test database objects. " +
+                                "Ignoring this and proceeding, as we are about to tear down the unit test database.");
+                    }
                 }
 
                 try {

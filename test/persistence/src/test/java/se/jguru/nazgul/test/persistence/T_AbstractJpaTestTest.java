@@ -27,7 +27,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import se.jguru.nazgul.test.persistence.pets.Bird;
-import sun.util.locale.provider.SPILocaleProviderAdapter;
 
 import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
@@ -89,7 +88,7 @@ public class T_AbstractJpaTestTest {
         unitUnderTest.setUp();
         Assert.assertNotNull(unitUnderTest.entityManager);
         Assert.assertNotNull(unitUnderTest.jpa);
-        Assert.assertNotNull(unitUnderTest.getJpaUnitTestConnection());
+        Assert.assertNotNull(unitUnderTest.getJpaUnitTestConnection(true));
 
         EntityTransaction userTransaction = unitUnderTest.transaction;
         Assert.assertNotNull(userTransaction);

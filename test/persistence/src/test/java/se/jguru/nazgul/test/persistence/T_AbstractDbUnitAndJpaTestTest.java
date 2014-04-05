@@ -74,7 +74,7 @@ public class T_AbstractDbUnitAndJpaTestTest {
         unitUnderTest.setUp();
         Assert.assertNotNull(unitUnderTest.entityManager);
         Assert.assertNotNull(unitUnderTest.jpa);
-        Assert.assertNotNull(unitUnderTest.getJpaUnitTestConnection());
+        Assert.assertNotNull(unitUnderTest.getJpaUnitTestConnection(true));
 
         EntityTransaction userTransaction = unitUnderTest.transaction;
         Assert.assertNotNull(userTransaction);
@@ -104,7 +104,7 @@ public class T_AbstractDbUnitAndJpaTestTest {
 
         // Act & Assert #6: Validate same connection for dbUnit and JPA EntityManager
         Assert.assertEquals(unitUnderTest.iDatabaseConnection.getConnection().hashCode(),
-                unitUnderTest.getJpaUnitTestConnection().hashCode());
+                unitUnderTest.getJpaUnitTestConnection(true).hashCode());
 
         // Act & Assert #7: Teardown
         unitUnderTest.tearDown();
@@ -152,7 +152,7 @@ public class T_AbstractDbUnitAndJpaTestTest {
         unitUnderTest.setUp();
         Assert.assertNotNull(unitUnderTest.entityManager);
         Assert.assertNotNull(unitUnderTest.jpa);
-        Assert.assertNotNull(unitUnderTest.getJpaUnitTestConnection());
+        Assert.assertNotNull(unitUnderTest.getJpaUnitTestConnection(true));
 
         EntityTransaction userTransaction = unitUnderTest.transaction;
         Assert.assertNotNull(userTransaction);
@@ -183,7 +183,8 @@ public class T_AbstractDbUnitAndJpaTestTest {
         Assertion.assertEquals(expected, dataSet);
 
         // Act & Assert #6: Validate not same connection for dbUnit and JPA EntityManager
-        Assert.assertNotSame(unitUnderTest.iDatabaseConnection.getConnection(), unitUnderTest.getJpaUnitTestConnection());
+        Assert.assertNotSame(unitUnderTest.iDatabaseConnection.getConnection(),
+                unitUnderTest.getJpaUnitTestConnection(true));
 
         // Act & Assert #7: Teardown
         unitUnderTest.tearDown();
