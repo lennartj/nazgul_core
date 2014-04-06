@@ -91,7 +91,7 @@ public abstract class AbstractJpaTest {
                 builder.append("  [").append(current.getKey()).append("]: ").append(current.getValue()).append("\n");
             }
 
-            log.debug("Testcase " + getClass().getSimpleName() + " - EntityManagerFactoryProperties:\n"
+            log.debug("Test Class " + getClass().getSimpleName() + " - EntityManagerFactoryProperties:\n"
                     + builder.toString() + "\n");
         }
 
@@ -144,7 +144,11 @@ public abstract class AbstractJpaTest {
         }
 
         // All done.
-        return entityManager.unwrap(Connection.class);
+        final Connection toReturn = entityManager.unwrap(Connection.class);
+        if(toReturn == null) {
+            log.warn("EntityManager unwrapped a null JDBC Connection. Proceeding anyways; insane states may occur.");
+        }
+        return toReturn;
     }
 
     /**
