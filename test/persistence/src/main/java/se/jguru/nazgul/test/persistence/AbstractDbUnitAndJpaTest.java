@@ -262,8 +262,8 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
                     try {
                         currentTransaction.commit();
                     } catch (Exception e) {
-                        log.warn("Caught exception when cleaning up unit test database objects. " +
-                                "Ignoring this and proceeding, as we are about to tear down the unit test database.");
+                        log.warn("Caught exception when cleaning up unit test database objects. "
+                                + "Ignoring this and proceeding, as we are about to tear down the unit test database.");
                     }
                 }
 

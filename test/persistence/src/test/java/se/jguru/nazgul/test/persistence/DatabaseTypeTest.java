@@ -70,7 +70,7 @@ public class DatabaseTypeTest {
         final IDataTypeFactory dataTypeFactory = unitUnderTest.getDataTypeFactory();
 
         // Assert
-        Assert.assertEquals("jdbc:hsqldb:mem:foo", fooJdbcURL);
+        Assert.assertEquals("jdbc:hsqldb:mem:foo;hsqldb.tx_level=serializable", fooJdbcURL);
         Assert.assertEquals("org.apache.openjpa.jdbc.sql.HSQLDictionary", databaseDialectClass);
         Assert.assertSame(HsqldbDataTypeFactory.class, dataTypeFactory.getClass());
     }

@@ -24,10 +24,12 @@ package se.jguru.nazgul.test.persistence;
 import org.apache.commons.lang3.Validate;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.operation.DatabaseOperation;
+import org.eclipse.persistence.config.PersistenceUnitProperties;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
@@ -142,7 +144,7 @@ public abstract class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
      * @see javax.persistence.Persistence#createEntityManagerFactory(String, java.util.Map)
      */
     @Override
-    protected Map<String, String> getEntityManagerFactoryProperties() {
+    protected SortedMap<String, String> getEntityManagerFactoryProperties() {
 
         // Get standard properties
         final String jdbcDriverClass = getDatabaseType().getJdbcDriverClass();
@@ -150,7 +152,7 @@ public abstract class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
         final String persistenceProviderClass = System.getProperty(JPA_PROVIDER_CLASS_SYSPROPKEY,
                 DEFAULT_PERSISTENCE_PROVIDER.getPersistenceProviderClass());
 
-        final Map<String, String> toReturn = new TreeMap<String, String>();
+        final SortedMap<String, String> toReturn = new TreeMap<String, String>();
 
         final String[][] persistenceProviderProps = new String[][]{
 
@@ -184,6 +186,7 @@ public abstract class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
                 {"openjpa.RuntimeUnenhancedClasses", "supported"},
 
                 // Eclipselink properties
+                {"eclipselink.deploy-on-startup", "true"},
                 {"eclipselink.target-database", getDatabaseType().getHibernatePlatformClass()},
                 {"eclipselink.logging.level", "FINER"},
                 {"eclipselink.orm.throw.exceptions", "true"},

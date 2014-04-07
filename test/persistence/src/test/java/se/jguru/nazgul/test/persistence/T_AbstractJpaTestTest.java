@@ -46,6 +46,8 @@ public class T_AbstractJpaTestTest {
     private ClassLoader originalClassLoader;
     private String jpaProviderClass;
     private DatabaseType dbType;
+    private MockAbstractJpaTest unitUnderTest;
+    private boolean teardownUnitUnderTest = false;
 
     @Before
     public void setupSharedState() {
@@ -59,13 +61,23 @@ public class T_AbstractJpaTestTest {
         Assert.assertNotNull("No JPA provider found. Ensure that system property ["
                         + StandardPersistenceTest.JPA_PROVIDER_CLASS_SYSPROPKEY + "] contains the JPA provider class. "
                         + "This should be done automatically by Maven.",
-                jpaProviderClass);
+                jpaProviderClass
+                            );
 
         dbType = DatabaseType.HSQL;
     }
 
     @After
     public void teardownSharedState() {
+
+        // Check sanity
+        if (unitUnderTest != null && teardownUnitUnderTest) {
+            try {
+                unitUnderTest.tearDown();
+            } catch (Exception e) {
+                System.out.println("Could not teardown MockAbstractJpaTest properly. " + e);
+            }
+        }
 
         // Restore the original classloader
         Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -77,14 +89,12 @@ public class T_AbstractJpaTestTest {
         // Assemble
         final String persistenceXmlFile = "testdata/mockjpa/mockpersistence.xml";
         final String persistenceUnit = "birdPU";
-        final MockAbstractJpaTest unitUnderTest = new MockAbstractJpaTest(
-                persistenceXmlFile,
-                persistenceUnit);
+        unitUnderTest = new MockAbstractJpaTest(persistenceXmlFile, persistenceUnit);
         unitUnderTest.emProperties = getHsqldbEntityManagerFactoryProperties(persistenceXmlFile);
 
         final Bird bird = new Bird("birdName", "cool birds");
 
-        // Act & Assert #1: Validate the entitymanager properties
+        // Act & Assert #1: Validate the EntityManager properties
         unitUnderTest.setUp();
         Assert.assertNotNull(unitUnderTest.entityManager);
         Assert.assertNotNull(unitUnderTest.jpa);
@@ -92,11 +102,10 @@ public class T_AbstractJpaTestTest {
 
         EntityTransaction userTransaction = unitUnderTest.transaction;
         Assert.assertNotNull(userTransaction);
-        // Assert.assertFalse(userTransaction.isActive());
+        Assert.assertTrue(userTransaction.isActive());
 
         // Act & Assert #2: Begin the user transaction
         final int firstTransactionHashCode = unitUnderTest.hashCode();
-        userTransaction.begin();
         Assert.assertTrue(userTransaction.isActive());
 
         // Act & Assert #3: Persist a Bird instance, and commit without starting a new transaction.
@@ -116,14 +125,12 @@ public class T_AbstractJpaTestTest {
         // Assemble
         final String persistenceXmlFile = "testdata/mockjpa/mockpersistence.xml";
         final String persistenceUnit = "birdPU";
-        final MockAbstractJpaTest unitUnderTest = new MockAbstractJpaTest(
-                persistenceXmlFile,
-                persistenceUnit);
+        unitUnderTest = new MockAbstractJpaTest(persistenceXmlFile, persistenceUnit);
         unitUnderTest.emProperties = getHsqldbEntityManagerFactoryProperties(persistenceXmlFile);
+        teardownUnitUnderTest = true;
 
         // Act & Assert #1: Close transaction, and check state
         unitUnderTest.setUp();
-        unitUnderTest.transaction.begin();
         unitUnderTest.commit(false);
         Assert.assertFalse(unitUnderTest.transaction.isActive());
 
@@ -143,9 +150,7 @@ public class T_AbstractJpaTestTest {
         // Assemble
         final String persistenceXmlFile = "testdata/mockjpa/mockpersistence.xml";
         final String persistenceUnit = "birdPU";
-        final MockAbstractJpaTest unitUnderTest = new MockAbstractJpaTest(
-                persistenceXmlFile,
-                persistenceUnit);
+        unitUnderTest = new MockAbstractJpaTest(persistenceXmlFile, persistenceUnit);
         unitUnderTest.cleanupSchemaInTeardown = false;
 
         // Act & Assert
@@ -158,9 +163,7 @@ public class T_AbstractJpaTestTest {
         // Assemble
         final String persistenceXmlFile = "testdata/mockjpa/mockpersistence.xml";
         final String persistenceUnit = "birdPU";
-        final MockAbstractJpaTest unitUnderTest = new MockAbstractJpaTest(
-                persistenceXmlFile,
-                persistenceUnit);
+        unitUnderTest = new MockAbstractJpaTest(persistenceXmlFile, persistenceUnit);
         unitUnderTest.emProperties = getHsqldbEntityManagerFactoryProperties(persistenceXmlFile);
 
         final Bird bird = new Bird("birdName", "cool birds");
@@ -168,7 +171,7 @@ public class T_AbstractJpaTestTest {
         // Act & Assert #1: Persist a Bird instance
         unitUnderTest.setUp();
         EntityTransaction userTransaction = unitUnderTest.transaction;
-        userTransaction.begin();
+        Assert.assertTrue(userTransaction.isActive());
 
         unitUnderTest.entityManager.persist(bird);
         unitUnderTest.commitAndStartNewTransaction();
@@ -192,6 +195,7 @@ public class T_AbstractJpaTestTest {
         // Assemble
         final String persistenceXmlFile = "testdata/mockjpa/incorrectpersistenceunit.xml";
         final String persistenceUnit = "nonexistentPersistenceUnit";
+        this.teardownUnitUnderTest = true;
         final MockAbstractJpaTest unitUnderTest = new MockAbstractJpaTest(
                 persistenceXmlFile,
                 persistenceUnit);
@@ -221,24 +225,43 @@ public class T_AbstractJpaTestTest {
     //
 
 
-    protected File getTargetDirectory() {
+    public static File getTargetDirectory(final Class<?> testcaseClass) {
 
         // Use CodeSource
-        final URL location = getClass().getProtectionDomain().getCodeSource().getLocation();
+        final URL location = testcaseClass.getProtectionDomain().getCodeSource().getLocation();
 
         // Check sanity
-        Validate.notNull(location, "CodeSource location not found for class [" + getClass().getSimpleName() + "]");
+        Validate.notNull(location, "CodeSource location not found for class [" + testcaseClass.getSimpleName() + "]");
 
         // All done.
         return new File(location.getPath()).getParentFile();
     }
 
     protected Map<String, String> getHsqldbEntityManagerFactoryProperties(final String persistenceXmlFile) {
+        return getHsqldbEntityManagerFactoryProperties(jpaProviderClass,
+                T_AbstractJpaTestTest.class,
+                persistenceXmlFile);
+    }
+
+    /**
+     * Retrieves the EntityManagerFactory properties required to properly talk to a HSQLDB instance.
+     *
+     * @param jpaProviderClass   The classname of the JPA provider.
+     * @param testClass          The unit test class itself.
+     * @param persistenceXmlFile The classpath-relative path to the persistence XML file to be used.
+     * @return The properties for the HSQLDB-compliant EntityManager.
+     */
+    public static Map<String, String> getHsqldbEntityManagerFactoryProperties(
+            final String jpaProviderClass,
+            final Class<?> testClass,
+            final String persistenceXmlFile) {
 
         // Get standard properties
-        final String jdbcDriverClass = dbType.getJdbcDriverClass();
-        final String jdbcURL = dbType.getUnitTestJdbcURL(StandardPersistenceTest.DEFAULT_DB_NAME,
-                getTargetDirectory());
+        final DatabaseType hsqldb = DatabaseType.HSQL;
+        final String jdbcDriverClass = hsqldb.getJdbcDriverClass();
+        final String jdbcURL = hsqldb.getUnitTestJdbcURL(
+                StandardPersistenceTest.DEFAULT_DB_NAME,
+                getTargetDirectory(testClass));
 
         final Map<String, String> toReturn = new TreeMap<String, String>();
 
@@ -252,7 +275,7 @@ public class T_AbstractJpaTestTest {
                 {"javax.persistence.jdbc.password", StandardPersistenceTest.DEFAULT_DB_PASSWORD},
 
                 // OpenJPA properties
-                {"openjpa.jdbc.DBDictionary", dbType.getDatabaseDialectClass()},
+                {"openjpa.jdbc.DBDictionary", hsqldb.getDatabaseDialectClass()},
 
                 // Note!
                 // These OpenJPA provider properties are now replaced by the standardized
@@ -274,7 +297,8 @@ public class T_AbstractJpaTestTest {
                 {"openjpa.RuntimeUnenhancedClasses", "supported"},
 
                 // Eclipselink properties
-                {"eclipselink.target-database", dbType.getHibernatePlatformClass()},
+                {"eclipselink.deploy-on-startup", "true"},
+                {"eclipselink.target-database", hsqldb.getHibernatePlatformClass()},
                 {"eclipselink.logging.level", "FINER"},
                 {"eclipselink.orm.throw.exceptions", "true"},
                 {"eclipselink.ddl-generation", "drop-and-create-tables"},
@@ -293,8 +317,8 @@ public class T_AbstractJpaTestTest {
         for (Map.Entry<Object, Object> current : System.getProperties().entrySet()) {
 
             final String currentPropertyName = "" + current.getKey();
-            for(String currentPrefix : overridablePrefixes) {
-                if(currentPropertyName.trim().toLowerCase().startsWith(currentPrefix)) {
+            for (String currentPrefix : overridablePrefixes) {
+                if (currentPropertyName.trim().toLowerCase().startsWith(currentPrefix)) {
                     toReturn.put(currentPropertyName, "" + current.getValue());
                 }
             }

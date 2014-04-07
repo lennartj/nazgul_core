@@ -21,12 +21,16 @@
  */
 package se.jguru.nazgul.test.persistence;
 
+import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -39,11 +43,32 @@ public class MockAbstractJpaTest extends AbstractJpaTest {
     private String persistenceXmlFile;
     private String persistenceUnit;
     public Map<String, String> emProperties = new HashMap<String, String>();
+    public List<String> knownTableNames = new ArrayList<String>();
 
     public MockAbstractJpaTest(final String persistenceXmlFile,
                                final String persistenceUnit) {
         this.persistenceXmlFile = persistenceXmlFile;
         this.persistenceUnit = persistenceUnit;
+    }
+
+    @Override
+    public void setUp() throws Exception {
+
+        // Delegate
+        super.setUp();
+
+        // Ensure that the database contains a sensible structure.
+        final Connection jpaUnitTestConnection = getJpaUnitTestConnection(true);
+        final ResultSet tables = jpaUnitTestConnection.getMetaData().getTables(null, null, "%", new String[]{"TABLE"});
+
+        while(tables.next()) {
+            knownTableNames.add(tables.getString(3));
+        }
+
+        System.out.println("\n\nMockAbstractJpaTest (setup) - existing tablenames: " + knownTableNames + "\n\n");
+
+        // Cleanup this operation.
+        this.commitAndStartNewTransaction();
     }
 
     /**
@@ -103,9 +128,9 @@ public class MockAbstractJpaTest extends AbstractJpaTest {
      * {@inheritDoc}
      */
     @Override
-    protected Map<String, String> getEntityManagerFactoryProperties() {
+    protected SortedMap<String, String> getEntityManagerFactoryProperties() {
 
-        final Map<String, String> toReturn = super.getEntityManagerFactoryProperties();
+        final SortedMap<String, String> toReturn = super.getEntityManagerFactoryProperties();
         toReturn.putAll(emProperties);
 
         return toReturn;
