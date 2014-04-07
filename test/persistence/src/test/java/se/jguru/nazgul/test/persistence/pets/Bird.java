@@ -31,8 +31,6 @@ import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
-import static se.jguru.nazgul.test.persistence.pets.Bird.GET_BIRDS_BY_CATEGORY;
-
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */

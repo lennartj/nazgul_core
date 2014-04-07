@@ -67,7 +67,9 @@ public class MockAbstractDbUnitAndJpaTest extends AbstractDbUnitAndJpaTest {
      */
     @Override
     protected void cleanupTestSchema() {
-        dropAllDbObjectsInPublicSchema();
+        if(cleanupSchemaInTeardown) {
+            dropAllDbObjectsInPublicSchema();
+        }
     }
 
     /**

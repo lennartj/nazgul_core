@@ -33,8 +33,9 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.sql.Connection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * Abstract superclass for JPA based tests.
@@ -63,6 +64,7 @@ public abstract class AbstractJpaTest {
 
     // Internal state
     private ClassLoader originalClassLoader;
+    private boolean closeDatabaseInTeardown = true;
 
     /**
      * Setting up the JPA framework which setup the Persistence Entity Manager.
@@ -81,7 +83,7 @@ public abstract class AbstractJpaTest {
         Thread.currentThread().setContextClassLoader(redirectionClassLoader);
 
         // Create a JpaPersistenceOperations and a corresponding Transaction.
-        final Map<String, String> props = getEntityManagerFactoryProperties();
+        final SortedMap<String, String> props = getEntityManagerFactoryProperties();
 
         if (log.isDebugEnabled()) {
 
@@ -163,8 +165,8 @@ public abstract class AbstractJpaTest {
      * need to be declared within the persistence.xml file.
      * @see Persistence#createEntityManagerFactory(String, java.util.Map)
      */
-    protected Map<String, String> getEntityManagerFactoryProperties() {
-        return new HashMap<String, String>();
+    protected SortedMap<String, String> getEntityManagerFactoryProperties() {
+        return new TreeMap<String, String>();
     }
 
     /**
@@ -191,6 +193,11 @@ public abstract class AbstractJpaTest {
             if (entityManager != null && entityManager.isOpen()) {
                 try {
                     entityManager.close();
+
+                    if(log.isDebugEnabled()) {
+                        log.debug("Closed EntityManager.");
+                    }
+
                 } catch (Exception e) {
                     throw new IllegalStateException("Could not close EntityManager.", e);
                 }
@@ -236,14 +243,16 @@ public abstract class AbstractJpaTest {
      *
      * @param startNewTransaction if {@code true}, starts a new EntityTransaction following the commit of the
      *                            currently active one.
+     * @throws java.lang.IllegalStateException if the Transaction could not be committed or begun anew.
+     *
      */
-    protected final void commit(final boolean startNewTransaction) {
+    protected final void commit(final boolean startNewTransaction) throws IllegalStateException {
 
         try {
             transaction.commit();
             transaction = entityManager.getTransaction();
         } catch (Exception e) {
-            throw new IllegalStateException("Could not create a new EntityTransacion", e);
+            throw new IllegalStateException("Could not create a new EntityTransaction", e);
         }
 
         if (startNewTransaction) {

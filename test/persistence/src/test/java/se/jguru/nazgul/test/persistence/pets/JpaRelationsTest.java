@@ -26,6 +26,8 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.junit.Assert;
 import org.junit.Test;
+import se.jguru.nazgul.core.persistence.api.PersistenceOperationException;
+import se.jguru.nazgul.core.persistence.model.NazgulEntity;
 import se.jguru.nazgul.test.persistence.StandardPersistenceTest;
 
 import java.util.ArrayList;
@@ -112,17 +114,48 @@ public class JpaRelationsTest extends StandardPersistenceTest {
         final Bird toDelete = result.get(0);
         Assert.assertEquals("Eagle", toDelete.getName());
 
+        final List<Seed> seedsEatenByBird = jpa.fireNamedQuery(Seed.GET_SEEDS_BY_BIRD_NAME, toDelete.getName());
+        Assert.assertEquals(1, seedsEatenByBird.size());
+        seedsEatenByBird.iterator().next().getEatenBy().remove(toDelete);
+
         // Act & Assert #2: Delete the entity from the database
         jpa.delete(toDelete);
         commitAndStartNewTransaction();
 
         // Assert
-        final IDataSet dbDataSet2 = iDatabaseConnection.createDataSet(birdTableName);
+        final IDataSet dbDataSet2 = iDatabaseConnection.createDataSet(); // birdTableName
         final ITable birdTable = dbDataSet2.getTable(birdTableName[0]);
+
+        // System.out.println("Got: " + extractFlatXmlDataSet(dbDataSet2));
 
         Assert.assertEquals(1, birdTable.getRowCount());
         Assert.assertEquals("Hawk", "" + birdTable.getValue(0, "NAME"));
         Assertion.assertEquals(expected, dbDataSet2);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void validateExceptionOnDeletingEntityWithForeignKeys() throws Exception {
+
+        // Assemble
+        final IDataSet expected = performStandardTestDbSetup("validateDeleteEntity");
+
+        // Act & Assert #1: Readout one of the Bird records from the DB.
+        final List<Bird> result = jpa.fireNamedQuery(Bird.GET_BIRDS_BY_CATEGORY, "Preda%");
+        Assert.assertEquals(2, result.size());
+
+        final Bird toDelete = result.get(0);
+        Assert.assertEquals("Eagle", toDelete.getName());
+
+        // Act & Assert #2: Delete the entity from the database
+        jpa.delete(toDelete);
+        commitAndStartNewTransaction();
+
+        /*
+        Exception [EclipseLink-4002] (Eclipse Persistence Services - 2.5.1.v20130918-f2b9fc5):
+        org.eclipse.persistence.exceptions.DatabaseException
+        Internal Exception: java.sql.SQLIntegrityConstraintViolationException:
+        integrity constraint violation: foreign key no action; FK_SEED_BIRD_EATENBY_ID table: SEED_BIRD
+         */
     }
 
     @Test
@@ -139,14 +172,14 @@ public class JpaRelationsTest extends StandardPersistenceTest {
         final Bird toUpdate = result.get(0);
         Assert.assertEquals("Eagle", toUpdate.getName());
 
-        // Act & Assert #2: Update the entity within the database
+        // Act #2: Update the entity, then merge it into the new DB transaction and sync to the DB.
+        commitAndStartNewTransaction();
         toUpdate.setName("Falcon");
         final Bird updatedEntity = jpa.update(toUpdate);
         entityManager.flush();
-        commitAndStartNewTransaction();
 
         // Assert
         Assert.assertEquals("Falcon", updatedEntity.getName());
-        Assertion.assertEquals(expected, iDatabaseConnection.createDataSet(birdTableName));
+        Assertion.assertEquals(expected, iDatabaseConnection.createDataSet());
     }
 }

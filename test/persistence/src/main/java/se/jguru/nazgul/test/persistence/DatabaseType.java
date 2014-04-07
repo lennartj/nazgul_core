@@ -45,7 +45,7 @@ public enum DatabaseType {
     HSQL(new HsqldbDataTypeFactory(),
             "org.hsqldb.jdbc.JDBCDriver",
             -1,
-            "jdbc:hsqldb:mem:{0}",
+            "jdbc:hsqldb:mem:{0};hsqldb.tx_level=serializable",
             0,
             "org.apache.openjpa.jdbc.sql.HSQLDictionary",
             "org.eclipse.persistence.platform.database.HSQLPlatform",
@@ -186,7 +186,7 @@ public enum DatabaseType {
                 if (!uniqueDirectory.exists()) {
                     uniqueDirectory.mkdirs();
 
-                    // Add the absolute path of the uniqueDirectory to the parametrMap
+                    // Add the absolute path of the uniqueDirectory to the parameterMap
                     addParameter(parameterMap, uniqueDirectoryParameterIndex, uniqueDirectory.getAbsolutePath());
                     break;
                 }

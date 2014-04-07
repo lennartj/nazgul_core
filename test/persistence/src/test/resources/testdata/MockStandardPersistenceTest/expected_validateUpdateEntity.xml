@@ -22,6 +22,6 @@
   #L%
   -->
 <dataset>
-    <BIRD id="0" version="1" name="Hawk" category="Predator" />
-    <BIRD id="1" version="2" name="Falcon" category="Predator" />
+    <BIRD id="1" version="1" name="Hawk" category="Predator" />
+    <BIRD id="2" version="2" name="Falcon" category="Predator" />
 </dataset>

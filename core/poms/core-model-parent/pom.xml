@@ -125,6 +125,17 @@
                         <version>${org.eclipse.persistence.version}</version>
                         <scope>provided</scope>
                     </dependency>
+                    <dependency>
+                        <groupId>org.hibernate</groupId>
+                        <artifactId>hibernate-validator</artifactId>
+                        <version>5.1.0.Final</version>
+                        <scope>provided</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>javax.validation</groupId>
+                        <artifactId>validation-api</artifactId>
+                        <version>1.1.0.Final</version>
+                    </dependency>
                 </dependencies>
             </dependencyManagement>
             <dependencies>
@@ -134,8 +145,18 @@
                     <scope>provided</scope>
                 </dependency>
                 <dependency>
+                    <groupId>javax.validation</groupId>
+                    <artifactId>validation-api</artifactId>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
                     <groupId>org.eclipse.persistence</groupId>
                     <artifactId>eclipselink</artifactId>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-validator</artifactId>
                     <scope>provided</scope>
                 </dependency>
             </dependencies>
