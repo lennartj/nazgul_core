@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ #%L
+  Nazgul Project: nazgul-core-xmlbinding-api
+  %%
+  Copyright (C) 2010 - 2013 jGuru Europe AB
+  ~
+  %%
+  Licensed under the jGuru Europe AB license (the "License"), based
+  on Apache License, Version 2.0; you may not use this file except
+  in compliance with the License.
+  You may obtain a copy of the License at
+        http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
+<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd"
+         name="Nazgul Tools">
+
+    <bannerLeft>
+        <name>${project.artifactId}</name>
+    </bannerLeft>
+
+    <body>
+        <menu name="Overview">
+            <item name="Introduction" href="index.html"/>
+        </menu>
+        <links>
+            <item name="Maven" href="http://maven.apache.org/"/>
+            <item name="Bitbucket" href="http://bitbucket.org/lennartj"/>
+        </links>
+
+        <menu ref="parent" />
+        <menu ref="modules" inherit="bottom"/>
+        <menu ref="reports" inherit="bottom"/>
+    </body>
+</project>
