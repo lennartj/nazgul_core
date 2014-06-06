@@ -24,7 +24,7 @@ package se.jguru.nazgul.test.persistence;
 import org.apache.commons.lang3.Validate;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.operation.DatabaseOperation;
-import org.eclipse.persistence.config.PersistenceUnitProperties;
+import se.jguru.nazgul.test.persistence.jpa.PersistenceProviderType;
 
 import java.util.Arrays;
 import java.util.List;
