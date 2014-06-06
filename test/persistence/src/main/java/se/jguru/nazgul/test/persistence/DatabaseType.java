@@ -21,13 +21,22 @@
  */
 package se.jguru.nazgul.test.persistence;
 
+import liquibase.database.core.H2Database;
+import liquibase.database.core.PostgresDatabase;
+import liquibase.database.core.supplier.H2ConnSupplier;
+import liquibase.database.jvm.HsqlConnection;
+import liquibase.database.jvm.JdbcConnection;
 import org.apache.commons.lang3.Validate;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
+import org.dbunit.ext.h2.H2Connection;
 import org.dbunit.ext.h2.H2DataTypeFactory;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
 import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.Connection;
 import java.text.MessageFormat;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -49,7 +58,8 @@ public enum DatabaseType {
             0,
             "org.apache.openjpa.jdbc.sql.HSQLDictionary",
             "org.eclipse.persistence.platform.database.HSQLPlatform",
-            "PUBLIC"),
+            "PUBLIC",
+            HsqlConnection.class.getName()),
 
     /**
      * H2 database definitions.
@@ -61,7 +71,8 @@ public enum DatabaseType {
             -1,
             "org.apache.openjpa.jdbc.sql.H2Dictionary",
             "org.eclipse.persistence.platform.database.H2Platform",
-            "public"),
+            "public",
+            JdbcConnection.class.getName()),
 
     /**
      * PostgreSQL database definitions for a postgresql database running on localhost and port 5432.
@@ -73,7 +84,8 @@ public enum DatabaseType {
             0,
             "org.apache.openjpa.jdbc.sql.PostgresDictionary",
             "org.eclipse.persistence.platform.database.PostgreSQLPlatform",
-            "public");
+            "public",
+            JdbcConnection.class.getName());
 
     // Internal state
     private int uniqueDirectoryParameterIndex;
@@ -84,20 +96,23 @@ public enum DatabaseType {
     private String unitTestJdbcUrlPattern;
     private String hibernatePlatformClass;
     private String publicSchemaName;
+    private String liquibaseDatabaseConnectionClass;
 
     /**
      * Creates a new DatabaseType wrapping the given properties assisting
      * in setting up an automated testcase using dbUnit, JPA and/or JDBC.
      *
-     * @param dataTypeFactory                The dbUnit IDataTypeFactory used for the supplied database.
-     * @param jdbcDriverClass                The JDBC driver class for the supplied database.
-     * @param uniqueDirectoryParameterIndex  If {@code true}, implies that the supplied database requires
-     *                                       a unique directory to write its state to.
-     * @param unitTestJdbcUrlPattern         A pattern for defining a unit-test (in-memory,
-     *                                       if possible) JDBC URL for the supplied database.
-     * @param openJpaDatabaseDictionaryClass The class name realizing the OpenJPA database dictionary for the
-     *                                       active DatabaseType.
-     * @param publicSchemaName               The name of the public schema for the active DatabaseType.
+     * @param dataTypeFactory                  The dbUnit IDataTypeFactory used for the supplied database.
+     * @param jdbcDriverClass                  The JDBC driver class for the supplied database.
+     * @param uniqueDirectoryParameterIndex    If {@code true}, implies that the supplied database requires
+     *                                         a unique directory to write its state to.
+     * @param unitTestJdbcUrlPattern           A pattern for defining a unit-test (in-memory,
+     *                                         if possible) JDBC URL for the supplied database.
+     * @param openJpaDatabaseDictionaryClass   The class name realizing the OpenJPA database dictionary for the
+     *                                         active DatabaseType.
+     * @param publicSchemaName                 The name of the public schema for the active DatabaseType.
+     * @param liquibaseDatabaseConnectionClass The name of the Liquibase JdbcConnection class for
+     *                                         the active DatabaseType.
      */
     private DatabaseType(final IDataTypeFactory dataTypeFactory,
                          final String jdbcDriverClass,
@@ -106,7 +121,8 @@ public enum DatabaseType {
                          final int dbNameParameterIndex,
                          final String openJpaDatabaseDictionaryClass,
                          final String hibernatePlatformClass,
-                         final String publicSchemaName) {
+                         final String publicSchemaName,
+                         final String liquibaseDatabaseConnectionClass) {
 
         // Assign internal state
         this.dataTypeFactory = dataTypeFactory;
@@ -117,6 +133,7 @@ public enum DatabaseType {
         this.openJpaDatabaseDictionaryClass = openJpaDatabaseDictionaryClass;
         this.hibernatePlatformClass = hibernatePlatformClass;
         this.publicSchemaName = publicSchemaName;
+        this.liquibaseDatabaseConnectionClass = liquibaseDatabaseConnectionClass;
     }
 
     /**
@@ -133,7 +150,7 @@ public enum DatabaseType {
      * {@code org.eclipse.persistence.platform.database.HSQLPlatform}.
      *
      * @return the hibernate platform class, such as
-     *         {@code org.eclipse.persistence.platform.database.HSQLPlatform}.
+     * {@code org.eclipse.persistence.platform.database.HSQLPlatform}.
      */
     public String getHibernatePlatformClass() {
         return hibernatePlatformClass;
@@ -212,6 +229,38 @@ public enum DatabaseType {
     public String getPublicSchemaName() {
         return publicSchemaName;
     }
+
+    /**
+     * Retrieves a Liquibase JdbcConnection subclass for this DatabaseType.
+     *
+     * @param dbConnection An SQL Connection to the unit test database.
+     * @param <T> The concrete type of JdbcConnection
+     * @return the class name for the Liquibase concrete JdbcConnection subclass corresponding to this DatabaseType.
+     */
+    public <T extends JdbcConnection> T getJdbcConnection(final Connection dbConnection) {
+
+        // Check sanity
+        Validate.notNull(dbConnection, "Cannot handle null dbConnection argument.");
+
+        try {
+            // Load the Liquibase JdbcConnection class.
+            final Class<T> connClass = (Class<T>) getClass()
+                    .getClassLoader()
+                    .loadClass(liquibaseDatabaseConnectionClass);
+
+            // Find the correct constructor
+            final Constructor<? extends JdbcConnection> constructor = connClass.getDeclaredConstructor(Connection.class);
+            Validate.notNull(constructor, "Class [" + liquibaseDatabaseConnectionClass
+                    + "] did not contain a constructor with a single java.sql.Connection argument.");
+            final Object[] arguments = new Object[] {dbConnection};
+
+            // All done.
+            return (T) constructor.newInstance(arguments);
+        } catch (Exception e) {
+            throw new IllegalStateException("Could not acquire JdbcConnection.", e);
+        }
+    }
+
 
     //
     // Private helpers

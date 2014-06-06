@@ -64,7 +64,11 @@ public abstract class AbstractJpaTest {
 
     // Internal state
     private ClassLoader originalClassLoader;
-    private boolean closeDatabaseInTeardown = true;
+
+    /**
+     * This flag controls if the database should be shut down during the teardown method.
+     */
+    protected boolean shutdownDatabaseInTeardown = true;
 
     /**
      * Setting up the JPA framework which setup the Persistence Entity Manager.
@@ -177,7 +181,7 @@ public abstract class AbstractJpaTest {
 
         try {
             // Clean up the test schema
-            cleanupTestSchema();
+            cleanupTestSchema(shutdownDatabaseInTeardown);
 
             // rollback
             if (transaction != null && transaction.isActive()) {
@@ -189,7 +193,7 @@ public abstract class AbstractJpaTest {
             }
             transaction = null;
 
-            // close
+            // Close the database, and the EntityManager
             if (entityManager != null && entityManager.isOpen()) {
                 try {
                     entityManager.close();
@@ -211,8 +215,10 @@ public abstract class AbstractJpaTest {
 
     /**
      * Invoked during teardown to clean up the schema used for test.
+     *
+     * @param shutdownDatabase if {@code true}, the database should be shutdown after cleaning the schema.
      */
-    protected abstract void cleanupTestSchema();
+    protected abstract void cleanupTestSchema(final boolean shutdownDatabase);
 
     /**
      * Retrieves the classpath-relative path to the persistence.xml file used in this AbstractJpaTest.

@@ -19,7 +19,7 @@
  * limitations under the License.
  * #L%
  */
-package se.jguru.nazgul.test.persistence;
+package se.jguru.nazgul.test.persistence.jpa;
 
 /**
  * Enumeration of several JPA persistence providers and their
