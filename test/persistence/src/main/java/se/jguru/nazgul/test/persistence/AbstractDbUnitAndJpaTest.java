@@ -214,9 +214,11 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
 
     /**
      * Drops all the Database Objects in the public schema of the active database.
+     *
+     * @param shutdownDatabase if {@code true}, the database should be shutdown after cleaning the schema.
      */
     @SuppressWarnings("PMD")
-    protected final void dropAllDbObjectsInPublicSchema() {
+    protected final void dropAllDbObjectsInPublicSchema(final boolean shutdownDatabase) {
 
         ResultSet dbObjects = null;
         Statement dropStatement = null;
@@ -250,6 +252,11 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
                     // Add the drop statement to the batch.
                     dropStatement.addBatch("DROP " + dbObjectType + " " + schemaAndTableName + " CASCADE ");
                 }
+
+                if(shutdownDatabase) {
+                    dropStatement.addBatch("SHUTDOWN");
+                }
+
                 final int[] results = dropStatement.executeBatch();
 
                 log.debug(" ... Done dropping [" + results.length + "] table(s).");
