@@ -35,9 +35,7 @@ public interface SchemaManager<T extends AbstractPersistenceTest> extends Lifecy
      * @param schemaSpecification A specification for the Schema to be created. If used by the
      *                            AbstractPersistenceTest, this parameter will be assigned the currently running test
      *                            method name.
-     * @param databaseType        The type of database used by this SchemaManager to create the schema.
      * @throws IllegalStateException If the schema could not be created as per the given specification.
      */
-    void createSchema(final String schemaSpecification, final DatabaseType databaseType)
-            throws IllegalStateException;
+    void createSchema(final String schemaSpecification) throws IllegalStateException;
 }

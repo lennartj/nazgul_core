@@ -36,6 +36,7 @@ public abstract class AbstractLifecycleAware<T extends AbstractPersistenceTest> 
 
     // Internal state
     private T testClass;
+    private DatabaseType databaseType;
 
     /**
      * Required default constructor, as the AbstractPersistenceTest can use the default
@@ -48,10 +49,11 @@ public abstract class AbstractLifecycleAware<T extends AbstractPersistenceTest> 
      * {@inheritDoc}
      */
     @Override
-    public final void initialize(final T testClass, final String testMethodName) {
+    public final void initialize(final T testClass, final String testMethodName, final DatabaseType databaseType) {
 
         // Check sanity
         Validate.notNull(testClass, "Cannot handle null testClass argument.");
+        Validate.notNull(databaseType, "Cannot handle null databaseType argument.");
         Validate.notEmpty(testMethodName, "Cannot handle null or empty testMethodName argument.");
 
         // Assign internal state
@@ -91,6 +93,13 @@ public abstract class AbstractLifecycleAware<T extends AbstractPersistenceTest> 
      */
     protected final T getTestClass() {
         return this.testClass;
+    }
+
+    /**
+     * @return The active DatabaseType.
+     */
+    protected final DatabaseType getDatabaseType() {
+        return this.databaseType;
     }
 
     /**

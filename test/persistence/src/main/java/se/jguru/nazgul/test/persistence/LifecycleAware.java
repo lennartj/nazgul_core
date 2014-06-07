@@ -39,8 +39,9 @@ public interface LifecycleAware<T extends AbstractPersistenceTest> {
      *
      * @param testClass      The currently executing AbstractPersistenceTest (subclass).
      * @param testMethodName The name of the currently executing test method.
+     * @param databaseType   The type of database used by this LifecycleAware.
      */
-    void initialize(T testClass, String testMethodName);
+    void initialize(T testClass, String testMethodName, final DatabaseType databaseType);
 
     /**
      * Shuts this LifecycleAware instance down, cleaning up any state which was set up in the initialize method.
