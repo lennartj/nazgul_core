@@ -29,6 +29,7 @@ import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
+import org.dbunit.operation.DatabaseOperation;
 import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -219,6 +220,8 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
      */
     @SuppressWarnings("PMD")
     protected final void dropAllDbObjectsInPublicSchema(final boolean shutdownDatabase) {
+
+        DatabaseOperation.DELETE_ALL.execute(iDatabaseConnection, );
 
         ResultSet dbObjects = null;
         Statement dropStatement = null;

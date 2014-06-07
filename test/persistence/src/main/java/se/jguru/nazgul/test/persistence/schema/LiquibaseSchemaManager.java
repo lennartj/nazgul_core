@@ -19,9 +19,12 @@
  * limitations under the License.
  * #L%
  */
-package se.jguru.nazgul.test.persistence.schemamanagers;
+package se.jguru.nazgul.test.persistence.schema;
 
 import liquibase.Liquibase;
+import liquibase.exception.DatabaseException;
+import liquibase.exception.LiquibaseException;
+import liquibase.exception.LockException;
 import liquibase.resource.FileSystemResourceAccessor;
 import liquibase.resource.ResourceAccessor;
 import se.jguru.nazgul.test.persistence.AbstractLifecycleAware;
@@ -46,7 +49,7 @@ public class LiquibaseSchemaManager<T extends AbstractPersistenceTest>
     /**
      * The filename of the Liquibase schema setup file.
      */
-    public static final String LIQUIBASE_SETUP_CONFIG = LIQUIBASE_CONFIG_PREFIX + "setup.xml";
+    public static final String LIQUIBASE_SETUP_CONFIG = LIQUIBASE_CONFIG_PREFIX + "setup_";
 
     // Internal state
     private Liquibase liquibase;
@@ -71,22 +74,29 @@ public class LiquibaseSchemaManager<T extends AbstractPersistenceTest>
     @Override
     protected void onShutdown(final T testClass, final String testMethodName) {
 
-        // Do nothing?
-        testClass.getDbConnection();
+        try {
+            // Drop all from the database
+            liquibase.dropAll();
+        } catch (Exception e) {
+            throw new IllegalStateException("Could not drop all from database.", e);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void createSchema(final String schemaSpecification, final DatabaseType databaseType)
-            throws IllegalStateException {
+    public void createSchema(final String schemaSpecification) throws IllegalStateException {
 
-        final String changeLogFileName = "setup_" + schemaSpecification + ".xml";
+        final String changeLogFileName = LIQUIBASE_SETUP_CONFIG + schemaSpecification + ".xml";
         final Connection conn = (Connection) getTestClass().getDbConnection();
 
-        // Create the liquibase, and update the database according to the specs.
-        liquibase = new Liquibase(changeLogFileName, resourceAccessor, databaseType.getJdbcConnection(conn));
-        liquibase.update(schemaSpecification);
+        // Create the liquibase instance, and update the database according to the specs.
+        try {
+            liquibase = new Liquibase(changeLogFileName, resourceAccessor, getDatabaseType().getJdbcConnection(conn));
+            liquibase.update(schemaSpecification);
+        } catch (LiquibaseException e) {
+            throw new IllegalStateException("Could not properly set up schema from [" + changeLogFileName + "]", e);
+        }
     }
 }

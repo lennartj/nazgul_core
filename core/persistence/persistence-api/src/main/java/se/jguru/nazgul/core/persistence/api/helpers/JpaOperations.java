@@ -76,6 +76,7 @@ public final class JpaOperations {
      * @param entity        The entity to update / merge. Cannot be {@code null}.
      * @param entityManager The active EntityManager. Cannot be {@code null}.
      * @param <T>           The entity type.
+     * @return The updated entity, to be used instead of the supplied argument entity.
      * @throws PersistenceOperationException if the entity could not be updated.
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -86,14 +87,21 @@ public final class JpaOperations {
         Validate.notNull(entity, "Cannot handle null entity argument.");
         Validate.notNull(entityManager, "Cannot handle null entityManager argument.");
 
-        // Update the entity
         try {
-            return entityManager.merge(entity);
-        } catch (Exception e) {
 
-            final String entityTypeName = entity == null ? "unknown" : entity.getClass().getName();
+            T toReturn = entity;
+
+            // Merge the T instance, if required
+            if (!entityManager.contains(entity)) {
+                toReturn = entityManager.merge(entity);
+            }
+
+            // All done.
+            return toReturn;
+
+        } catch (Exception e) {
             throw new PersistenceOperationException("Could not update (JPA merge) object of type ["
-                    + entityTypeName + "]", e);
+                    + entity.getClass().getName() + "]", e);
         }
     }
 
@@ -114,10 +122,12 @@ public final class JpaOperations {
 
         try {
 
-            if(entity instanceof Validatable) {
-                entityManager.refresh(validateInternalState((Validatable) entity));
-            } else {
-                entityManager.refresh(entity);
+            // Refresh first
+            entityManager.refresh(entity);
+
+            // Validate, as required
+            if (entity instanceof Validatable) {
+                validateInternalState((Validatable) entity);
             }
         } catch (Exception e) {
 
