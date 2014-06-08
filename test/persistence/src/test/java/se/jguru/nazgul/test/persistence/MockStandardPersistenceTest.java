@@ -43,8 +43,7 @@ public class MockStandardPersistenceTest extends StandardPersistenceTest {
 
         // Assemble
         final Bird eagle = new Bird("Eagle", "Predator");
-
-        final IDataSet expected = performStandardTestDbSetup("validateCreateEntity");
+        final IDataSet expected = performStandardTestDbSetup();
 
         // Act
         jpa.create(eagle);
@@ -64,7 +63,7 @@ public class MockStandardPersistenceTest extends StandardPersistenceTest {
     public void validateDeleteEntity() throws Exception {
 
         // Assemble
-        final IDataSet expected = performStandardTestDbSetup("validateDeleteEntity");
+        final IDataSet expected = performStandardTestDbSetup();
 
         // Act & Assert #1: Readout one of the Bird records from the DB.
         final List<Bird> result = jpa.fireNamedQuery(Bird.GET_BIRDS_BY_CATEGORY, "Preda%");
@@ -85,14 +84,10 @@ public class MockStandardPersistenceTest extends StandardPersistenceTest {
     public void validateUpdateEntity() throws Exception {
 
         // Assemble
-        final IDataSet expected = performStandardTestDbSetup("validateUpdateEntity");
-
-        // final IDataSet dataSet = iDatabaseConnection.createDataSet(new String[]{"BIRD"});
-        // System.out.println("...> " + extractFlatXmlDataSet(dataSet));
+        final IDataSet expected = performStandardTestDbSetup();
 
         // Act & Assert #1: Readout some Bird records from the DB.
         final List<Bird> result = jpa.fireNamedQuery(Bird.GET_BIRDS_BY_CATEGORY, "Pred%");
-        System.out.println(" ===> " + result);
         Assert.assertEquals(2, result.size());
 
         // Since the NamedQuery is sorted by name, the first bird should be the Eagle.

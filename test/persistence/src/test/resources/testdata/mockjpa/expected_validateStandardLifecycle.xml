@@ -20,5 +20,7 @@
   #L%
   -->
 <dataset>
-    <BIRD ID="0" CATEGORY="cool birds" NAME="birdName" VERSION="1"/>
+    <BIRD ID="1" CATEGORY="cool birds" NAME="birdName" VERSION="1"/>
+    <SEED/>
+    <SEED_BIRD/>
 </dataset>

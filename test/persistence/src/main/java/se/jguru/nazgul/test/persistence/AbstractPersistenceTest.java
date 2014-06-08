@@ -51,7 +51,8 @@ public abstract class AbstractPersistenceTest<D> {
     private ClassLoader originalClassloader;
 
     @Rule
-    private TestName testName = new TestName();
+    @SuppressWarnings("all")
+    public final TestName testName = new TestName();
 
     /**
      * Creates an AbstractPersistenceTest using the supplied SchemaManager and DataManager classes to
@@ -106,15 +107,15 @@ public abstract class AbstractPersistenceTest<D> {
 
         // Initialize the internal state objects.
         final String testMethodName = testName.getMethodName();
-        schemaManager.initialize(this, testMethodName);
-        dataManager.initialize(this, testMethodName);
+        schemaManager.initialize(this, testMethodName, databaseType);
+        dataManager.initialize(this, testMethodName, databaseType);
 
         // Delegate setup to subclasses
         preSetup();
 
         // Setup schema
         Assert.assertTrue("Could not acquire test method name.", testMethodName != null && testMethodName.length() > 0);
-        schemaManager.createSchema(testMethodName, getDatabaseType());
+        schemaManager.createSchema(testMethodName);
 
         // Delegate setup to subclasses
         onSetup();

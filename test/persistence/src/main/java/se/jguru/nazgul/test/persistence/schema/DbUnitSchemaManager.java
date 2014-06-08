@@ -7,11 +7,11 @@
  * Licensed under the jGuru Europe AB license (the "License"), based
  * on Apache License, Version 2.0; you may not use this file except
  * in compliance with the License.
- *
+ * 
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,12 +21,9 @@
  */
 package se.jguru.nazgul.test.persistence.schema;
 
-import liquibase.Liquibase;
 import liquibase.resource.ResourceAccessor;
-import org.dbunit.operation.DatabaseOperation;
 import se.jguru.nazgul.test.persistence.AbstractLifecycleAware;
 import se.jguru.nazgul.test.persistence.AbstractPersistenceTest;
-import se.jguru.nazgul.test.persistence.DatabaseType;
 import se.jguru.nazgul.test.persistence.SchemaManager;
 
 import java.io.File;
@@ -36,8 +33,8 @@ import java.io.File;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class DbUnitSchemaManager <T extends AbstractPersistenceTest> extends AbstractLifecycleAware<T>
-        implements SchemaManager<T> {
+public class DbUnitSchemaManager <T extends AbstractPersistenceTest>
+        extends AbstractLifecycleAware<T> implements SchemaManager<T> {
 
     // Constants
     private static final String DBUNIT_CONFIG_PREFIX = "dbunit_";
@@ -48,7 +45,6 @@ public class DbUnitSchemaManager <T extends AbstractPersistenceTest> extends Abs
     public static final String DBUNIT_SETUP_CONFIG = DBUNIT_CONFIG_PREFIX + "setup_";
 
     // Internal state
-    private Liquibase liquibase;
     private ResourceAccessor resourceAccessor;
 
     /**
@@ -75,7 +71,5 @@ public class DbUnitSchemaManager <T extends AbstractPersistenceTest> extends Abs
      */
     @Override
     public void createSchema(final String schemaSpecification) throws IllegalStateException {
-
-        DatabaseOperation.TRANSACTION(DatabaseOperation.REFRESH)
     }
 }

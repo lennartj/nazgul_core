@@ -45,7 +45,6 @@ public class T_AbstractJpaTestTest {
     // Shared state
     private ClassLoader originalClassLoader;
     private String jpaProviderClass;
-    private DatabaseType dbType;
     private MockAbstractJpaTest unitUnderTest;
     private boolean teardownUnitUnderTest = false;
 
@@ -58,13 +57,11 @@ public class T_AbstractJpaTestTest {
 
         // Ensure that we have a correct Maven profile set.
         jpaProviderClass = System.getProperty(StandardPersistenceTest.JPA_PROVIDER_CLASS_SYSPROPKEY);
+
         Assert.assertNotNull("No JPA provider found. Ensure that system property ["
                         + StandardPersistenceTest.JPA_PROVIDER_CLASS_SYSPROPKEY + "] contains the JPA provider class. "
                         + "This should be done automatically by Maven.",
-                jpaProviderClass
-                            );
-
-        dbType = DatabaseType.HSQL;
+                jpaProviderClass);
     }
 
     @After
@@ -89,8 +86,10 @@ public class T_AbstractJpaTestTest {
         // Assemble
         final String persistenceXmlFile = "testdata/mockjpa/mockpersistence.xml";
         final String persistenceUnit = "birdPU";
-        unitUnderTest = new MockAbstractJpaTest(persistenceXmlFile, persistenceUnit);
-        unitUnderTest.emProperties = getHsqldbEntityManagerFactoryProperties(persistenceXmlFile);
+        unitUnderTest = new MockAbstractJpaTest(persistenceXmlFile,
+                persistenceUnit,
+                true,
+                getHsqldbEntityManagerFactoryProperties(persistenceXmlFile));
 
         final Bird bird = new Bird("birdName", "cool birds");
 
@@ -125,13 +124,17 @@ public class T_AbstractJpaTestTest {
         // Assemble
         final String persistenceXmlFile = "testdata/mockjpa/mockpersistence.xml";
         final String persistenceUnit = "birdPU";
-        unitUnderTest = new MockAbstractJpaTest(persistenceXmlFile, persistenceUnit);
-        unitUnderTest.emProperties = getHsqldbEntityManagerFactoryProperties(persistenceXmlFile);
+        unitUnderTest = new MockAbstractJpaTest(persistenceXmlFile,
+                persistenceUnit,
+                true,
+                getHsqldbEntityManagerFactoryProperties(persistenceXmlFile));
+
         teardownUnitUnderTest = true;
 
         // Act & Assert #1: Close transaction, and check state
         unitUnderTest.setUp();
-        unitUnderTest.commit(false);
+        unitUnderTest.jpaCache.evictAll();
+        // unitUnderTest.commit(false);
         Assert.assertFalse(unitUnderTest.transaction.isActive());
 
         // Act & Assert #2:
@@ -150,7 +153,7 @@ public class T_AbstractJpaTestTest {
         // Assemble
         final String persistenceXmlFile = "testdata/mockjpa/mockpersistence.xml";
         final String persistenceUnit = "birdPU";
-        unitUnderTest = new MockAbstractJpaTest(persistenceXmlFile, persistenceUnit);
+        unitUnderTest = new MockAbstractJpaTest(persistenceXmlFile, persistenceUnit, false, null);
         unitUnderTest.cleanupSchemaInTeardown = false;
 
         // Act & Assert
@@ -163,19 +166,21 @@ public class T_AbstractJpaTestTest {
         // Assemble
         final String persistenceXmlFile = "testdata/mockjpa/mockpersistence.xml";
         final String persistenceUnit = "birdPU";
-        unitUnderTest = new MockAbstractJpaTest(persistenceXmlFile, persistenceUnit);
-        unitUnderTest.emProperties = getHsqldbEntityManagerFactoryProperties(persistenceXmlFile);
+        unitUnderTest = new MockAbstractJpaTest(persistenceXmlFile,
+                persistenceUnit,
+                true,
+                getHsqldbEntityManagerFactoryProperties(persistenceXmlFile));
 
         final Bird bird = new Bird("birdName", "cool birds");
 
         // Act & Assert #1: Persist a Bird instance
         unitUnderTest.setUp();
         EntityTransaction userTransaction = unitUnderTest.transaction;
-        Assert.assertTrue(userTransaction.isActive());
+        Assert.assertFalse(userTransaction.isActive());
+        userTransaction.begin();
 
         unitUnderTest.entityManager.persist(bird);
         unitUnderTest.commitAndStartNewTransaction();
-        userTransaction = unitUnderTest.transaction;
 
         // Act & Assert #2: Fire an arbitrary JPQL query
         final List<Bird> birds = unitUnderTest.jpa.fireJpaQuery("select a from Bird a order by a.name");
@@ -198,8 +203,9 @@ public class T_AbstractJpaTestTest {
         this.teardownUnitUnderTest = true;
         final MockAbstractJpaTest unitUnderTest = new MockAbstractJpaTest(
                 persistenceXmlFile,
-                persistenceUnit);
-        unitUnderTest.emProperties = getHsqldbEntityManagerFactoryProperties(persistenceXmlFile);
+                persistenceUnit,
+                true,
+                getHsqldbEntityManagerFactoryProperties(persistenceXmlFile));
 
         // Act & Assert
         unitUnderTest.setUp();
@@ -213,8 +219,9 @@ public class T_AbstractJpaTestTest {
         final String persistenceUnit = "incorrectPU";
         final MockAbstractJpaTest unitUnderTest = new MockAbstractJpaTest(
                 persistenceXmlFile,
-                persistenceUnit);
-        unitUnderTest.emProperties = getHsqldbEntityManagerFactoryProperties(persistenceXmlFile);
+                persistenceUnit,
+                true,
+                null);
 
         // Act & Assert
         unitUnderTest.setUp();

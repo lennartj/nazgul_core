@@ -21,6 +21,14 @@
  */
 package se.jguru.nazgul.test.persistence;
 
+import se.jguru.nazgul.test.persistence.jpa.PersistenceProviderType;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
@@ -58,7 +66,11 @@ public class MockAbstractDbUnitAndJpaTest extends AbstractDbUnitAndJpaTest {
      */
     @Override
     protected boolean isSeparateConnectionsUsedForDbUnitAndJPA() {
+
+        // Just a coverage stunt...
         super.isSeparateConnectionsUsedForDbUnitAndJPA();
+
+        // Override the result.
         return separateConnectionForDbUnit;
     }
 
@@ -66,8 +78,8 @@ public class MockAbstractDbUnitAndJpaTest extends AbstractDbUnitAndJpaTest {
      * {@inheritDoc}
      */
     @Override
-    protected void cleanupTestSchema() {
-        if(cleanupSchemaInTeardown) {
+    protected void cleanupTestSchema(final boolean shutdownDatabase) {
+        if (cleanupSchemaInTeardown) {
             dropAllDbObjectsInPublicSchema(true);
         }
     }
@@ -94,5 +106,91 @@ public class MockAbstractDbUnitAndJpaTest extends AbstractDbUnitAndJpaTest {
     @Override
     protected String getDatabaseName() {
         return databaseName;
+    }
+
+    /**
+     * Override to supply any additional EntityManagerFactory properties.
+     * The properties are supplied as the latter argument to the
+     * {@code Persistence.createEntityManagerFactory} method.
+     * <p/>
+     * The properties supplied within this Map override property definitions
+     * given in the persistence.xml file.
+     *
+     * @return Properties supplied to the EntityManagerFactory, implying they do not
+     * need to be declared within the persistence.xml file.
+     * @see javax.persistence.Persistence#createEntityManagerFactory(String, java.util.Map)
+     */
+    @Override
+    protected SortedMap<String, String> getEntityManagerFactoryProperties() {
+
+        // Get standard properties
+        final String jdbcDriverClass = getDatabaseType().getJdbcDriverClass();
+        final String jdbcURL = getDatabaseType().getUnitTestJdbcURL(getDatabaseName(), getTargetDirectory());
+        final String persistenceProviderClass = System.getProperty("jpa_provider_class",
+                PersistenceProviderType.ECLIPSELINK_2.getPersistenceProviderClass());
+
+        final SortedMap<String, String> toReturn = new TreeMap<String, String>();
+
+        final String[][] persistenceProviderProps = new String[][]{
+
+                // Generic properties
+                {"javax.persistence.provider", persistenceProviderClass},
+                {"javax.persistence.jdbc.driver", jdbcDriverClass},
+                {"javax.persistence.jdbc.url", jdbcURL},
+                {"javax.persistence.jdbc.user", "sa"},
+                {"javax.persistence.jdbc.password", ""},
+
+                // OpenJPA properties
+                {"openjpa.jdbc.DBDictionary", getDatabaseType().getDatabaseDialectClass()},
+
+                // Note!
+                // These OpenJPA provider properties are now replaced by the standardized
+                // properties, "javax.persistence....".
+                // It is now an exception to define both the standardized property and the
+                // corresponding legacy openjpa property for the commented-out properties
+                // below. These properties will remain commented-out to indicate which openjpa
+                // properties are now replaced by javax.persistence properties.
+                //
+                // {"openjpa.ConnectionDriverName", jdbcDriverClass},
+                // {"openjpa.ConnectionURL", jdbcURL},
+                // {"openjpa.ConnectionUserName", DEFAULT_DB_UID},
+                // {"openjpa.ConnectionPassword", DEFAULT_DB_PASSWORD},
+                {"openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true)"},
+                {"openjpa.InverseManager", "true"},
+                {"openjpa.Log", "DefaultLevel=WARN, Tool=INFO, RUNTIME=WARN, SQL=WARN"},
+                {"openjpa.jdbc.SchemaFactory", "native(ForeignKeys=true)"},
+                {"openjpa.jdbc.TransactionIsolation", "serializable"},
+                {"openjpa.RuntimeUnenhancedClasses", "supported"},
+
+                // Eclipselink properties
+                {"eclipselink.deploy-on-startup", "true"},
+                {"eclipselink.target-database", getDatabaseType().getHibernatePlatformClass()},
+                {"eclipselink.logging.level", "FINER"},
+                {"eclipselink.orm.throw.exceptions", "true"},
+                {"eclipselink.ddl-generation", "drop-and-create-tables"},
+                {"eclipselink.ddl-generation.output-mode", "database"},
+                {"eclipselink.persistencexml", getPersistenceXmlFile()}
+        };
+
+        // First, add the default values - and then overwrite them with
+        // any given system properties.
+        for (String[] current : persistenceProviderProps) {
+            toReturn.put(current[0], current[1]);
+        }
+
+        // Now, overwrite with appropriate system properties
+        final List<String> overridablePrefixes = Arrays.asList("javax.persistence.", "openjpa.", "eclipselink.");
+        for (Map.Entry<Object, Object> current : System.getProperties().entrySet()) {
+
+            final String currentPropertyName = "" + current.getKey();
+            for (String currentPrefix : overridablePrefixes) {
+                if (currentPropertyName.trim().toLowerCase().startsWith(currentPrefix)) {
+                    toReturn.put(currentPropertyName, "" + current.getValue());
+                }
+            }
+        }
+
+        // All done.
+        return toReturn;
     }
 }

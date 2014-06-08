@@ -22,14 +22,11 @@
 package se.jguru.nazgul.test.persistence.schema;
 
 import liquibase.Liquibase;
-import liquibase.exception.DatabaseException;
 import liquibase.exception.LiquibaseException;
-import liquibase.exception.LockException;
 import liquibase.resource.FileSystemResourceAccessor;
 import liquibase.resource.ResourceAccessor;
 import se.jguru.nazgul.test.persistence.AbstractLifecycleAware;
 import se.jguru.nazgul.test.persistence.AbstractPersistenceTest;
-import se.jguru.nazgul.test.persistence.DatabaseType;
 import se.jguru.nazgul.test.persistence.SchemaManager;
 
 import java.io.File;
