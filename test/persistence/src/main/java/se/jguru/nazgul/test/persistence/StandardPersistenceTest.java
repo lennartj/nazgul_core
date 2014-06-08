@@ -57,7 +57,7 @@ public abstract class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
      *
      * @see #JPA_PROVIDER_CLASS_SYSPROPKEY
      */
-    public static final PersistenceProviderType DEFAULT_PERSISTENCE_PROVIDER = PersistenceProviderType.OPENJPA_2;
+    public static final PersistenceProviderType DEFAULT_PERSISTENCE_PROVIDER = PersistenceProviderType.ECLIPSELINK_2;
 
     /**
      * The name of the standard/default (in-memory) database.
@@ -98,8 +98,8 @@ public abstract class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
      * Retrieves the DatabaseType used by this AbstractJpaPersistenceDbUnitTest.
      *
      * @return The DatabaseType used by this AbstractJpaPersistenceDbUnitTest.
-     *         StandardPersistenceTest uses an in-memory HSQL database. Override
-     *         in specific implementations/test cases to change the DatabaseType.
+     * StandardPersistenceTest uses an in-memory HSQL database. Override
+     * in specific implementations/test cases to change the DatabaseType.
      * @see DatabaseType#HSQL
      */
     @Override
@@ -140,7 +140,7 @@ public abstract class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
      * given in the persistence.xml file.
      *
      * @return Properties supplied to the EntityManagerFactory, implying they do not
-     *         need to be declared within the persistence.xml file.
+     * need to be declared within the persistence.xml file.
      * @see javax.persistence.Persistence#createEntityManagerFactory(String, java.util.Map)
      */
     @Override
@@ -206,8 +206,8 @@ public abstract class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
         for (Map.Entry<Object, Object> current : System.getProperties().entrySet()) {
 
             final String currentPropertyName = "" + current.getKey();
-            for(String currentPrefix : overridablePrefixes) {
-                if(currentPropertyName.trim().toLowerCase().startsWith(currentPrefix)) {
+            for (String currentPrefix : overridablePrefixes) {
+                if (currentPropertyName.trim().toLowerCase().startsWith(currentPrefix)) {
                     toReturn.put(currentPropertyName, "" + current.getValue());
                 }
             }
@@ -219,11 +219,14 @@ public abstract class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
 
     /**
      * Invoked during setup to prepare the schema used for test.
+     *
+     * @param shutdownDatabase if {@code true}, the database should be shutdown after cleaning the schema.
      */
     @Override
-    protected void cleanupTestSchema() {
-        dropAllDbObjectsInPublicSchema();
+    protected void cleanupTestSchema(final boolean shutdownDatabase) {
+        dropAllDbObjectsInPublicSchema(shutdownDatabase);
     }
+
 
     /**
      * Retrieves the name of the database used for this AbstractDbUnitAndJpaTest.
@@ -275,7 +278,7 @@ public abstract class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
             dbOp.execute(iDatabaseConnection, setupDataSet);
         } catch (Exception e) {
             String dataSetContent = "<no content>";
-            if(setupDataSet != null) {
+            if (setupDataSet != null) {
                 dataSetContent = extractFlatXmlDataSet(setupDataSet);
             }
             throw new IllegalStateException("Could not setup database state. SetupDataSet: " + dataSetContent, e);
@@ -321,11 +324,23 @@ public abstract class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
         final IDataSet toReturn = getExpectedDatabaseState(testMethodName);
 
         // Start a transaction, unless already started.
-        if(!transaction.isActive()) {
+        if (!transaction.isActive()) {
             transaction.begin();
         }
 
         // All done.
         return toReturn;
+    }
+
+    /**
+     * Convenience method performing standardized setup of the in-memory database and retrieving the
+     * IDataSet pointing to the expected state following the test. Also begins the transaction, by
+     * calling the {@code transaction.begin()} method. Uses the {@code getTestMethodName() } method to
+     * retrieve the name of the currently active test method.
+     *
+     * @return the IDataSet pointing to the expected state following the test.
+     */
+    protected final IDataSet performStandardTestDbSetup() {
+        return performStandardTestDbSetup(activeTestName.getMethodName());
     }
 }

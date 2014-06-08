@@ -21,6 +21,11 @@
  */
 package se.jguru.nazgul.test.persistence;
 
+import org.dbunit.DatabaseUnitException;
+import org.dbunit.database.DatabaseConnection;
+import org.dbunit.dataset.IDataSet;
+import org.dbunit.operation.DatabaseOperation;
+
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -40,17 +45,25 @@ public class MockAbstractJpaTest extends AbstractJpaTest {
     public boolean cleanupSchemaInTeardown = true;
 
     // Internal state
+    private boolean useDbUnitToCleanDatabaseStateInTeardown;
     private String persistenceXmlFile;
     private String persistenceUnit;
-    public Map<String, String> emProperties = new HashMap<String, String>();
-    public List<String> knownTableNames = new ArrayList<String>();
+    private Map<String, String> emProperties;
 
     public MockAbstractJpaTest(final String persistenceXmlFile,
-                               final String persistenceUnit) {
+                               final String persistenceUnit,
+                               final boolean useDbUnitToCleanDatabaseStateInTeardown,
+                               final Map<String, String> entityManagerProperties) {
+
         this.persistenceXmlFile = persistenceXmlFile;
         this.persistenceUnit = persistenceUnit;
+        this.useDbUnitToCleanDatabaseStateInTeardown = useDbUnitToCleanDatabaseStateInTeardown;
+        if(entityManagerProperties != null) {
+            emProperties = entityManagerProperties;
+        }
     }
 
+    /*
     @Override
     public void setUp() throws Exception {
 
@@ -61,7 +74,7 @@ public class MockAbstractJpaTest extends AbstractJpaTest {
         final Connection jpaUnitTestConnection = getJpaUnitTestConnection(true);
         final ResultSet tables = jpaUnitTestConnection.getMetaData().getTables(null, null, "%", new String[]{"TABLE"});
 
-        while(tables.next()) {
+        while (tables.next()) {
             knownTableNames.add(tables.getString(3));
         }
 
@@ -70,6 +83,7 @@ public class MockAbstractJpaTest extends AbstractJpaTest {
         // Cleanup this operation.
         this.commitAndStartNewTransaction();
     }
+    */
 
     /**
      * {@inheritDoc}
@@ -77,15 +91,30 @@ public class MockAbstractJpaTest extends AbstractJpaTest {
     @Override
     public void tearDown() {
 
+        if (useDbUnitToCleanDatabaseStateInTeardown) {
+
+            // Be somewhat rigorous.
+            try {
+                final Connection jpaUnitTestConnection = getJpaUnitTestConnection(true);
+                final DatabaseConnection dbUnitConn = new DatabaseConnection(jpaUnitTestConnection);
+                final IDataSet allDatabaseDataSet = dbUnitConn.createDataSet();
+                DatabaseOperation.DELETE_ALL.execute(dbUnitConn, allDatabaseDataSet);
+            } catch (Exception e) {
+                throw new IllegalStateException("Could not wipe all database state.", e);
+            }
+        }
+
         // Proceed with normal testcase teardown.
         super.tearDown();
     }
 
     /**
      * Invoked during setup to prepare the schema used for test.
+     *
+     * @param shutdownDatabase if {@code true}, the database should be shutdown after cleaning the schema.
      */
     @Override
-    protected void cleanupTestSchema() {
+    protected void cleanupTestSchema(final boolean shutdownDatabase) {
 
         if (cleanupSchemaInTeardown) {
 
@@ -108,6 +137,7 @@ public class MockAbstractJpaTest extends AbstractJpaTest {
             }
         }
     }
+
     /**
      * {@inheritDoc}
      */
@@ -131,8 +161,11 @@ public class MockAbstractJpaTest extends AbstractJpaTest {
     protected SortedMap<String, String> getEntityManagerFactoryProperties() {
 
         final SortedMap<String, String> toReturn = super.getEntityManagerFactoryProperties();
-        toReturn.putAll(emProperties);
+        if(emProperties != null) {
+            toReturn.putAll(emProperties);
+        }
 
+        // All Done.
         return toReturn;
     }
 }

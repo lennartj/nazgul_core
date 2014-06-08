@@ -37,6 +37,9 @@ import javax.persistence.NamedQuery;
 @Entity
 @NamedQueries({
         @NamedQuery(
+                name = Bird.GET_BIRDS_BY_NAMED_CATEGORY,
+                query = "select b from Bird b where b.category like :category order by b.name"),
+        @NamedQuery(
                 name = Bird.GET_BIRDS_BY_CATEGORY,
                 query = "select b from Bird b where b.category like ?1 order by b.name"),
         @NamedQuery(
@@ -45,6 +48,7 @@ import javax.persistence.NamedQuery;
 })
 public class Bird extends NazgulEntity {
 
+    public static final String GET_BIRDS_BY_NAMED_CATEGORY = "getBirdsByNamedCategory";
     public static final String GET_BIRDS_BY_CATEGORY = "getBirdsByCategory";
     public static final String GET_ALL_BIRDS = "getAllBirds";
 

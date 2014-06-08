@@ -29,6 +29,7 @@
 
         <class>se.jguru.nazgul.core.persistence.model.NazgulEntity</class>
         <class>se.jguru.nazgul.test.persistence.pets.Bird</class>
+        <class>se.jguru.nazgul.test.persistence.pets.Seed</class>
 
     </persistence-unit>
 </persistence>

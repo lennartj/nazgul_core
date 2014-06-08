@@ -31,6 +31,9 @@ import se.jguru.nazgul.test.persistence.pets.Bird;
 
 import javax.persistence.EntityTransaction;
 import java.io.File;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -71,21 +74,17 @@ public class T_AbstractDbUnitAndJpaTestTest {
         final Bird bird = new Bird("birdName", "cool birds");
 
         // Act & Assert #1: Validate the entitymanager properties
+        // Note! The setUp activates the EntityManager Transaction.
         unitUnderTest.setUp();
         Assert.assertNotNull(unitUnderTest.entityManager);
         Assert.assertNotNull(unitUnderTest.jpa);
-        Assert.assertNotNull(unitUnderTest.getJpaUnitTestConnection(true));
 
         EntityTransaction userTransaction = unitUnderTest.transaction;
         Assert.assertNotNull(userTransaction);
-        Assert.assertFalse(userTransaction.isActive());
-
-        // Act & Assert #2: Begin the user transaction
-        final int firstTransactionHashCode = unitUnderTest.hashCode();
-        userTransaction.begin();
         Assert.assertTrue(userTransaction.isActive());
 
-        // Act & Assert #3: Persist a Bird instance, and commit without starting a new transaction.
+        // Act & Assert #2: Persist a Bird instance, and commit without starting a new transaction.
+        final int firstTransactionHashCode = unitUnderTest.hashCode();
         unitUnderTest.entityManager.persist(bird);
         unitUnderTest.commitAndStartNewTransaction();
         userTransaction = unitUnderTest.transaction;
@@ -93,10 +92,10 @@ public class T_AbstractDbUnitAndJpaTestTest {
 
         // Act & Assert #4: Dig out the database using dbUnit methods.
         final IDataSet dataSet = unitUnderTest.iDatabaseConnection.createDataSet();
+        final String expectedDataSetLine = "<BIRD ID=\"1\" CATEGORY=\"cool birds\" NAME=\"birdName\" VERSION=\"1\"/>";
         final String flatXmlDataSet = unitUnderTest.extractFlatXmlDataSet(dataSet);
-        Assert.assertTrue(
-                flatXmlDataSet.contains("<BIRD ID=\"0\" CATEGORY=\"cool birds\" NAME=\"birdName\" VERSION=\"1\"/>")
-        );
+        Assert.assertTrue("Got dataSet [" + flatXmlDataSet + "], expected it to contain [" + expectedDataSetLine + "]",
+                flatXmlDataSet.contains(expectedDataSetLine));
 
         // Act & Assert #5: Find the expected FlatXmlDataSet - as written to a file.
         final IDataSet expected = unitUnderTest.getDataSet("testdata/mockjpa/expected_validateStandardLifecycle.xml");
@@ -156,37 +155,37 @@ public class T_AbstractDbUnitAndJpaTestTest {
 
         EntityTransaction userTransaction = unitUnderTest.transaction;
         Assert.assertNotNull(userTransaction);
-        Assert.assertFalse(userTransaction.isActive());
-
-        // Act & Assert #2: Begin the user transaction
-        final int firstTransactionHashCode = unitUnderTest.hashCode();
-        userTransaction.begin();
         Assert.assertTrue(userTransaction.isActive());
 
-        // Act & Assert #3: Persist a Bird instance, and commit without starting a new transaction.
+        // Act & Assert #2: Persist a Bird instance.
+        final int firstTransactionHashCode = unitUnderTest.hashCode();
         unitUnderTest.entityManager.persist(bird);
         unitUnderTest.entityManager.flush();
         unitUnderTest.commitAndStartNewTransaction();
+        unitUnderTest.jpaCache.evictAll();
         userTransaction = unitUnderTest.transaction;
         Assert.assertNotSame(firstTransactionHashCode, userTransaction.hashCode());
 
-        // Act & Assert #4: Dig out the database using dbUnit methods.
+        // Act & Assert #3: Find the newly persisted bird using JPA select mechanics, to ensure it is there.
+        final Map<String, Object> namedParameterMap = new TreeMap<>();
+        namedParameterMap.put("category", "cool birds");
+        final List<Bird> result = unitUnderTest.jpa.fireNamedQuery(
+                Bird.GET_BIRDS_BY_NAMED_CATEGORY,
+                namedParameterMap);
+        Assert.assertTrue(result.size() > 0);
+
+        // Act & Assert #4: Dig out the database data using dbUnit.
         final IDataSet dataSet = unitUnderTest.iDatabaseConnection.createDataSet();
         final String flatXmlDataSet = unitUnderTest.extractFlatXmlDataSet(dataSet);
+        final String expectedDataSetLine = "<BIRD ID=\"1\" CATEGORY=\"cool birds\" NAME=\"birdName\" VERSION=\"1\"/>";
+        Assert.assertTrue("Got dataSet [" + flatXmlDataSet + "], expected it to contain [" + expectedDataSetLine + "]",
+                flatXmlDataSet.contains(expectedDataSetLine));
 
-        Assert.assertTrue(
-                flatXmlDataSet.contains("<BIRD ID=\"0\" CATEGORY=\"cool birds\" NAME=\"birdName\" VERSION=\"1\"/>")
-                         );
-
-        // Act & Assert #5: Find the expected FlatXmlDataSet - as written to a file.
-        final IDataSet expected = unitUnderTest.getDataSet("testdata/mockjpa/expected_validateStandardLifecycle.xml");
-        Assertion.assertEquals(expected, dataSet);
-
-        // Act & Assert #6: Validate not same connection for dbUnit and JPA EntityManager
+        // Act & Assert #5: Validate not same connection for dbUnit and JPA EntityManager
         Assert.assertNotSame(unitUnderTest.iDatabaseConnection.getConnection(),
                 unitUnderTest.getJpaUnitTestConnection(true));
 
-        // Act & Assert #7: Teardown
+        // Act & Assert #6: Teardown
         unitUnderTest.tearDown();
         Assert.assertNull(unitUnderTest.transaction);
     }

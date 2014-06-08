@@ -21,19 +21,25 @@
  */
 package se.jguru.nazgul.test.persistence;
 
+import org.eclipse.persistence.jpa.rs.PersistenceContextFactory;
+import org.eclipse.persistence.jpa.rs.PersistenceContextFactoryProvider;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TestName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.test.persistence.classloader.PersistenceRedirectionClassLoader;
 import se.jguru.nazgul.test.persistence.helpers.JpaPersistenceTestOperations;
 
+import javax.persistence.Cache;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.sql.Connection;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -46,6 +52,13 @@ public abstract class AbstractJpaTest {
 
     // Our Log
     private static final Logger log = LoggerFactory.getLogger(AbstractJpaTest.class);
+
+    /**
+     * Convenience rule providing the currently executing test method name.
+     */
+    @Rule
+    @SuppressWarnings("all")
+    public final TestName activeTestName = new TestName();
 
     /**
      * The unit-test scoped access to JpaOperations, created by this AbstractJpaTest.
@@ -61,6 +74,11 @@ public abstract class AbstractJpaTest {
      * The active JPA EntityManager.
      */
     protected EntityManager entityManager;
+
+    /**
+     * The active JPA persistence Cache.
+     */
+    protected Cache jpaCache;
 
     // Internal state
     private ClassLoader originalClassLoader;
@@ -104,6 +122,11 @@ public abstract class AbstractJpaTest {
         EntityManagerFactory factory = null;
         try {
             factory = Persistence.createEntityManagerFactory(getPersistenceUnitName(), props);
+
+            // Clean out the JPA cache, to prevent phantom reads from earlier tests.
+            jpaCache = factory.getCache();
+            jpaCache.evictAll();
+
             entityManager = factory.createEntityManager();
         } catch (Exception e) {
 
@@ -129,7 +152,6 @@ public abstract class AbstractJpaTest {
      *                                   startNewTransaction parameter is {@code true},
      *                                   the EntityManager's Transaction will be started. Otherwise,
      *                                   an Exception will be thrown.
-     *
      * @return The SQL Connection used by the entityManager.
      * @throws java.lang.IllegalStateException if {@code entityManager.getTransaction().isActive()} was {@code false}.
      */
@@ -139,19 +161,19 @@ public abstract class AbstractJpaTest {
         // Check sanity
         if (!entityManager.getTransaction().isActive()) {
 
-            if(startTransactionIfRequired) {
+            if (startTransactionIfRequired) {
                 entityManager.getTransaction().begin();
             } else {
                 throw new IllegalStateException("EclipseLink - and perhaps other JPA implementations - considers it "
                         + "an Exception to unwrap the DB Connection from the JPA EntityManager unless there is an "
                         + "active Transaction. Fix your testcase [" + getClass().getSimpleName()
-                        + "] to adhere to these mechanics.");
+                        + "], method [" + activeTestName.getMethodName() + "] to adhere to these mechanics.");
             }
         }
 
         // All done.
         final Connection toReturn = entityManager.unwrap(Connection.class);
-        if(toReturn == null) {
+        if (toReturn == null) {
             log.warn("EntityManager unwrapped a null JDBC Connection. Proceeding anyways; insane states may occur.");
         }
         return toReturn;
@@ -183,6 +205,20 @@ public abstract class AbstractJpaTest {
             // Clean up the test schema
             cleanupTestSchema(shutdownDatabaseInTeardown);
 
+            // Ensure that EclipseLink actually reloads its persistence unit,
+            // by ensuring that we always close the PersistenceContextFactoryProvider.
+            //
+            // As indicated in https://bugs.eclipse.org/bugs/show_bug.cgi?id=408015, this does not always happen.
+            final ServiceLoader<PersistenceContextFactoryProvider> persistenceContextFactoryProviderLoader
+                    = ServiceLoader.load(PersistenceContextFactoryProvider.class,
+                    Thread.currentThread().getContextClassLoader());
+            for (PersistenceContextFactoryProvider current : persistenceContextFactoryProviderLoader) {
+                PersistenceContextFactory persistenceContextFactory = current.getPersistenceContextFactory(null);
+                if (persistenceContextFactory != null) {
+                    persistenceContextFactory.close();
+                }
+            }
+
             // rollback
             if (transaction != null && transaction.isActive()) {
                 try {
@@ -198,7 +234,7 @@ public abstract class AbstractJpaTest {
                 try {
                     entityManager.close();
 
-                    if(log.isDebugEnabled()) {
+                    if (log.isDebugEnabled()) {
                         log.debug("Closed EntityManager.");
                     }
 
@@ -250,7 +286,6 @@ public abstract class AbstractJpaTest {
      * @param startNewTransaction if {@code true}, starts a new EntityTransaction following the commit of the
      *                            currently active one.
      * @throws java.lang.IllegalStateException if the Transaction could not be committed or begun anew.
-     *
      */
     protected final void commit(final boolean startNewTransaction) throws IllegalStateException {
 

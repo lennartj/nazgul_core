@@ -34,17 +34,13 @@ import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EntityTransaction;
 import java.io.File;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URL;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -221,8 +217,21 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
     @SuppressWarnings("PMD")
     protected final void dropAllDbObjectsInPublicSchema(final boolean shutdownDatabase) {
 
-        DatabaseOperation.DELETE_ALL.execute(iDatabaseConnection, );
+        try {
 
+            // Get a dataSet for the entire database
+            final IDataSet dataSet = iDatabaseConnection.createDataSet();
+
+            // Delete everything in the database.
+            DatabaseOperation.DELETE_ALL.execute(iDatabaseConnection, dataSet);
+
+        } catch (Exception e) {
+            throw new IllegalStateException("Could not delete all db objects.", e);
+        }
+
+        // TODO: Handle DB shutdown.
+
+        /*
         ResultSet dbObjects = null;
         Statement dropStatement = null;
         EntityTransaction currentTransaction = null;
@@ -290,6 +299,7 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
                 }
             }
         }
+        */
     }
 
     //

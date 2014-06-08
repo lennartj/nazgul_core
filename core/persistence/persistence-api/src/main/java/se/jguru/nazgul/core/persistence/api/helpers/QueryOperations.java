@@ -182,10 +182,20 @@ public final class QueryOperations {
     // Private helpers
     //
 
+    /**
+     * Retrieves a JPA Query from the supplied EntityManager, sporting the supplied maxResults.
+     *
+     * @param query         The JPA NamedQuery to fire.
+     * @param entityManager The active EntityManager.
+     * @param maxResults    Either a positive integer, or {@code Integer.MIN_VALUE} to indicate that the max result
+     *                      value should not be set.
+     * @return The JPA NamedQuery with the supplied name.
+     */
     private static Query getQuery(final String query, final EntityManager entityManager, final int maxResults) {
 
         // Check sanity
-        Validate.notEmpty(query, "Cannot handle null or empty query parameter.");
+        Validate.notEmpty(query, "Cannot handle null or empty query argument.");
+        Validate.notNull(entityManager, "Cannot handle null entityManager argument.");
 
         // Create the query, and handle the amount of results returned.
         Query namedQuery = entityManager.createNamedQuery(query);
