@@ -85,10 +85,8 @@
                             <include>se/jguru/nazgul/**/*.class</include>
                         </includes>
                         <excludes>
-
                             <!-- Don't check Exception classes -->
                             <exclude>se/jguru/nazgul/**/*Exception.class</exclude>
-
                         </excludes>
                     </instrumentation>
                     <check>
@@ -98,8 +96,13 @@
                         <regexes>
                             <regex>
                                 <pattern>se.jguru.nazgul.test.persistence.AbstractJpaTest</pattern>
-                                <branchRate>65</branchRate>
+                                <branchRate>63</branchRate>
                                 <lineRate>73</lineRate>
+                            </regex>
+                            <regex>
+                                <pattern>se.jguru.nazgul.test.persistence.StandardPersistenceTest</pattern>
+                                <branchRate>63</branchRate>
+                                <lineRate>80</lineRate>
                             </regex>
                             <regex>
                                 <pattern>se.jguru.nazgul.test.persistence.AbstractDbUnitAndJpaTest</pattern>
