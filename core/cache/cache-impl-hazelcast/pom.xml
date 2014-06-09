@@ -103,6 +103,19 @@
             <scope>test</scope>
         </dependency>
 
+        <!--
+            Ensure that we don't run into problems with old versions of Xalan and Xerces.
+        -->
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <!-- +=============================================== -->
