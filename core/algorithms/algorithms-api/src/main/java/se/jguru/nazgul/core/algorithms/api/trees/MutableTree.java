@@ -24,16 +24,13 @@ package se.jguru.nazgul.core.algorithms.api.trees;
 
 import se.jguru.nazgul.core.algorithms.api.trees.node.MutableNode;
 
-import java.io.Serializable;
-
 /**
  * Specification for a Tree whose internal state can be manipulated, in terms
  * of adding/removing Nodes and re-assigning the root Node.
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public interface MutableTree<KeyType extends Serializable & Comparable<KeyType>, ValueType extends Serializable>
-        extends Tree<KeyType, ValueType> {
+public interface MutableTree<K extends Comparable<K>, V> extends Tree<K, V> {
 
     /**
      * Reassigns the root node of this MutableTree, and moves all existing (immediate)
@@ -47,5 +44,5 @@ public interface MutableTree<KeyType extends Serializable & Comparable<KeyType>,
      *                                  any existing children are not MutableNode instances.
      *                                  Also thrown if {@code root} has a parent node assigned.
      */
-    MutableNode<KeyType, ValueType> setRoot(MutableNode<KeyType, ValueType> root) throws IllegalArgumentException;
+    MutableNode<K, V> setRoot(MutableNode<K, V> root) throws IllegalArgumentException;
 }

@@ -27,7 +27,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import se.jguru.nazgul.core.algorithms.tree.model.helpers.CityIdentifier;
 import se.jguru.nazgul.core.algorithms.tree.model.helpers.IncorrectEmptyEnum;
-import se.jguru.nazgul.core.algorithms.tree.model.path.EnumMapPath;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.JaxbXmlBinder;
 import se.jguru.nazgul.test.xmlbinding.XmlTestUtils;
 
@@ -47,7 +46,7 @@ public class EnumMapPathTest {
         final Class<CityIdentifier> enumType = CityIdentifier.class;
 
         // Act & Assert
-        new EnumMapPath<CityIdentifier>(compoundPath, enumType);
+        new EnumMapPath<>(compoundPath, enumType);
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
@@ -70,7 +69,7 @@ public class EnumMapPathTest {
         final Class<CityIdentifier> enumType = null;
 
         // Act & Assert
-        new EnumMapPath<CityIdentifier>(compoundPath, enumType);
+        new EnumMapPath<>(compoundPath, enumType);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -81,7 +80,7 @@ public class EnumMapPathTest {
         final Class<IncorrectEmptyEnum> enumType = IncorrectEmptyEnum.class;
 
         // Act & Assert
-        new EnumMapPath<IncorrectEmptyEnum>(compoundPath, enumType);
+        new EnumMapPath<>(compoundPath, enumType);
     }
 
     @Test
