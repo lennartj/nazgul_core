@@ -32,7 +32,6 @@
 
     <publishDate position="right"/>
 
-
     <body>
         <menu name="Overview">
             <item name="Introduction" href="index.html"/>
