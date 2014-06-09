@@ -40,5 +40,7 @@
 
     <!-- Make the frameworks shut up. -->
     <logger name="org.springframework" level="WARN"/>
+    <logger name="org.dbunit.database" level="INFO"/>
+    <logger name="org.dbunit.dataset" level="INFO"/>
 
 </configuration>

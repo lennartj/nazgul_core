@@ -25,7 +25,6 @@ import org.dbunit.Assertion;
 import org.dbunit.dataset.IDataSet;
 import org.junit.Assert;
 import org.junit.Test;
-import se.jguru.nazgul.core.algorithms.tree.model.path.StringPath;
 import se.jguru.nazgul.test.persistence.StandardPersistenceTest;
 
 import javax.persistence.Query;
@@ -43,7 +42,7 @@ public class StringPathPersistenceTest extends StandardPersistenceTest {
         StringPath unitUnderTest = new StringPath("root");
         unitUnderTest = unitUnderTest.append("intermediate");
         unitUnderTest = unitUnderTest.append("leaf");
-        final IDataSet expected = performStandardTestDbSetup("validatePersistingStringPath");
+        final IDataSet expected = performStandardTestDbSetup();
 
         // Act
         entityManager.persist(unitUnderTest);
@@ -54,8 +53,7 @@ public class StringPathPersistenceTest extends StandardPersistenceTest {
         final List<StringPath> resultList = jpql.getResultList();
 
         // Assert
-        // final IDataSet dbDataSet = iDatabaseConnection.createDataSet();
-        // System.out.println("Got: " + extractFlatXmlDataSet(dbDataSet));
+        logIDataSets(expected, iDatabaseConnection.createDataSet());
         Assert.assertEquals(1, resultList.size());
 
         final StringPath readFromDb = resultList.get(0);
@@ -63,7 +61,7 @@ public class StringPathPersistenceTest extends StandardPersistenceTest {
         Assert.assertEquals("intermediate", readFromDb.get(1));
         Assert.assertEquals("leaf", readFromDb.get(2));
 
-        Assertion.assertEquals(expected, iDatabaseConnection.createDataSet());
+        Assertion.assertEquals(expected, iDatabaseConnection.createDataSet(new String[]{"STRINGPATH"}));
     }
 
     @Test
@@ -71,7 +69,7 @@ public class StringPathPersistenceTest extends StandardPersistenceTest {
 
         // Assemble
         final String pathToDelete = "top/middle/cellar";
-        final IDataSet expected = performStandardTestDbSetup("validateDeleteStringPath");
+        final IDataSet expected = performStandardTestDbSetup();
 
         // ### 1) Act & Assert: Ensure that the database contains the Entity to remove.
         final Query getStringPathByCompoundPath = entityManager.createNamedQuery("getStringPathByCompoundPath");
@@ -91,9 +89,8 @@ public class StringPathPersistenceTest extends StandardPersistenceTest {
         commitAndStartNewTransaction();
 
         // Assert
-        Assertion.assertEquals(expected, iDatabaseConnection.createDataSet());
-        // final IDataSet dbDataSet = iDatabaseConnection.createDataSet();
-        // System.out.println("Got: " + extractFlatXmlDataSet(dbDataSet));
+        logIDataSets(expected, iDatabaseConnection.createDataSet(new String[]{"STRINGPATH"}));
+        Assertion.assertEquals(expected, iDatabaseConnection.createDataSet(new String[]{"STRINGPATH"}));
     }
 
     @Test
@@ -101,19 +98,26 @@ public class StringPathPersistenceTest extends StandardPersistenceTest {
 
         // Assemble
         final String compoundPath = "top#middle#cellar";
-        final IDataSet expected = performStandardTestDbSetup("validateFindingStringPath");
+        performStandardTestDbSetup();
 
         // Act
-        final Query getStringPathByCompoundPath = entityManager.createNamedQuery("getStringPathByCompoundPath");
-        getStringPathByCompoundPath.setParameter(1, compoundPath);
+        final List<StringPath> resultList = jpa.fireNamedQuery("getStringPathByCompoundPath", compoundPath);
 
         // Assert
-        final List<StringPath> resultList = getStringPathByCompoundPath.getResultList();
         Assert.assertEquals(1, resultList.size());
-        entityManager.flush();
 
         final StringPath cellarPath = resultList.get(0);
         Assert.assertNotNull(cellarPath);
         Assert.assertEquals(compoundPath, cellarPath.toString());
+    }
+
+    //
+    // Private helpers
+    //
+
+    private void logIDataSets(final IDataSet expected, final IDataSet actual) {
+        System.out.println(" ===== expected: \n" + extractFlatXmlDataSet(expected)
+                        + "\n ===== actual: \n" + extractFlatXmlDataSet(actual)
+                          + "\n =====");
     }
 }

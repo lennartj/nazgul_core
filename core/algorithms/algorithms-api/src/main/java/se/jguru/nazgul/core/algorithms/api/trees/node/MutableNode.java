@@ -24,18 +24,15 @@ package se.jguru.nazgul.core.algorithms.api.trees.node;
 
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
 
-import java.io.Serializable;
-
 /**
  * Specification for a Node whose internal state can be manipulated, in terms
  * of moving it within trees, and adding/removing children.
  *
- * @param <ValueType> The value type of this MutableNode.
- * @param <KeyType>   The key type of this MutableNode.
+ * @param <V> The value type of this MutableNode.
+ * @param <K> The key type of this MutableNode.
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public interface MutableNode<KeyType extends Serializable & Comparable<KeyType>, ValueType extends Serializable>
-        extends Node<KeyType, ValueType> {
+public interface MutableNode<K extends Comparable<K>, V> extends Node<K, V> {
 
     /**
      * Adds the provided node as a child to this MutableNode.
@@ -43,14 +40,14 @@ public interface MutableNode<KeyType extends Serializable & Comparable<KeyType>,
      * @param node The node to add.
      * @throws IllegalArgumentException if the given node could not be added properly.
      */
-    void addChild(MutableNode<KeyType, ValueType> node) throws IllegalArgumentException;
+    void addChild(MutableNode<K, V> node) throws IllegalArgumentException;
 
     /**
      * Removes all immediate children of this MutableNode matching the provided Filter.
      *
      * @param nodeFilter a Filter defining which children should be removed.
      */
-    void removeChildren(Filter<Node<KeyType, ValueType>> nodeFilter);
+    void removeChildren(Filter<Node<K, V>> nodeFilter);
 
     /**
      * Removes the provided child node from this MutableNode, if it exists.
@@ -59,14 +56,14 @@ public interface MutableNode<KeyType extends Serializable & Comparable<KeyType>,
      *
      * @param node The node to remove.
      */
-    void removeChild(MutableNode<KeyType, ValueType> node);
+    void removeChild(MutableNode<K, V> node);
 
     /**
      * Assigns the parent of this MutableNode.
      *
      * @param parent The parent of this node.
      */
-    void setParent(MutableNode<KeyType, ValueType> parent);
+    void setParent(MutableNode<K, V> parent);
 
     /**
      * Removes this MutableNode from its parent, by removing both the

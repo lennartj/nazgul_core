@@ -26,19 +26,17 @@ import se.jguru.nazgul.core.algorithms.api.trees.node.MutableNode;
 import se.jguru.nazgul.core.algorithms.api.trees.node.Node;
 import se.jguru.nazgul.core.algorithms.api.trees.path.Path;
 
-import java.io.Serializable;
-
 /**
  * A generic typed Tree structure holding nodes.
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public interface Tree<KeyType extends Serializable & Comparable<KeyType>, ValueType extends Serializable> {
+public interface Tree<K extends Comparable<K>, V> {
 
     /**
      * @return The root node of this tree.
      */
-    MutableNode<KeyType, ValueType> getRoot();
+    MutableNode<K, V> getRoot();
 
     /**
      * Retrieves the Node at the provided path.
@@ -47,5 +45,5 @@ public interface Tree<KeyType extends Serializable & Comparable<KeyType>, ValueT
      * @param path The path to the node which should be acquired.
      * @return The Node at the provided path, or {@code null} if no node was found.
      */
-    <X extends Node<KeyType, ValueType>> X get(Path<KeyType> path);
+    <X extends Node<K, V>> X get(Path<K> path);
 }

@@ -25,14 +25,10 @@ package se.jguru.nazgul.core.algorithms.tree.api;
 import org.junit.Assert;
 import org.junit.Test;
 import se.jguru.nazgul.core.algorithms.api.trees.node.MutableNode;
-import se.jguru.nazgul.core.algorithms.api.trees.node.Node;
 import se.jguru.nazgul.core.algorithms.tree.api.common.SimpleTree;
-import se.jguru.nazgul.core.algorithms.tree.model.node.StringKeyNode;
+import se.jguru.nazgul.core.algorithms.tree.model.node.StringNode;
 import se.jguru.nazgul.core.algorithms.tree.model.path.AbstractPath;
 import se.jguru.nazgul.core.algorithms.tree.model.path.StringPath;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid, jGuru Europe AB</a>
@@ -50,15 +46,12 @@ public class SimpleTreeTest {
     public void validateReassigningRoot() {
 
         // Assemble
-        final MutableNode<String, String> root1 = new StringKeyNode<String>(
-                "root1Key", "root1Value", null, null);
-        final MutableNode<String, String> root2 = new StringKeyNode<String>(
-                "root2Key", "root2Value", null, null);
-        final MutableNode<String, String> child1 = new StringKeyNode<String>(
-                "child1Key", "child1Value", null, null);
+        final MutableNode<String, String> root1 = new StringNode("root1Key", "root1Value", null);
+        final MutableNode<String, String> root2 = new StringNode("root2Key", "root2Value", null);
+        final MutableNode<String, String> child1 = new StringNode("child1Key", "child1Value", null);
 
         // Act & Assert #1
-        final SimpleTree<String, String> unitUnderTest = new SimpleTree<String, String>(root1);
+        final SimpleTree<String, String> unitUnderTest = new SimpleTree<>(root1);
         final MutableNode<String, String> originalRoot = unitUnderTest.getRoot();
         originalRoot.addChild(child1);
 
@@ -79,10 +72,8 @@ public class SimpleTreeTest {
     public void validateAcquiringNodes() {
 
         // Assemble
-        final MutableNode<String, String> root1 = new StringKeyNode<String>(
-                "root1Key", "root1Value", null, null);
-        final MutableNode<String, String> child1 = new StringKeyNode<String>(
-                "child1Key", "child1Value", null, null);
+        final MutableNode<String, String> root1 = new StringNode("root1Key", "root1Value", null);
+        final MutableNode<String, String> child1 = new StringNode("child1Key", "child1Value", null);
 
         // Act
         final SimpleTree<String, String> unitUnderTest = new SimpleTree<String, String>(root1);

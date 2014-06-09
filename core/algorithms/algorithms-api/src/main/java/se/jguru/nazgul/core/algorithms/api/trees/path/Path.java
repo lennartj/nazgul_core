@@ -28,11 +28,10 @@ import java.io.Serializable;
  * Generic immutable Path, defining a single continuous list of segments.
  * This is applicable - for example - as a Path within a Tree.
  *
- * @param <SegmentType> The type of segment from which this Path is constructed.
+ * @param <S> The type of segment from which this Path is constructed.
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public interface Path<SegmentType extends Serializable & Comparable<SegmentType>>
-        extends Iterable<SegmentType>, Comparable<Path<SegmentType>>, Serializable {
+public interface Path<S extends Comparable<S>> extends Iterable<S>, Comparable<Path<S>>, Serializable {
 
     /**
      * @return The number of segments in this Path.
@@ -47,7 +46,7 @@ public interface Path<SegmentType extends Serializable & Comparable<SegmentType>
      * @throws IndexOutOfBoundsException if {@code index} was smaller than 0 or
      *                                   greater than {@code size}.
      */
-    SegmentType get(int index) throws IndexOutOfBoundsException;
+    S get(int index) throws IndexOutOfBoundsException;
 
     /**
      * Appends the provided KeyType to this Path, returning the resulting Path.
@@ -60,5 +59,5 @@ public interface Path<SegmentType extends Serializable & Comparable<SegmentType>
      *         Note that the returned value could/should be a new Path subtype, given that
      *         the implementation's internal state is immutable.
      */
-    <X extends Path<SegmentType>> X append(SegmentType aKey);
+    <X extends Path<S>> X append(S aKey);
 }

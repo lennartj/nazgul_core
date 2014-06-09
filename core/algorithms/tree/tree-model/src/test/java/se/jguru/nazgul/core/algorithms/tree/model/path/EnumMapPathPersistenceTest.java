@@ -44,7 +44,10 @@ public class EnumMapPathPersistenceTest extends StandardPersistenceTest {
         EnumMapPath<CityIdentifier> unitUnderTest = new EnumMapPath<CityIdentifier>("Sweden", CityIdentifier.class);
         unitUnderTest = unitUnderTest.append("Västra Götaland");
         unitUnderTest = unitUnderTest.append("Göteborg");
-        final IDataSet expected = performStandardTestDbSetup("validatePersistingEnumMapPath");
+        final IDataSet expected = performStandardTestDbSetup();
+
+        // System.out.println("expected: " + extractFlatXmlDataSet(expected));
+
 
         // Act
         entityManager.persist(unitUnderTest);
@@ -57,7 +60,8 @@ public class EnumMapPathPersistenceTest extends StandardPersistenceTest {
 
         // Assert
         final IDataSet dbDataSet = iDatabaseConnection.createDataSet();
-        // System.out.println("Got: " + extractFlatXmlDataSet(dbDataSet));
+
+        // System.out.println("dbDataSet: " + extractFlatXmlDataSet(dbDataSet));
         // Assert.assertEquals(1, resultList.size());
 
         final EnumMapPath<CityIdentifier> readFromDb = resultList.get(0);

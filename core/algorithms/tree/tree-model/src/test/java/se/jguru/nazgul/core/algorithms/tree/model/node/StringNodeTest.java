@@ -2,7 +2,7 @@
  * #%L
  * Nazgul Project: nazgul-core-algorithms-tree-model
  * %%
- * Copyright (C) 2010 - 2013 jGuru Europe AB
+ * Copyright (C) 2010 - 2014 jGuru Europe AB
  * %%
  * Licensed under the jGuru Europe AB license (the "License"), based
  * on Apache License, Version 2.0; you may not use this file except
@@ -19,7 +19,6 @@
  * limitations under the License.
  * #L%
  */
-
 package se.jguru.nazgul.core.algorithms.tree.model.node;
 
 import org.junit.Assert;
@@ -27,7 +26,7 @@ import org.junit.Test;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
 import se.jguru.nazgul.core.algorithms.api.trees.node.Node;
 import se.jguru.nazgul.core.algorithms.api.trees.path.Path;
-import se.jguru.nazgul.core.algorithms.tree.model.helpers.StringStringNode;
+import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,39 +34,70 @@ import java.util.List;
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class AbstractLegacyMutableNodeTest {
+public class StringNodeTest {
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = InternalStateValidationException.class)
     public void validateExceptionOnNullKey() {
 
         // Assemble
-        final List<Node<String, String>> children = new ArrayList<Node<String, String>>();
+        final List<StringNode> children = new ArrayList<>();
 
         // Act & Assert
-        new StringStringNode(null, "data", null, children);
+        new StringNode(null, "data", null, children);
     }
 
     @Test
-    public void validateEmptyChildrenListOnNullChildrenArgument() {
+    public void validateEmptyChildrenListOnConvenienceConstructor() {
 
         // Assemble
 
         // Act
-        final StringStringNode unitUnderTest = new StringStringNode("key", "data", null, null);
+        final StringNode unitUnderTest = new StringNode("key", "data", null);
+        final String stringRepresentation = unitUnderTest.toString();
 
         // Assert
         Assert.assertNotNull("Received null children List", unitUnderTest.getChildren());
         Assert.assertEquals(0, unitUnderTest.getChildren().size());
-        Assert.assertNotNull(unitUnderTest.toString());
+        Assert.assertNotNull(stringRepresentation);
+    }
+
+    @Test
+    public void vaidateComparisonAndEquality() {
+
+        // Assemble
+        final StringNode parent = new StringNode("parent", "data", null);
+        final StringNode child1 = new StringNode("child1", "child1_data", parent);
+        final StringNode child2 = new StringNode("child2", "child2_data", parent);
+        final StringNode child2WithNullData = new StringNode("child2", null, parent);
+
+        final StringNode child1WithChildren = new StringNode("child1", "child1_data", parent);
+        new StringNode("grandChild", "grandChild_data", child1WithChildren);
+
+        final List<Node<String, String>> firstChildren = child1.getChildren();
+        final List<Node<String, String>> nextChildren = child1WithChildren.getChildren();
+
+        // Act & Assert
+        Assert.assertEquals(0, firstChildren.size());
+        Assert.assertEquals(1, nextChildren.size());
+        Assert.assertNotEquals(firstChildren.hashCode(), nextChildren.hashCode());
+
+        Assert.assertEquals(0, parent.compareTo(parent));
+        Assert.assertTrue(parent.equals(parent));
+        Assert.assertFalse(parent.equals(child1));
+        Assert.assertTrue(parent.compareTo(child1) != 0);
+        Assert.assertFalse(child1.equals(child1WithChildren));
+        Assert.assertFalse(child1.equals(child2));
+        Assert.assertEquals(1, child1WithChildren.getChildren().size());
+        Assert.assertFalse(child2WithNullData.compareTo(child2) == 0);
     }
 
     @Test
     public void validateAddingAndRemovingChildren() {
 
         // Assemble
-        final StringStringNode unitUnderTest = new StringStringNode("key", "data", null, null);
-        final StringStringNode child1 = new StringStringNode("child1", "child1_data", null, null);
-        final StringStringNode child2 = new StringStringNode("child2", "child2_data", null, null);
+        final StringNode unitUnderTest = new StringNode("key", "data", null);
+        final StringNode child1 = new StringNode("child1", "child1_data", null);
+        final StringNode child2 = new StringNode("child2", "child2_data", null);
 
         // Act & Assert #1
         Assert.assertEquals(0, unitUnderTest.getChildren().size());
@@ -102,9 +132,9 @@ public class AbstractLegacyMutableNodeTest {
             }
         };
 
-        final StringStringNode unitUnderTest = new StringStringNode("key", "data", null, null);
-        final StringStringNode child1 = new StringStringNode("child1", "child1_data", null, null);
-        final StringStringNode child2 = new StringStringNode("child2", "child2_data", null, null);
+        final StringNode unitUnderTest = new StringNode("key", "data", null);
+        final StringNode child1 = new StringNode("child1", "child1_data", null);
+        final StringNode child2 = new StringNode("child2", "child2_data", null);
 
         // Act & Assert #1
         Assert.assertEquals(0, unitUnderTest.getChildren().size());
@@ -132,9 +162,9 @@ public class AbstractLegacyMutableNodeTest {
     public void validateNoExceptionOnRemovingNonExistentChild() {
 
         // Assemble
-        final StringStringNode unitUnderTest = new StringStringNode("key", "data", null, null);
-        final List<Node<String, String>> children = new ArrayList<Node<String, String>>();
-        final StringStringNode child = new StringStringNode("child", "childData", unitUnderTest, children);
+        final StringNode unitUnderTest = new StringNode("key", "data", null);
+        final List<StringNode> children = new ArrayList<>();
+        final StringNode child = new StringNode("child", "childData", unitUnderTest, children);
 
         // Act
         unitUnderTest.removeChild(child);
@@ -148,9 +178,9 @@ public class AbstractLegacyMutableNodeTest {
     public void validateAcquiringPath() {
 
         // Assemble
-        final StringStringNode unitUnderTest = new StringStringNode("key", "data", null, null);
-        final StringStringNode child1 = new StringStringNode("child1", "child1_data", null, null);
-        final StringStringNode child2 = new StringStringNode("child2", "child2_data", null, null);
+        final StringNode unitUnderTest = new StringNode("key", "data", null);
+        final StringNode child1 = new StringNode("child1", "child1_data", null);
+        final StringNode child2 = new StringNode("child2", "child2_data", null);
 
         unitUnderTest.addChild(child1);
         child1.addChild(child2);
