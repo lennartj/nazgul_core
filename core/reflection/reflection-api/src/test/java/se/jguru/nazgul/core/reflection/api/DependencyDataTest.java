@@ -89,6 +89,16 @@ public class DependencyDataTest {
         Assert.assertEquals("se.jguru.nazgul.tools.validation.api", localDependencyData.getGroupId());
     }
 
+    @Test(expected = NullPointerException.class)
+    public void validateExceptionOnComparingNullDependencyData() {
+
+        // Assemble
+        final DependencyData unitUnderTest = new DependencyData(groupId, artifactId, version);
+
+        // Act & Assert
+        unitUnderTest.compareTo(null);
+    }
+
     @Test
     public void validateComparingDependencyDatas() {
 
@@ -98,11 +108,9 @@ public class DependencyDataTest {
 
         // Act
         final int result1 = info1.compareTo(info2);
-        final int result2 = info1.compareTo(null);
 
         // Assert
         Assert.assertEquals(info1.toString().compareTo(info2.toString()), result1);
-        Assert.assertEquals(Integer.MIN_VALUE, result2);
     }
 
     @Test

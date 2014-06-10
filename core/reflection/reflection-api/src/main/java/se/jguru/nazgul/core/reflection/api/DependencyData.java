@@ -28,6 +28,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -38,7 +39,7 @@ import java.util.StringTokenizer;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class DependencyData implements Comparable<DependencyData> {
+public class DependencyData implements Serializable, Comparable<DependencyData> {
 
     // Constants
     private static final String DELIMITER = "/";
@@ -92,26 +93,46 @@ public class DependencyData implements Comparable<DependencyData> {
     }
 
     /**
-     * <p>In the foregoing description, the notation
-     * <tt>sgn(</tt><i>expression</i><tt>)</tt> designates the mathematical
-     * <i>signum</i> function, which is defined to return one of <tt>-1</tt>,
-     * <tt>0</tt>, or <tt>1</tt> according to whether the value of
-     * <i>expression</i> is negative, zero or positive.
-     *
-     * @param o the object to be compared.
-     * @return a negative integer, zero, or a positive integer as this object
-     *         is less than, equal to, or greater than the specified object.
-     * @throws ClassCastException if the specified object's type prevents it
-     *                            from being compared to this object.
+     * Simply uses the string-wise hashCode method.
+     * <p/>
+     * {@inheritDoc}
      */
     @Override
-    public int compareTo(final DependencyData o) {
+    public boolean equals(final Object obj) {
 
-        if (o == null) {
-            return Integer.MIN_VALUE;
+        // Check sanity
+        if(!(obj instanceof DependencyData)) {
+            return false;
+        } else if(obj == this) {
+            return true;
         }
 
-        return toString().compareTo(o.toString());
+        // Delegate
+        return this.hashCode() == obj.hashCode();
+    }
+
+    /**
+     * Simply hashes the string representation of this DependencyData.
+     * <p/>
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(final DependencyData that) {
+
+        // Check sanity
+        Validate.notNull(that, "Cannot handle null DependencyData argument.");
+
+        // Simply compare the string forms of the two DependencyData objects
+        final String thisStringForm = toString();
+        return thisStringForm.compareTo(that.toString());
     }
 
     /**
@@ -148,33 +169,37 @@ public class DependencyData implements Comparable<DependencyData> {
 
         final List<DependencyData> toReturn = new ArrayList<DependencyData>();
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        final InputStream resourceStream = classLoader.getResourceAsStream(classpathRelativePath);
 
-        if (resourceStream != null) {
-            final BufferedReader in = new BufferedReader(new InputStreamReader(resourceStream));
-            String aLine = null;
-            try {
-                while ((aLine = in.readLine()) != null) {
+        try (InputStream resourceStream = classLoader.getResourceAsStream(classpathRelativePath)) {
 
-                    if (aLine.contains(VERSION_LINE_TOKEN)) {
+            if (resourceStream != null) {
+                String aLine = null;
 
-                        // some.group.name/artifactId/version = [version]
-                        StringTokenizer tok = new StringTokenizer(aLine, DELIMITER, false);
-                        if (tok.countTokens() != 3) {
-                            throw new IllegalStateException("Malformed dependency row [" + aLine + "].");
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(resourceStream))) {
+                    while ((aLine = in.readLine()) != null) {
+
+                        if (aLine.contains(VERSION_LINE_TOKEN)) {
+
+                            // some.group.name/artifactId/version = [version]
+                            StringTokenizer tok = new StringTokenizer(aLine, DELIMITER, false);
+                            if (tok.countTokens() != 3) {
+                                throw new IllegalStateException("Malformed dependency row [" + aLine + "].");
+                            }
+
+                            final String groupId = tok.nextToken();
+                            final String artifactId = tok.nextToken();
+                            final String tmp = tok.nextToken().trim();
+                            final String version = tmp.substring(tmp.lastIndexOf('=') + 1).trim();
+
+                            toReturn.add(new DependencyData(groupId, artifactId, version));
                         }
-
-                        final String groupId = tok.nextToken();
-                        final String artifactId = tok.nextToken();
-                        final String tmp = tok.nextToken().trim();
-                        final String version = tmp.substring(tmp.lastIndexOf('=') + 1).trim();
-
-                        toReturn.add(new DependencyData(groupId, artifactId, version));
                     }
+                } catch (IOException e) {
+                    throw new IllegalStateException("Could not read resource from [" + classpathRelativePath + "]", e);
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not obtain resource from [" + classpathRelativePath + "]", e);
         }
 
         // All done
