@@ -4,14 +4,14 @@ The Nazgul Core Parser API revolves around two concepts:
 
 <dl>
     <dt>TokenParser</dt>
-    <dd>A *TokenParser* is an object which can substitute variables within a set of data, returning a String
-        where all variables have been substituted for specific values. In the Nazgul Core Parser API, a variable
-        has the form <code>${token}</code> - hence the name TokenParser.</dd>
+    <dd>A <em>TokenParser</em> is an object which can substitute variables within a set of data,
+        returning a String where all variables have been substituted for specific values. In the Nazgul Core Parser
+        API, a variable has the form <code>${token}</code> - hence the name TokenParser.</dd>
 
     <dt>ParserAgent</dt>
-    <dd>A *ParserAgent* is an object that has information/algorithms about which tokens should be replaced with
-        what data content. Several Parser agents can be used together, where each ParserAgent typically knows about
-        a single type of token substitution.</dd>
+    <dd>A <em>ParserAgent</em> is an object that has information/algorithms about which tokens should be
+        replaced with what data content. Several Parser agents can be used together,
+        where each ParserAgent typically knows about a single type of token substitution.</dd>
 </dl>
 
 
