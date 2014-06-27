@@ -25,6 +25,7 @@ package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import se.jguru.nazgul.test.xmlbinding.AbstractStandardizedTimezoneTest;
 
@@ -39,7 +40,7 @@ public class JaxbAnnotatedDateTimeTest extends AbstractStandardizedTimezoneTest 
     // Shared state
     private DateTime value;
 
-    @Override
+    @Before
     public void setupSharedState() {
         value = new DateTime(2012, 7, 6, 5, 4, 3, DateTimeZone.UTC);
     }

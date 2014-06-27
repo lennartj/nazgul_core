@@ -23,6 +23,7 @@ package se.jguru.nazgul.core.configuration.model.common;
 
 import org.joda.time.DateTime;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.JaxbXmlBinder;
 import se.jguru.nazgul.test.xmlbinding.AbstractStandardizedTimezoneTest;
@@ -41,11 +42,8 @@ public class DateTimePropertyTest extends AbstractStandardizedTimezoneTest {
     private DateTime dateTime1;
     private DateTime dateTime2;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void setupSharedState() {
+    @Before
+    public void setupSharedState() {
         dateTime1 = new DateTime(2013, 5, 6, 7, 8, 9);
         dateTime2 = new DateTime(2013, 6, 7, 8, 9, 10);
     }

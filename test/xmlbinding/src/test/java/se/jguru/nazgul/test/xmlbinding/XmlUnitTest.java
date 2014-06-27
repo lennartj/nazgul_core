@@ -31,6 +31,7 @@ import se.jguru.nazgul.test.xmlbinding.helpers.Beverage;
 
 import java.util.List;
 import java.util.SortedMap;
+import java.util.regex.Pattern;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -42,7 +43,6 @@ public class XmlUnitTest {
     private static final String ACTUAL_EXTRA_ATTRIBUTE = "<a><b foo=\"bar\"/><c/></a>";
     private static final String ACTUAL_EXTRA_WHITESPACE = "<a>    <b/> <c/>    </a>";
     private static final String ACTUAL_CHANGED_ORDER = "<a>    <c/><b/>     </a>";
-
 
     @Test
     public void validateXPathMappedDifferenceLists() {
@@ -127,6 +127,26 @@ public class XmlUnitTest {
 
         // Act & Assert
         Assert.assertTrue(XmlTestUtils.readFully(path).trim().endsWith(EXPECTED));
+    }
+
+    @Test
+    public void validateExceptionExcludedOnTrivialPatternMatch() {
+
+        // Assemble
+        final Pattern bDiffsAreTrivialPattern = Pattern.compile("/a\\[\\d+\\]/b\\[\\d+\\]");
+
+        // Act & Assert
+        XmlTestUtils.validateIdenticalContent(EXPECTED, ACTUAL_EXTRA_ATTRIBUTE, bDiffsAreTrivialPattern);
+    }
+
+    @Test(expected = AssertionError.class)
+    public void validateJunitAssertionFailureOnNonTrivialPatternMatch() {
+
+        // Assemble
+        final Pattern matchesNothingPattern = Pattern.compile("/no/match/here");
+
+        // Act & Assert
+        XmlTestUtils.validateIdenticalContent(EXPECTED, ACTUAL_EXTRA_ATTRIBUTE, matchesNothingPattern);
     }
 
     @Test(expected = IllegalArgumentException.class)

@@ -27,6 +27,7 @@ import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.Difference;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -39,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 
 /**
  * Utility class to simplify working with XML data in tests.
@@ -50,6 +52,13 @@ public abstract class XmlTestUtils {
 
     // Our Log
     private static final Logger log = LoggerFactory.getLogger(XmlTestUtils.class);
+
+    /**
+     * Standard pattern for ignoring differences within the synthesized
+     * classes section of an EntityTransporter' XML form.
+     */
+    public static final Pattern ENTITY_TRANSPORTER_METADATA_DIFF
+            = Pattern.compile("/entityTransporter\\[\\d+\\]/entityClasses\\[\\d+\\](/entityClass\\[\\d+\\](/.*)?)?");
 
     /**
      * Compares XML documents provided by the two Readers.
@@ -73,6 +82,52 @@ public abstract class XmlTestUtils {
 
         // Compare and return
         return XMLUnit.compareXML(expected, actual);
+    }
+
+
+    /**
+     * Validates that the expected and actual XML-formatted strings are identical,
+     * ignoring any differences considered "trivial". Differences are considered trivial if their XPath locations
+     * (in the document) match the supplied Pattern. A pattern such as
+     * {@code Pattern.compile("/a\\[\\d+\\]/b\\[\\d+\\]")} would identify all differences occurring
+     * within the XPath {@code "/a/b"} as trivial.
+     * <p/>
+     * This is a convenience method; a jUnit assertion error is thrown if the two XML documents
+     * had non-trivial differences implying that this method can be used directly within a unit test method.
+     * No additional/surrounding {@code Assert.isTrue(...) } is required.
+     *
+     * @param expected                      The expected XML.
+     * @param actual                        The actual, received XML.
+     * @param trivialPatternXpathIdentifier a non-null pattern defining XPath locations within the document(s)
+     *                                      where exceptions are considered trivial.
+     * @see #ENTITY_TRANSPORTER_METADATA_DIFF
+     */
+    public static void validateIdenticalContent(final String expected,
+                                                final String actual,
+                                                final Pattern trivialPatternXpathIdentifier) {
+
+        // Check sanity
+        Validate.notNull(expected, "Cannot handle null expected argument.");
+        Validate.notNull(actual, "Cannot handle null actual argument.");
+        Validate.notNull(trivialPatternXpathIdentifier, "Cannot handle null trivialPatternXpathIdentifier argument.");
+
+        final Diff diff;
+        try {
+            diff = XmlTestUtils.compareXmlIgnoringWhitespace(expected, actual);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Could not compare XMLs.", e);
+        }
+
+        if (!diff.identical()) {
+
+            // Validate that the differences are non-trivial.
+            final SortedMap<String, List<Difference>> diffMap = getXPathLocationToDifferenceMap(diff);
+            for (String current : diffMap.keySet()) {
+                if (!trivialPatternXpathIdentifier.matcher(current).matches()) {
+                    Assert.fail("Diff [" + current + "] was non-trivial. (" + diffMap.get(current) + ")");
+                }
+            }
+        }
     }
 
     /**
