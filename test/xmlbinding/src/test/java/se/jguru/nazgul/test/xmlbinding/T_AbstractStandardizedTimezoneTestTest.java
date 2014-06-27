@@ -22,47 +22,18 @@
 package se.jguru.nazgul.test.xmlbinding;
 
 import org.joda.time.DateTimeZone;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import se.jguru.nazgul.test.xmlbinding.helpers.MockTimezoneTest;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class T_AbstractStandardizedTimezoneTestTest {
-
-    // Shared state
-    private DateTimeZone originalTZ;
-    private DateTimeZone eightHoursOffset;
-
-    @Before
-    public void setupSharedState() {
-        originalTZ = DateTimeZone.getDefault();
-        eightHoursOffset = DateTimeZone.forOffsetHours(8);
-
-        // Adjust the timezone
-        DateTimeZone.setDefault(eightHoursOffset);
-    }
-
-    @After
-    public void teardownSharedState() {
-        // Reset the timezone
-        DateTimeZone.setDefault(originalTZ);
-    }
+public class T_AbstractStandardizedTimezoneTestTest extends AbstractStandardizedTimezoneTest {
 
     @Test
-    public void validateTimezoneJuggling() {
-
-        // Assemble
-        final MockTimezoneTest unitUnderTest = new MockTimezoneTest();
-
-        // Act
-        unitUnderTest.standardizeTimezone();
-        unitUnderTest.resetTimezone();
+    public void validateUtcTimeZoneInNormalTestMethod() {
 
         // Assert
-        Assert.assertEquals(DateTimeZone.UTC, unitUnderTest.activeTimeZone);
+        Assert.assertEquals(DateTimeZone.UTC, DateTimeZone.getDefault());
     }
 }

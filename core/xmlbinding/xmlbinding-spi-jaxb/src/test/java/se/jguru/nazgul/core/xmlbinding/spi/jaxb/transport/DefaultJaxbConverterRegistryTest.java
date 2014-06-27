@@ -25,6 +25,7 @@ package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.JaxbXmlBinder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedCollection;
@@ -57,7 +58,7 @@ public class DefaultJaxbConverterRegistryTest extends AbstractStandardizedTimezo
     private List<Object> data2D;
     private DefaultJaxbConverterRegistry unitUnderTest;
 
-    @Override
+    @Before
     public void setupSharedState() {
 
         // Create the xml binder.

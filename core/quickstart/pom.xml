@@ -47,7 +47,9 @@
     <!-- | Section 2:  Module definitions                 -->
     <!-- +=============================================== -->
     <modules>
-        <module>analyzer</module>
+        <module>quickstart-model</module>
+        <module>quickstart-api</module>
+        <module>quickstart-impl-nazgul</module>
     </modules>
 
     <!-- +=============================================== -->

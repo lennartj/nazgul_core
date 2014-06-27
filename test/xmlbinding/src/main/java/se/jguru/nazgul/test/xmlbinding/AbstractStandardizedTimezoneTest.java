@@ -22,49 +22,40 @@
 package se.jguru.nazgul.test.xmlbinding;
 
 import org.joda.time.DateTimeZone;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.Rule;
+import se.jguru.nazgul.test.xmlbinding.junit.StandardTimeZoneRule;
 
 /**
+ * Extend this testcase for a convenient way to assign a standard/well-defined DateTimeZone which will be
+ * assigned for the remainder of the tests. The default DateTimeZone is restored after each test is complete.
+ *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
+ * @see se.jguru.nazgul.test.xmlbinding.junit.StandardTimeZoneRule
  */
 public abstract class AbstractStandardizedTimezoneTest {
 
-    // Internal state
-    private DateTimeZone originalTimeZone;
+    /**
+     * Active rule which assigns a standard DateTimeZone for the remainder of the tests,
+     * executed within this AbstractStandardizedTimezoneTest.
+     */
+    @Rule
+    public StandardTimeZoneRule standardTimeZoneRule;
 
-    @Before
-    public final void standardizeTimezone() {
-
-        // Change/Standardize the timezone to simplify comparing test results.
-        originalTimeZone = DateTimeZone.getDefault();
-        DateTimeZone.setDefault(DateTimeZone.UTC);
-
-        // Delegate
-        setupSharedState();
+    /**
+     * Default constructor, which creates an AbstractStandardizedTimezoneTest that assigns the supplied
+     * desiredTimeZone for the remainder of the tests.
+     *
+     * @param desiredTimeZone The DateTimeZone to be used when the test cases are executed.
+     */
+    protected AbstractStandardizedTimezoneTest(final DateTimeZone desiredTimeZone) {
+        this.standardTimeZoneRule = new StandardTimeZoneRule(desiredTimeZone);
     }
 
     /**
-     * Override to setup shared state.
+     * Default constructor, which creates an AbstractStandardizedTimezoneTest that assigns the
+     * {@code DateTimeZone.UTC} timezone for the remainder of the tests.
      */
-    protected void setupSharedState() {
-        // Do nothing.
-    }
-
-    @After
-    public final void resetTimezone() {
-
-        // Cleanup the synthetic timezone
-        DateTimeZone.setDefault(originalTimeZone);
-
-        // Delegate
-        cleanupSharedState();
-    }
-
-    /**
-     * Override to clean up shared state.
-     */
-    protected void cleanupSharedState() {
-        // Do nothing
+    protected AbstractStandardizedTimezoneTest() {
+        this(DateTimeZone.UTC);
     }
 }

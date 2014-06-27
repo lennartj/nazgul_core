@@ -24,6 +24,7 @@ package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import se.jguru.nazgul.test.xmlbinding.AbstractStandardizedTimezoneTest;
 
@@ -49,7 +50,7 @@ public class JaxbAnnotatedCollectionTest extends AbstractStandardizedTimezoneTes
     private List<Object> data2D;
     private List<Object> data3D;
 
-    @Override
+    @Before
     public void setupSharedState() {
 
         // Create the data structures
