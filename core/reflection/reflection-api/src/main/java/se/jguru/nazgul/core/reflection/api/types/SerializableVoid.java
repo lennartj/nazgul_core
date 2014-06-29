@@ -48,7 +48,7 @@ import java.io.Serializable;
  *     }
  * </pre>
  * <p/>
- * This class can not be instantiated.
+ * The SerializableVoid class can not be instantiated.
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
