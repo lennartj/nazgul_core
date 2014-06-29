@@ -100,6 +100,8 @@ public class CollectionAlgorithmsInternalTest {
             public int size() {
                 return 0;
             }
+
+
         }
 
         // Act & Assert #1
