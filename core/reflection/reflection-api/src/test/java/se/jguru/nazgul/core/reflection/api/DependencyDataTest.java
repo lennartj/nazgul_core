@@ -30,6 +30,8 @@ import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
 
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -123,5 +125,57 @@ public class DependencyDataTest {
         Assert.assertNotNull(dependencyDatas);
         Assert.assertTrue(dependencyDatas.size() > 0);
         Assert.assertNotNull(dependencyDatas.get(0).toDependencyDataString());
+    }
+
+    @Test
+    public void validateNoExceptionOnNonexistentPropertiesFile() {
+
+        // Assemble
+        final String nonexistentFile = "a/nonexistent/file";
+
+        // Act & Assert
+        DependencyData.parse(nonexistentFile);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void validateExceptionOnInvalidPropertiesFile() {
+
+        // Assemble
+        final String nonexistentFile = "testdata/incorrect_dependencies.properties";
+
+        // Act & Assert
+        DependencyData.parse(nonexistentFile);
+    }
+
+    @Test
+    public void validateComparisonAndEquality() {
+
+        // Assemble
+        final String commonsLangKey = "org.apache.commons/commons-lang3/3.3.2";
+        final String osgiDependenciesPath = "testdata/osgi_launcher_dependencies.properties";
+        final String xmlBindingDependenciesPath = "testdata/xmlbinding_spi_jaxb_dependencies.properties";
+
+        // Act
+        final List<DependencyData> result1 = DependencyData.parse(osgiDependenciesPath);
+        final List<DependencyData> result2 = DependencyData.parse(xmlBindingDependenciesPath);
+
+        final SortedMap<String, DependencyData> map1 = new TreeMap<>();
+        final SortedMap<String, DependencyData> map2 = new TreeMap<>();
+
+        for(DependencyData current : result1) {
+            map1.put(current.toString(), current);
+        }
+        for(DependencyData current : result2) {
+            map2.put(current.toString(), current);
+        }
+
+        // Assert
+        Assert.assertNotSame(result1, result2);
+        final DependencyData commonsLang332_1 = map1.get(commonsLangKey);
+        final DependencyData commonsLang332_2 = map2.get(commonsLangKey);
+
+        Assert.assertEquals(commonsLang332_1, commonsLang332_2);
+        Assert.assertEquals("compile", commonsLang332_1.getScope());
+        Assert.assertEquals("jar", commonsLang332_1.getType());
     }
 }

@@ -30,8 +30,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.SortedMap;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 
 /**
  * Maven dependency information wrapper, as read from a dependency.properties file
@@ -44,15 +47,21 @@ public class DependencyData implements Serializable, Comparable<DependencyData> 
     // Constants
     private static final String DELIMITER = "/";
     private static final String VERSION_LINE_TOKEN = DELIMITER + "version";
+    private static final String TYPE_LINE_TOKEN = DELIMITER + "type";
+    private static final String SCOPE_LINE_TOKEN = DELIMITER + "scope";
     private static final String DEPENDENCY_RESOURCE = "META-INF/maven/dependencies.properties";
+    private static final List<String> VALID_SCOPES =
+            Arrays.asList("compile", "provided", "runtime", "test", "system", "import");
 
     // Internal state
     private final String groupId;
     private final String artifactId;
     private final String version;
+    private String scope = "compile";
+    private String type = "jar";
 
     /**
-     * Creates DependencyData from the provided Maven GAV.
+     * Creates DependencyData from the provided Maven GAV, using the default "compile" scope and "jar" type.
      *
      * @param groupId    The groupId of this DependencyData.
      * @param artifactId The artifactId of this DependencyData.
@@ -69,6 +78,56 @@ public class DependencyData implements Serializable, Comparable<DependencyData> 
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;
+    }
+
+    /**
+     * @return The scope of the dependency whose Group/Artifact/Version coordinates is wrapped by
+     * this DependencyData instance. Unless updated, the scope defaults to "compile".
+     */
+    public String getScope() {
+        return scope;
+    }
+
+    /**
+     * Assigns the scope of this DependencyData instance.
+     * The scope value should adhere to Maven's dependency scope definition.
+     *
+     * @param scope Should be one of the values {@code compile, provided, runtime, test, system or import}.
+     * @throws java.lang.IllegalArgumentException if the scope value was not one of the permitted scopes.
+     * @see <a href="http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism
+     * .html#Dependency_Scope">The Maven Dependency Scopes</a>
+     */
+    public void setScope(final String scope) throws IllegalArgumentException {
+
+        Validate.notEmpty(scope, "Cannot handle null or empty scope argument.");
+        for (String current : VALID_SCOPES) {
+            final String value = scope.toLowerCase().trim();
+            if (value.equals(current)) {
+                this.scope = value;
+                return;
+            }
+        }
+
+        throw new IllegalArgumentException("Scope [" + scope + "] not valid. Permitted scopes: " + VALID_SCOPES);
+    }
+
+    /**
+     * @return The type of the dependency whose Group/Artifact/Version coordinates is wrapped by
+     * this DependencyData instance. Unless updated, the type defaults to "jar".
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * Assigns the type of this DependencyData instance.
+     *
+     * @param type The type of this DependencyData. Cannot be null or empty.
+     */
+    public void setType(final String type) {
+
+        Validate.notEmpty(type, "Cannot handle null or empty ");
+        this.type = type;
     }
 
     /**
@@ -101,9 +160,9 @@ public class DependencyData implements Serializable, Comparable<DependencyData> 
     public boolean equals(final Object obj) {
 
         // Check sanity
-        if(!(obj instanceof DependencyData)) {
+        if (!(obj instanceof DependencyData)) {
             return false;
-        } else if(obj == this) {
+        } else if (obj == this) {
             return true;
         }
 
@@ -167,7 +226,7 @@ public class DependencyData implements Serializable, Comparable<DependencyData> 
      */
     public static List<DependencyData> parse(final String classpathRelativePath) {
 
-        final List<DependencyData> toReturn = new ArrayList<DependencyData>();
+        final List<DependencyData> toReturn = new ArrayList<>();
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
         try (InputStream resourceStream = classLoader.getResourceAsStream(classpathRelativePath)) {
@@ -176,22 +235,56 @@ public class DependencyData implements Serializable, Comparable<DependencyData> 
                 String aLine = null;
 
                 try (BufferedReader in = new BufferedReader(new InputStreamReader(resourceStream))) {
+
+                    // Temporary storage
+                    DependencyData current = null;
+
                     while ((aLine = in.readLine()) != null) {
 
+                        // The lines should come in the order
+                        //
+                        // versionLine,
+                        // typeLine,
+                        // scopeLine
+                        //
                         if (aLine.contains(VERSION_LINE_TOKEN)) {
 
                             // some.group.name/artifactId/version = [version]
-                            StringTokenizer tok = new StringTokenizer(aLine, DELIMITER, false);
-                            if (tok.countTokens() != 3) {
-                                throw new IllegalStateException("Malformed dependency row [" + aLine + "].");
+                            final List<String> data = parseLine(aLine);
+                            current = new DependencyData(data.get(0), data.get(1), data.get(2));
+
+                        } else if (aLine.contains(TYPE_LINE_TOKEN)) {
+
+                            // some.group.name/artifactId/type = [type]
+                            final List<String> data = parseLine(aLine);
+
+                            boolean okState = current != null
+                                    && current.getGroupId().equals(data.get(0))
+                                    && current.getArtifactId().equals(data.get(1));
+
+                            if (okState) {
+                                current.setType(data.get(2));
+                            } else {
+                                throw new IllegalStateException("The type information for [" + current
+                                        + "] is assumed to be found immediately after the version information.");
                             }
+                        } else if(aLine.contains(SCOPE_LINE_TOKEN)) {
 
-                            final String groupId = tok.nextToken();
-                            final String artifactId = tok.nextToken();
-                            final String tmp = tok.nextToken().trim();
-                            final String version = tmp.substring(tmp.lastIndexOf('=') + 1).trim();
+                            // some.group.name/artifactId/scope = [scope]
+                            final List<String> data = parseLine(aLine);
 
-                            toReturn.add(new DependencyData(groupId, artifactId, version));
+                            boolean okState = current != null
+                                    && current.getGroupId().equals(data.get(0))
+                                    && current.getArtifactId().equals(data.get(1));
+
+                            if (okState) {
+                                current.setScope(data.get(2));
+                                toReturn.add(current);
+                                current = null;
+                            } else {
+                                throw new IllegalStateException("The scope information for [" + current
+                                        + "] is assumed to be found after the version information.");
+                            }
                         }
                     }
                 } catch (IOException e) {
@@ -203,6 +296,25 @@ public class DependencyData implements Serializable, Comparable<DependencyData> 
         }
 
         // All done
+        return toReturn;
+    }
+
+    //
+    // Private helpers
+    //
+
+    private static List<String> parseLine(final String aLine) {
+
+        final List<String> toReturn = new ArrayList<>();
+        final StringTokenizer tok = new StringTokenizer(aLine, DELIMITER, false);
+        if (tok.countTokens() != 3) {
+            throw new IllegalStateException("Malformed dependency row [" + aLine + "].");
+        }
+
+        toReturn.add(tok.nextToken());
+        toReturn.add(tok.nextToken());
+        toReturn.add(aLine.substring(aLine.lastIndexOf("=") + 1).trim());
+
         return toReturn;
     }
 }
