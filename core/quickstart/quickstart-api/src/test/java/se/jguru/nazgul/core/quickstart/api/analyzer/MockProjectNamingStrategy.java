@@ -21,8 +21,6 @@
  */
 package se.jguru.nazgul.core.quickstart.api.analyzer;
 
-import se.jguru.nazgul.core.quickstart.api.analyzer.AbstractPatternBasedProjectNamingStrategy;
-
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */

@@ -21,6 +21,7 @@
  */
 package se.jguru.nazgul.core.quickstart.model;
 
+import org.apache.commons.lang3.Validate;
 import se.jguru.nazgul.core.persistence.model.NazgulEntity;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException;
@@ -37,6 +38,15 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Project artifact data holder, unencumbered by all the dependencies of the Maven core.
+ * The Project class holds data used when creating a new project, as opposed to creating
+ * a new software component (i.e. a set of collaborating Maven projects) within
+ * an existing project.
+ *
+ * In keeping with an orderly tradition, it is important to separate Maven build reactor
+ * consistency and design from dependency management and plugin management. Build reactor
+ * definition is done by maven POMs called "reactor parent" (whose role is simply to define
+ * site generation and module plugins), and "parent parent" (whose role is to define dependencies
+ * and plugins required to build delivery artifacts).
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
@@ -45,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"name", "reactorName",
         "prefix", "reactorParent", "parentParent"})
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Project extends NazgulEntity {
+public class Project extends NazgulEntity implements Comparable<Project> {
 
     // Internal state
     @Basic(optional = true)
@@ -160,6 +170,69 @@ public class Project extends NazgulEntity {
      */
     public SimpleArtifact getParentParent() {
         return parentParent;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+
+        final String prefixOrEmpty = getPrefix() == null ? "[no prefix]" : getPrefix();
+        return prefixOrEmpty + SimpleArtifact.DELIMITER + getName() + SimpleArtifact.DELIMITER + getReactorName()
+                + "\n ParentParent: " + getParentParent().toString()
+                + "\n ReactorParent: " + getReactorParent().toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+
+        final int prefixOrEmpty = getPrefix() == null ? 0 : getPrefix().hashCode();
+        return prefixOrEmpty + getName().hashCode() + getReactorName().hashCode()
+                + getParentParent().hashCode() + getReactorParent().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        Validate.notNull(obj, "Cannot handle null obj argument.");
+        return obj instanceof Project && hashCode() == obj.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(final Project project) {
+
+        // Check sanity
+        Validate.notNull(project, "Cannot handle null project argument.");
+        if (project == this) {
+            return 0;
+        }
+
+        // Delegate
+        int toReturn = getName().compareTo(project.getName());
+        if(toReturn == 0) {
+            final String prefixOrEmpty = getPrefix() == null ? "[no prefix]" : getPrefix();
+            final String thatPrefixOrEmpty = project.getPrefix() == null ? "[no prefix]" : project.getPrefix();
+            toReturn = prefixOrEmpty.compareTo(thatPrefixOrEmpty);
+        }
+        if(toReturn == 0) {
+            toReturn = getReactorName().compareTo(project.getReactorName());
+        }
+        if(toReturn == 0) {
+            toReturn = getParentParent().compareTo(project.getParentParent());
+        }
+        if(toReturn == 0) {
+            toReturn = getReactorParent().compareTo(project.getReactorParent());
+        }
+        return toReturn;
     }
 
     /**
