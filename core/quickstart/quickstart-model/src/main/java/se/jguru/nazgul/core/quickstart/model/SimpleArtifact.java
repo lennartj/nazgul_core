@@ -21,19 +21,25 @@
  */
 package se.jguru.nazgul.core.quickstart.model;
 
+import org.apache.commons.lang3.Validate;
 import se.jguru.nazgul.core.persistence.model.NazgulEntity;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
  * Maven artifact data holder, unencumbered by all the dependencies of the Maven core.
+ * This class does not contain all the mechanics of the Maven core, implying that the
+ * user must take care not to inject insane values (for groupId, artifactId, type etc.).
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
@@ -41,11 +47,27 @@ import javax.xml.bind.annotation.XmlType;
 @Access(AccessType.FIELD)
 @XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"groupId", "artifactId", "mavenVersion"})
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SimpleArtifact extends NazgulEntity {
+public class SimpleArtifact extends NazgulEntity implements Comparable<SimpleArtifact> {
+
+    /**
+     * String delimiter for SimpleArtifact data.
+     */
+    public static final String DELIMITER = "/";
 
     // Internal state
+    @Basic(optional = false)
+    @Column(nullable = false)
+    @XmlElement(required = true, nillable = false)
     private String groupId;
+
+    @Basic(optional = false)
+    @Column(nullable = false)
+    @XmlElement(required = true, nillable = false)
     private String artifactId;
+
+    @Basic(optional = false)
+    @Column(nullable = false)
+    @XmlElement(required = true, nillable = false)
     private String mavenVersion;
 
     /**
@@ -86,6 +108,67 @@ public class SimpleArtifact extends NazgulEntity {
      */
     public String getMavenVersion() {
         return mavenVersion;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(final SimpleArtifact art) {
+
+        // Check sanity
+        Validate.notNull(art, "Cannot handle null art argument.");
+        if (this == art) {
+            return 0;
+        }
+
+        // Delegate
+        int toReturn = getGroupId().compareTo(art.getGroupId());
+        if (toReturn == 0) {
+            toReturn = getArtifactId().compareTo(art.getArtifactId());
+        }
+        if (toReturn == 0) {
+            toReturn = getMavenVersion().compareTo(art.getMavenVersion());
+        }
+
+        // All done.
+        return toReturn;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return getGroupId() + DELIMITER + getArtifactId() + DELIMITER + getMavenVersion();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return getGroupId().hashCode()
+                + getArtifactId().hashCode()
+                + getMavenVersion().hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        Validate.notNull(obj, "Cannot handle null obj argument.");
+        if (obj instanceof SimpleArtifact) {
+
+            final SimpleArtifact that = (SimpleArtifact) obj;
+            return getGroupId().equals(that.getGroupId())
+                    && getArtifactId().equals(that.getArtifactId())
+                    && getMavenVersion().equals(that.getMavenVersion());
+        }
+
+        // All done.
+        return false;
     }
 
     /**

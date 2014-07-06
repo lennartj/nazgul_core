@@ -22,27 +22,15 @@
 package se.jguru.nazgul.core.quickstart.model;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import se.jguru.nazgul.core.xmlbinding.spi.jaxb.JaxbXmlBinder;
-import se.jguru.nazgul.test.xmlbinding.AbstractStandardizedTimezoneTest;
 import se.jguru.nazgul.test.xmlbinding.XmlTestUtils;
+
+import java.io.StringReader;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class ProjectTest extends AbstractStandardizedTimezoneTest {
-
-    // Shared state
-    private JaxbXmlBinder binder;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Before
-    public void setupSharedState() {
-        binder = new JaxbXmlBinder();
-    }
+public class ProjectTest extends AbstractJaxbBinderTest {
 
     @Test
     public void validateMarshalling() throws Exception {
@@ -69,8 +57,39 @@ public class ProjectTest extends AbstractStandardizedTimezoneTest {
         // Assemble
         final String data = XmlTestUtils.readFully("testdata/project.xml");
 
+        final SimpleArtifact reactorParent = new SimpleArtifact(
+                "reactorGroupId", "reactorArtifactId", "reactorMavenVersion");
+        final SimpleArtifact parentParent = new SimpleArtifact("groupId", "artifactId", "mavenVersion");
+        final Project expected = new Project("prefix", "name", "reactorName", reactorParent, parentParent);
+
         // Act
+        final Project result = binder.unmarshalInstance(new StringReader(data));
 
         // Assert
+        Assert.assertEquals(expected, result);
+        Assert.assertNotSame(expected, result);
+    }
+
+    @Test
+    public void validateComparisonAndEquality() {
+
+        // Assemble
+        final SimpleArtifact reactorParent = new SimpleArtifact(
+                "reactorGroupId", "reactorArtifactId", "reactorMavenVersion");
+        final SimpleArtifact parentParent = new SimpleArtifact("groupId", "artifactId", "mavenVersion");
+
+        final Project project1 = new Project("prefix", "name", "reactorName", reactorParent, parentParent);
+        final Project project2 = new Project("anotherPrefix", "anotherName", "anotherReactorName",
+                reactorParent, parentParent);
+        final Project project3 = new Project("prefix", "name", "reactorName", reactorParent, parentParent);
+
+        // Act & Assert
+        Assert.assertEquals(project1, project3);
+        Assert.assertEquals(project1.hashCode(), project3.hashCode());
+        Assert.assertNotSame(project1, project3);
+        Assert.assertEquals(0, project1.compareTo(project3));
+        Assert.assertEquals(project1.getName().compareTo(project2.getName()), project1.compareTo(project2));
+        Assert.assertTrue(project1.equals(project3));
+        Assert.assertFalse(project1.equals(project2));
     }
 }
