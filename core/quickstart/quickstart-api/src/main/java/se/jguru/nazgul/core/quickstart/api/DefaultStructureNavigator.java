@@ -1,13 +1,19 @@
 package se.jguru.nazgul.core.quickstart.api;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.quickstart.api.analyzer.ProjectNamingStrategy;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.Serializable;
 
 /**
@@ -50,12 +56,34 @@ public class DefaultStructureNavigator implements StructureNavigator, Serializab
             current != null && currentPom != null;
             current = current.getParentFile()) {
 
-            // Simply assign the
+            // Simply assign the current pom file.
             currentPom = getPomFile(current);
         }
 
-        // Does the top directory contain a
+        // Does the top directory contain a reactor pom file?
+        final Model rootReactorCandidate = getPomModel(currentPom);
+        if(namingStrategy.isRootReactorPom(
+                rootReactorCandidate.getParent().getGroupId(),
+                rootReactorCandidate.getParent().getArtifactId(),
+                rootReactorCandidate.getGroupId(),
+                rootReactorCandidate.getArtifactId())) {
 
+            // We have found a root reactor POM. Ensure that we have a poms directory here as well.
+            @SuppressWarnings("all")
+            final File[] pomsDir = current.listFiles(new FileFilter() {
+                @Override
+                public boolean accept(final File aDir) {
+                    return aDir.isDirectory() && aDir.getName().equalsIgnoreCase("poms");
+                }
+            });
+
+            if(pomsDir != null && pomsDir.length == 1) {
+                final File[] files = pomsDir[0].listFiles(POM_FILE_FILTER);
+
+            }
+        }
+
+        // No project root found.
         return null;
     }
 
@@ -90,5 +118,13 @@ public class DefaultStructureNavigator implements StructureNavigator, Serializab
 
         // No pom file found.
         return null;
+    }
+
+    private Model getPomModel(final File aPomFile) {
+        try {
+            return pomReader.read(new FileReader(aPomFile));
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Could not read POM file [" + aPomFile.getAbsolutePath() + "]", e);
+        }
     }
 }

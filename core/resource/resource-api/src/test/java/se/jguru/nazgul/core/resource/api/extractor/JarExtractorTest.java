@@ -116,12 +116,13 @@ public class JarExtractorTest {
         Assert.assertTrue(targetDirectory.isDirectory());
 
         final List<File> content = Arrays.asList(targetDirectory.listFiles());
-        final Map<String, File> fileName2ContentMap = CollectionAlgorithms.map(content, new Transformer<File, Tuple<String, File>>() {
-            @Override
-            public Tuple<String, File> transform(File input) {
-                return new Tuple<String, File>(input.getName(), input);
-            }
-        });
+        final Map<String, File> fileName2ContentMap = CollectionAlgorithms.map(content,
+                new Transformer<File, Tuple<String, File>>() {
+                    @Override
+                    public Tuple<String, File> transform(File input) {
+                        return new Tuple<String, File>(input.getName(), input);
+                    }
+                });
 
         Assert.assertEquals(3, content.size());
         Assert.assertTrue(fileName2ContentMap.keySet().contains("logback-test.xml"));
