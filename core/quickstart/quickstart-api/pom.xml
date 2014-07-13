@@ -63,6 +63,18 @@
             <artifactId>logback-classic</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- dependency>
+            <groupId>se.jguru.nazgul.core.xmlbinding.spi.jaxb</groupId>
+            <artifactId>nazgul-core-xmlbinding-spi-jaxb</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>se.jguru.nazgul.test.xmlbinding</groupId>
+            <artifactId>nazgul-core-xmlbinding-test</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency -->
     </dependencies>
 
     <!-- +=============================================== -->
@@ -90,6 +102,18 @@
                         <branchRate>65</branchRate>
                         <lineRate>80</lineRate>
                         <haltOnFailure>true</haltOnFailure>
+                        <regexes>
+                            <!-- regex>
+                                <pattern>se.jguru.nazgul.core.quickstart.api.DefaultStructureNavigator</pattern>
+                                <branchRate>60</branchRate>
+                                <lineRate>80</lineRate>
+                            </regex -->
+                            <regex>
+                                <pattern>se.jguru.nazgul.core.quickstart.api.analyzer.AbstractPomAnalyzer\$1</pattern>
+                                <branchRate>0</branchRate>
+                                <lineRate>0</lineRate>
+                            </regex>
+                        </regexes>
                     </check>
                 </configuration>
             </plugin>

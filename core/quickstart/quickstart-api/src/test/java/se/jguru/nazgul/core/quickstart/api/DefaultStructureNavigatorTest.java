@@ -24,25 +24,27 @@ package se.jguru.nazgul.core.quickstart.api;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import se.jguru.nazgul.core.quickstart.api.analyzer.AbstractMavenModelTest;
 import se.jguru.nazgul.core.quickstart.api.analyzer.NamingStrategy;
-import se.jguru.nazgul.core.quickstart.api.analyzer.helpers.TestPomAnalyzer;
+import se.jguru.nazgul.core.quickstart.api.analyzer.PomAnalyzer;
+import se.jguru.nazgul.core.quickstart.api.analyzer.helpers.TestPatternPomAnalyzer;
 
 import java.io.File;
-import java.net.URL;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class DefaultStructureNavigatorTest {
+public class DefaultStructureNavigatorTest extends AbstractMavenModelTest {
 
     // Shared state
     private NamingStrategy namingStrategy;
-    private TestPomAnalyzer pomAnalyzer;
+    private PomAnalyzer pomAnalyzer;
 
     @Before
     public void setupSharedState() {
-        pomAnalyzer = new TestPomAnalyzer();
+        TestPatternPomAnalyzer pomAnalyzer = new TestPatternPomAnalyzer();
         this.namingStrategy = pomAnalyzer.getNamingStrategy();
+        this.pomAnalyzer = pomAnalyzer;
     }
 
     @Test(expected = NullPointerException.class)
@@ -56,9 +58,10 @@ public class DefaultStructureNavigatorTest {
     public void validateFindingRootProjectDirectory() {
 
         // Assemble
-        final File fooRootDir = getFileOrDirectory("testdata/foo");
-        final File fooReactorPom = getFileOrDirectory("testdata/foo/poms/pom.xml");
-        final File fooParentPomDir = getFileOrDirectory("testdata/foo/poms/foo-parent");
+        final String parentPomRelativePath = "foo/poms/pom.xml";
+        final File fooRootDir = getTestDataFile("foo");
+        final File fooReactorPom = getTestDataFile(parentPomRelativePath);
+        final File fooParentPomDir = getTestDataFile("foo/poms/foo-parent");
         final DefaultStructureNavigator unitUnderTest = new DefaultStructureNavigator(namingStrategy, pomAnalyzer);
 
         // Act
@@ -76,7 +79,7 @@ public class DefaultStructureNavigatorTest {
     public void validateExceptionOnNonProjectDirectory() {
 
         // Assemble
-        final File notAProjectDirectory = getFileOrDirectory("testdata/foo").getParentFile();
+        final File notAProjectDirectory = getTestDataFile("foo").getParentFile();
         final DefaultStructureNavigator unitUnderTest = new DefaultStructureNavigator(namingStrategy, pomAnalyzer);
 
         // Act & Assert
@@ -87,7 +90,7 @@ public class DefaultStructureNavigatorTest {
     public void validateExceptionOnIncorrectParentGroupIdInRootReactorPom() {
 
         // Assemble
-        final File aDir = getFileOrDirectory("testdata/invalid_rootreactor_parentgroupid/poms");
+        final File aDir = getTestDataFile("invalid_rootreactor_parentgroupid/poms");
         final DefaultStructureNavigator unitUnderTest = new DefaultStructureNavigator(namingStrategy, pomAnalyzer);
 
         // Act & Assert
@@ -98,22 +101,69 @@ public class DefaultStructureNavigatorTest {
     public void validateExceptionOnNoPomsDirectory() {
 
         // Assemble
-        final File aDir = getFileOrDirectory("testdata/invalid_no_poms_dir/bar");
+        final File aDir = getTestDataFile("invalid_no_poms_dir/bar");
         final DefaultStructureNavigator unitUnderTest = new DefaultStructureNavigator(namingStrategy, pomAnalyzer);
 
         // Act & Assert
         unitUnderTest.getProjectRootDirectory(aDir);
     }
 
-    //
-    // Private helpers
-    //
+    @Test
+    public void validateRelativePaths() {
 
-    private File getFileOrDirectory(final String relativePath) {
-        final URL resource = getClass().getClassLoader().getResource(relativePath);
-        if(resource == null) {
-            return null;
-        }
-        return new File(resource.getPath());
+        // Assemble
+        final File fooPomsReactorDir = getTestDataFile("foo/poms");
+        final File barBazDir = getTestDataFile("foo/bar/baz");
+        final DefaultStructureNavigator unitUnderTest = new DefaultStructureNavigator(namingStrategy, pomAnalyzer);
+
+        // Act
+        final String pomReactorRelativePackagePath = unitUnderTest.getRelativePath(fooPomsReactorDir, true);
+        final String pomReactorRelativePath = unitUnderTest.getRelativePath(fooPomsReactorDir, false);
+        final String barBazRelativePackagePath = unitUnderTest.getRelativePath(barBazDir, true);
+        final String barBazRelativePath = unitUnderTest.getRelativePath(barBazDir, false);
+
+        // Assert
+        Assert.assertEquals("poms", pomReactorRelativePackagePath);
+        Assert.assertEquals("poms", pomReactorRelativePath);
+        Assert.assertEquals("bar.baz", barBazRelativePackagePath);
+        Assert.assertEquals("bar/baz", barBazRelativePath);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void validateExceptionOnExistentNonDirectoryArgument() {
+
+        // Assemble
+        final File fooPomsReactorPom = getTestDataFile("foo/poms/pom.xml");
+        final DefaultStructureNavigator unitUnderTest = new DefaultStructureNavigator(namingStrategy, pomAnalyzer);
+
+        // Act & Assert
+        unitUnderTest.getRelativePath(fooPomsReactorPom, true);
+    }
+
+    @Test(expected = InvalidStructureException.class)
+    public void validateExceptionOnSubmittingNonProjectDirectory() {
+
+        // Assemble
+        final File fooPomsReactorPom = getTestDataFile("foo/poms/pom.xml");
+        final DefaultStructureNavigator unitUnderTest = new DefaultStructureNavigator(namingStrategy, pomAnalyzer);
+
+        // Act & Assert
+        final File projectRootDirectory = unitUnderTest.getProjectRootDirectory(fooPomsReactorPom);
+        Assert.assertNotNull(projectRootDirectory);
+        Assert.assertTrue(projectRootDirectory.exists() && projectRootDirectory.isDirectory());
+
+        final File directoryOutsideOfProject = getTestDataFile("invalid_no_poms_dir/bar");
+        unitUnderTest.getRelativePath(directoryOutsideOfProject, true);
+    }
+
+    @Test(expected = InvalidStructureException.class)
+    public void validateExceptionOnParentContainingModules() {
+
+        // Assemble
+        final File pomsReactorPom = getTestDataFile("invalid_modules_in_parent/poms/pom.xml");
+        final DefaultStructureNavigator unitUnderTest = new DefaultStructureNavigator(namingStrategy, pomAnalyzer);
+
+        // Act & Assert
+        unitUnderTest.getProjectRootDirectory(pomsReactorPom);
     }
 }

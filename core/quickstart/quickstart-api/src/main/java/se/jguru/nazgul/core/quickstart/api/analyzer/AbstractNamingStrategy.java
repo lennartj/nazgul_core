@@ -26,9 +26,6 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import se.jguru.nazgul.core.quickstart.model.Name;
 
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * Abstract NamingStrategy implementation which contains some standard method
  * implementations usable by all NamingStrategy subtypes.
@@ -82,24 +79,35 @@ public abstract class AbstractNamingStrategy implements NamingStrategy {
         final Name name = createName(model);
         final Parent parent = model.getParent();
         final String effectiveVersion = model.getVersion() == null ? parent.getVersion() : model.getVersion();
+        PomType toReturn = null;
 
         if (name.getType().toLowerCase().endsWith(REACTOR_SUFFIX)) {
-            return resolvePomTypeForReactorPom(model, parent);
+            toReturn = resolvePomTypeForReactorPom(model);
         }
 
-        for (PomType current : PomType.values()) {
-            final String expectedSuffix = current.name().toLowerCase().replace("_", name.getSeparator());
-            if(!expectedSuffix.contains(REACTOR_SUFFIX) && name.getType().equalsIgnoreCase(expectedSuffix)) {
-                return current;
+        outer:
+        if (toReturn == null) {
+            for (PomType current : PomType.values()) {
+                final String expectedSuffix = current.name().toLowerCase().replace("_", name.getSeparator());
+                if (!expectedSuffix.contains(REACTOR_SUFFIX) && name.getType().equalsIgnoreCase(expectedSuffix)) {
+                    toReturn = current;
+                    break outer;
+                }
+            }
+
+            if (isOtherParent(model)) {
+                toReturn = PomType.OTHER_PARENT;
             }
         }
 
-        if (isOtherParent(model)) {
-            return PomType.OTHER_PARENT;
+        if(toReturn == null) {
+            throw new IllegalArgumentException("Could not define PomType for POM (" + model.getGroupId() + "/"
+                    + model.getArtifactId() + "/" + effectiveVersion + ")");
         }
 
-        throw new IllegalArgumentException("Could not define PomType for POM (" + model.getGroupId() + "/"
-                + model.getArtifactId() + "/" + effectiveVersion + ")");
+        // All done.
+        validate(name, toReturn);
+        return toReturn;
     }
 
     /**
@@ -125,22 +133,25 @@ public abstract class AbstractNamingStrategy implements NamingStrategy {
      * Override this method to provide custom logic if your ROOT_REACTOR and REACTOR POMs
      * are crafted in another way.
      *
-     * @param model  The (non-null) Maven Model of the reactor POM whose PomType should be created.
-     * @param parent The (non-null) Parent of the supplied reactor POM model.
+     * @param model The (non-null) Maven Model of the reactor POM whose PomType should be created.
      * @return the PomType for a reactor POM with the supplied Model and Parent.
      */
-    protected PomType resolvePomTypeForReactorPom(final Model model, final Parent parent) {
+    protected PomType resolvePomTypeForReactorPom(final Model model) {
 
-        if(model.getGroupId().startsWith(parent.getGroupId())) {
-            return PomType.REACTOR;
-        }
+        // Check sanity
+        final Parent parent = model.getParent();
+        Validate.notNull(parent, "POM (" + model.getGroupId() + "/" + model.getArtifactId() + "/"
+                + model.getVersion() + ") must have a Parent definition.");
 
-        return PomType.ROOT_REACTOR;
+        // All done.
+        return model.getGroupId().startsWith(parent.getGroupId())
+                ? PomType.REACTOR
+                : PomType.ROOT_REACTOR;
     }
 
     /**
      * Determines if the supplied model is a parent POM (but of an explicitly undefined type) or not.
-     *
+     * <p/>
      * The AbstractNamingStrategy implementation assumes that all parent POMs use a naming strategy that
      * implies that the last segment of the groupId for each parent POM is the end part of its corresponding
      * artifactId. For example:

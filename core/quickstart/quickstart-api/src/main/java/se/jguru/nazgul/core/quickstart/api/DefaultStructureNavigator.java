@@ -164,16 +164,21 @@ public class DefaultStructureNavigator implements StructureNavigator, Serializab
 
         // Check sanity
         Validate.notNull(directory, "Cannot handle null directory argument.");
-
-        final File rootDirPath = getProjectRootDirectory(directory);
-        if (rootDirPath == null) {
-            throw new IllegalStateException("Directory [" + getCanonicalPath(directory)
-                    + "] is not part of a project.");
+        if(directory.exists() && !directory.isDirectory()) {
+            throw new IllegalArgumentException("If the directory target exists, "
+                    + "it must be a directory. Found incorrect: [" + getCanonicalPath(directory) + "]");
         }
 
+        final File rootDirPath = getProjectRootDirectory(directory);
         final String rootPath = getCanonicalPath(rootDirPath);
         final String leafPath = getCanonicalPath(directory);
-        String toReturn = rootPath.substring(rootPath.lastIndexOf(leafPath));
+        final int lastIndex = leafPath.lastIndexOf(rootPath);
+
+        if(lastIndex == -1) {
+            throw new InvalidStructureException("Leaf path [" + leafPath + "] was not below [" + rootPath + "]");
+        }
+
+        String toReturn = leafPath.substring(lastIndex + rootPath.length() + 1);
         if (usePackageSeparator) {
             toReturn = toReturn.replace(File.separator, PACKAGE_SEPARATOR);
         }
@@ -240,17 +245,15 @@ public class DefaultStructureNavigator implements StructureNavigator, Serializab
     private File getPomFile(final File aDirectory) {
         if (aDirectory.exists() && aDirectory.isDirectory()) {
             final File[] files = aDirectory.listFiles(POM_FILE_FILTER);
-            if (files != null) {
-                if (files.length > 0) {
-                    if (files.length > 1) {
-                        log.warn("More than one file in [" + aDirectory.getAbsolutePath()
-                                + "] has the lowercase name 'pom.xml'. "
-                                + "This is not recommended, as it confuses tooling. Returning the first one found.");
-                    }
-
-                    // All done,
-                    return files[0];
+            if (files != null && files.length > 0) {
+                if (files.length > 1) {
+                    log.warn("More than one file in [" + aDirectory.getAbsolutePath()
+                            + "] has the lowercase name 'pom.xml'. "
+                            + "This is not recommended, as it confuses tooling. Returning the first one found.");
                 }
+
+                // All done,
+                return files[0];
             }
         }
 

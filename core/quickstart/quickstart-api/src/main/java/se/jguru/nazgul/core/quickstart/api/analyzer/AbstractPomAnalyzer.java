@@ -64,6 +64,7 @@ public abstract class AbstractPomAnalyzer implements PomAnalyzer {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("all")
     public final void validateRootReactorPom(final Model aRootReactorPom) throws InvalidStructureException {
 
         // Validate that the supplied Model complies with the naming strategy.
@@ -84,6 +85,7 @@ public abstract class AbstractPomAnalyzer implements PomAnalyzer {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("all")
     public final void validateTopmostParentPom(final Model topmostParentPom) throws InvalidStructureException {
 
         // Validate that the supplied Model complies with the naming strategy.
@@ -107,6 +109,7 @@ public abstract class AbstractPomAnalyzer implements PomAnalyzer {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("all")
     public final void validate(final Model aPOM, final PomType expectedType, final Model parentOrNull) throws
             InvalidStructureException {
 
@@ -119,8 +122,9 @@ public abstract class AbstractPomAnalyzer implements PomAnalyzer {
         try {
             namingStrategy.validate(name, expectedType);
         } catch (IllegalArgumentException e) {
-            getErrorMessageBuilder("Incompatible POM name for strategy [" + namingStrategy.getClass().getSimpleName()
-                    + "]: " + e.getMessage(), aPOM);
+            final StringBuilder builder = getErrorMessageBuilder("Incompatible POM name for strategy ["
+                    + namingStrategy.getClass().getSimpleName() + "]: " + e.getMessage(), aPOM);
+            throw new InvalidStructureException(builder.toString());
         }
 
         switch (expectedType) {
@@ -303,17 +307,22 @@ public abstract class AbstractPomAnalyzer implements PomAnalyzer {
         switch (type) {
             case ROOT_REACTOR:
             case REACTOR:
-                toReturn = "reactor";
+                toReturn = AbstractNamingStrategy.REACTOR_SUFFIX;
                 break;
 
             case PARENT:
             case API_PARENT:
             case MODEL_PARENT:
+            case WAR_PARENT:
                 toReturn = type.name().toLowerCase().replace('_', '-');
                 break;
 
+            case OTHER_PARENT:
+                toReturn = AbstractNamingStrategy.PARENT_SUFFIX;
+                break;
+
             default:
-                log.warn("PomType [" + type + "] not registered for an expected type String.");
+                log.warn("PomType [" + type + "] not registered.");
                 break;
         }
 
