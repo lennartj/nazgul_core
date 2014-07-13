@@ -22,41 +22,66 @@
 package se.jguru.nazgul.core.quickstart.api.analyzer;
 
 import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.quickstart.api.analyzer.patterns.DefaultProjectParentPatterns;
 import se.jguru.nazgul.core.quickstart.api.analyzer.patterns.DefaultTopReactorPatterns;
 import se.jguru.nazgul.core.quickstart.api.analyzer.patterns.MavenModelPatterns;
-import se.jguru.nazgul.core.quickstart.api.analyzer.ProjectNamingStrategy;
 
 import java.util.regex.Pattern;
 
 /**
- * Abstract ProjectNamingStrategy implementation using java Patterns (and, hence, regular expressions)
- * to identify valid project names. Subclasses should override given abstract methods to provide
- * implementation hooks.
+ * Abstract ProjectNamingStrategy implementation using java Patterns (and, hence,
+ * regular expressions) to identify valid project names. Subclasses define the actual behaviour for
+ * each parse/definition concept.
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 public abstract class AbstractPatternBasedProjectNamingStrategy implements ProjectNamingStrategy {
 
+    // Our log
+    private static final Logger log = LoggerFactory.getLogger(
+            AbstractPatternBasedProjectNamingStrategy.class.getName());
+
+    /**
+     * Pattern matching a single word with lower case letters.
+     */
+    public static final Pattern SINGLE_LOWERCASE_WORD_PATTERN = Pattern.compile("[a-z][a-z0-9]*", Pattern.CANON_EQ);
+
     // Internal state
+    private boolean requirePrefixOnFolderNames;
     private Pattern projectNamePattern;
     private Pattern projectPrefixPattern;
     private MavenModelPatterns topReactorPatterns;
     private MavenModelPatterns topParentPatterns;
 
     /**
-     * Compound constructor, creating a new AbstractPatternBasedProjectNamingStrategy instance
-     * from the supplied parameters. Using default implementations for the TopReactorPatterns
-     * and TopParentPatterns parameters.
+     * Default constructor creating a new AbstractPatternBasedProjectNamingStrategy which requires that
+     * project name and prefix should be a single, lower-case word and that no prefix should be present within
+     * default folder names.
+     */
+    protected AbstractPatternBasedProjectNamingStrategy() {
+        this(SINGLE_LOWERCASE_WORD_PATTERN.pattern(), SINGLE_LOWERCASE_WORD_PATTERN.pattern());
+    }
+
+    /**
+     * Convenience constructor, creating a new AbstractPatternBasedProjectNamingStrategy with the supplied patterns
+     * for project name and prefix. Requires that no prefix should be present within default folder names and uses
+     * default implementations for the TopReactorPatterns and TopParentPatterns parameters.
      *
      * @param projectNamePattern   The java regexp defining a valid project name.
      * @param projectPrefixPattern The java regexp defining a valid project prefix.
+     * @see se.jguru.nazgul.core.quickstart.api.analyzer.patterns.DefaultTopReactorPatterns
+     * @see se.jguru.nazgul.core.quickstart.api.analyzer.patterns.DefaultProjectParentPatterns
      */
     protected AbstractPatternBasedProjectNamingStrategy(final String projectNamePattern,
                                                         final String projectPrefixPattern) {
         // Delegate
-        this(projectNamePattern, projectPrefixPattern,
-                new DefaultTopReactorPatterns(), new DefaultProjectParentPatterns());
+        this(projectNamePattern,
+                projectPrefixPattern,
+                false,
+                new DefaultTopReactorPatterns(),
+                new DefaultProjectParentPatterns());
     }
 
     /**
@@ -70,6 +95,7 @@ public abstract class AbstractPatternBasedProjectNamingStrategy implements Proje
      */
     protected AbstractPatternBasedProjectNamingStrategy(final String projectNamePattern,
                                                         final String projectPrefixPattern,
+                                                        final boolean requirePrefixOnFolderNames,
                                                         final MavenModelPatterns topReactorPatterns,
                                                         final MavenModelPatterns topParentPatterns) {
 
@@ -84,6 +110,15 @@ public abstract class AbstractPatternBasedProjectNamingStrategy implements Proje
         this.projectPrefixPattern = Pattern.compile(projectPrefixPattern, Pattern.CANON_EQ);
         this.topReactorPatterns = topReactorPatterns;
         this.topParentPatterns = topParentPatterns;
+        this.requirePrefixOnFolderNames = requirePrefixOnFolderNames;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isPrefixRequiredOnAllFolders() {
+        return requirePrefixOnFolderNames;
     }
 
     /**
@@ -147,13 +182,7 @@ public abstract class AbstractPatternBasedProjectNamingStrategy implements Proje
     protected abstract String createTopLevelPackageFrom(final String reverseOrganisationDNS);
 
     /**
-     * Retrieves the project name, if the supplied data yields {@code true} for a call to {@code isRootReactorPom}.
-     *
-     * @param parentGroupID    The parent groupId, as found within a POM.
-     * @param parentArtifactID The parent artifactId, as found within a POM.
-     * @param groupID          The groupId of a POM.
-     * @param artifactID       The artifactId of a POM.
-     * @return The project name, if the supplied data is for a root reactor POM.
+     * {@inheritDoc}
      */
     @Override
     public final String getProjectName(final String parentGroupID,
@@ -170,11 +199,14 @@ public abstract class AbstractPatternBasedProjectNamingStrategy implements Proje
         Validate.isTrue(isProjectParentPom || isRootReactorPOM, errorMessage);
 
         // Delegate and return
-        return getProjectName(isRootReactorPOM, parentGroupID, parentArtifactID, groupID, artifactID);
+        final String name = getProjectName(isRootReactorPOM, parentGroupID, parentArtifactID, groupID, artifactID);
+        Validate.isTrue(isValidProjectName(name), "Synthesized project name [" + name + "] is invalid. "
+                + "Check implementation in [" + getClass().getName() + "]");
+        return name;
     }
 
     /**
-     * Retrieves the project name for the supplied data.
+     * Calculates a compliant project name from the supplied values.
      *
      * @param isReactorData    {@code true} if the supplied data is reactor POM data, and
      *                         {@code false} if the supplied data is parent POM data.
@@ -204,10 +236,11 @@ public abstract class AbstractPatternBasedProjectNamingStrategy implements Proje
         final boolean validIfNull = topReactorPatterns.nullPatternImpliesValid();
 
         // Evaluate.
-        return isMatch(topReactorPatterns.getParentGroupIdPattern(), validIfNull, parentGroupID)
-                && isMatch(topReactorPatterns.getParentArtifactIdPattern(), validIfNull, parentArtifactID)
-                && isMatch(topReactorPatterns.getGroupIdPattern(), validIfNull, groupID)
-                && isMatch(topReactorPatterns.getArtifactIdPattern(), validIfNull, artifactID);
+        return isMatch("parentGroupId", topReactorPatterns.getParentGroupIdPattern(), validIfNull, parentGroupID)
+                && isMatch("parentArtifactId", topReactorPatterns.getParentArtifactIdPattern(), validIfNull,
+                parentArtifactID)
+                && isMatch("groupId", topReactorPatterns.getGroupIdPattern(), validIfNull, groupID)
+                && isMatch("artifactId", topReactorPatterns.getArtifactIdPattern(), validIfNull, artifactID);
     }
 
     /**
@@ -224,24 +257,75 @@ public abstract class AbstractPatternBasedProjectNamingStrategy implements Proje
         final boolean validIfNull = topParentPatterns.nullPatternImpliesValid();
 
         // Evaluate.
-        return isMatch(topParentPatterns.getParentGroupIdPattern(), validIfNull, parentGroupID)
-                && isMatch(topParentPatterns.getParentArtifactIdPattern(), validIfNull, parentArtifactID)
-                && isMatch(topParentPatterns.getGroupIdPattern(), validIfNull, groupID)
-                && isMatch(topParentPatterns.getArtifactIdPattern(), validIfNull, artifactID);
+        return isMatch("parentGroupId", topParentPatterns.getParentGroupIdPattern(), validIfNull, parentGroupID)
+                && isMatch("parentArtifactId", topParentPatterns.getParentArtifactIdPattern(),
+                validIfNull, parentArtifactID)
+                && isMatch("groupId", topParentPatterns.getGroupIdPattern(), validIfNull, groupID)
+                && isMatch("artifactId", topParentPatterns.getArtifactIdPattern(), validIfNull, artifactID);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final String getProjectPrefix(final String parentGroupID,
+                                         final String parentArtifactID,
+                                         final String groupID,
+                                         final String artifactID) {
+
+        // Check sanity
+        final String errorMessage = "Combination of Parent GroupID/ArtifactID [" + parentGroupID + "/"
+                + parentArtifactID + "] and GroupID/ArtifactID [" + groupID + "/" + artifactID
+                + "] was neither a root reactor POM nor a project parent POM.";
+        final boolean isRootReactorPOM = isRootReactorPom(parentGroupID, parentArtifactID, groupID, artifactID);
+        final boolean isProjectParentPom = isProjectParentPom(parentGroupID, parentArtifactID, groupID, artifactID);
+        Validate.isTrue(isProjectParentPom || isRootReactorPOM, errorMessage);
+
+        // Delegate and return
+        final String prefix = getProjectPrefix(isRootReactorPOM, parentGroupID, parentArtifactID, groupID, artifactID);
+        Validate.isTrue(isValidProjectPrefix(prefix), "Synthesized project prefix [" + prefix + "] is invalid. "
+                + "Check implementation in [" + getClass().getName() + "]");
+        return prefix;
+    }
+
+    /**
+     * Calculates a compliant project name from the supplied values.
+     *
+     * @param isReactorData    {@code true} if the supplied data is reactor POM data, and
+     *                         {@code false} if the supplied data is parent POM data.
+     * @param parentGroupID    The parent groupId, as found within a POM.
+     * @param parentArtifactID The parent artifactId, as found within a POM.
+     * @param groupID          The groupId of a POM.
+     * @param artifactID       The artifactId of a POM.
+     * @return The project prefix, or "" if none exists.
+     */
+    protected abstract String getProjectPrefix(boolean isReactorData,
+                                               final String parentGroupID,
+                                               final String parentArtifactID,
+                                               final String groupID,
+                                               final String artifactID);
 
     //
     // Private helpers
     //
 
-    private boolean isMatch(final Pattern pattern, final boolean validIfNullPattern, final String toMatch) {
+    private boolean isMatch(final String matchingType,
+                            final Pattern pattern,
+                            final boolean validIfNullPattern,
+                            final String toMatch) {
 
         // Null pattern yields standard behaviour.
-        if(pattern == null) {
+        if (pattern == null) {
             return validIfNullPattern;
         }
 
         // Perform standard pattern matching
-        return pattern.matcher(toMatch).matches();
+        final boolean toReturn = pattern.matcher(toMatch).matches();
+        if(log.isDebugEnabled()) {
+            log.debug(matchingType + " pattern [" + pattern + "] for [" + toMatch + "]: " + toReturn);
+        }
+
+        // All done.
+        return toReturn;
     }
 }

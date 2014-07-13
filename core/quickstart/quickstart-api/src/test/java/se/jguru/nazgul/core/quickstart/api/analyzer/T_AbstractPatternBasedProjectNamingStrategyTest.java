@@ -24,8 +24,6 @@ package se.jguru.nazgul.core.quickstart.api.analyzer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import se.jguru.nazgul.core.quickstart.api.analyzer.AbstractPatternBasedProjectNamingStrategy;
-import se.jguru.nazgul.core.quickstart.api.analyzer.MockProjectNamingStrategy;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -59,7 +57,7 @@ public class T_AbstractPatternBasedProjectNamingStrategyTest {
     public void validateGettingProjectName() {
 
         // Assemble
-        final String expected = "RootDirectoryName_test-project";
+        final String expected = "RootDirectoryName_project";
 
         // Act
         final String result = unitUnderTest.getRootDirectoryName(projectNamePattern);
@@ -72,7 +70,7 @@ public class T_AbstractPatternBasedProjectNamingStrategyTest {
     public void validateGettingTopLevelPackage() {
 
         // Assemble
-        final String expected = "TopLevelPackage_test-prefix";
+        final String expected = "TopLevelPackage_prefix";
 
         // Act
         final String result = unitUnderTest.getTopLevelPackage(projectPrefixPattern);

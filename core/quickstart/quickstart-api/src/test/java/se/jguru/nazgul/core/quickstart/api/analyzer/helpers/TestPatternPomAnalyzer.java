@@ -19,45 +19,32 @@
  * limitations under the License.
  * #L%
  */
-/*
- * Copyright (c) jGuru Europe AB.
- * All rights reserved.
- */
+package se.jguru.nazgul.core.quickstart.api.analyzer.helpers;
 
-package se.jguru.nazgul.core.quickstart.api.analyzer;
+import se.jguru.nazgul.core.quickstart.api.analyzer.NamingStrategy;
+import se.jguru.nazgul.core.quickstart.api.analyzer.PatternPomAnalyzer;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.io.File;
-import java.net.URL;
+import java.lang.reflect.Field;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class PatternBasedProjectNamingStrategyTest {
+public class TestPatternPomAnalyzer extends PatternPomAnalyzer {
 
     // Shared state
-    private File projectRootDir;
-
-    @Before
-    public void setupSharedState() {
-
-        final URL fooDirURL = getClass().getClassLoader().getResource("testdata/foo");
-        projectRootDir = new File(fooDirURL.getPath());
-        Assert.assertNotNull(projectRootDir);
-        Assert.assertTrue(projectRootDir.exists() && projectRootDir.isDirectory());
+    public TestPatternPomAnalyzer() {
+        super(new TestNamingStrategy());
     }
 
-    @Test
-    public void validateNamingStandard() {
+    public NamingStrategy getNamingStrategy() {
 
-        // Assemble
-        final NazgulFooProjectNamingStrategy unitUnderTest = new NazgulFooProjectNamingStrategy();
+        try {
+            final Field namingStrategyField = PatternPomAnalyzer.class.getDeclaredField("namingStrategy");
+            namingStrategyField.setAccessible(true);
 
-        // Act
-
-        // Assert
+            return (NamingStrategy) namingStrategyField.get(this);
+        } catch (Exception e) {
+            throw new IllegalStateException("Could not acquire the NamingStrategy field.", e);
+        }
     }
 }

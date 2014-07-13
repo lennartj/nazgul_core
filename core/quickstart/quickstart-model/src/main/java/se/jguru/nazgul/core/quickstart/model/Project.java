@@ -41,7 +41,7 @@ import javax.xml.bind.annotation.XmlType;
  * The Project class holds data used when creating a new project, as opposed to creating
  * a new software component (i.e. a set of collaborating Maven projects) within
  * an existing project.
- *
+ * <p/>
  * In keeping with an orderly tradition, it is important to separate Maven build reactor
  * consistency and design from dependency management and plugin management. Build reactor
  * definition is done by maven POMs called "reactor parent" (whose role is simply to define
@@ -92,20 +92,22 @@ public class Project extends NazgulEntity implements Comparable<Project> {
     /**
      * Compound constructor creating a Project instance wrapping the supplied data.
      *
-     * @param prefix        The project prefix, used as a prefix to the project name to form a unique identifier.
-     *                      For example "nazgul" is the prefix for the project identifier "nazgul-core".
-     * @param name          The name of the project, such as "Entities". Should normally not contain whitespace and is
-     *                      recommended to be a single word. For example, "core" is the name for the project
-     *                      identifier "nazgul-core".
-     * @param reactorName   The name of the reactor of a project. This is used for topmost folder name and
-     *                      affects Maven site documentation.
-     * @param reactorParent The POM to be used as parent by the topmost reactor POM in the project. A "reactor POM"
-     *                      is a pom.xml file that only defines the build order (and not any dependencies or plugins
-     *                      for release-able artifacts such as JARs, WARs, EARs or ZIPs).
-     * @param parentParent  The POM to be used as parent by the topmost artifact parent POM in the project. An
-     *                      "artifact parent POM" is a pom.xml file that defines dependencies and profiles for
-     *                      artifacts released by the Maven reactor, but does not contain any module definitions.
-     *                      Thus, a parent pom does not have any children.
+     * @param prefix                    The project prefix, used as a prefix to the project name to form a unique
+     *                                  identifier. For example "nazgul" is the prefix for the project identifier
+     *                                  "nazgul-core".
+     * @param name                      The name of the project, such as "Entities". Should normally not contain
+     *                                  whitespace and is recommended to be a single word. For example,
+     *                                  "core" is the name for the project identifier "nazgul-core".
+     * @param reactorName               The name of the reactor of a project. This is used for topmost folder name and
+     *                                  affects Maven site documentation.
+     * @param reactorParent             The POM to be used as parent by the topmost reactor POM in the project. A
+     *                                  "reactor POM" is a pom.xml file that only defines the build order (and not
+     *                                  any dependencies or plugins for release-able artifacts such as JARs, WARs,
+     *                                  EARs or ZIPs).
+     * @param parentParent              The POM to be used as parent by the topmost artifact parent POM in the project.
+     *                                  An "artifact parent POM" is a pom.xml file that defines dependencies and
+     *                                  profiles for artifacts released by the Maven reactor, but does not contain any
+     *                                  module definitions. Thus, a parent pom does not have any children.
      */
     public Project(final String prefix,
                    final String name,
@@ -218,18 +220,18 @@ public class Project extends NazgulEntity implements Comparable<Project> {
 
         // Delegate
         int toReturn = getName().compareTo(project.getName());
-        if(toReturn == 0) {
+        if (toReturn == 0) {
             final String prefixOrEmpty = getPrefix() == null ? "[no prefix]" : getPrefix();
             final String thatPrefixOrEmpty = project.getPrefix() == null ? "[no prefix]" : project.getPrefix();
             toReturn = prefixOrEmpty.compareTo(thatPrefixOrEmpty);
         }
-        if(toReturn == 0) {
+        if (toReturn == 0) {
             toReturn = getReactorName().compareTo(project.getReactorName());
         }
-        if(toReturn == 0) {
+        if (toReturn == 0) {
             toReturn = getParentParent().compareTo(project.getParentParent());
         }
-        if(toReturn == 0) {
+        if (toReturn == 0) {
             toReturn = getReactorParent().compareTo(project.getReactorParent());
         }
         return toReturn;
