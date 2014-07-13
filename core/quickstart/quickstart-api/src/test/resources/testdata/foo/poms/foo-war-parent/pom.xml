@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   #%L
   Nazgul Project: nazgul-core-quickstart-api
@@ -21,6 +21,10 @@
   #L%
   -->
 
+<!--
+  ~ Copyright (c) jGuru Europe AB.
+  ~ All rights reserved.
+  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -28,50 +32,43 @@
     <!-- | Section 1:  Project information                -->
     <!-- +=============================================== -->
     <parent>
-        <groupId>se.jguru.nazgul.tools.poms.external</groupId>
-        <artifactId>nazgul-tools-external-reactor-parent</artifactId>
-        <version>4.0.0</version>
-        <relativePath />
+        <groupId>se.jguru.nazgul.foo.poms.foo-api-parent</groupId>
+        <artifactId>nazgul-foo-api-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../foo-api-parent</relativePath>
     </parent>
 
-    <groupId>se.jguru.nazgul.foo</groupId>
-    <artifactId>nazgul-foo-reactor</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-    <name>${project.artifactId}</name>
+    <groupId>se.jguru.nazgul.foo.poms.foo-war-parent</groupId>
+    <artifactId>nazgul-foo-war-parent</artifactId>
     <packaging>pom</packaging>
+    <name>${project.artifactId}</name>
     <url>${url.prefix}/${path.in.reactor}</url>
 
     <properties>
-        <!--
-            Define the URL prefixes for Site Deployment and DistributionManagement.
-            These can be overridden in sub-reactors to tailor releases to other locations.
-        -->
-        <reactor.name>foo</reactor.name>
-        <url.prefix>${reactor.url.remote.prefix}/${reactor.name}/${project.version}</url.prefix>
-        <distro.url.prefix>${site.url.prefix}/${reactor.name}/${project.version}</distro.url.prefix>
-        <path.in.reactor />
+        <path.in.reactor>core/poms/foo-war-parent</path.in.reactor>
     </properties>
 
     <!-- +=============================================== -->
-    <!-- | Section 2:  Module definitions                 -->
+    <!-- | Section 2:  Dependency (management) settings   -->
     <!-- +=============================================== -->
-    <modules>
-        <module>poms</module>
-    </modules>
 
     <!-- +=============================================== -->
     <!-- | Section 3:  Build settings                     -->
     <!-- +=============================================== -->
     <build>
         <plugins>
+
             <!--
-                Don't deploy reactor poms.
+                Ensure that all packages are exported; this is an API project.
             -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
                 <configuration>
-                    <skip>true</skip>
+                    <instructions>
+                        <Export-Package>{local-packages}</Export-Package>
+                    </instructions>
                 </configuration>
             </plugin>
         </plugins>
@@ -88,8 +85,8 @@
     -->
     <distributionManagement>
         <site>
-            <id>NazgulFooSite</id>
-            <name>NazgulFooSite</name>
+            <id>jGuru_NazgulCoreSite</id>
+            <name>jGuru_NazgulCoreSite</name>
             <url>${distro.url.prefix}/${path.in.reactor}</url>
         </site>
     </distributionManagement>

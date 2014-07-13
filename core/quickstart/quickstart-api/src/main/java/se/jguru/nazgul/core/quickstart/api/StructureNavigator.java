@@ -1,6 +1,28 @@
+/*
+ * #%L
+ * Nazgul Project: nazgul-core-quickstart-api
+ * %%
+ * Copyright (C) 2010 - 2014 jGuru Europe AB
+ * %%
+ * Licensed under the jGuru Europe AB license (the "License"), based
+ * on Apache License, Version 2.0; you may not use this file except
+ * in compliance with the License.
+ * 
+ * You may obtain a copy of the License at
+ * 
+ *       http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
 package se.jguru.nazgul.core.quickstart.api;
 
 import java.io.File;
+import java.io.FileFilter;
 
 /**
  * Specification for how to navigate in a File system containing a Project,
@@ -21,16 +43,29 @@ public interface StructureNavigator {
     public static final String PACKAGE_SEPARATOR = ".";
 
     /**
-     * Finds the root directory of an existing project structure, given a file or
-     * directory inside the project structure.
+     * A FileFilter identifying pom.xml files.
+     */
+    public static final FileFilter POM_FILE_FILTER = new FileFilter() {
+        @Override
+        public boolean accept(final File fileOrDirectory) {
+            return fileOrDirectory.isFile() && fileOrDirectory.getName().equalsIgnoreCase("pom.xml");
+        }
+    };
+
+    /**
+     * Finds the root directory of an existing project structure, given a file or directory inside the project
+     * structure. If the root directory could not be found - because the structure in the root directory was
+     * incorrect, because found POMs did not have correct parents or follow the required NamingStrategy etc. -
+     * an InvalidStructureException is thrown with a message indicating the exact reason.
      *
      * @param fileOrDirectory A file or directory within an existing project.
      * @return The root directory of the project within which the supplied file or directory resides.
-     * @throws java.lang.IllegalStateException if the supplied dir File was not found within a project (i.e. a
+     * @throws InvalidStructureException if the supplied dir File was not found within a project (i.e. a
      *                                         directory or file which has the returned File as an ancestor within
-     *                                         its directory hierarchy).
+     *                                         its directory hierarchy). Also thrown if any of the required
+     *                                         poms (reactor or parent) poms were not compliant with the namingStrategy.
      */
-    File getProjectRootDirectory(File fileOrDirectory) throws IllegalStateException;
+    File getProjectRootDirectory(File fileOrDirectory) throws InvalidStructureException;
 
     /**
      * Retrieves the relative path for the supplied directory within the project.
@@ -39,9 +74,8 @@ public interface StructureNavigator {
      * @param usePackageSeparator if {@code true}, the path returned will use {@code PACKAGE_SEPARATOR}s, and
      *                            otherwise {@code DIRECTORY_SEPARATOR}s.
      * @return The relative path between the project root directory and the supplied directory.
-     * @throws IllegalStateException if the supplied dir File was not found within a project (i.e. a
-     *                               directory or file which has the returned File as an ancestor within
-     *                               its directory hierarchy).
+     * @throws InvalidStructureException if the supplied dir File was not found within a project (i.e. a directory or
+     * file which has the returned File as an ancestor within its directory hierarchy), or if the
      */
-    String getRelativePath(File directory, boolean usePackageSeparator) throws IllegalStateException;
+    String getRelativePath(File directory, boolean usePackageSeparator) throws InvalidStructureException;
 }

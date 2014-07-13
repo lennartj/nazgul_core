@@ -19,45 +19,33 @@
  * limitations under the License.
  * #L%
  */
-/*
- * Copyright (c) jGuru Europe AB.
- * All rights reserved.
- */
+package se.jguru.nazgul.core.quickstart.api.analyzer.helpers;
 
-package se.jguru.nazgul.core.quickstart.api.analyzer;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.io.File;
-import java.net.URL;
+import se.jguru.nazgul.core.quickstart.api.analyzer.AbstractNamingStrategy;
+import se.jguru.nazgul.core.quickstart.api.analyzer.PomType;
+import se.jguru.nazgul.core.quickstart.model.Name;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class PatternBasedProjectNamingStrategyTest {
+public class TestNamingStrategy extends AbstractNamingStrategy {
 
     // Shared state
-    private File projectRootDir;
+    public boolean throwException = false;
 
-    @Before
-    public void setupSharedState() {
-
-        final URL fooDirURL = getClass().getClassLoader().getResource("testdata/foo");
-        projectRootDir = new File(fooDirURL.getPath());
-        Assert.assertNotNull(projectRootDir);
-        Assert.assertTrue(projectRootDir.exists() && projectRootDir.isDirectory());
+    public TestNamingStrategy() {
+        this(false);
     }
 
-    @Test
-    public void validateNamingStandard() {
+    public TestNamingStrategy(final boolean prefixIsRequiredOnAllFolders) {
+        super(prefixIsRequiredOnAllFolders);
+    }
 
-        // Assemble
-        final NazgulFooProjectNamingStrategy unitUnderTest = new NazgulFooProjectNamingStrategy();
+    @Override
+    public void validate(final Name aName, final PomType pomType) throws IllegalArgumentException {
 
-        // Act
-
-        // Assert
+        if(throwException) {
+            throw new IllegalArgumentException("Instructed to throw an Exception.");
+        }
     }
 }

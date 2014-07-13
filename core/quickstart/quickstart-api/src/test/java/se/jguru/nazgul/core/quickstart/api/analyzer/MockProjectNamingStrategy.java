@@ -57,6 +57,21 @@ public class MockProjectNamingStrategy extends AbstractPatternBasedProjectNaming
                                     final String groupID,
                                     final String artifactID) {
 
-        return artifactID.substring(0, artifactID.indexOf("-"));
+        // foobar-parent  ==> "foobar"
+        // foobar-reactor ==> "foobar"
+        return artifactID.substring(artifactID.indexOf("-") + 1);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getProjectPrefix(final boolean isReactorData,
+                                      final String parentGroupID,
+                                      final String parentArtifactID,
+                                      final String groupID,
+                                      final String artifactID) {
+        final String toReturn = artifactID.substring(0, artifactID.indexOf("-"));
+        return toReturn;
     }
 }

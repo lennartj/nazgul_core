@@ -22,8 +22,20 @@
 package se.jguru.nazgul.core.quickstart.api.analyzer;
 
 /**
- * Specification for how to validate project names and build relevant
- * project-structure names or paths.
+ * Specification for how to validate project names and build relevant project-structure names or paths.
+ * A project name is normally created on the form {@code prefix-name-type}, such as {@code nazgul-foo-api-parent}
+ * where:
+ * <dl>
+ * <dt>prefix</dt>
+ * <dd>nazgul</dd>
+ * <dt>name</dt>
+ * <dd>foo</dd>
+ * <dt>type</dt>
+ * <dd>api-parent</dd>
+ * </dl>
+ * <p/>
+ * Depending on the actual ProjectNamingStrategy implementation, it may be permissible to use null/empty
+ * prefix or type on projects.
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
@@ -54,6 +66,13 @@ public interface ProjectNamingStrategy {
      * @return {@code true} if the supplied projectPrefix is valid.
      */
     boolean isValidProjectPrefix(String projectPrefix);
+
+    /**
+     * @return {@code true} if all folders are required to have names on the form
+     * {@code projectPrefix-projectName-folderName}. If {@code false}, then folder names should
+     * be on the form {@code projectName-folderName} instead.
+     */
+    boolean isPrefixRequiredOnAllFolders();
 
     /**
      * Retrieves the top-level package for the supplied reverseOrganisationDNS (which, in itself,
@@ -102,4 +121,17 @@ public interface ProjectNamingStrategy {
      * @return The project name, if the supplied data is for a root reactor POM or a project parent POM.
      */
     String getProjectName(String parentGroupID, String parentArtifactID, String groupID, String artifactID);
+
+    /**
+     * Gets the project prefix for the supplied data, if the supplied data yields {@code true} for a
+     * call to either {@code isRootReactorPom} or {@code isProjectParentPom}.
+     *
+     * @param parentGroupID    The parent groupId, as found within a POM.
+     * @param parentArtifactID The parent artifactId, as found within a POM.
+     * @param groupID          The groupId of a POM.
+     * @param artifactID       The artifactId of a POM.
+     * @return The project prefix, if the supplied data is for a root reactor POM or a project parent
+     * POM, or "" if none exists.
+     */
+    String getProjectPrefix(String parentGroupID, String parentArtifactID, String groupID, String artifactID);
 }
