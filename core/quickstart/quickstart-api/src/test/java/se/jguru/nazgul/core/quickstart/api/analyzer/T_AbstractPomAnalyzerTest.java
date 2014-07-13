@@ -32,6 +32,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -40,7 +42,7 @@ public class T_AbstractPomAnalyzerTest extends AbstractMavenModelTest {
 
     // Shared state
     private List<String> callTrace;
-    private NamingStrategy testNamingStrategy;
+    private TestNamingStrategy testNamingStrategy;
 
     @Before
     public void setupSharedState() {
@@ -98,9 +100,94 @@ public class T_AbstractPomAnalyzerTest extends AbstractMavenModelTest {
                 "validateParentPom",
                 "verifyNoModules");
         Assert.assertEquals(expectedCallStructure.size(), callTrace.size());
-        for(int i = 0; i < expectedCallStructure.size(); i++) {
+        for (int i = 0; i < expectedCallStructure.size(); i++) {
             Assert.assertEquals(expectedCallStructure.get(i), callTrace.get(i));
         }
+    }
+
+    @Test
+    public void validateInvalidStructureExceptionOnInvalidRootReactorPom() {
+
+        // Assemble
+        testNamingStrategy.throwException = true;
+        final File fooRootReactorPomFile = getTestDataFile("foo/pom.xml");
+        final Model rootReactorPomModel = getPomModel(fooRootReactorPomFile);
+        final AbstractPomAnalyzer unitUnderTest = getAbstractPomAnalyzer(testNamingStrategy);
+
+        // Act & Assert
+        try {
+            unitUnderTest.validateRootReactorPom(rootReactorPomModel);
+            Assert.fail("When the naming strategy emits an Exception for invalid POM naming, an "
+                    + "InvalidStructureException must be thrown from the AbstractPomAnalyzer");
+        } catch (InvalidStructureException e) {
+            Assert.assertTrue(e.getMessage().contains("Incompatible POM name for strategy ["));
+        }
+    }
+
+    @Test
+    public void validateExpectedArtifactIdSuffix() {
+
+        // Assemble
+        testNamingStrategy.throwException = true;
+        final AbstractPomAnalyzer unitUnderTest = getAbstractPomAnalyzer(testNamingStrategy);
+
+        final Map<PomType, String> expected = new TreeMap<>();
+        expected.put(PomType.ROOT_REACTOR, AbstractNamingStrategy.REACTOR_SUFFIX);
+        expected.put(PomType.REACTOR, AbstractNamingStrategy.REACTOR_SUFFIX);
+        expected.put(PomType.PARENT, AbstractNamingStrategy.PARENT_SUFFIX);
+        expected.put(PomType.API_PARENT, "api-parent");
+        expected.put(PomType.MODEL_PARENT, "model-parent");
+        expected.put(PomType.WAR_PARENT, "war-parent");
+        expected.put(PomType.OTHER_PARENT, "parent");
+
+        // Act & Assert
+        for (PomType current : Arrays.asList(PomType.values())) {
+            Assert.assertEquals(expected.get(current), unitUnderTest.getExpectedArtifactIdSuffix(current));
+        }
+    }
+
+    @Test
+    public void validateInvalidStructureExceptionOnInvalidTopmostParentPom() {
+
+        // Assemble
+        testNamingStrategy.throwException = true;
+        final File fooParentPomFile = getTestDataFile("foo/poms/foo-parent/pom.xml");
+        final Model fooParentPomModel = getPomModel(fooParentPomFile);
+        final AbstractPomAnalyzer unitUnderTest = getAbstractPomAnalyzer(testNamingStrategy);
+
+        // Act & Assert
+        try {
+            unitUnderTest.validateTopmostParentPom(fooParentPomModel);
+            Assert.fail("When the naming strategy emits an Exception for invalid POM naming, an "
+                    + "InvalidStructureException must be thrown from the AbstractPomAnalyzer");
+        } catch (InvalidStructureException e) {
+            Assert.assertTrue(e.getMessage().contains("Incompatible POM name for strategy ["));
+        }
+    }
+
+    @Test
+    public void validateVerifyingParentPoms() {
+
+        // Assemble
+        testNamingStrategy.throwException = false;
+        final AbstractPomAnalyzer unitUnderTest = getAbstractPomAnalyzer(testNamingStrategy);
+
+        final Model incorrectParentGID = getParentModel(true);
+        final Model incorrectParentAID = getParentModel(true);
+        final Model incorrectGID = getParentModel(true);
+        final Model incorrectAID = getParentModel(true);
+
+        incorrectParentGID.getParent().setGroupId("some.incorrect.group.id");
+        incorrectParentAID.getParent().setArtifactId("some-incorrect-artifact-id");
+        incorrectGID.setGroupId("some.incorrect.group.id");
+        incorrectAID.setArtifactId("some-incorrect-artifact-id");
+
+        // Act & Assert
+        unitUnderTest.verifyParentPom(getParentModel(true), getParentModel(false));
+        verifyInvalidParentPom(unitUnderTest, incorrectParentGID);
+        verifyInvalidParentPom(unitUnderTest, incorrectParentAID);
+        verifyInvalidParentPom(unitUnderTest, incorrectGID);
+        verifyInvalidParentPom(unitUnderTest, incorrectAID);
     }
 
     //
@@ -152,5 +239,23 @@ public class T_AbstractPomAnalyzerTest extends AbstractMavenModelTest {
                 return super.getExpectedArtifactIdSuffix(type);
             }
         };
+    }
+
+    private void verifyInvalidParentPom(final AbstractPomAnalyzer unitUnderTest, final Model invalidParent) {
+
+        try {
+            unitUnderTest.verifyParentPom(getParentModel(true), invalidParent);
+            Assert.fail("InvalidStructureException expected");
+        } catch (InvalidStructureException e) {
+            // Do nothing.
+        } catch (Exception e) {
+            Assert.fail("Expected InvalidStructureException, but got [" + e.getClass().getSimpleName() + "]");
+        }
+    }
+
+    private Model getParentModel(final boolean apiParentPom) {
+        final String relativePath = "foo/poms/" + (apiParentPom ? "foo-api-parent/pom.xml" : "foo-parent/pom.xml");
+        final File fooApiParentPomFile = getTestDataFile(relativePath);
+        return getPomModel(fooApiParentPomFile);
     }
 }

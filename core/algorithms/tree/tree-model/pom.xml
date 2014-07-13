@@ -106,39 +106,6 @@
     <!-- +=============================================== -->
     <!-- | Section 3:  Build settings                     -->
     <!-- +=============================================== -->
-    <!-- build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.openjpa</groupId>
-                <artifactId>openjpa-maven-plugin</artifactId>
-                <version>${openjpa.version}</version>
-                <executions>
-                    <execution>
-                        <id>enhancer</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>enhance</goal>
-                        </goals>
-                        <configuration>
-                            <includes>**/*.class</includes>
-                            <persistenceXmlFile>${basedir}/src/main/weaving/openjpa/tree-model-persistence.xml
-                            </persistenceXmlFile>
-                        </configuration>
-                    </execution>
-                </executions>
-                <configuration>
-                    <includes>**/*.class</includes>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.openjpa</groupId>
-                        <artifactId>openjpa</artifactId>
-                        <version>${openjpa.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-        </plugins>
-    </build -->
 
     <!-- +=============================================== -->
     <!-- | Section 4:  External systems                   -->

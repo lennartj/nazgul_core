@@ -44,9 +44,9 @@ public interface NamingStrategy {
      *
      * @param model A non-null Maven model.
      * @return The PomType corresponding to the supplied Maven Model.
-     * @throws java.lang.IllegalArgumentException if a PomType could not be found from the supplied model. This
-     *                                            implies that the Model did not follow the required naming patterns
-     *                                            as implied by this NamingStrategy.
+     * @throws java.lang.IllegalArgumentException if a PomType could not be found from the supplied model.
+     *                                            This implies that the Model did not follow the required
+     *                                            naming patterns as implied by this NamingStrategy.
      */
     PomType getPomType(Model model) throws IllegalArgumentException;
 

@@ -21,6 +21,7 @@
  */
 package se.jguru.nazgul.core.quickstart.api.analyzer.helpers;
 
+import se.jguru.nazgul.core.quickstart.api.analyzer.AbstractPomAnalyzer;
 import se.jguru.nazgul.core.quickstart.api.analyzer.NamingStrategy;
 import se.jguru.nazgul.core.quickstart.api.analyzer.PatternPomAnalyzer;
 
@@ -39,7 +40,7 @@ public class TestPatternPomAnalyzer extends PatternPomAnalyzer {
     public NamingStrategy getNamingStrategy() {
 
         try {
-            final Field namingStrategyField = PatternPomAnalyzer.class.getDeclaredField("namingStrategy");
+            final Field namingStrategyField = AbstractPomAnalyzer.class.getDeclaredField("namingStrategy");
             namingStrategyField.setAccessible(true);
 
             return (NamingStrategy) namingStrategyField.get(this);

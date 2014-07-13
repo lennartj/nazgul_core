@@ -35,17 +35,17 @@ public interface StructureNavigator {
     /**
      * The standard separator char for directories.
      */
-    public static final String DIRECTORY_SEPARATOR = "/";
+    String DIRECTORY_SEPARATOR = "/";
 
     /**
      * The standard separator for packages.
      */
-    public static final String PACKAGE_SEPARATOR = ".";
+    String PACKAGE_SEPARATOR = ".";
 
     /**
      * A FileFilter identifying pom.xml files.
      */
-    public static final FileFilter POM_FILE_FILTER = new FileFilter() {
+    FileFilter POM_FILE_FILTER = new FileFilter() {
         @Override
         public boolean accept(final File fileOrDirectory) {
             return fileOrDirectory.isFile() && fileOrDirectory.getName().equalsIgnoreCase("pom.xml");
@@ -61,9 +61,9 @@ public interface StructureNavigator {
      * @param fileOrDirectory A file or directory within an existing project.
      * @return The root directory of the project within which the supplied file or directory resides.
      * @throws InvalidStructureException if the supplied dir File was not found within a project (i.e. a
-     *                                         directory or file which has the returned File as an ancestor within
-     *                                         its directory hierarchy). Also thrown if any of the required
-     *                                         poms (reactor or parent) poms were not compliant with the namingStrategy.
+     *                                   directory or file which has the returned File as an ancestor within
+     *                                   its directory hierarchy). Also thrown if any of the required
+     *                                   poms (reactor or parent) poms were not compliant with the namingStrategy.
      */
     File getProjectRootDirectory(File fileOrDirectory) throws InvalidStructureException;
 
@@ -75,7 +75,7 @@ public interface StructureNavigator {
      *                            otherwise {@code DIRECTORY_SEPARATOR}s.
      * @return The relative path between the project root directory and the supplied directory.
      * @throws InvalidStructureException if the supplied dir File was not found within a project (i.e. a directory or
-     * file which has the returned File as an ancestor within its directory hierarchy), or if the
+     *                                   file which has the returned File as an ancestor within its directory hierarchy), or if the
      */
     String getRelativePath(File directory, boolean usePackageSeparator) throws InvalidStructureException;
 }

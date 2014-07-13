@@ -103,4 +103,24 @@ public class PatternPomAnalyzerTest extends AbstractMavenModelTest {
             Assert.assertTrue(e.getMessage().contains(" 1: Incorrect parent groupId [some.incorrect.parent.group.id]"));
         }
     }
+
+    @Test(expected = InvalidStructureException.class)
+    public void validateExceptionOnIncompatibleRootReactorPom() {
+
+        // Assemble
+        final File fooPomsReactorPomFile = getTestDataFile("foo/poms/pom.xml");
+
+        // Act & Assert
+        unitUnderTest.validateRootReactorPom(getPomModel(fooPomsReactorPomFile));
+    }
+
+    @Test(expected = InvalidStructureException.class)
+    public void validateExceptionOnIncompatibleTopmostParentPom() {
+
+        // Assemble
+        final File fooApiParentPomFile = getTestDataFile("foo/poms/foo-api-parent/pom.xml");
+
+        // Act & Assert
+        unitUnderTest.validateTopmostParentPom(getPomModel(fooApiParentPomFile));
+    }
 }

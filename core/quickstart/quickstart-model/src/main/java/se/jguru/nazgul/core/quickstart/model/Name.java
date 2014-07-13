@@ -1,4 +1,25 @@
 /*
+ * #%L
+ * Nazgul Project: nazgul-core-quickstart-model
+ * %%
+ * Copyright (C) 2010 - 2014 jGuru Europe AB
+ * %%
+ * Licensed under the jGuru Europe AB license (the "License"), based
+ * on Apache License, Version 2.0; you may not use this file except
+ * in compliance with the License.
+ * 
+ * You may obtain a copy of the License at
+ * 
+ *       http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+/*
  * Copyright (c) jGuru Europe AB.
  * All rights reserved.
  */
@@ -167,7 +188,7 @@ public class Name extends NazgulEntity implements Comparable<Name> {
     public boolean equals(final Object obj) {
 
         // Check sanity
-        if(obj == null || !(obj instanceof Name)) {
+        if(!(obj instanceof Name)) {
             return false;
         }
 
