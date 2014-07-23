@@ -23,6 +23,7 @@ package se.jguru.nazgul.core.quickstart.api.analyzer;
 
 import org.apache.maven.model.Model;
 import se.jguru.nazgul.core.quickstart.api.InvalidStructureException;
+import se.jguru.nazgul.core.quickstart.api.PomType;
 
 /**
  * Specification for how to validate the content of POMs. In the Nazgul Framework structure, POMs have

@@ -1,12 +1,20 @@
 # About the Nazgul Core Parser API
 
-The Nazgul Core Parser API revolves around two concepts:
+The Nazgul Core Parser API revolves around three concepts:
 
 <dl>
     <dt>TokenParser</dt>
     <dd>A <em>TokenParser</em> is an object which can substitute variables within a set of data,
-        returning a String where all variables have been substituted for specific values. In the Nazgul Core Parser
-        API, a variable has the form <code>${token}</code> - hence the name TokenParser.</dd>
+        returning a String where all variables have been substituted for specific values. 
+        In the Nazgul Core Parser API, a variable has the form <code>${token}</code> - hence the 
+        name TokenParser.</dd>
+    
+    <dt>TokenDefinitions</dt>
+    <dd>A <em>TokenDefinitions</em> class defines how to identify token delimiters and how to
+        find the token name from a token string. For example, the DefaultTokenDefinitions class 
+        defines <code>${</code> to be a string which identifies the start of a token, and 
+        <code>}</code> a string which identifies its end - implying that a Pattern to identify
+        tokens within a text would be <em>\\$\\{[^}]*\\}</em>. 
 
     <dt>ParserAgent</dt>
     <dd>A <em>ParserAgent</em> is an object that has information/algorithms about which tokens should be

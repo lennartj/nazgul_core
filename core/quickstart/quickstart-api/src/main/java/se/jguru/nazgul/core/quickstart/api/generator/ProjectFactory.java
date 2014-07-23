@@ -22,9 +22,12 @@
 package se.jguru.nazgul.core.quickstart.api.generator;
 
 import se.jguru.nazgul.core.quickstart.model.Project;
+import se.jguru.nazgul.core.quickstart.model.SimpleArtifact;
+
+import java.io.File;
 
 /**
- * Specification for how to generate a new project where no project exists.
+ * Specification for how to generate a new project structure in an empty or non-existent directory.
  * A project should contain root resources such as required POMs and directories where maven projects
  * or other components should be located.
  *
@@ -33,10 +36,31 @@ import se.jguru.nazgul.core.quickstart.model.Project;
 public interface ProjectFactory {
 
     /**
+     * Creates a Project (definition) by harvesting names from the supplied name,
+     * prefix and parent Artifact definitions.
+     *
+     * @param prefix        The project prefix. Optional, but recommended.
+     * @param name          The project name.
+     * @param reactorParent The parent of the root reactor POM.
+     * @param parentParent  The parent of the topmost parent POM.
+     * @return A Project instance for use with the {@code createProject} method.
+     */
+    Project createProjectDefinition(final String prefix,
+                                    final String name,
+                                    final SimpleArtifact reactorParent,
+                                    final SimpleArtifact parentParent);
+
+    /**
      * Creates a new Project using the information found within the supplied projectDefinition.
      *
+     * @param projectParentDir  a directory in which the project should be created.
      * @param projectDefinition The entity defining the Project's values, and holding naming standards.
      * @return {@code true} if the project could be properly created, and false otherwise.
+     * @throws java.lang.IllegalArgumentException if projectParentDir was not an existing directory.
+     * @throws java.lang.IllegalStateException    if the projectRootDirectory (typically either on the form
+     *                                            {@code prefix-name} or {@code name}) could not be created
+     *                                            under the projectParentDir.
      */
-    boolean createProject(final Project projectDefinition);
+    boolean createProject(File projectParentDir, Project projectDefinition)
+            throws IllegalArgumentException, IllegalStateException;
 }

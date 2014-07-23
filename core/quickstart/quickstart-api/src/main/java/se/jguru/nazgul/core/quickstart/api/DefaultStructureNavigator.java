@@ -24,16 +24,13 @@ package se.jguru.nazgul.core.quickstart.api;
 import org.apache.commons.lang3.Validate;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.quickstart.api.analyzer.NamingStrategy;
 import se.jguru.nazgul.core.quickstart.api.analyzer.PomAnalyzer;
-import se.jguru.nazgul.core.quickstart.api.analyzer.PomType;
 import se.jguru.nazgul.core.quickstart.model.Name;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
 
@@ -49,9 +46,9 @@ public class DefaultStructureNavigator implements StructureNavigator, Serializab
 
     // Internal state
     private File projectRootDirectoryCache;
+    private File projectTopmostParentPomDirectoryCache;
     private NamingStrategy namingStrategy;
     private PomAnalyzer pomAnalyzer;
-    private MavenXpp3Reader pomReader = new MavenXpp3Reader();
 
     /**
      * Creates a new DefaultStructureNavigator using the supplied ProjectNamingStrategy
@@ -82,8 +79,8 @@ public class DefaultStructureNavigator implements StructureNavigator, Serializab
 
         // Result already cached?
         if (projectRootDirectoryCache != null) {
-            final String cachedProjectRootPath = getCanonicalPath(projectRootDirectoryCache);
-            final String givenFileOrDir = getCanonicalPath(fileOrDirectory);
+            final String cachedProjectRootPath = FileUtils.getCanonicalPath(projectRootDirectoryCache);
+            final String givenFileOrDir = FileUtils.getCanonicalPath(fileOrDirectory);
 
             if (givenFileOrDir.startsWith(cachedProjectRootPath)) {
                 return projectRootDirectoryCache;
@@ -97,7 +94,7 @@ public class DefaultStructureNavigator implements StructureNavigator, Serializab
         if (toReturn != null) {
 
             // 1) Validate that we have a properly formed Root Reactor pom.
-            final Model rootReactorCandidate = getPomModel(topmostNonNullPom);
+            final Model rootReactorCandidate = FileUtils.getPomModel(topmostNonNullPom);
             final Parent rootReactorParent = rootReactorCandidate.getParent();
             Model parentModel = new Model();
             pomAnalyzer.validateRootReactorPom(rootReactorCandidate);
@@ -118,7 +115,7 @@ public class DefaultStructureNavigator implements StructureNavigator, Serializab
             // 3) ... and a correctly formed reactor POM in the poms directory
             final File pomsReactorFile = new File(pomsDir, "pom.xml");
             validateFileExists(pomsReactorFile);
-            final Model pomsReactor = getPomModel(pomsReactorFile);
+            final Model pomsReactor = FileUtils.getPomModel(pomsReactorFile);
             pomAnalyzer.validate(pomsReactor, PomType.REACTOR, rootReactorCandidate);
 
             // 4) Validate that we have a correct setup of parent POM directories
@@ -138,15 +135,16 @@ public class DefaultStructureNavigator implements StructureNavigator, Serializab
             validateFileExists(modelParentPomFile);
 
             // 6) Ensure that the Parent POMs are valid, in terms of parent relations.
-            final Model parentPomModel = getPomModel(parentPomFile);
-            final Model apiParentPomModel = getPomModel(apiParentPomFile);
-            final Model modelParentPomModel = getPomModel(modelParentPomFile);
+            final Model parentPomModel = FileUtils.getPomModel(parentPomFile);
+            final Model apiParentPomModel = FileUtils.getPomModel(apiParentPomFile);
+            final Model modelParentPomModel = FileUtils.getPomModel(modelParentPomFile);
             pomAnalyzer.validate(parentPomModel, PomType.PARENT, null);
             pomAnalyzer.validate(apiParentPomModel, PomType.API_PARENT, parentPomModel);
             pomAnalyzer.validate(modelParentPomModel, PomType.MODEL_PARENT, apiParentPomModel);
 
             // All done.
             projectRootDirectoryCache = toReturn;
+            projectTopmostParentPomDirectoryCache = parentPomDir;
             return toReturn;
 
         } else {
@@ -164,17 +162,17 @@ public class DefaultStructureNavigator implements StructureNavigator, Serializab
 
         // Check sanity
         Validate.notNull(directory, "Cannot handle null directory argument.");
-        if(directory.exists() && !directory.isDirectory()) {
+        if (directory.exists() && !directory.isDirectory()) {
             throw new IllegalArgumentException("If the directory target exists, "
-                    + "it must be a directory. Found incorrect: [" + getCanonicalPath(directory) + "]");
+                    + "it must be a directory. Found incorrect: [" + FileUtils.getCanonicalPath(directory) + "]");
         }
 
         final File rootDirPath = getProjectRootDirectory(directory);
-        final String rootPath = getCanonicalPath(rootDirPath);
-        final String leafPath = getCanonicalPath(directory);
+        final String rootPath = FileUtils.getCanonicalPath(rootDirPath);
+        final String leafPath = FileUtils.getCanonicalPath(directory);
         final int lastIndex = leafPath.lastIndexOf(rootPath);
 
-        if(lastIndex == -1) {
+        if (lastIndex == -1) {
             throw new InvalidStructureException("Leaf path [" + leafPath + "] was not below [" + rootPath + "]");
         }
 
@@ -192,6 +190,19 @@ public class DefaultStructureNavigator implements StructureNavigator, Serializab
         return toReturn;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public File getParentPomDirectory(final File fileOrDirectory) throws InvalidStructureException {
+
+        // Delegate
+        getProjectRootDirectory(fileOrDirectory);
+
+        // All done.
+        return projectTopmostParentPomDirectoryCache;
+    }
+
     //
     // Private helpers
     //
@@ -199,10 +210,10 @@ public class DefaultStructureNavigator implements StructureNavigator, Serializab
     private void validateDirectoryExists(final File aDir) {
         boolean directoryExists = aDir != null && aDir.exists() && aDir.isDirectory();
 
-        if(!directoryExists) {
+        if (!directoryExists) {
             final String msg = aDir == null
                     ? "Required directory nonexistent."
-                    : "Required directory [" + getCanonicalPath(aDir) + "] nonexistent.";
+                    : "Required directory [" + FileUtils.getCanonicalPath(aDir) + "] nonexistent.";
             throw new InvalidStructureException(msg);
         }
     }
@@ -210,10 +221,10 @@ public class DefaultStructureNavigator implements StructureNavigator, Serializab
     private void validateFileExists(final File aFile) {
         boolean fileExists = aFile != null && aFile.exists() && aFile.isFile();
 
-        if(!fileExists) {
+        if (!fileExists) {
             final String msg = aFile == null
                     ? "Required file nonexistent."
-                    : "Required file [" + getCanonicalPath(aFile) + "] nonexistent.";
+                    : "Required file [" + FileUtils.getCanonicalPath(aFile) + "] nonexistent.";
             throw new InvalidStructureException(msg);
         }
     }
@@ -261,14 +272,6 @@ public class DefaultStructureNavigator implements StructureNavigator, Serializab
         return null;
     }
 
-    private Model getPomModel(final File aPomFile) {
-        try {
-            return pomReader.read(new FileReader(aPomFile));
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Could not read POM file [" + getCanonicalPath(aPomFile) + "]", e);
-        }
-    }
-
     private File getRelativeFileOrDirectory(final File rootReactorDirectory,
                                             final String relativePath,
                                             final boolean isFile) {
@@ -287,94 +290,4 @@ public class DefaultStructureNavigator implements StructureNavigator, Serializab
         // All done.
         return shouldExist;
     }
-
-
-    private String getCanonicalPath(final File fileOrDirectory) {
-        try {
-            return fileOrDirectory.getCanonicalPath();
-        } catch (IOException e) {
-            throw new IllegalStateException("Could not acquire canonical path for [" + fileOrDirectory + "]", e);
-        }
-    }
-
-    /*
-
-    private void validateParentPom(final Model toValidate, final Model requiredParent) {
-
-        final List<String> errors = new ArrayList<>();
-
-        //
-        // Note that the version of the toValidate project might be null
-        // (in case the version is inherited from the parent, and therefore matching).
-        //
-        final Parent parentToValidate = toValidate.getParent();
-        final boolean versionMatches = toValidate.getVersion() == null
-                || requiredParent.getVersion().equals(parentToValidate.getVersion());
-        if(!versionMatches) {
-            errors.add("Required version mismatch (" + requiredParent.getVersion() + ")");
-        }
-        if(!requiredParent.getGroupId().equals(parentToValidate.getGroupId())) {
-            errors.add("Required groupId mismatch (" + requiredParent.getGroupId() + ")");
-        }
-        if(!requiredParent.getArtifactId().equals(parentToValidate.getArtifactId())) {
-            errors.add("Required artifactId mismatch (" + requiredParent.getArtifactId() + ")");
-        }
-
-        if(errors.size() > 0) {
-
-            final String effectiveVersion = toValidate.getVersion() == null
-                    ? toValidate.getParent().getVersion()
-                    : toValidate.getVersion();
-
-            final StringBuilder builder = new StringBuilder("Incorrect parent relationship for POM ("
-                    + toValidate.getGroupId() + "/" + toValidate.getArtifactId() + "/" + effectiveVersion + "): ");
-            for(int i = 0; i < errors.size(); i++) {
-                builder.append("\n " + (i + 1)).append(errors.get(i));
-            }
-
-            // All done.
-            throw new InvalidStructureException(builder.toString());
-        }
-    }
-
-
-    private boolean isParent(final Model requiredParent, final Model toValidate) {
-
-        if (requiredParent == null || toValidate == null) {
-            return false;
-        }
-
-        //
-        // Note that the version of the toValidate project might be null
-        // (in case the version is inherited from the parent, and therefore matching).
-        //
-        final Parent parentToValidate = toValidate.getParent();
-        final boolean versionMatches = toValidate.getVersion() == null
-                || requiredParent.getVersion().equals(parentToValidate.getVersion());
-        return requiredParent.getGroupId().equals(parentToValidate.getGroupId())
-                && requiredParent.getArtifactId().equals(parentToValidate.getArtifactId())
-                && versionMatches;
-    }
-
-    private String getErrorMessage(final String pomType,
-                                   final File pomFile,
-                                   final String requiredParentGroupId,
-                                   final String requiredParentArtifactId,
-                                   final String requiredGroupId,
-                                   final String requiredArtifactId) {
-
-        final String parentRequirement = requiredParentGroupId == null
-                ? ""
-                : "Required Parent [groupId: " + requiredParentGroupId + ", artifactId: "
-                + requiredParentArtifactId + "]";
-
-        final String selfRequirement = requiredGroupId == null
-                ? ""
-                : "Required Own [groupId: " + requiredGroupId + ", artifactId: " + requiredArtifactId + "]";
-
-        return pomType + " pom [" + pomFile.getAbsolutePath()
-                + "] nonexistent or does not comply with naming strategy. ("
-                + parentRequirement + ", " + selfRequirement + ")";
-    }
-    */
 }

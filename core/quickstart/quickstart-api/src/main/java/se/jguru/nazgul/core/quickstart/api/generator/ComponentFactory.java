@@ -19,15 +19,53 @@
  * limitations under the License.
  * #L%
  */
-/*
- * Copyright (c) jGuru Europe AB.
- * All rights reserved.
- */
-
 package se.jguru.nazgul.core.quickstart.api.generator;
 
+import se.jguru.nazgul.core.quickstart.api.InvalidStructureException;
+
+import java.io.File;
+import java.util.SortedMap;
+
 /**
+ * Specification for how to create a new Software Component, which consists of several collaborating Maven
+ * projects within the same reactor.
+ *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 public interface ComponentFactory {
+
+    /**
+     * Creates a new SoftwareComponent containing the supplied parts in the given componentDirectory.
+     *
+     * @param componentDirectory An non-existent or empty directory where a SoftwareComponent should be
+     *                           created. The directory name will be identical to the SoftwareComponent name,
+     *                           and must therefore be compliant with the NamingStrategy used.
+     * @param parts2SuffixMap    A non-empty Map relating SoftwareComponentParts to be created within the
+     *                           SoftwareComponent to their respective suffix. A non-empty value is only required
+     *                           within the Map if {@code SoftwareComponentPart.isSuffixRequired()} yields {@code true}.
+     * @throws InvalidStructureException If {@code componentDirectory} already contained a POM,
+     *                                   or was not compliant with the NamingStrategy chosen. Also thrown if the parts
+     *                                   list is empty or holds an Implementation SoftwareComponentPart but neither
+     *                                   API nor SPI SoftwareComponentParts.
+     */
+    void createSoftwareComponent(File componentDirectory,
+                                 SortedMap<SoftwareComponentPart, String> parts2SuffixMap)
+            throws InvalidStructureException;
+
+    /**
+     * Adds a SoftwareComponentPart to the SoftwareComponent found within the supplied componentDirectory.
+     *
+     * @param componentDirectory An directory containing an existing SoftwareComponent.
+     * @param toAdd              The SoftwareComponentPart to add to the supplied SoftwareComponent.
+     * @param suffix             The suffix of the SoftwareComponent's type. Ignored unless
+     *                           {@code toAdd.isSuffixRequired()} yields {@code true}.
+     * @throws InvalidStructureException if the supplied componentDirectory did not contain a SoftwareComponent,
+     *                                   or if the toAdd SoftwareComponentPart was already present within
+     *                                   the {@code componentDirectory} directory.
+     * @see SoftwareComponentPart#isSuffixRequired()
+     */
+    void addSoftwareComponentPart(File componentDirectory,
+                                  SoftwareComponentPart toAdd,
+                                  String suffix)
+            throws InvalidStructureException;
 }

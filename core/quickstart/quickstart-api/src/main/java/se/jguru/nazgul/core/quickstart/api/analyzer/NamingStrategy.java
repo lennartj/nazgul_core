@@ -22,6 +22,7 @@
 package se.jguru.nazgul.core.quickstart.api.analyzer;
 
 import org.apache.maven.model.Model;
+import se.jguru.nazgul.core.quickstart.api.PomType;
 import se.jguru.nazgul.core.quickstart.model.Name;
 
 /**

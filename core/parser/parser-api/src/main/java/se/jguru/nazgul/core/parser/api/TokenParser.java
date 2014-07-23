@@ -37,19 +37,15 @@ import java.util.regex.Pattern;
 public interface TokenParser {
 
     /**
-     * Definition for the "Start of token" identifier.
+     * Initializes this TokenParser, indicating that the supplied TokenDefinitions should be used to acquire
+     * charSequences for start and end of tokens, as well as a pattern to recognize a Token.
+     * This initialize method can only be called once, before any call to the {@code substituteTokens} method
+     * has been done.
+     *
+     * @param tokenDefinitions a non-null TokenDefinitions object.
+     * @throws java.lang.IllegalStateException if this TokenParser has already been initialized.
      */
-    String TOKEN_START = "\\$\\{";
-
-    /**
-     * Definition for the "End of token" identifier.
-     */
-    String TOKEN_END = "\\}";
-
-    /**
-     * Regular expression definition of a token.
-     */
-    Pattern TOKEN_REGEXP = Pattern.compile(TOKEN_START + "[^}]*" + TOKEN_END);
+    void initialize(TokenDefinitions tokenDefinitions) throws IllegalStateException;
 
     /**
      * Adds a parserAgent to the list of known AbstractParserAgents.

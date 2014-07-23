@@ -88,6 +88,44 @@ public class DefaultTokenParserTest {
 
         final DefaultTokenParser unitUnderTest = new DefaultTokenParser();
         unitUnderTest.addAgent(parserAgent);
+        unitUnderTest.initialize(new DefaultTokenDefinitions());
+
+        // Act
+        final String result = unitUnderTest.substituteTokens(data);
+
+        // Assert
+        Assert.assertEquals(expected, result);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void validateExceptionOnMultipleInitializations() {
+
+        // Assemble
+        final DefaultParserAgent parserAgent = new DefaultParserAgent();
+        final DefaultTokenParser unitUnderTest = new DefaultTokenParser();
+        unitUnderTest.addAgent(parserAgent);
+
+        final TokenDefinitions tokenDefinitions = new DefaultTokenDefinitions();
+
+        // Act & Assert
+        unitUnderTest.initialize(tokenDefinitions);
+        unitUnderTest.initialize(tokenDefinitions);
+    }
+
+    @Test
+    public void validateNormalParsingUsingDifferentTokenDefinitions() {
+
+        // Assemble
+        final String data = "Your JDK version is [sysprop:java.version], which is [good].";
+        final String expected = "Your JDK version is " + System.getProperty("java.version")
+                + ", which is bad.";
+
+        final DefaultParserAgent parserAgent = new DefaultParserAgent();
+        parserAgent.addStaticReplacement("good", "bad");
+
+        final DefaultTokenParser unitUnderTest = new DefaultTokenParser();
+        unitUnderTest.addAgent(parserAgent);
+        unitUnderTest.initialize(new SingleBracketTokenDefinitions());
 
         // Act
         final String result = unitUnderTest.substituteTokens(data);

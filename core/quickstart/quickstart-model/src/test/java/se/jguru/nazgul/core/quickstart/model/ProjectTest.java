@@ -39,7 +39,7 @@ public class ProjectTest extends AbstractJaxbBinderTest {
         final SimpleArtifact reactorParent = new SimpleArtifact(
                 "reactorGroupId", "reactorArtifactId", "reactorMavenVersion");
         final SimpleArtifact parentParent = new SimpleArtifact("groupId", "artifactId", "mavenVersion");
-        final Project unitUnderTest = new Project("prefix", "name", "reactorName", reactorParent, parentParent);
+        final Project unitUnderTest = new Project("prefix", "name", reactorParent, parentParent);
 
         final String expected = XmlTestUtils.readFully("testdata/project.xml");
 
@@ -60,7 +60,7 @@ public class ProjectTest extends AbstractJaxbBinderTest {
         final SimpleArtifact reactorParent = new SimpleArtifact(
                 "reactorGroupId", "reactorArtifactId", "reactorMavenVersion");
         final SimpleArtifact parentParent = new SimpleArtifact("groupId", "artifactId", "mavenVersion");
-        final Project expected = new Project("prefix", "name", "reactorName", reactorParent, parentParent);
+        final Project expected = new Project("prefix", "name", reactorParent, parentParent);
 
         // Act
         final Project result = binder.unmarshalInstance(new StringReader(data));
@@ -78,10 +78,9 @@ public class ProjectTest extends AbstractJaxbBinderTest {
                 "reactorGroupId", "reactorArtifactId", "reactorMavenVersion");
         final SimpleArtifact parentParent = new SimpleArtifact("groupId", "artifactId", "mavenVersion");
 
-        final Project project1 = new Project("prefix", "name", "reactorName", reactorParent, parentParent);
-        final Project project2 = new Project("anotherPrefix", "anotherName", "anotherReactorName",
-                reactorParent, parentParent);
-        final Project project3 = new Project("prefix", "name", "reactorName", reactorParent, parentParent);
+        final Project project1 = new Project("prefix", "name", reactorParent, parentParent);
+        final Project project2 = new Project("anotherPrefix", "anotherName", reactorParent, parentParent);
+        final Project project3 = new Project("prefix", "name", reactorParent, parentParent);
 
         // Act & Assert
         Assert.assertEquals(project1, project3);
