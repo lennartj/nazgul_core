@@ -68,6 +68,21 @@ public interface StructureNavigator {
     File getProjectRootDirectory(File fileOrDirectory) throws InvalidStructureException;
 
     /**
+     * Finds the directory of the topmost parent pom within an existing project structure, given a file or directory
+     * inside the project structure. If the root directory could not be found - because the structure in the root
+     * directory was incorrect, because found POMs did not have correct parents or follow the required NamingStrategy
+     * etc. - an InvalidStructureException is thrown with a message indicating the exact reason.
+     *
+     * @param fileOrDirectory A file or directory within an existing project.
+     * @return The root directory of the project within which the supplied file or directory resides.
+     * @throws InvalidStructureException if the supplied dir File was not found within a project (i.e. a
+     *                                   directory or file which has the returned File as an ancestor within
+     *                                   its directory hierarchy). Also thrown if any of the required
+     *                                   poms (reactor or parent) poms were not compliant with the namingStrategy.
+     */
+    File getParentPomDirectory(File fileOrDirectory) throws InvalidStructureException;
+
+    /**
      * Retrieves the relative path for the supplied directory within the project.
      *
      * @param directory           A directory which must have the Project Root Directory as a parent.

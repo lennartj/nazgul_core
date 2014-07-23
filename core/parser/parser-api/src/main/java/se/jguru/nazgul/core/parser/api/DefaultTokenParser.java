@@ -27,6 +27,7 @@ import se.jguru.nazgul.core.parser.api.agent.ParserAgent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Simple implementation of a String replacement parser.
@@ -36,7 +37,28 @@ import java.util.regex.Matcher;
 public class DefaultTokenParser implements TokenParser {
 
     // Internal state
-    private List<ParserAgent> parseAgents = new ArrayList<ParserAgent>();
+    private boolean canBeInitialized = true;
+    private TokenDefinitions tokenDefinitions = new DefaultTokenDefinitions();
+    private final List<ParserAgent> parseAgents = new ArrayList<>();
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void initialize(final TokenDefinitions tokenDefinitions) throws IllegalStateException {
+
+        // Check sanity
+        Validate.notNull(tokenDefinitions, "Cannot handle null tokenDefinitions argument.");
+        if(!canBeInitialized) {
+            throw new IllegalStateException("Cannot (re-)initialize a DefaultTokenParser after it has been used.");
+        }
+
+        // Assign the supplied TokenDefinitions
+        synchronized (parseAgents) {
+            this.tokenDefinitions = tokenDefinitions;
+            canBeInitialized = false;
+        }
+    }
 
     /**
      * Adds a parserAgent to the list of known AbstractParserAgents.
@@ -65,8 +87,16 @@ public class DefaultTokenParser implements TokenParser {
 
         StringBuilder toReturn = new StringBuilder();
 
+        // Flip the switch.
+        if(canBeInitialized) {
+            synchronized (parseAgents) {
+                canBeInitialized = false;
+            }
+        }
+
         // Find all matches within data
-        Matcher m = TOKEN_REGEXP.matcher(data);
+        final Pattern pattern = tokenDefinitions.getTokenRegExpPattern();
+        Matcher m = pattern.matcher(data);
         int currentStartIndex = 0;
 
         while (m.find(currentStartIndex)) {
@@ -74,23 +104,18 @@ public class DefaultTokenParser implements TokenParser {
             // Found a token hit within the data.
             int matchStartIndex = m.start();
             int matchEndIndex = m.end();
-            String matchedToken = m.group();
-
-            // Compensate for the extra escape backslashes.
-            String strippedToken = matchedToken.substring(TOKEN_START.length() - 2,
-                    matchedToken.length() - TOKEN_END.length() + 1);
-
+            String actualToken = tokenDefinitions.getToken(m.group());
             boolean handled = false;
 
             // Let all known parseAgents attempt to replace the token.
             for (ParserAgent currentParser : parseAgents) {
 
-                boolean canHandle = currentParser.canHandle(strippedToken);
+                boolean canHandle = currentParser.canHandle(actualToken);
                 if (canHandle) {
                     handled = true;
 
                     // Inject the data into the return buffer.
-                    String replacement = currentParser.substituteValue(strippedToken);
+                    String replacement = currentParser.substituteValue(actualToken);
                     toReturn.append(data.substring(currentStartIndex, matchStartIndex));
                     toReturn.append(replacement);
 

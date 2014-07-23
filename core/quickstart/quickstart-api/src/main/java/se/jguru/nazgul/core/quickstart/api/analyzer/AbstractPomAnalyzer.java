@@ -27,6 +27,7 @@ import org.apache.maven.model.Parent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.quickstart.api.InvalidStructureException;
+import se.jguru.nazgul.core.quickstart.api.PomType;
 import se.jguru.nazgul.core.quickstart.model.Name;
 
 import java.util.ArrayList;

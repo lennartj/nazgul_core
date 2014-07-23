@@ -19,7 +19,7 @@
  * limitations under the License.
  * #L%
  */
-package se.jguru.nazgul.core.quickstart.api.analyzer;
+package se.jguru.nazgul.core.quickstart.api;
 
 /**
  * The types of POM normally available within a multi-module Maven project.
@@ -67,5 +67,30 @@ public enum PomType {
     /**
      * Any parent POM (other than already listed ones) within the reactor.
      */
-    OTHER_PARENT
+    OTHER_PARENT,
+
+    /**
+     * The POM of a model project, part of a Software Component.
+     */
+    COMPONENT_MODEL,
+
+    /**
+     * The POM of an API project, part of a Software Component.
+     */
+    COMPONENT_API,
+
+    /**
+     * The POM of an SPI project, part of a Software Component.
+     */
+    COMPONENT_SPI,
+
+    /**
+     * The POM of an implementation project, part of a Software Component.
+     */
+    COMPONENT_IMPLEMENTATION,
+
+    /**
+     * Any other POM
+     */
+    OTHER
 }

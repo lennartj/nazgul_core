@@ -24,6 +24,7 @@ package se.jguru.nazgul.core.quickstart.api.analyzer;
 import org.apache.commons.lang3.Validate;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
+import se.jguru.nazgul.core.quickstart.api.PomType;
 import se.jguru.nazgul.core.quickstart.model.Name;
 
 /**
@@ -60,6 +61,11 @@ public abstract class AbstractNamingStrategy implements NamingStrategy {
     }
 
     /**
+     * The default implementation in AbstractNamingStrategy simply creates a Name
+     * by parsing the artifactId of the supplied model. (I.e. {@code return Name.parse(model.getArtifactId());}).
+     * <p/>
+     * Override this method if you need other ways to synthesize a Name from the supplied Model.
+     * <p/>
      * {@inheritDoc}
      */
     @Override

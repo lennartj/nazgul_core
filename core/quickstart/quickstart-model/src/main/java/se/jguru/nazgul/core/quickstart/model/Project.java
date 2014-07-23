@@ -52,8 +52,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @Entity
 @Access(AccessType.FIELD)
-@XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"name", "reactorName",
-        "prefix", "reactorParent", "parentParent"})
+@XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"name", "prefix", "reactorParent", "parentParent"})
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Project extends NazgulEntity implements Comparable<Project> {
 
@@ -67,11 +66,6 @@ public class Project extends NazgulEntity implements Comparable<Project> {
     @Column(nullable = false)
     @XmlElement(required = true, nillable = false)
     private String name;
-
-    @Basic(optional = false)
-    @Column(nullable = false)
-    @XmlElement(required = true, nillable = false)
-    private String reactorName;
 
     @Basic(optional = false)
     @Column(nullable = false)
@@ -98,8 +92,6 @@ public class Project extends NazgulEntity implements Comparable<Project> {
      * @param name                      The name of the project, such as "Entities". Should normally not contain
      *                                  whitespace and is recommended to be a single word. For example,
      *                                  "core" is the name for the project identifier "nazgul-core".
-     * @param reactorName               The name of the reactor of a project. This is used for topmost folder name and
-     *                                  affects Maven site documentation.
      * @param reactorParent             The POM to be used as parent by the topmost reactor POM in the project. A
      *                                  "reactor POM" is a pom.xml file that only defines the build order (and not
      *                                  any dependencies or plugins for release-able artifacts such as JARs, WARs,
@@ -111,13 +103,11 @@ public class Project extends NazgulEntity implements Comparable<Project> {
      */
     public Project(final String prefix,
                    final String name,
-                   final String reactorName,
                    final SimpleArtifact reactorParent,
                    final SimpleArtifact parentParent) {
 
         this.prefix = prefix;
         this.name = name;
-        this.reactorName = reactorName;
         this.reactorParent = reactorParent;
         this.parentParent = parentParent;
     }
@@ -140,15 +130,6 @@ public class Project extends NazgulEntity implements Comparable<Project> {
      */
     public String getName() {
         return name;
-    }
-
-    /**
-     * The name of the reactor of a project. This is used for topmost folder name and affects Maven site documentation.
-     *
-     * @return The name of the reactor of a project. Never null or empty.
-     */
-    public String getReactorName() {
-        return reactorName;
     }
 
     /**
@@ -181,7 +162,7 @@ public class Project extends NazgulEntity implements Comparable<Project> {
     public String toString() {
 
         final String prefixOrEmpty = getPrefix() == null ? "[no prefix]" : getPrefix();
-        return prefixOrEmpty + SimpleArtifact.DELIMITER + getName() + SimpleArtifact.DELIMITER + getReactorName()
+        return prefixOrEmpty + SimpleArtifact.DELIMITER + getName()
                 + "\n ParentParent: " + getParentParent().toString()
                 + "\n ReactorParent: " + getReactorParent().toString();
     }
@@ -193,8 +174,7 @@ public class Project extends NazgulEntity implements Comparable<Project> {
     public int hashCode() {
 
         final int prefixOrEmpty = getPrefix() == null ? 0 : getPrefix().hashCode();
-        return prefixOrEmpty + getName().hashCode() + getReactorName().hashCode()
-                + getParentParent().hashCode() + getReactorParent().hashCode();
+        return prefixOrEmpty + getName().hashCode() + getParentParent().hashCode() + getReactorParent().hashCode();
     }
 
     /**
@@ -226,9 +206,6 @@ public class Project extends NazgulEntity implements Comparable<Project> {
             toReturn = prefixOrEmpty.compareTo(thatPrefixOrEmpty);
         }
         if (toReturn == 0) {
-            toReturn = getReactorName().compareTo(project.getReactorName());
-        }
-        if (toReturn == 0) {
             toReturn = getParentParent().compareTo(project.getParentParent());
         }
         if (toReturn == 0) {
@@ -245,7 +222,6 @@ public class Project extends NazgulEntity implements Comparable<Project> {
 
         InternalStateValidationException.create()
                 .notNullOrEmpty(name, "name")
-                .notNullOrEmpty(reactorName, "reactorName")
                 .notNull(reactorParent, "reactorParent")
                 .notNull(parentParent, "parentParent")
                 .endExpressionAndValidate();

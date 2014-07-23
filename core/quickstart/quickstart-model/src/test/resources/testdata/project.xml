@@ -32,7 +32,6 @@
     <items>
         <item xsi:type="core:project" version="0">
             <name>name</name>
-            <reactorName>reactorName</reactorName>
             <prefix>prefix</prefix>
             <reactorParent version="0">
                 <groupId>reactorGroupId</groupId>
