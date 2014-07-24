@@ -156,4 +156,9 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
                 projectData);
         FileUtils.writeFile(new File(partDir, "pom.xml"), partPomData);
     }
+
+    protected void addStandardProjectStructure(final File projectDirectory) {
+
+        // Create the following structure.
+    }
 }
