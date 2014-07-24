@@ -24,14 +24,25 @@ package se.jguru.nazgul.core.quickstart.api.generator;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.jguru.nazgul.core.parser.api.DefaultTokenParser;
+import se.jguru.nazgul.core.parser.api.SingleBracketTokenDefinitions;
+import se.jguru.nazgul.core.parser.api.TokenParser;
+import se.jguru.nazgul.core.parser.api.agent.DefaultParserAgent;
+import se.jguru.nazgul.core.parser.api.agent.HostNameParserAgent;
+import se.jguru.nazgul.core.quickstart.api.PomType;
 import se.jguru.nazgul.core.quickstart.api.analyzer.AbstractNamingStrategy;
 import se.jguru.nazgul.core.quickstart.api.analyzer.NamingStrategy;
-import se.jguru.nazgul.core.quickstart.api.PomType;
+import se.jguru.nazgul.core.quickstart.api.generator.parser.FactoryParserAgent;
 import se.jguru.nazgul.core.quickstart.model.Name;
 import se.jguru.nazgul.core.quickstart.model.Project;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Map;
+import java.util.TreeMap;
+
 /**
- * Abstract utility implementations for all Factory classes.
+ * Abstract utility implementations for all Factory classes, including POM synthesis and naming validation.
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
@@ -73,7 +84,7 @@ public abstract class AbstractFactory {
         }
 
         // Reactor directories should only be called their respective component name.
-        if(aPomType == PomType.ROOT_REACTOR || aPomType == PomType.REACTOR) {
+        if (aPomType == PomType.ROOT_REACTOR || aPomType == PomType.REACTOR) {
             return namingStrategy.isPrefixRequiredOnAllFolders()
                     ? projectPrefix : "";
         }
@@ -108,6 +119,10 @@ public abstract class AbstractFactory {
     }
 
     /**
+     * Reads data from a POM template, and uses the TokenParser to replace any tokens before handing the resulting
+     * data back as a String. The default implementation assumes that the POM template is found in the URL given by
+     * the {@code getPomTemplateURL} method.
+     * <p/>
      * Acquires the data within the POM given by the supplied data.
      * The resulting String should be correctly formed data of the POM (i.e. fully tokenized if applicable).
      *
@@ -116,5 +131,72 @@ public abstract class AbstractFactory {
      * @param project         The active Project, from which tokens could be retrieved.
      * @return correctly formed data of the POM (i.e. fully tokenized if applicable).
      */
-    protected abstract String getPom(final PomType pomType, final String relativeDirPath, final Project project);
+    protected String getPom(final PomType pomType,
+                            final String relativeDirPath,
+                            final Project project) {
+
+        // Check sanity
+        Validate.notNull(pomType, "Cannot handle null pomType argument.");
+        Validate.notNull(project, "Cannot handle null project argument.");
+        Validate.notNull(relativeDirPath, "Cannot handle null relativeDirPath argument.");
+
+        // Get a POM template
+        final String pomURL = getPomTemplateURL(pomType);
+        final StringBuilder builder = new StringBuilder();
+        try (BufferedReader data = new BufferedReader(
+                new InputStreamReader(getClass().getClassLoader().getResourceAsStream(pomURL)))) {
+            for (String aLine = data.readLine(); aLine != null; aLine = data.readLine()) {
+                builder.append(aLine).append("\n");
+            }
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Could not read data from [" + pomURL + "]", e);
+        }
+
+        // Tokenize and return.
+        return getTokenParser(pomType, relativeDirPath, project).substituteTokens(builder.toString());
+    }
+
+    /**
+     * Method retrieving an URL to a template for a pom of the supplied PomType.
+     * Default implementation assumes that POM templates URLs are synthesized
+     * on the form {@code "templates/standard/" + pomType.name().toLowerCase() + ".xml"}.
+     * Override this method if your local Factory uses other algorithms.
+     *
+     * @param pomType The type of POM whose template should be retrieved.
+     * @return The content of the POM template data.
+     */
+    protected String getPomTemplateURL(final PomType pomType) {
+        return "templates/standard/" + pomType.name().toLowerCase() + ".xml";
+    }
+
+    /**
+     * The TokenParser used to substitute tokens within POM templates.
+     * This TokenParser uses tokens on the form [token] to avoid clashing with Maven's variables on the form ${token}.
+     * Override this method if your particular factory requires another TokenParser implementation.
+     *
+     * @param pomType         The type of POM whose data should be retrieved.
+     * @param relativeDirPath The directory path (relative to the project root directory) of the POM to retrieve.
+     * @param project         The active Project, from which tokens could be retrieved.
+     * @return A fully configured TokenParser hosting 3 parser agents (DefaultParserAgent, HostNameParserAgent,
+     * FactoryParserAgent) and initialized using the SingleBracketTokenDefinitions.
+     */
+    protected TokenParser getTokenParser(final PomType pomType,
+                                         final String relativeDirPath,
+                                         final Project project) {
+
+        // Put the relative dir path into a static token.
+        final Map<String, String> staticTokensMap = new TreeMap<>();
+        staticTokensMap.put("relativeDirPath", relativeDirPath);
+
+        // Create a default TokenParser, using tokens on the form [token],
+        // to avoid clashing with Maven's variables on the form ${token}.
+        final DefaultTokenParser toReturn = new DefaultTokenParser();
+        toReturn.addAgent(new DefaultParserAgent());
+        toReturn.addAgent(new HostNameParserAgent());
+        toReturn.addAgent(new FactoryParserAgent(project, pomType, staticTokensMap));
+        toReturn.initialize(new SingleBracketTokenDefinitions());
+
+        // All done.
+        return toReturn;
+    }
 }

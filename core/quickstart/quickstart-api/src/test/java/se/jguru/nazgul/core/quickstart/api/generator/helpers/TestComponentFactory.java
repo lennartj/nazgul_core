@@ -25,9 +25,8 @@ import se.jguru.nazgul.core.quickstart.api.DefaultStructureNavigator;
 import se.jguru.nazgul.core.quickstart.api.PomType;
 import se.jguru.nazgul.core.quickstart.api.StructureNavigator;
 import se.jguru.nazgul.core.quickstart.api.analyzer.NamingStrategy;
-import se.jguru.nazgul.core.quickstart.api.analyzer.helpers.TestNamingStrategy;
 import se.jguru.nazgul.core.quickstart.api.analyzer.helpers.TestPomAnalyzer;
-import se.jguru.nazgul.core.quickstart.api.generator.AbstractProjectFactory;
+import se.jguru.nazgul.core.quickstart.api.generator.AbstractComponentFactory;
 import se.jguru.nazgul.core.quickstart.model.Project;
 
 import java.util.ArrayList;
@@ -36,17 +35,15 @@ import java.util.List;
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class TestProjectFactory extends AbstractProjectFactory {
+public class TestComponentFactory extends AbstractComponentFactory {
 
     // Shared state
-    public StructureNavigator navigator;
+    public boolean useDefaultPomTemplateImplementation = false;
     public List<String> callTrace;
 
-    public TestProjectFactory(final NamingStrategy namingStrategy) {
-        super(namingStrategy);
+    public TestComponentFactory(final NamingStrategy namingStrategy) {
+        super(namingStrategy, new DefaultStructureNavigator(namingStrategy, new TestPomAnalyzer(namingStrategy)));
 
-        // Assign internal state
-        navigator = new DefaultStructureNavigator(new TestNamingStrategy(), new TestPomAnalyzer());
         callTrace = new ArrayList<>();
     }
 
@@ -58,7 +55,19 @@ public class TestProjectFactory extends AbstractProjectFactory {
                             final String relativeDirPath,
                             final Project project) {
 
-        callTrace.add("[" + relativeDirPath + "] ==> [" + pomType + "]");
-        return "pomData: [" + pomType + "]";
+        if(!useDefaultPomTemplateImplementation) {
+            callTrace.add("[" + relativeDirPath + "] ==> [" + pomType + "]");
+            return "pomData: [" + pomType + "]";
+        } else {
+            return super.getPom(pomType, relativeDirPath, project);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getPomTemplateURL(final PomType pomType) {
+        return "testdata/" + super.getPomTemplateURL(pomType);
     }
 }
