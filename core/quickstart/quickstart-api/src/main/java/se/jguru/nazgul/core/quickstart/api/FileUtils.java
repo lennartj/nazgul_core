@@ -31,9 +31,13 @@ import se.jguru.nazgul.core.quickstart.model.SimpleArtifact;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  * A suite of utility algorithms for use with Files and related structures.
@@ -196,12 +200,45 @@ public final class FileUtils {
         Validate.isTrue(aFile.exists() && aFile.isFile(), "File [" + getCanonicalPath(aFile)
                 + "] must exist and be a (text) file.");
 
+        try {
+            return readFully(new FileInputStream(aFile), getCanonicalPath(aFile));
+        } catch (FileNotFoundException e) {
+
+            // This should never happen
+            throw new IllegalArgumentException("Could not read file", e);
+        }
+    }
+
+    /**
+     * Reads all (text) data from the supplied resource URL, returning it as a String.
+     * All line feeds are converted to {@code "\n"}.
+     *
+     * @param resourceURL The non-empty resource URL to read data from.
+     * @return The content of the supplied resource URL.
+     */
+    public static String readFile(final String resourceURL) {
+
+        // Check sanity
+        Validate.notEmpty(resourceURL, "Cannot handle null resourceURL argument.");
+        final InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceURL);
+        Validate.notNull(in, "Resource [" + resourceURL + "] yielded null input stream.");
+
+        // All done.
+        return readFully(in, resourceURL);
+    }
+
+    //
+    // Private helpers
+    //
+
+    private static String readFully(final InputStream stream, final String desc) {
+
         final StringBuilder result = new StringBuilder();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(aFile))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
             result.append(reader.readLine()).append("\n");
         } catch (IOException e) {
-            throw new IllegalArgumentException("Could not read data from [" + getCanonicalPath(aFile) + "]", e);
+            throw new IllegalArgumentException("Could not read data from [" + desc + "]", e);
         }
 
         // All done.
