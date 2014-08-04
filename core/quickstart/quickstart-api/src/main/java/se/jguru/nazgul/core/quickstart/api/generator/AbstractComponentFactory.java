@@ -157,8 +157,21 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
         FileUtils.writeFile(new File(partDir, "pom.xml"), partPomData);
     }
 
-    protected void addStandardProjectStructure(final File projectDirectory) {
+    protected void addStandardProjectStructure(final File componentProjectDirectory,
+                                               final String rootPackage) {
 
         // Create the following structure.
+        //
+        // src/main/java/[package for project]
+        // src/test/java/[package for project]
+        // src/test/resources/logback-test.xml
+        // src/test/resources/testdata
+
+        final File sourceDir = FileUtils.makeDirectory(componentProjectDirectory, "src/main/java/" + rootPackage);
+        final File testDir = FileUtils.makeDirectory(componentProjectDirectory, "src/test/java/" + rootPackage);
+        final File testdataDirectory = new File(componentProjectDirectory, "src/test/resources/testdata");
+
+        // First off, create the logback-test.xml file.
+
     }
 }
