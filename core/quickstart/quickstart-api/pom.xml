@@ -42,12 +42,21 @@
             <artifactId>nazgul-core-parser-api</artifactId>
             <version>1.6.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>se.jguru.nazgul.core.resource.api</groupId>
+            <artifactId>nazgul-core-resource-api</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+        </dependency>
 
         <!-- External dependencies -->
         <dependency>
             <groupId>se.jguru.nazgul.tools.codestyle</groupId>
             <artifactId>nazgul-codestyle</artifactId>
             <version>${nazgul.tools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>

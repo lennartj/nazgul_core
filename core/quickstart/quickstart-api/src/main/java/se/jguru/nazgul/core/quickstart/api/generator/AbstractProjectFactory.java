@@ -143,7 +143,7 @@ public abstract class AbstractProjectFactory extends AbstractFactory implements 
         }
 
         // Read the POM resource, and write the POM file.
-        final String pomData = getPom(pomType, relativePomDirectory, project);
+        final String pomData = synthesizeResource(relativePomDirectory, pomType, project);
         FileUtils.writeFile(pomFile, pomData);
     }
 }
