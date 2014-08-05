@@ -25,6 +25,9 @@ import org.apache.commons.lang3.Validate;
 import org.apache.maven.model.Model;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import se.jguru.nazgul.core.parser.api.TokenParser;
 import se.jguru.nazgul.core.quickstart.api.FileUtils;
 import se.jguru.nazgul.core.quickstart.api.InvalidStructureException;
 import se.jguru.nazgul.core.quickstart.api.StructureNavigator;
@@ -51,6 +54,9 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 public abstract class AbstractComponentFactory extends AbstractFactory implements ComponentFactory {
+
+    // Our log
+    private static final Logger log = LoggerFactory.getLogger(AbstractComponentFactory.class.getName());
 
     /**
      * A DateTimeFormatter on the format "20140213_052652".
@@ -198,9 +204,22 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
      */
     protected void createMavenProject(final File projectParentDirectory,
                                       final String projectTopPackage,
-                                      final String templateResourcePath) {
+                                      final String projectDirectoryName,
+                                      final String templateResourcePath,
+                                      final TokenParser tokenParser) {
 
-        // 0) Find an empty temporary file area.
+        // Check sanity
+        Validate.notNull(projectParentDirectory, "Cannot handle null projectParentDirectory argument.");
+        Validate.notEmpty(projectTopPackage, "Cannot handle null or empty projectTopPackage argument.");
+        Validate.notEmpty(projectDirectoryName, "Cannot handle null or empty projectDirectoryName argument.");
+        Validate.notEmpty(templateResourcePath, "Cannot handle null or empty templateResourcePath argument.");
+        Validate.notNull(tokenParser, "Cannot handle null tokenParser argument.");
+
+        final File targetDirectory = new File(projectParentDirectory, projectDirectoryName);
+        Validate.isTrue(!targetDirectory.exists(), "Project directory ["
+                + FileUtils.getCanonicalPath(targetDirectory) + "] must not exist. Aborting creation.");
+
+        // Find an empty temporary file area.
         File tmpExtractedFilesRoot;
         for (int i = 0; true; i++) {
             tmpExtractedFilesRoot = new File(System.getProperty("java.io.tmpdir"),
@@ -209,6 +228,11 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
                 tmpExtractedFilesRoot.mkdirs();
                 break;
             }
+        }
+
+        if(log.isDebugEnabled()) {
+            log.debug("Using temporary directory [" + FileUtils.getCanonicalPath(tmpExtractedFilesRoot)
+                    + "] for all templates.");
         }
 
         // Resources:
@@ -234,35 +258,61 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
                     tmpExtractedFilesRoot,
                     false);
 
-            // Tokenize each extracted template, and move it to the correct location.
-            Map<String, File>
-
         } else if ("file".equalsIgnoreCase(protocol)) {
+
+            // Check sanity
+            final File templateRootDir = new File(templateRootURL.getPath());
+            Validate.isTrue(templateRootDir.exists() && templateRootDir.isDirectory(),
+                    "File template root directory must exist and be a directory. (Got: ["
+                            + templateRootDir.getAbsolutePath() + "]");
+
+            // Copy all resources to the tmpExtractedFilesRoot directory.
+            final SortedMap<String, File> path2File = FileUtils.listFilesRecursively(templateRootDir);
+
+            for(Map.Entry<String, File> current : path2File.entrySet()) {
+                final File toWrite = new File(tmpExtractedFilesRoot, current.getKey());
+                final File parentDir = toWrite.getParentFile();
+                if(!parentDir.exists()) {
+                    parentDir.mkdirs();
+                }
+
+                // Copy the template file.
+                FileUtils.writeFile(toWrite, FileUtils.readFile(current.getValue()));
+            }
 
         } else {
             throw new IllegalStateException("Cannot handle resource URL [" + templateRootURL.toString()
                     + "]. Supported protocols are ('jar', 'file').");
         }
 
-        // JarExtractor.extractResourcesFrom()
-
         // 3) Tokenize and move each file.
+        final SortedMap<String, File> path2File = FileUtils.listFilesRecursively(tmpExtractedFilesRoot);
+        for(Map.Entry<String, File> current : path2File.entrySet()) {
 
+            final String relativePath = current.getKey();
+            final String data = tokenParser.substituteTokens(FileUtils.readFile(current.getValue()));
 
-        // Create the following structure.
+            final File toWrite = new File(targetDirectory, relativePath);
+            final File parentFile = toWrite.getParentFile();
+            if(!parentFile.exists()) {
+                parentFile.mkdirs();
+            }
+
+            // Finally, write the file.
+            FileUtils.writeFile(toWrite, data);
+        }
+
+        // Create the packages as required within the project.
         //
         // src/main/java/[package for project]
         // src/test/java/[package for project]
-        // src/test/resources/logback-test.xml
-        // src/test/resources/testdata
 
-        final File sourceDir = FileUtils.makeDirectory(projectParentDirectory, "src/main/java/" + projectTopPackage);
-        final File testDir = FileUtils.makeDirectory(projectParentDirectory, "src/test/java/" + projectTopPackage);
-        final File testdataDirectory = new File(projectParentDirectory, "src/test/resources/testdata");
+        final File sourceDir = FileUtils.makeDirectory(targetDirectory,
+                "src/main/java/" + projectTopPackage.replace(".", "/"));
+        final File testDir = FileUtils.makeDirectory(targetDirectory,
+                "src/test/java/" + projectTopPackage.replace(".", "/"));
 
-        // First off, create the logback-test.xml file.
-        FileUtils.readFile(templateResourcePath + "src/test/resources/logback-test.xml");
-        FileUtils.writeFile(new File(testdataDirectory, "logback-test.xml"), );
+        // TODO: Move skeleton source files to the correct package directories?
     }
 
     //

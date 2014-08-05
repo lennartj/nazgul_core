@@ -31,6 +31,7 @@ import se.jguru.nazgul.core.quickstart.model.SimpleArtifact;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -38,6 +39,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * A suite of utility algorithms for use with Files and related structures.
@@ -56,6 +59,18 @@ public final class FileUtils {
 
     // Internal state
     private static MavenXpp3Reader pomReader = new MavenXpp3Reader();
+    private static FileFilter DIRECTORY_FILTER = new FileFilter() {
+        @Override
+        public boolean accept(final File pathname) {
+            return pathname.isDirectory();
+        }
+    };
+    private static FileFilter FILE_FILTER = new FileFilter() {
+        @Override
+        public boolean accept(final File pathname) {
+            return pathname.isFile();
+        }
+    };
 
     /*
      * Hide constructor for utility classes.
@@ -232,6 +247,29 @@ public final class FileUtils {
         return readFully(in, resourceURL);
     }
 
+    /**
+     * Maps the relative path of all files found under the supplied aDirectory to the files themselves.
+     * Note that this operation consumes considerable amounts of resources (memory buffers) when mapping large file
+     * trees. Therefore, it is wise to confine the aDirectory to smaller file trees.
+     *
+     * @param aDirectory A directory under which all Files are mapped.
+     * @return A non-null SortedMap relating the relative paths of all Files found under the supplied aDirectory
+     * to the Files themselves.
+     */
+    public static SortedMap<String, File> listFilesRecursively(final File aDirectory) {
+
+        // Check sanity
+        Validate.notNull(aDirectory, "Cannot handle null aDirectory argument.");
+        Validate.isTrue(aDirectory.exists() && aDirectory.isDirectory(),
+                "Argument aDirectory must point to an existing directory. Got [" + getCanonicalPath(aDirectory) + "]");
+
+        final SortedMap<String, File> toReturn = new TreeMap<>();
+        populate(toReturn, aDirectory, aDirectory);
+
+        // All done.
+        return toReturn;
+    }
+
     //
     // Private helpers
     //
@@ -267,5 +305,36 @@ public final class FileUtils {
 
         // All done.
         return result.toString();
+    }
+
+    /**
+     * Populates the provided SortedMap with the relative path of each File found under the rootDirectory,
+     *
+     * @param toPopulate       The SortedMap to populate.
+     * @param currentDirectory The current directory.
+     * @param rootDirectory    The root directory of the structure to populate, used to calculate the relative
+     *                         path of the files found within the currentDirectory (i.e. the keys within the
+     *                         toPopulate SortedMap).
+     */
+    private static void populate(final SortedMap<String, File> toPopulate,
+                                 final File currentDirectory,
+                                 final File rootDirectory) {
+
+        // Calculate the relative path
+        final String rootDirPath = getCanonicalPath(rootDirectory);
+        final String currentDirPath = getCanonicalPath(currentDirectory);
+        final String tmp = currentDirPath.substring(currentDirPath.indexOf(rootDirPath) + rootDirPath.length());
+        final String prefix = tmp.length() == 0 ? "" : tmp + "/";
+
+        // Map all files in the current directory
+        for (File current : currentDirectory.listFiles(FILE_FILTER)) {
+            final File existingFile = toPopulate.put(prefix + current.getName(), current);
+            Validate.isTrue(existingFile == null, "Already mapped file at path [" + getCanonicalPath(current) + "]");
+        }
+
+        // Recurse
+        for (File current : currentDirectory.listFiles(DIRECTORY_FILTER)) {
+            populate(toPopulate, current, rootDirectory);
+        }
     }
 }
