@@ -63,8 +63,8 @@ public abstract class JarExtractor {
      * Acquires the JarFile for the supplied packageResourceURL, which should be pointing to a resource packaged
      * within a JAR. The first/outermost protocol for the supplied packagedResourceURL must be "jar",
      * as a normal JAR resource URL has the form {@code jar:file:/some/path/aJarFile.jar!/path/in/jar/aFile.txt},
-     * where the path part is operating system dependent. (For instance, the windows contrapart could start with
-     * something like {@code jar:file:/C:/some/path/aJarFile.jar!/path/in/jar/aFile.txt}.
+     * where the path part is operating system dependent. (For instance, the windows counterpart could start with
+     * something like {@code jar:file:/C:/some/path/aJarFile.jar!/path/in/jar/aFile.txt}).
      *
      * @param packagedResourceURL a non-null URL pointing to a resource packaged within a JAR.
      * @return The JarFile for the JAR within which the packagedResourceURL is found.
@@ -109,6 +109,43 @@ public abstract class JarExtractor {
             throw new IllegalArgumentException("Could not create a JarFile from File ["
                     + jarFileFile.getAbsolutePath() + "]", e);
         }
+    }
+
+    /**
+     * Retrieves the JarEntry name for the supplied packagedResourceURL. Typically,
+     * this value can be used to acquire a JarEntry for the
+     * <p/>
+     * <pre>
+     *     <code>
+     *         // Get the JarFile for a JAR-based URL
+     *         final JarFile foundJarFile = JarExtractor.getJarFileFor(resourceInJarURL);
+     *
+     *         // Now, find the JarEntry name for the given resourceInJarURL
+     *         final String name = JarExtractor.getEntryNameFor(resourceInJarURL);
+     *
+     *         // Get the JarEntry for the resourceInJarURL
+     *         final JarEntry entry = foundJarFile.getJarEntry(name);
+     *     </code>
+     * </pre>
+     *
+     * @param packagedResourceURL A JAR URL, which must contain an '!' char. Typically on a form similar to
+     *                            {@code jar:file:/some/path/aJarFile.jar!/path/in/jar/aFile.txt}
+     * @return The entry name of the URL, which is the part following the '!/' char. Note that the first '/' must be
+     * peeled off to retrieve a valid JarEntry name.
+     */
+    public static String getEntryNameFor(final URL packagedResourceURL) {
+
+        // Check sanity
+        Validate.notNull(packagedResourceURL, "Cannot handle null packagedResourceURL argument.");
+
+        // Find the path for the supplied packagedResourceURL
+        final String urlString = packagedResourceURL.toString();
+        final String tmp = urlString.substring(urlString.indexOf(JAR_PATH_SEPARATOR) + 1);
+
+        // Peel off the initial '/' to make a valid name.
+        Validate.isTrue(tmp.startsWith("/"), "The absolute path within the JAR should start with a '/' char. Got ["
+                       + tmp + "]");
+        return tmp.substring(1);
     }
 
     /**
@@ -160,12 +197,11 @@ public abstract class JarExtractor {
 
             if (!current.isDirectory() && resourceIdentifier.matcher(entryPath).matches()) {
 
-                // Extract the file.
-                // final String fileName = entryPath.substring(entryPath.lastIndexOf("/") + 1);
+                // Extract the file at its relative path location.
                 final File toWrite = new File(targetDirectory, entryPath);
                 final File parentFile = toWrite.getParentFile();
 
-                if(!parentFile.exists()) {
+                if (!parentFile.exists()) {
                     parentFile.mkdirs();
                 }
 

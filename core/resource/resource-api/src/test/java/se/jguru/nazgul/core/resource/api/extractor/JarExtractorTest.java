@@ -33,6 +33,7 @@ import java.net.URL;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.jar.JarFile;
+import java.util.regex.Pattern;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -139,6 +140,35 @@ public class JarExtractorTest {
         Assert.assertNotNull(getPathEndingWith(path2FileMap, "onlyInJar/textfiles/file1.txt"));
         Assert.assertNotNull(getPathEndingWith(path2FileMap, "onlyInJar/textfiles/file2.txt"));
         Assert.assertNotNull(getPathEndingWith(path2FileMap, "META-INF/MANIFEST.MF"));
+    }
+
+    @Test
+    public void validateExtractingSingleFileUsingPatternFiltering() {
+
+        // Assemble
+        final String filePathPattern = "onlyInJar/textfiles/file1.txt";
+        File targetExtractionDir = null;
+        for(int i = 0; true; i++) {
+            targetExtractionDir = new File(targetDir, "extracted/singleFile/pattern_" + i);
+            if(!targetExtractionDir.exists()) {
+                break;
+            }
+        }
+
+        final Pattern singleFilePattern = Pattern.compile(filePathPattern);
+
+        // Act
+        JarExtractor.extractResourcesFrom(jar1File, singleFilePattern, targetExtractionDir, true);
+
+        // Assert
+        Assert.assertTrue(targetExtractionDir.exists());
+        Assert.assertTrue(targetExtractionDir.isDirectory());
+
+        final Map<String, File> path2FileMap = new TreeMap<>();
+        addFiles(path2FileMap, targetExtractionDir);
+
+        Assert.assertEquals(1, path2FileMap.size());
+        Assert.assertNotNull(getPathEndingWith(path2FileMap, filePathPattern));
     }
 
     //
