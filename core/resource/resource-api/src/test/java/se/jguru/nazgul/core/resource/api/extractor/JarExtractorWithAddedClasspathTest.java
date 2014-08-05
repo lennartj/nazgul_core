@@ -32,10 +32,10 @@ import java.io.FileReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.channels.FileChannel;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
@@ -98,14 +98,14 @@ public class JarExtractorWithAddedClasspathTest {
         // Assemble
         final String innerFilePart = "/foo/bar/jar1.jar!/onlyInJar/textfiles/file1.txt";
         final String filePart = "file:" + innerFilePart;
-        final String pathPart = filePart + "?foo=bar";
-        final String completeJarUrl = "jar:" + filePart;
+        final String filePartPlusQueryString = filePart + "?foo=bar";
+        final String completeJarUrl = "jar:" + filePartPlusQueryString;
         final URL jarURL = new URL(completeJarUrl);
 
         // Act & Assert
         Assert.assertEquals("jar", jarURL.getProtocol());
         Assert.assertEquals(filePart, jarURL.getPath());
-        Assert.assertEquals(filePart, jarURL.getFile());
+        Assert.assertEquals(filePartPlusQueryString, jarURL.getFile());
 
         // Act & Assert, part 2
         final URL innerURL = new URL(jarURL.getPath());
@@ -176,5 +176,22 @@ public class JarExtractorWithAddedClasspathTest {
         final BufferedReader in = new BufferedReader(new FileReader(expectedExtractedFile));
         final String aLine = in.readLine();
         Assert.assertEquals("number1", aLine);
+    }
+
+    @Test
+    public void validateExtractingEntryNameForURLs() {
+
+        // Assemble
+        final String resource = "onlyInJar/textfiles/file1.txt";
+        final URL resourceInJarURL = Thread.currentThread().getContextClassLoader().getResource(resource);
+
+        // Act
+        final JarFile foundJarFile = JarExtractor.getJarFileFor(resourceInJarURL);
+        final String name = JarExtractor.getEntryNameFor(resourceInJarURL);
+        final JarEntry entry = foundJarFile.getJarEntry(name);
+
+        // Assert
+        Assert.assertNotNull(entry);
+        Assert.assertEquals(resource, name);
     }
 }
