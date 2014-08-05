@@ -30,6 +30,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
@@ -40,6 +42,7 @@ import java.util.regex.Pattern;
 
 /**
  * Trivial utility which extracts resources from a (self-contained) JAR.
+ * Also provides utility methods to simplify finding JarFiles originating from URLs to resources placed within JARs.
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
@@ -53,17 +56,71 @@ public abstract class JarExtractor {
      */
     public static final Pattern ALL_RESOURCES = Pattern.compile(".*");
 
+    // Internal state
+    private static final String JAR_PATH_SEPARATOR = "!";
+
+    /**
+     * Acquires the JarFile for the supplied packageResourceURL, which should be pointing to a resource packaged
+     * within a JAR. The first/outermost protocol for the supplied packagedResourceURL must be "jar",
+     * as a normal JAR resource URL has the form {@code jar:file:/some/path/aJarFile.jar!/path/in/jar/aFile.txt},
+     * where the path part is operating system dependent. (For instance, the windows contrapart could start with
+     * something like {@code jar:file:/C:/some/path/aJarFile.jar!/path/in/jar/aFile.txt}.
+     *
+     * @param packagedResourceURL a non-null URL pointing to a resource packaged within a JAR.
+     * @return The JarFile for the JAR within which the packagedResourceURL is found.
+     * @throws java.lang.IllegalArgumentException if the supplied URL did not correspond to a resource packaged
+     *                                            within a JAR.
+     */
+    public static JarFile getJarFileFor(final URL packagedResourceURL) throws IllegalArgumentException {
+
+        // Check sanity
+        Validate.notNull(packagedResourceURL, "Cannot handle null packagedResourceURL argument.");
+
+        final String jarProtocol = packagedResourceURL.getProtocol();
+        Validate.isTrue("jar".equalsIgnoreCase(jarProtocol),
+                "packagedResourceURL must have a 'jar' protocol. (Found: " + jarProtocol + ")");
+
+        // Peel off all protocols, to find the path to the JarFile's File.
+        URL innermostURL = packagedResourceURL;
+        while (true) {
+            try {
+                innermostURL = new URL(innermostURL.getPath());
+            } catch (MalformedURLException e) {
+                // Expected
+                break;
+            }
+        }
+
+        final String path = innermostURL.getPath();
+        final int exclamationIndex = path.indexOf(JAR_PATH_SEPARATOR);
+        Validate.isTrue(exclamationIndex > 0, "Required JAR path separator [" + JAR_PATH_SEPARATOR
+                + "] not found in URLs path [" + path + "], distilled from packagedResourceURL ["
+                + packagedResourceURL.toString() + "].");
+
+        final File jarFileFile = new File(path.substring(0, exclamationIndex));
+        Validate.isTrue(jarFileFile.exists() && jarFileFile.isFile(), "Inconsistent JarFile ["
+                + jarFileFile.getAbsolutePath() + "]: nonexistent or not a File, distilled from packagedResourceURL ["
+                + packagedResourceURL.toString() + "].");
+
+        // All seems well.
+        try {
+            return new JarFile(jarFileFile);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Could not create a JarFile from File ["
+                    + jarFileFile.getAbsolutePath() + "]", e);
+        }
+    }
+
     /**
      * Extracts all resources whose names matches the supplied resourceIdentifier from jarFile
      * to the targetDirectory. If targetDirectory does not exist and the createTargetDirectoryIfNonexistent
      * parameter is {@code true}, the directory (and any parent directories) will be created.
      *
-     * @param jarFile            The JAR file from which some resources should be extracted.
-     * @param resourceIdentifier A Pattern matching the names of all resources which should be extracted.
-     * @param targetDirectory    The directory to which all resources should be extracted.
-     * @param createTargetDirectoryIfNonexistent
-     *                           if {@code true}, the targetDirectory will be
-     *                           created if it does not already exist.
+     * @param jarFile                            The JAR file from which some resources should be extracted.
+     * @param resourceIdentifier                 A Pattern matching the names of all resources which should be extracted.
+     * @param targetDirectory                    The directory to which all resources should be extracted.
+     * @param createTargetDirectoryIfNonexistent if {@code true}, the targetDirectory will be
+     *                                           created if it does not already exist.
      */
     public static void extractResourcesFrom(final JarFile jarFile,
                                             final Pattern resourceIdentifier,
@@ -103,9 +160,14 @@ public abstract class JarExtractor {
 
             if (!current.isDirectory() && resourceIdentifier.matcher(entryPath).matches()) {
 
-                // Extract the native file.
-                final String fileName = entryPath.substring(entryPath.lastIndexOf("/") + 1);
-                final File toWrite = new File(targetDirectory, fileName);
+                // Extract the file.
+                // final String fileName = entryPath.substring(entryPath.lastIndexOf("/") + 1);
+                final File toWrite = new File(targetDirectory, entryPath);
+                final File parentFile = toWrite.getParentFile();
+
+                if(!parentFile.exists()) {
+                    parentFile.mkdirs();
+                }
 
                 log.debug("Extracting [" + current.getName() + "] to [" + toWrite.getAbsolutePath() + "]");
 

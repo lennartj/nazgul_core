@@ -25,16 +25,13 @@ package se.jguru.nazgul.core.resource.api.extractor;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
-import se.jguru.nazgul.core.algorithms.api.collections.predicate.Transformer;
-import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.jar.JarFile;
 
 /**
@@ -47,6 +44,18 @@ public class JarExtractorTest {
     private File targetDir;
     private JarFile jar1File;
     private File jar1FileFile;
+    private FileFilter fileFilter = new FileFilter() {
+        @Override
+        public boolean accept(final File pathname) {
+            return pathname.isFile();
+        }
+    };
+    private FileFilter dirFilter = new FileFilter() {
+        @Override
+        public boolean accept(final File pathname) {
+            return pathname.isDirectory();
+        }
+    };
 
     @Before
     public void setupSharedState() throws IOException {
@@ -106,27 +115,61 @@ public class JarExtractorTest {
     public void validateDirectoryCreationAndExtraction() {
 
         // Assemble
-        final File targetDirectory = new File(targetDir, "some/nested/directory/properExtraction");
+        File targetExtractionDir = null;
+        for(int i = 0; true; i++) {
+            targetExtractionDir = new File(targetDir, "some/nested/directory/properExtraction_" + i);
+            if(!targetExtractionDir.exists()) {
+                break;
+            }
+        }
 
         // Act
-        JarExtractor.extractResourcesFrom(jar1File, JarExtractor.ALL_RESOURCES, targetDirectory, true);
+        JarExtractor.extractResourcesFrom(jar1File, JarExtractor.ALL_RESOURCES, targetExtractionDir, true);
 
         // Assert
-        Assert.assertTrue(targetDirectory.exists());
-        Assert.assertTrue(targetDirectory.isDirectory());
+        Assert.assertTrue(targetExtractionDir.exists());
+        Assert.assertTrue(targetExtractionDir.isDirectory());
 
-        final List<File> content = Arrays.asList(targetDirectory.listFiles());
-        final Map<String, File> fileName2ContentMap = CollectionAlgorithms.map(content,
-                new Transformer<File, Tuple<String, File>>() {
-                    @Override
-                    public Tuple<String, File> transform(File input) {
-                        return new Tuple<String, File>(input.getName(), input);
-                    }
-                });
+        final Map<String, File> path2FileMap = new TreeMap<>();
+        addFiles(path2FileMap, targetExtractionDir);
 
-        Assert.assertEquals(3, content.size());
-        Assert.assertTrue(fileName2ContentMap.keySet().contains("logback-test.xml"));
-        Assert.assertTrue(fileName2ContentMap.keySet().contains("orange_ball.png"));
-        Assert.assertTrue(fileName2ContentMap.keySet().contains("MANIFEST.MF"));
+        Assert.assertEquals(5, path2FileMap.size());
+        Assert.assertNotNull(getPathEndingWith(path2FileMap, "logback-test.xml"));
+        Assert.assertNotNull(getPathEndingWith(path2FileMap, "binary/orange_ball.png"));
+        Assert.assertNotNull(getPathEndingWith(path2FileMap, "onlyInJar/textfiles/file1.txt"));
+        Assert.assertNotNull(getPathEndingWith(path2FileMap, "onlyInJar/textfiles/file2.txt"));
+        Assert.assertNotNull(getPathEndingWith(path2FileMap, "META-INF/MANIFEST.MF"));
+    }
+
+    //
+    // Private helpers
+    //
+
+    private void addFiles(final Map<String, File> path2FileMap, final File aDirectory) {
+
+        if(aDirectory.isDirectory()) {
+            for(File current : aDirectory.listFiles(fileFilter)) {
+                try {
+                    path2FileMap.put(current.getCanonicalPath(), current);
+                } catch (IOException e) {
+                    throw new IllegalArgumentException("Could not get canonical path for ["
+                            + current.getAbsolutePath() + "]");
+                }
+            }
+
+            for(File current : aDirectory.listFiles(dirFilter)) {
+                addFiles(path2FileMap, current);
+            }
+        }
+    }
+
+    private String getPathEndingWith(final Map<String, File> path2FileMap, final String pathEnd) {
+        for(String current : path2FileMap.keySet()) {
+            if(current.replace(File.separator, "/").endsWith(pathEnd)) {
+                return current;
+            }
+        }
+
+        return null;
     }
 }
