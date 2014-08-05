@@ -23,7 +23,6 @@ package se.jguru.nazgul.core.quickstart.api.generator.helpers;
 
 import se.jguru.nazgul.core.quickstart.api.DefaultStructureNavigator;
 import se.jguru.nazgul.core.quickstart.api.PomType;
-import se.jguru.nazgul.core.quickstart.api.StructureNavigator;
 import se.jguru.nazgul.core.quickstart.api.analyzer.NamingStrategy;
 import se.jguru.nazgul.core.quickstart.api.analyzer.helpers.TestPomAnalyzer;
 import se.jguru.nazgul.core.quickstart.api.generator.AbstractComponentFactory;
@@ -67,7 +66,7 @@ public class TestComponentFactory extends AbstractComponentFactory {
      * {@inheritDoc}
      */
     @Override
-    protected String getPomTemplateURL(final PomType pomType) {
-        return "testdata/" + super.getPomTemplateURL(pomType);
+    protected String getTemplateDirectoryPath(final PomType pomType) {
+        return "testdata/" + super.getTemplateResource(pomType);
     }
 }

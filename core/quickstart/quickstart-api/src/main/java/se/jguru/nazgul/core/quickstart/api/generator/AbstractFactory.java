@@ -29,17 +29,21 @@ import se.jguru.nazgul.core.parser.api.SingleBracketTokenDefinitions;
 import se.jguru.nazgul.core.parser.api.TokenParser;
 import se.jguru.nazgul.core.parser.api.agent.DefaultParserAgent;
 import se.jguru.nazgul.core.parser.api.agent.HostNameParserAgent;
+import se.jguru.nazgul.core.quickstart.api.FileUtils;
 import se.jguru.nazgul.core.quickstart.api.PomType;
 import se.jguru.nazgul.core.quickstart.api.analyzer.AbstractNamingStrategy;
 import se.jguru.nazgul.core.quickstart.api.analyzer.NamingStrategy;
 import se.jguru.nazgul.core.quickstart.api.generator.parser.FactoryParserAgent;
 import se.jguru.nazgul.core.quickstart.model.Name;
 import se.jguru.nazgul.core.quickstart.model.Project;
+import se.jguru.nazgul.core.resource.api.extractor.JarExtractor;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.File;
+import java.net.URL;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * Abstract utility implementations for all Factory classes, including POM synthesis and naming validation.
@@ -119,54 +123,103 @@ public abstract class AbstractFactory {
     }
 
     /**
-     * Reads data from a POM template, and uses the TokenParser to replace any tokens before handing the resulting
-     * data back as a String. The default implementation assumes that the POM template is found in the URL given by
-     * the {@code getPomTemplateURL} method.
-     * <p/>
-     * Acquires the data within the POM given by the supplied data.
-     * The resulting String should be correctly formed data of the POM (i.e. fully tokenized if applicable).
+     * Method retrieving a URL to a template for the supplied templateResourcePath.
+     * Typically, this method should be implemented in a concrete Factory to emit valid JAR URLs for each resource type
+     * which should be synthesized by AbstractFactory subclasses. Only URLs with either 'jar' or 'file' protocols may
+     * be returned. (I.e. the template resource must either be packaged within a JAR or found within the local file
+     * system).
      *
-     * @param pomType         The type of POM whose data should be retrieved.
-     * @param relativeDirPath The directory path (relative to the project root directory) of the POM to retrieve.
-     * @param project         The active Project, from which tokens could be retrieved.
-     * @return correctly formed data of the POM (i.e. fully tokenized if applicable).
+     * @param templateResourcePath The path of the resource template for which a URL should be retrieved.
+     * @return a URL to a template for the supplied resourceType. May only return URLs with either
+     * 'jar' or 'file' protocols.
      */
-    protected String getPom(final PomType pomType,
-                            final String relativeDirPath,
-                            final Project project) {
+    protected abstract URL getTemplateResource(final String templateResourcePath);
+
+    /**
+     * Reads resource template data from the supplied relativeResourcePath and returns it after substituting all its
+     * contained tokens with actual values. Token substitution will only be done if the {@code isTokenizable} method
+     * returns true.
+     * <p/>
+     * The default implementation calculates the actual resource template path as
+     * {@code getTemplateResource() + "/" + relativeResourcePath}.
+     * Override this method if your template resource data is retrieved in another fashion.
+     *
+     * @param templateResourcePath The path to the template resource to synthesize. Fed to the
+     *                             {@code getTemplateResource} method to retrieve the actual template URL.
+     * @param pomType              The type of POM whose data should be retrieved. Optional convenience argument; null
+     *                             if the resource is not a POM.
+     * @param project              The active Project, from which tokens could be retrieved. Required; cannot be null.
+     * @return all data found in the resource template given by the relativeResourcePath
+     * (with token substitution performed if applicable).
+     */
+    protected String synthesizeResource(final String templateResourcePath,
+                                        final PomType pomType,
+                                        final Project project) {
 
         // Check sanity
-        Validate.notNull(pomType, "Cannot handle null pomType argument.");
+        Validate.notEmpty(templateResourcePath, "Cannot handle null or empty relativeResourcePath argument.");
         Validate.notNull(project, "Cannot handle null project argument.");
-        Validate.notNull(relativeDirPath, "Cannot handle null relativeDirPath argument.");
 
-        // Get a POM template
-        final String pomURL = getPomTemplateURL(pomType);
-        final StringBuilder builder = new StringBuilder();
-        try (BufferedReader data = new BufferedReader(
-                new InputStreamReader(getClass().getClassLoader().getResourceAsStream(pomURL)))) {
-            for (String aLine = data.readLine(); aLine != null; aLine = data.readLine()) {
-                builder.append(aLine).append("\n");
-            }
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Could not read data from [" + pomURL + "]", e);
+        // Read the data from the resource, and validate that we have a supported URL protocol.
+        final URL templateResourceURL = getTemplateResource(templateResourcePath);
+        Validate.notNull(templateResourceURL, "ResourceType [" + templateResourcePath + "] yielded no templateResourceURL.");
+
+        final String protocol = templateResourceURL.getProtocol();
+        Validate.isTrue("jar".equalsIgnoreCase(protocol) || "file".equalsIgnoreCase(protocol),
+                "Can only synthesize resources from URLs using 'jar' or 'file' protocols. (Got [" + protocol + "]).");
+
+        String resourceData = null;
+        if ("jar".equalsIgnoreCase(protocol)) {
+
+            final JarFile templateJarFile = JarExtractor.getJarFileFor(templateResourceURL);
+            final String entryName = JarExtractor.getEntryNameFor(templateResourceURL);
+
+        } else if("file".equalsIgnoreCase(protocol)) {
+            resourceData = FileUtils.readFile(templateResourceURL.toString());
         }
 
-        // Tokenize and return.
-        return getTokenParser(pomType, relativeDirPath, project).substituteTokens(builder.toString());
+        // Tokenize if required
+        return isTokenizable(templateResourceURL)
+                ? getTokenParser(pomType, templateResourceURL, project).substituteTokens(resourceData)
+                : resourceData;
     }
 
     /**
-     * Method retrieving an URL to a template for a pom of the supplied PomType.
-     * Default implementation assumes that POM templates URLs are synthesized
-     * on the form {@code "templates/standard/" + pomType.name().toLowerCase() + ".xml"}.
-     * Override this method if your local Factory uses other algorithms.
+     * Checks if the supplied resourceURL and pomType should be tokenized.
+     * <p/>
+     * The default implementation handles "file" and "jar" URLs and returns true for all non-directory resources
+     * found within either a File system or a JAR. Override this method if your local Factory uses another algorithm
+     * to determine if resources should be tokenized.
      *
-     * @param pomType The type of POM whose template should be retrieved.
-     * @return The content of the POM template data.
+     * @param resourceURL The non-null resourceURL of the resource template which could be tokenized.
+     * @return {@code true} if the supplied resource URL should be tokenized.
      */
-    protected String getPomTemplateURL(final PomType pomType) {
-        return "templates/standard/" + pomType.name().toLowerCase() + ".xml";
+    protected boolean isTokenizable(final URL resourceURL) {
+
+        // Check sanity
+        Validate.notNull(resourceURL, "Cannot handle null resourceURL argument.");
+
+        final String protocol = resourceURL.getProtocol().toLowerCase();
+        boolean toReturn = true;
+
+        if (protocol.equals("file")) {
+            final File resourceFile = new File(resourceURL.getPath());
+
+            // Only tokenize content in files.
+            toReturn = resourceFile.isFile();
+        } else if (protocol.equals("jar")) {
+
+            // Find the resource within the JAR
+            final JarFile jarFile = JarExtractor.getJarFileFor(resourceURL);
+            final String name = JarExtractor.getEntryNameFor(resourceURL);
+            final JarEntry entry = jarFile.getJarEntry(name);
+
+            // Only tokenize content in files.
+            toReturn = !entry.isDirectory();
+        }
+
+        // All done.
+        return toReturn;
     }
 
     /**
@@ -191,9 +244,11 @@ public abstract class AbstractFactory {
         // Create a default TokenParser, using tokens on the form [token],
         // to avoid clashing with Maven's variables on the form ${token}.
         final DefaultTokenParser toReturn = new DefaultTokenParser();
-        toReturn.addAgent(new DefaultParserAgent());
+        toReturn.addAgent(new DefaultParserAgent(staticTokensMap));
         toReturn.addAgent(new HostNameParserAgent());
-        toReturn.addAgent(new FactoryParserAgent(project, pomType, staticTokensMap));
+        if (pomType != null) {
+            toReturn.addAgent(new FactoryParserAgent(project, pomType));
+        }
         toReturn.initialize(new SingleBracketTokenDefinitions());
 
         // All done.

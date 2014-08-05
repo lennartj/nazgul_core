@@ -49,6 +49,11 @@ public final class FileUtils {
     // Our log
     private static final Logger log = LoggerFactory.getLogger(FileUtils.class.getName());
 
+    /**
+     * The line ending string,
+     */
+    public static final String LINE_ENDING = System.getProperty("line.separator");
+
     // Internal state
     private static MavenXpp3Reader pomReader = new MavenXpp3Reader();
 
@@ -188,7 +193,7 @@ public final class FileUtils {
 
     /**
      * Reads all (text) data from the supplied File, returning it as a String.
-     * All line feeds are converted to {@code "\n"}.
+     * All line feeds are converted to {@code System.getProperty("line.separator")}.
      *
      * @param aFile The non-null File to read data from.
      * @return The content of the supplied File.
@@ -211,7 +216,7 @@ public final class FileUtils {
 
     /**
      * Reads all (text) data from the supplied resource URL, returning it as a String.
-     * All line feeds are converted to {@code "\n"}.
+     * All line feeds are converted to {@code System.getProperty("line.separator")}.
      *
      * @param resourceURL The non-empty resource URL to read data from.
      * @return The content of the supplied resource URL.
@@ -231,14 +236,33 @@ public final class FileUtils {
     // Private helpers
     //
 
+    /**
+     * Reads all data from the supplied InputStream, assumed to point to a character-based stream.
+     * All line feeds are converted to {@code System.getProperty("line.separator")}.
+     *
+     * @param stream The non-null stream to read fully. The stream is closed before returning from this method,
+     *               irrespective of the results of reading the stream.
+     * @param desc   A description of the stream. Used within an Exception message should an IOException
+     *               occur while reading the stream data.
+     * @return The fully read text data.
+     */
+    @SuppressWarnings("all")
     private static String readFully(final InputStream stream, final String desc) {
 
         final StringBuilder result = new StringBuilder();
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
-            result.append(reader.readLine()).append("\n");
+            result.append(reader.readLine()).append(LINE_ENDING);
         } catch (IOException e) {
             throw new IllegalArgumentException("Could not read data from [" + desc + "]", e);
+        } finally {
+
+            try {
+                // Close the original stream.
+                stream.close();
+            } catch (IOException e) {
+                throw new IllegalArgumentException("Could not close original stream for [" + desc + "]", e);
+            }
         }
 
         // All done.
