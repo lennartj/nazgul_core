@@ -24,6 +24,7 @@ package se.jguru.nazgul.core.quickstart.api.generator;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.jguru.nazgul.core.parser.api.TokenParser;
 import se.jguru.nazgul.core.quickstart.api.FileUtils;
 import se.jguru.nazgul.core.quickstart.api.InvalidStructureException;
 import se.jguru.nazgul.core.quickstart.api.analyzer.AbstractNamingStrategy;
@@ -58,8 +59,10 @@ public abstract class AbstractProjectFactory extends AbstractFactory implements 
      * {@inheritDoc}
      */
     @Override
-    public boolean createProject(final File projectParentDir, final Project projectDefinition)
-            throws IllegalArgumentException {
+    public boolean createProject(final File projectParentDir,
+                                 final Project projectDefinition,
+                                 final String packagePrefix)
+            throws IllegalArgumentException, IllegalStateException {
 
         // Check sanity
         Validate.notNull(projectDefinition, "Cannot handle null projectDefinition argument.");
@@ -67,6 +70,8 @@ public abstract class AbstractProjectFactory extends AbstractFactory implements 
         Validate.isTrue(projectParentDir.exists() && projectParentDir.isDirectory(),
                 "Project parent directory [" + FileUtils.getCanonicalPath(projectParentDir)
                         + "] must exist and be a directory.");
+
+        final String reverseDNS = packagePrefix == null ? "" : packagePrefix.replace("/", ".");
 
         // Synthesize the Name from the supplied project, and validate it.
         final Name projectName = new Name(
@@ -89,12 +94,12 @@ public abstract class AbstractProjectFactory extends AbstractFactory implements 
         }
 
         // Create the project structure.
-        createPom(projectRootDir, "", PomType.ROOT_REACTOR, projectDefinition);
-        createPom(projectRootDir, "poms", PomType.REACTOR, projectDefinition);
-        createPom(projectRootDir, "poms", PomType.PARENT, projectDefinition);
-        createPom(projectRootDir, "poms", PomType.API_PARENT, projectDefinition);
-        createPom(projectRootDir, "poms", PomType.MODEL_PARENT, projectDefinition);
-        createPom(projectRootDir, "poms", PomType.WAR_PARENT, projectDefinition);
+        createPom(projectRootDir, "", PomType.ROOT_REACTOR, projectDefinition, reverseDNS);
+        createPom(projectRootDir, "poms", PomType.REACTOR, projectDefinition, reverseDNS);
+        createPom(projectRootDir, "poms", PomType.PARENT, projectDefinition, reverseDNS);
+        createPom(projectRootDir, "poms", PomType.API_PARENT, projectDefinition, reverseDNS);
+        createPom(projectRootDir, "poms", PomType.MODEL_PARENT, projectDefinition, reverseDNS);
+        createPom(projectRootDir, "poms", PomType.WAR_PARENT, projectDefinition, reverseDNS);
 
         // All done.
         return true;
@@ -125,13 +130,15 @@ public abstract class AbstractProjectFactory extends AbstractFactory implements 
     private void createPom(final File rootDirectory,
                            final String relativePomDirectory,
                            final PomType pomType,
-                           final Project project) throws InvalidStructureException {
+                           final Project project,
+                           final String packagePrefix) throws InvalidStructureException {
 
         // Sane state?
         final String directoryName = getDirectoryName(project.getName(), pomType, project.getPrefix());
         final String relativePath = relativePomDirectory.isEmpty() ? "" : relativePomDirectory + "/";
         final File pomDirectory = FileUtils.makeDirectory(rootDirectory, relativePath + directoryName);
         final File pomFile = new File(pomDirectory, "pom.xml");
+        final String nameSuffix = "";
 
         if (FileUtils.exists(pomFile, false)) {
             throw new InvalidStructureException("POM file [" + FileUtils.getCanonicalPath(pomFile)
@@ -143,7 +150,8 @@ public abstract class AbstractProjectFactory extends AbstractFactory implements 
         }
 
         // Read the POM resource, and write the POM file.
-        final String pomData = synthesizeResource(relativePomDirectory, pomType, project);
+        final TokenParser tokenParser = getTokenParser(pomType, relativePath, project, packagePrefix, nameSuffix);
+        final String pomData = tokenParser.substituteTokens(getTemplateResource(pomType + "/pom.xml"));
         FileUtils.writeFile(pomFile, pomData);
     }
 }

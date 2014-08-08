@@ -38,7 +38,11 @@ import se.jguru.nazgul.core.quickstart.model.Name;
 import se.jguru.nazgul.core.quickstart.model.Project;
 import se.jguru.nazgul.core.resource.api.extractor.JarExtractor;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Map;
 import java.util.TreeMap;
@@ -133,35 +137,24 @@ public abstract class AbstractFactory {
      * @return a URL to a template for the supplied resourceType. May only return URLs with either
      * 'jar' or 'file' protocols.
      */
-    protected abstract URL getTemplateResource(final String templateResourcePath);
+    protected abstract URL getTemplateResourceURL(final String templateResourcePath);
 
     /**
-     * Reads resource template data from the supplied relativeResourcePath and returns it after substituting all its
-     * contained tokens with actual values. Token substitution will only be done if the {@code isTokenizable} method
-     * returns true.
-     * <p/>
-     * The default implementation calculates the actual resource template path as
-     * {@code getTemplateResource() + "/" + relativeResourcePath}.
-     * Override this method if your template resource data is retrieved in another fashion.
+     * Retrieves a template resource data from the supplied templateResourcePath (relative to the Classpath).
      *
      * @param templateResourcePath The path to the template resource to synthesize. Fed to the
-     *                             {@code getTemplateResource} method to retrieve the actual template URL.
-     * @param pomType              The type of POM whose data should be retrieved. Optional convenience argument; null
-     *                             if the resource is not a POM.
-     * @param project              The active Project, from which tokens could be retrieved. Required; cannot be null.
+     *                             {@code getTemplateResourceURL} method to retrieve the actual
+     *                             template URL.
      * @return all data found in the resource template given by the relativeResourcePath
      * (with token substitution performed if applicable).
      */
-    protected String synthesizeResource(final String templateResourcePath,
-                                        final PomType pomType,
-                                        final Project project) {
+    protected String getTemplateResource(final String templateResourcePath) {
 
         // Check sanity
         Validate.notEmpty(templateResourcePath, "Cannot handle null or empty relativeResourcePath argument.");
-        Validate.notNull(project, "Cannot handle null project argument.");
 
         // Read the data from the resource, and validate that we have a supported URL protocol.
-        final URL templateResourceURL = getTemplateResource(templateResourcePath);
+        final URL templateResourceURL = getTemplateResourceURL(templateResourcePath);
         Validate.notNull(templateResourceURL, "ResourceType [" + templateResourcePath + "] yielded no templateResourceURL.");
 
         final String protocol = templateResourceURL.getProtocol();
@@ -173,81 +166,138 @@ public abstract class AbstractFactory {
 
             final JarFile templateJarFile = JarExtractor.getJarFileFor(templateResourceURL);
             final String entryName = JarExtractor.getEntryNameFor(templateResourceURL);
+            final JarEntry jarEntry = templateJarFile.getJarEntry(entryName);
+            final StringBuilder builder = new StringBuilder();
 
-        } else if("file".equalsIgnoreCase(protocol)) {
-            resourceData = FileUtils.readFile(templateResourceURL.toString());
+            try (BufferedReader in = new BufferedReader(
+                    new InputStreamReader(templateJarFile.getInputStream(jarEntry)))) {
+
+                String aLine = null;
+                while ((aLine = in.readLine()) != null) {
+                    builder.append(aLine).append("\n");
+                }
+            } catch (IOException e) {
+                throw new IllegalArgumentException("Could not fully read entry [" + entryName
+                        + "] from templateResourceURL [" + templateResourceURL.toString() + "]", e);
+            }
+
+            resourceData = builder.toString();
+
+        } else if ("file".equalsIgnoreCase(protocol)) {
+            resourceData = FileUtils.readFile(new File(templateResourceURL.getPath()));
         }
 
-        // Tokenize if required
-        return isTokenizable(templateResourceURL)
-                ? getTokenParser(pomType, templateResourceURL, project).substituteTokens(resourceData)
-                : resourceData;
+        // All done
+        return resourceData;
     }
 
     /**
-     * Checks if the supplied resourceURL and pomType should be tokenized.
-     * <p/>
-     * The default implementation handles "file" and "jar" URLs and returns true for all non-directory resources
-     * found within either a File system or a JAR. Override this method if your local Factory uses another algorithm
-     * to determine if resources should be tokenized.
+     * Acquires a FileFilter which accepts Files whose content should be run through a TokenParser before returning.
+     * The default implementation simply retrieves the {@code FileUtils.CHARACTER_DATAFILE_FILTER}; override this
+     * method if your particular Factory requires a different implementation.
      *
-     * @param resourceURL The non-null resourceURL of the resource template which could be tokenized.
-     * @return {@code true} if the supplied resource URL should be tokenized.
+     * @return A FileFiler which accepts Files whose content should be Tokenized.
      */
-    protected boolean isTokenizable(final URL resourceURL) {
-
-        // Check sanity
-        Validate.notNull(resourceURL, "Cannot handle null resourceURL argument.");
-
-        final String protocol = resourceURL.getProtocol().toLowerCase();
-        boolean toReturn = true;
-
-        if (protocol.equals("file")) {
-            final File resourceFile = new File(resourceURL.getPath());
-
-            // Only tokenize content in files.
-            toReturn = resourceFile.isFile();
-        } else if (protocol.equals("jar")) {
-
-            // Find the resource within the JAR
-            final JarFile jarFile = JarExtractor.getJarFileFor(resourceURL);
-            final String name = JarExtractor.getEntryNameFor(resourceURL);
-            final JarEntry entry = jarFile.getJarEntry(name);
-
-            // Only tokenize content in files.
-            toReturn = !entry.isDirectory();
-        }
-
-        // All done.
-        return toReturn;
+    protected FileFilter getShouldTokenizeFilter() {
+        return FileUtils.CHARACTER_DATAFILE_FILTER;
     }
 
     /**
-     * The TokenParser used to substitute tokens within POM templates.
+     * The TokenParser used to substitute tokens within character-data resource templates (i.e. POMs,
+     * source code files, etc. which contain plain text). Override this method if your particular factory
+     * requires another TokenParser implementation.
+     * <p/>
+     * The default (AbstractFactory) implementation emits a TokenParser which adds 3 ParserAgents:
+     * <ol>
+     * <li><strong>DefaultParserAgent</strong>, with additional tokens added:
+     * <dl>
+     * <dt>relativeDirPath</dt>
+     * <dd>The value of the parameter relativeDirPath</dd>
+     * <p/>
+     * <dt>relativePackage</dt>
+     * <dd>{@code relativeDirPath.replace("/", ".")}</dd>
+     * </dl></li>
+     * <li><strong>HostNameParserAgent</strong>, which implies that data for the actual host can be substituted
+     * within any template.
+     * </li>
+     * <li><strong>FactoryParserAgent</strong>, which accesses data from the supplied project,
+     * in addition to adding two static tokens:
+     * <dl>
+     * <dt>groupId</dt>
+     * <dd>{@code groupIdPrefix + relativeDirPath.replace("/", ".")}, where groupIdPrefix is identical
+     * to projectGroupIdPrefix, with a "." appended unless it already ends with a "."</dd>
+     * <p/>
+     * <dt>artifactId</dt>
+     * <dd></dd>
+     * </dl></li>
+     * </ol>
+     * <p/>
      * This TokenParser uses tokens on the form [token] to avoid clashing with Maven's variables on the form ${token}.
-     * Override this method if your particular factory requires another TokenParser implementation.
      *
-     * @param pomType         The type of POM whose data should be retrieved.
-     * @param relativeDirPath The directory path (relative to the project root directory) of the POM to retrieve.
-     * @param project         The active Project, from which tokens could be retrieved.
+     * @param pomType                  The SoftwareComponentPart for which a TokenParser should be retrieved.
+     * @param relativeDirPath       The current/active directory path (relative to the project root directory) of the
+     *                              project which should be tokenized by the retrieved TokenParser.
+     * @param project               The active Project, from which tokens could be retrieved.
+     * @param projectGroupIdPrefix  The prefix used for groupId within POMs and packages within Maven projects as
+     *                              tokenized by this AbstractFactory.
+     * @param optionalProjectSuffix The project suffix, which is used to create a compliant Name for the
+     *                              SoftwareComponentPart (and, therefore,
+     *                              only used when {@code SoftwareComponentPart.isSuffixRequired()} is true.
      * @return A fully configured TokenParser hosting 3 parser agents (DefaultParserAgent, HostNameParserAgent,
      * FactoryParserAgent) and initialized using the SingleBracketTokenDefinitions.
+     * @see se.jguru.nazgul.core.parser.api.agent.DefaultParserAgent
+     * @see se.jguru.nazgul.core.parser.api.agent.HostNameParserAgent
+     * @see FactoryParserAgent
      */
     protected TokenParser getTokenParser(final PomType pomType,
                                          final String relativeDirPath,
-                                         final Project project) {
+                                         final Project project,
+                                         final String projectGroupIdPrefix,
+                                         final String optionalProjectSuffix) {
+
+        // Check sanity
+        Validate.isTrue((pomType == null && project == null) || (pomType != null && project != null),
+                "'pomType' and 'project' arguments must both either be null or non-null.");
+        Validate.notNull(relativeDirPath, "Cannot handle null relativeDirPath argument.");
 
         // Put the relative dir path into a static token.
         final Map<String, String> staticTokensMap = new TreeMap<>();
         staticTokensMap.put("relativeDirPath", relativeDirPath);
+        staticTokensMap.put("relativePackage", relativeDirPath.replace("/", "."));
 
         // Create a default TokenParser, using tokens on the form [token],
         // to avoid clashing with Maven's variables on the form ${token}.
         final DefaultTokenParser toReturn = new DefaultTokenParser();
         toReturn.addAgent(new DefaultParserAgent(staticTokensMap));
         toReturn.addAgent(new HostNameParserAgent());
-        if (pomType != null) {
-            toReturn.addAgent(new FactoryParserAgent(project, pomType));
+        if (pomType != null && project != null) {
+
+            // Find the groupId and artifactId of the local Maven Project.
+            final StringBuilder groupIdBuilder = new StringBuilder();
+            if(projectGroupIdPrefix != null) {
+                groupIdBuilder.append(projectGroupIdPrefix.replace("/", "."));
+                groupIdBuilder.append(".");
+            }
+            groupIdBuilder.append(relativeDirPath.replace("/", "."));
+
+
+            final StringBuilder artifactIdBuilder = new StringBuilder();
+            final String projectPrefix = project.getPrefix();
+            if(projectPrefix != null && projectPrefix.length() > 0) {
+                artifactIdBuilder.append(projectPrefix).append(Name.DEFAULT_SEPARATOR);
+            }
+            artifactIdBuilder.append(project.getName());
+            if(optionalProjectSuffix != null && optionalProjectSuffix.length() > 0) {
+                artifactIdBuilder.append(Name.DEFAULT_SEPARATOR).append(optionalProjectSuffix);
+            }
+
+            // Add some typically useful static tokens for POM synthesis.
+            final Map<String, String> pomValueMap = new TreeMap<>();
+            pomValueMap.put("groupId", groupIdBuilder.toString());
+            pomValueMap.put("artifactId", artifactIdBuilder.toString());
+
+            // Add the FactoryParserAgent
+            toReturn.addAgent(new FactoryParserAgent(project, pomType, pomValueMap));
         }
         toReturn.initialize(new SingleBracketTokenDefinitions());
 

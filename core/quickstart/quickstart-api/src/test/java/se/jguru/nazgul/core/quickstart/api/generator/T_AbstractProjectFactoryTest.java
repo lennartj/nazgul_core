@@ -25,6 +25,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import se.jguru.nazgul.core.quickstart.api.FileUtils;
+import se.jguru.nazgul.core.quickstart.api.FileUtilsTest;
 import se.jguru.nazgul.core.quickstart.api.PomType;
 import se.jguru.nazgul.core.quickstart.api.analyzer.NamingStrategy;
 import se.jguru.nazgul.core.quickstart.api.analyzer.helpers.TestNamingStrategy;
@@ -93,8 +94,7 @@ public class T_AbstractProjectFactoryTest {
     public void validateCreatingProjectSkeleton() {
 
         // Assemble
-        final File rootDir = new File(testDataDir, "createProjectData");
-        rootDir.mkdir();
+        final File rootDir = FileUtilsTest.createUniqueDirectoryUnderTestData("createProjectData");
         final TestProjectFactory unitUnderTest = new TestProjectFactory(namingStrategy);
 
         final SimpleArtifact reactorParent = new SimpleArtifact(

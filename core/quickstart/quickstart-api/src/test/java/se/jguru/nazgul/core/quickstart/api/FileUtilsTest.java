@@ -80,4 +80,21 @@ public class FileUtilsTest {
         // Act & Assert
         FileUtils.getPomModel(incorrectPom);
     }
+
+    public static File createUniqueDirectoryUnderTestData(final String name) {
+
+        // Get the testdata directory
+        final URL testdata = Thread.currentThread().getContextClassLoader().getResource("testdata");
+        final File testdataDir = new File(testdata.getPath());
+
+        Assert.assertTrue("Required testdata directory [" + FileUtils.getCanonicalPath(testdataDir)
+                        + "] nonexistent.", testdataDir.exists());
+        for(int i = 0; true; i++) {
+            final String dirName = name + "_" + i;
+            final File toReturn = new File(testdataDir, dirName);
+            if(!toReturn.exists()) {
+                return FileUtils.makeDirectory(testdataDir, dirName);
+            }
+        }
+    }
 }

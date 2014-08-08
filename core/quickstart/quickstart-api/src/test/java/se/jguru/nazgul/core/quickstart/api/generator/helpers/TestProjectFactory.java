@@ -21,6 +21,7 @@
  */
 package se.jguru.nazgul.core.quickstart.api.generator.helpers;
 
+import se.jguru.nazgul.core.parser.api.TokenParser;
 import se.jguru.nazgul.core.quickstart.api.DefaultStructureNavigator;
 import se.jguru.nazgul.core.quickstart.api.PomType;
 import se.jguru.nazgul.core.quickstart.api.StructureNavigator;
@@ -29,7 +30,11 @@ import se.jguru.nazgul.core.quickstart.api.analyzer.helpers.TestNamingStrategy;
 import se.jguru.nazgul.core.quickstart.api.analyzer.helpers.TestPomAnalyzer;
 import se.jguru.nazgul.core.quickstart.api.generator.AbstractProjectFactory;
 import se.jguru.nazgul.core.quickstart.model.Project;
+import se.jguru.nazgul.core.quickstart.model.SimpleArtifact;
 
+import java.io.File;
+import java.io.FileFilter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +46,7 @@ public class TestProjectFactory extends AbstractProjectFactory {
     // Shared state
     public StructureNavigator navigator;
     public List<String> callTrace;
+    public String testdataSubDir = "test";
 
     public TestProjectFactory(final NamingStrategy namingStrategy) {
         super(namingStrategy);
@@ -54,11 +60,54 @@ public class TestProjectFactory extends AbstractProjectFactory {
      * {@inheritDoc}
      */
     @Override
-    protected String getPom(final PomType pomType,
-                            final String relativeDirPath,
-                            final Project project) {
+    protected URL getTemplateResourceURL(final String templateResourcePath) {
 
-        callTrace.add("[" + relativeDirPath + "] ==> [" + pomType + "]");
-        return "pomData: [" + pomType + "]";
+        callTrace.add("getTemplateResourceURL(" + templateResourcePath + ")");
+
+        // Ensure that we check the testdata/directory.
+        final String enrichedPath = "testdata/templates/" + testdataSubDir + "/" + templateResourcePath;
+        return Thread.currentThread().getContextClassLoader().getResource(enrichedPath);
+    }
+
+    @Override
+    public boolean createProject(final File projectParentDir, final Project projectDefinition)
+            throws IllegalArgumentException {
+
+        callTrace.add("createProject");
+        return super.createProject(projectParentDir, projectDefinition);
+    }
+
+    @Override
+    public Project createProjectDefinition(final String prefix,
+                                           final String name,
+                                           final SimpleArtifact reactorParent,
+                                           final SimpleArtifact parentParent) {
+        callTrace.add("createProjectDefinition(" + prefix + ", " + name + ", "
+                + reactorParent + ", " + "" + parentParent + ")");
+        return super.createProjectDefinition(prefix, name, reactorParent, parentParent);
+    }
+
+    @Override
+    protected String getDirectoryName(final String projectName, final PomType aPomType, final String projectPrefix) {
+        callTrace.add("getDirectoryName(" + projectName + ", " + aPomType + ", " + projectPrefix + ")");
+        return super.getDirectoryName(projectName, aPomType, projectPrefix);
+    }
+
+    @Override
+    protected String getTemplateResource(final String templateResourcePath) {
+        callTrace.add("getTemplateResource(" + templateResourcePath + ")");
+        return super.getTemplateResource(templateResourcePath);
+    }
+
+    @Override
+    protected FileFilter getShouldTokenizeFilter() {
+        callTrace.add("getShouldTokenizeFilter");
+        return super.getShouldTokenizeFilter();
+    }
+
+    @Override
+    protected TokenParser getTokenParser(final PomType pomType, final String relativeDirPath, final Project project) {
+        callTrace.add("getTokenParser(" + pomType + ", " + relativeDirPath + ", " + project + ")");
+        return super.getTokenParser(pomType, relativeDirPath, project);
     }
 }
