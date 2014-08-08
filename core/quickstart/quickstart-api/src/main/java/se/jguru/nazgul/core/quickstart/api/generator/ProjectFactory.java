@@ -45,22 +45,28 @@ public interface ProjectFactory {
      * @param parentParent  The parent of the topmost parent POM.
      * @return A Project instance for use with the {@code createProject} method.
      */
-    Project createProjectDefinition(final String prefix,
-                                    final String name,
-                                    final SimpleArtifact reactorParent,
-                                    final SimpleArtifact parentParent);
+    Project createProjectDefinition(String prefix,
+                                    String name,
+                                    SimpleArtifact reactorParent,
+                                    SimpleArtifact parentParent);
 
     /**
      * Creates a new Project using the information found within the supplied projectDefinition.
      *
      * @param projectParentDir  a directory in which the project should be created.
-     * @param projectDefinition The entity defining the Project's values, and holding naming standards.
+     * @param projectDefinition The entity defining the Project's overall data, and holding naming standards.
+     * @param packagePrefix     A non-null (but optionally empty) package prefix prepended to the groupId of the
+     *                          reactor parent POM. Typically the reverse DNS of the organisation creating the
+     *                          project, such as "se.jguru.". (For example, the groupId of the topmost reactor POM
+     *                          created within the projectParentDir is {@code [packagePrefix].[name]}).
      * @return {@code true} if the project could be properly created, and false otherwise.
      * @throws java.lang.IllegalArgumentException if projectParentDir was not an existing directory.
      * @throws java.lang.IllegalStateException    if the projectRootDirectory (typically either on the form
      *                                            {@code prefix-name} or {@code name}) could not be created
      *                                            under the projectParentDir.
      */
-    boolean createProject(File projectParentDir, Project projectDefinition)
+    boolean createProject(File projectParentDir,
+                          Project projectDefinition,
+                          String packagePrefix)
             throws IllegalArgumentException, IllegalStateException;
 }

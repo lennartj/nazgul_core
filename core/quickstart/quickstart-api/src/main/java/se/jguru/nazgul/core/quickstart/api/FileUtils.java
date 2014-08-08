@@ -39,6 +39,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -57,20 +59,69 @@ public final class FileUtils {
      */
     public static final String LINE_ENDING = System.getProperty("line.separator");
 
-    // Internal state
-    private static MavenXpp3Reader pomReader = new MavenXpp3Reader();
-    private static FileFilter DIRECTORY_FILTER = new FileFilter() {
+    /**
+     * A FileFilter which accepts directories only.
+     */
+    public static final FileFilter DIRECTORY_FILTER = new FileFilter() {
         @Override
         public boolean accept(final File pathname) {
             return pathname.isDirectory();
         }
     };
-    private static FileFilter FILE_FILTER = new FileFilter() {
+
+    /**
+     * A FileFilter which accepts files only.
+     */
+    public static final FileFilter FILE_FILTER = new FileFilter() {
         @Override
         public boolean accept(final File pathname) {
             return pathname.isFile();
         }
     };
+
+    /**
+     * A list containing file suffixes of files normally containing character data, implying that the
+     * content of such files can normally be manipulated using TokenParsers.
+     */
+    public static final List<String> CHARDATA_FILE_SUFFIXES = Arrays.asList("txt", "text", "xml", "xsd", "properties",
+            "apt", "log", "md", "readme", "csv", "tab", "odt", "1st", "java", "jsp", "js", "jsf", "c", "cpp", "html",
+            "css", "js", "less", "scss");
+
+    /**
+     * A FileFilter which identifies file types normally holding character data content.
+     */
+    public static final FileFilter CHARACTER_DATAFILE_FILTER = new FileFilter() {
+
+        /**
+         * Accepts aFile if it is a file whose suffix is found in the CHARDATA_FILE_SUFFIXES list.
+         *
+         * @param aFile The non-null File to check.
+         * @return {@code true} if the supplied aFile is a file whose suffix is found in
+         * the {@code CHARDATA_FILE_SUFFIXES} list.
+         */
+        @Override
+        public boolean accept(final File aFile) {
+
+            if (aFile.exists() && aFile.isFile()) {
+
+                // Find the file suffix to compare with.
+                final String fileName = aFile.getName();
+                final int suffixDelimiterIndex = fileName.lastIndexOf(".");
+                final String fileSuffix = "" + (suffixDelimiterIndex == -1
+                        ? fileName
+                        : fileName.substring(suffixDelimiterIndex + 1)).trim().toLowerCase();
+
+                // All done.
+                return CHARDATA_FILE_SUFFIXES.contains(fileSuffix);
+            }
+
+            // not recognized as a CharacterData-based file.
+            return false;
+        }
+    };
+
+    // Internal state
+    private static MavenXpp3Reader pomReader = new MavenXpp3Reader();
 
     /*
      * Hide constructor for utility classes.
@@ -201,6 +252,7 @@ public final class FileUtils {
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(aFile))) {
             writer.write(data);
+            writer.flush();
         } catch (IOException e) {
             log.warn("Could not write data to [" + getCanonicalPath(aFile) + "]", e);
         }
@@ -240,8 +292,11 @@ public final class FileUtils {
 
         // Check sanity
         Validate.notEmpty(resourceURL, "Cannot handle null resourceURL argument.");
-        final InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceURL);
-        Validate.notNull(in, "Resource [" + resourceURL + "] yielded null input stream.");
+
+        // Peel off any initial '/' chars
+        final String effectiveURL = resourceURL.startsWith("/") ? resourceURL.substring(1) : resourceURL;
+        final InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(effectiveURL);
+        Validate.notNull(in, "Resource [" + effectiveURL + "] yielded null input stream.");
 
         // All done.
         return readFully(in, resourceURL);
@@ -290,7 +345,9 @@ public final class FileUtils {
         final StringBuilder result = new StringBuilder();
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
-            result.append(reader.readLine()).append(LINE_ENDING);
+            for(String aLine = reader.readLine(); aLine != null; aLine = reader.readLine()) {
+                result.append(aLine).append(LINE_ENDING);
+            }
         } catch (IOException e) {
             throw new IllegalArgumentException("Could not read data from [" + desc + "]", e);
         } finally {

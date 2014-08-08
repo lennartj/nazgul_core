@@ -22,12 +22,11 @@
 package se.jguru.nazgul.core.quickstart.api.generator.helpers;
 
 import se.jguru.nazgul.core.quickstart.api.DefaultStructureNavigator;
-import se.jguru.nazgul.core.quickstart.api.PomType;
 import se.jguru.nazgul.core.quickstart.api.analyzer.NamingStrategy;
 import se.jguru.nazgul.core.quickstart.api.analyzer.helpers.TestPomAnalyzer;
 import se.jguru.nazgul.core.quickstart.api.generator.AbstractComponentFactory;
-import se.jguru.nazgul.core.quickstart.model.Project;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +36,7 @@ import java.util.List;
 public class TestComponentFactory extends AbstractComponentFactory {
 
     // Shared state
+    public String testdataSubDir = "test";
     public boolean useDefaultPomTemplateImplementation = false;
     public List<String> callTrace;
 
@@ -46,9 +46,7 @@ public class TestComponentFactory extends AbstractComponentFactory {
         callTrace = new ArrayList<>();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /*
     @Override
     protected String getPom(final PomType pomType,
                             final String relativeDirPath,
@@ -61,12 +59,17 @@ public class TestComponentFactory extends AbstractComponentFactory {
             return super.getPom(pomType, relativeDirPath, project);
         }
     }
+    */
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected String getTemplateDirectoryPath(final PomType pomType) {
-        return "testdata/" + super.getTemplateResource(pomType);
+    protected URL getTemplateResourceURL(final String templateResourcePath) {
+        // pomType + "/pom.xml"
+        final String enrichedPath = "testdata/templates/" + testdataSubDir + "/" + templateResourcePath;
+        System.out.println("TestComponentFactory - Got enrichedPath: " + enrichedPath);
+        final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        return contextClassLoader.getResource(enrichedPath);
     }
 }
