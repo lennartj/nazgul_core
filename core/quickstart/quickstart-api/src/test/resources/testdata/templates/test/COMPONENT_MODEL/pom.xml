@@ -31,25 +31,68 @@
     <parent>
         <groupId>[parentGroupId]</groupId>
         <artifactId>[parentArtifactId]</artifactId>
-        <version>[parentVersion]</version>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>[parentPomRelativePath]</relativePath>
     </parent>
 
     <groupId>[groupId]</groupId>
     <artifactId>[artifactId]</artifactId>
     <name>${project.artifactId}</name>
+    <packaging>jar</packaging>
     <url>${url.prefix}/${path.in.reactor}</url>
-    <packaging>pom</packaging>
 
     <properties>
         <path.in.reactor>[relativeDirPath]</path.in.reactor>
     </properties>
 
     <!-- +=============================================== -->
-    <!-- | Section 2:  Module definitions                 -->
+    <!-- | Section 2:  Dependency (management) settings   -->
     <!-- +=============================================== -->
-    <modules>
-        [modules]
-    </modules>
+    <dependencies>
+        <!--
+            External dependencies.
+        -->
+        <dependency>
+            <groupId>se.jguru.nazgul.core.xmlbinding.spi.jaxb</groupId>
+            <artifactId>nazgul-core-xmlbinding-spi-jaxb</artifactId>
+        </dependency>
+
+        <!--
+            External dependencies.
+        -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>se.jguru.nazgul.test.xmlbinding</groupId>
+            <artifactId>nazgul-core-xmlbinding-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>se.jguru.nazgul.test.persistence</groupId>
+            <artifactId>nazgul-core-persistence-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
     <!-- +=============================================== -->
     <!-- | Section 4:  External systems                   -->
@@ -76,5 +119,4 @@
         <url>${reactor.url.remote.prefix}/${reactor.name}</url>
         <tag>HEAD</tag>
     </scm>
-
 </project>

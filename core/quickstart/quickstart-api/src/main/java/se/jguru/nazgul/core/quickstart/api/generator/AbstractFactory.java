@@ -24,18 +24,11 @@ package se.jguru.nazgul.core.quickstart.api.generator;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.jguru.nazgul.core.parser.api.DefaultTokenParser;
-import se.jguru.nazgul.core.parser.api.SingleBracketTokenDefinitions;
-import se.jguru.nazgul.core.parser.api.TokenParser;
-import se.jguru.nazgul.core.parser.api.agent.DefaultParserAgent;
-import se.jguru.nazgul.core.parser.api.agent.HostNameParserAgent;
 import se.jguru.nazgul.core.quickstart.api.FileUtils;
 import se.jguru.nazgul.core.quickstart.api.PomType;
 import se.jguru.nazgul.core.quickstart.api.analyzer.AbstractNamingStrategy;
 import se.jguru.nazgul.core.quickstart.api.analyzer.NamingStrategy;
-import se.jguru.nazgul.core.quickstart.api.generator.parser.FactoryParserAgent;
 import se.jguru.nazgul.core.quickstart.model.Name;
-import se.jguru.nazgul.core.quickstart.model.Project;
 import se.jguru.nazgul.core.resource.api.extractor.JarExtractor;
 
 import java.io.BufferedReader;
@@ -44,8 +37,6 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -202,7 +193,7 @@ public abstract class AbstractFactory {
         return FileUtils.CHARACTER_DATAFILE_FILTER;
     }
 
-    /**
+    /*
      * The TokenParser used to substitute tokens within character-data resource templates (i.e. POMs,
      * source code files, etc. which contain plain text). Override this method if your particular factory
      * requires another TokenParser implementation.
@@ -226,15 +217,15 @@ public abstract class AbstractFactory {
      * <dt>groupId</dt>
      * <dd>{@code groupIdPrefix + relativeDirPath.replace("/", ".")}, where groupIdPrefix is identical
      * to projectGroupIdPrefix, with a "." appended unless it already ends with a "."</dd>
-     * <p/>
      * <dt>artifactId</dt>
-     * <dd></dd>
+     * <dd>The standard {@code prefix-name-suffix} or {@code name-suffix}, in case no prefix is used in the
+     * active project</dd>
      * </dl></li>
      * </ol>
      * <p/>
      * This TokenParser uses tokens on the form [token] to avoid clashing with Maven's variables on the form ${token}.
      *
-     * @param pomType                  The SoftwareComponentPart for which a TokenParser should be retrieved.
+     * @param pomType               The SoftwareComponentPart for which a TokenParser should be retrieved.
      * @param relativeDirPath       The current/active directory path (relative to the project root directory) of the
      *                              project which should be tokenized by the retrieved TokenParser.
      * @param project               The active Project, from which tokens could be retrieved.
@@ -248,60 +239,194 @@ public abstract class AbstractFactory {
      * @see se.jguru.nazgul.core.parser.api.agent.DefaultParserAgent
      * @see se.jguru.nazgul.core.parser.api.agent.HostNameParserAgent
      * @see FactoryParserAgent
-     */
-    protected TokenParser getTokenParser(final PomType pomType,
-                                         final String relativeDirPath,
-                                         final Project project,
-                                         final String projectGroupIdPrefix,
-                                         final String optionalProjectSuffix) {
+
+    protected TokenParser getTokenParser(final PomType pomType, final Map<String, String> pomTokens) {
 
         // Check sanity
-        Validate.isTrue((pomType == null && project == null) || (pomType != null && project != null),
-                "'pomType' and 'project' arguments must both either be null or non-null.");
-        Validate.notNull(relativeDirPath, "Cannot handle null relativeDirPath argument.");
-
-        // Put the relative dir path into a static token.
-        final Map<String, String> staticTokensMap = new TreeMap<>();
-        staticTokensMap.put("relativeDirPath", relativeDirPath);
-        staticTokensMap.put("relativePackage", relativeDirPath.replace("/", "."));
+        Validate.notNull(pomType, "Cannot handle null pomType argument.");
+        Validate.notEmpty(pomTokens, "Cannot handle null or empty pomTokens argument.");
 
         // Create a default TokenParser, using tokens on the form [token],
         // to avoid clashing with Maven's variables on the form ${token}.
         final DefaultTokenParser toReturn = new DefaultTokenParser();
-        toReturn.addAgent(new DefaultParserAgent(staticTokensMap));
+        toReturn.addAgent(new DefaultParserAgent());
         toReturn.addAgent(new HostNameParserAgent());
-        if (pomType != null && project != null) {
 
-            // Find the groupId and artifactId of the local Maven Project.
-            final StringBuilder groupIdBuilder = new StringBuilder();
-            if(projectGroupIdPrefix != null) {
-                groupIdBuilder.append(projectGroupIdPrefix.replace("/", "."));
-                groupIdBuilder.append(".");
-            }
-            groupIdBuilder.append(relativeDirPath.replace("/", "."));
+        // Find the groupId and artifactId of the local Maven Project.
+        final String groupId = getGroupId(projectGroupIdPrefix, relativeDirPath, pomType, optionalProjectSuffix);
 
+        // {artifactId=nazgul-blah,
+        // groupId=se.jguru.poms.,
+        // parentArtifactId=nazgulparent,
+        // parentPomRelativePath=../nazgul-blah-parent}
 
-            final StringBuilder artifactIdBuilder = new StringBuilder();
-            final String projectPrefix = project.getPrefix();
-            if(projectPrefix != null && projectPrefix.length() > 0) {
-                artifactIdBuilder.append(projectPrefix).append(Name.DEFAULT_SEPARATOR);
-            }
-            artifactIdBuilder.append(project.getName());
-            if(optionalProjectSuffix != null && optionalProjectSuffix.length() > 0) {
-                artifactIdBuilder.append(Name.DEFAULT_SEPARATOR).append(optionalProjectSuffix);
-            }
-
-            // Add some typically useful static tokens for POM synthesis.
-            final Map<String, String> pomValueMap = new TreeMap<>();
-            pomValueMap.put("groupId", groupIdBuilder.toString());
-            pomValueMap.put("artifactId", artifactIdBuilder.toString());
-
-            // Add the FactoryParserAgent
-            toReturn.addAgent(new FactoryParserAgent(project, pomType, pomValueMap));
+        final StringBuilder artifactIdBuilder = new StringBuilder();
+        final String projectPrefix = project.getPrefix();
+        if (projectPrefix != null && projectPrefix.length() > 0) {
+            artifactIdBuilder.append(projectPrefix).append(Name.DEFAULT_SEPARATOR);
         }
+        artifactIdBuilder.append(project.getName());
+        final String compoundProjectPrefix = artifactIdBuilder.toString();
+
+        if (optionalProjectSuffix != null && optionalProjectSuffix.length() > 0) {
+            artifactIdBuilder.append(Name.DEFAULT_SEPARATOR).append(optionalProjectSuffix);
+        }
+        final String artifactId = artifactIdBuilder.toString();
+
+        // Add some typically useful static tokens for POM synthesis.
+        final SortedMap<String, String> pomValueMap = getPomTokens(groupId, artifactId, relativeDirPath,
+                "...", "...", "...");
+        pomValueMap.put("groupId", groupId);
+        pomValueMap.put("artifactId", artifactIdBuilder.toString());
+
+        // We should add the groupId and artifactId of the immediate parent as well.
+        // This should be done for all PomTypes except ROOT_REACTOR.
+        final String parentGroupIdKey = "parentGroupId";
+        final String parentArtifactIdKey = "parentArtifactId";
+        final String relativePathToParentPomKey = "parentPomRelativePath";
+
+        switch (pomType) {
+
+            case REACTOR:
+                final String parentArtifactId = getReactorParentArtifactId(
+                        projectPrefix, artifactId, relativeDirPath);
+                final int endIndexForParentRelativeDirPath = groupId.lastIndexOf(".");
+                final String parentGroupId = groupId.substring(0, endIndexForParentRelativeDirPath);
+                pomValueMap.put(parentGroupIdKey, parentGroupId);
+                pomValueMap.put(parentArtifactIdKey, parentArtifactId);
+                break;
+
+            case COMPONENT_API:
+            case COMPONENT_SPI:
+                String parentPomDirPath = pomValueMap.put(relativePathToParentPomKey,
+                        getRelativePathToParentPomDir(relativeDirPath, PomType.API_PARENT, project.getPrefix()));
+                pomValueMap.put(relativePathToParentPomKey, parentPomDirPath);
+                pomValueMap.put(parentArtifactIdKey, projectPrefix + "api-parent");
+                break;
+
+            case COMPONENT_IMPLEMENTATION:
+                parentPomDirPath = pomValueMap.put(relativePathToParentPomKey,
+                        getRelativePathToParentPomDir(relativeDirPath, PomType.PARENT, project.getPrefix()));
+                pomValueMap.put(relativePathToParentPomKey, parentPomDirPath);
+                pomValueMap.put(parentArtifactIdKey, projectPrefix + "parent");
+                break;
+
+            case COMPONENT_MODEL:
+                parentPomDirPath = pomValueMap.put(relativePathToParentPomKey,
+                        getRelativePathToParentPomDir(relativeDirPath, PomType.MODEL_PARENT, project.getPrefix()));
+                pomValueMap.put(relativePathToParentPomKey, parentPomDirPath);
+                pomValueMap.put(parentArtifactIdKey, projectPrefix + "model-parent");
+                break;
+
+            case API_PARENT:
+                parentPomDirPath = "../" + compoundProjectPrefix + Name.DEFAULT_SEPARATOR + "parent";
+                pomValueMap.put(relativePathToParentPomKey, parentPomDirPath);
+                pomValueMap.put(parentArtifactIdKey, projectPrefix + "parent");
+                pomValueMap.put(parentGroupIdKey, groupId.substring(0, groupId.lastIndexOf("api-parent"))
+                        + "parent");
+                break;
+
+            case MODEL_PARENT:
+                parentPomDirPath = "../" + compoundProjectPrefix + Name.DEFAULT_SEPARATOR + "api-parent";
+                pomValueMap.put(relativePathToParentPomKey, parentPomDirPath);
+                pomValueMap.put(parentArtifactIdKey, projectPrefix + "api-parent");
+                pomValueMap.put(parentGroupIdKey, groupId.substring(0, groupId.lastIndexOf("model-parent"))
+                        + "api-parent");
+                break;
+
+            case WAR_PARENT:
+                parentPomDirPath = "../" + compoundProjectPrefix + Name.DEFAULT_SEPARATOR + "parent";
+                pomValueMap.put(relativePathToParentPomKey, parentPomDirPath);
+                pomValueMap.put(parentArtifactIdKey, projectPrefix + "parent");
+                pomValueMap.put(parentGroupIdKey, groupId.substring(0, groupId.lastIndexOf("war-parent"))
+                        + "model-parent");
+                break;
+
+            case PARENT:
+                pomValueMap.put(parentArtifactIdKey, project.getParentParent().getArtifactId());
+                pomValueMap.put(parentGroupIdKey, project.getParentParent().getGroupId());
+                break;
+        }
+
+        if (log.isDebugEnabled()) {
+            StringBuilder builder = new StringBuilder("Got pomValueMap for (" + pomType + "):\n");
+            for (Map.Entry<String, String> current : pomValueMap.entrySet()) {
+                builder.append("  [" + current.getKey() + "]: " + current.getValue() + "\n");
+            }
+            log.debug(builder.toString());
+        }
+
+        // Add the FactoryParserAgent
+        toReturn.addAgent(new FactoryParserAgent(project, pomType, pomValueMap));
         toReturn.initialize(new SingleBracketTokenDefinitions());
 
         // All done.
         return toReturn;
     }
+
+
+    //
+    // Private helpers
+    //
+
+    protected String getRelativePathToParentPomDir(final String relativeDirPath,
+                                                   final PomType parentPom,
+                                                   final String projectPrefix) {
+
+        // Check sanity
+        Validate.notNull(parentPom, "Cannot handle null parentPom argument.");
+        final String projectName = (projectPrefix == null ? "" : projectPrefix + Name.DEFAULT_SEPARATOR)
+                + parentPom.toString().toLowerCase().replace("_", Name.DEFAULT_SEPARATOR);
+
+        final StringTokenizer tok = new StringTokenizer(relativeDirPath, "/");
+        final int depth = tok.countTokens();
+
+        final StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < depth; i++) {
+            builder.append("../");
+        }
+        builder.append("poms/").append(projectName);
+
+        // All done.
+        return builder.toString();
+    }
+
+    private String getGroupId(final String projectGroupIdPrefix,
+                              final String relativeDirPath,
+                              final PomType pomType,
+                              final String optionalProjectSuffix) {
+
+        final StringBuilder groupIdBuilder = new StringBuilder();
+        if (projectGroupIdPrefix != null) {
+            groupIdBuilder.append(projectGroupIdPrefix.replace("/", "."));
+            groupIdBuilder.append(".");
+        }
+        groupIdBuilder.append(relativeDirPath.replace(Name.DEFAULT_SEPARATOR, "/").replace("/", "."));
+
+        // Should we add the optionalProjectSuffix?
+        for (SoftwareComponentPart part : SoftwareComponentPart.values()) {
+            if (part.getComponentPomType() == pomType && part.isSuffixRequired()) {
+                groupIdBuilder.append(optionalProjectSuffix);
+            }
+        }
+
+        // All done.
+        return groupIdBuilder.toString();
+    }
+
+    private String getReactorParentArtifactId(final String projectPrefix,
+                                              final String projectName,
+                                              final String childRelativePath) {
+
+        // Given relativePath:      osgi/launcher
+        // --> parent artifactID:   nazgul-core-osgi-launcher-reactor
+        // (I.e:                    prefix-name-[relativePathWith-'s]-reactor
+        final String start = projectPrefix + Name.DEFAULT_SEPARATOR + projectName + Name.DEFAULT_SEPARATOR;
+        final String parentRelativePath = childRelativePath.substring(0, childRelativePath.lastIndexOf("/"))
+                .replace("/", Name.DEFAULT_SEPARATOR);
+
+        // All done.
+        return start + parentRelativePath + Name.DEFAULT_SEPARATOR + "reactor";
+    }
+    */
 }

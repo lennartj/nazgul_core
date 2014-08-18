@@ -70,11 +70,12 @@ public class TestProjectFactory extends AbstractProjectFactory {
     }
 
     @Override
-    public boolean createProject(final File projectParentDir, final Project projectDefinition)
-            throws IllegalArgumentException {
-
+    public boolean createProject(final File projectParentDir,
+                                 final Project projectDefinition,
+                                 final String packagePrefix)
+            throws IllegalArgumentException, IllegalStateException {
         callTrace.add("createProject");
-        return super.createProject(projectParentDir, projectDefinition);
+        return super.createProject(projectParentDir, projectDefinition, packagePrefix);
     }
 
     @Override
@@ -103,11 +104,5 @@ public class TestProjectFactory extends AbstractProjectFactory {
     protected FileFilter getShouldTokenizeFilter() {
         callTrace.add("getShouldTokenizeFilter");
         return super.getShouldTokenizeFilter();
-    }
-
-    @Override
-    protected TokenParser getTokenParser(final PomType pomType, final String relativeDirPath, final Project project) {
-        callTrace.add("getTokenParser(" + pomType + ", " + relativeDirPath + ", " + project + ")");
-        return super.getTokenParser(pomType, relativeDirPath, project);
     }
 }

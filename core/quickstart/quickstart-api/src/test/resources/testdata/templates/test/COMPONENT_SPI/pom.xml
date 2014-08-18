@@ -21,6 +21,11 @@
   #L%
   -->
 
+<!--
+  ~ Copyright (c) jGuru Europe AB.
+  ~ All rights reserved.
+  -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -31,25 +36,55 @@
     <parent>
         <groupId>[parentGroupId]</groupId>
         <artifactId>[parentArtifactId]</artifactId>
-        <version>[parentVersion]</version>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>[parentPomRelativePath]</relativePath>
     </parent>
 
     <groupId>[groupId]</groupId>
     <artifactId>[artifactId]</artifactId>
     <name>${project.artifactId}</name>
+    <packaging>jar</packaging>
     <url>${url.prefix}/${path.in.reactor}</url>
-    <packaging>pom</packaging>
 
     <properties>
         <path.in.reactor>[relativeDirPath]</path.in.reactor>
     </properties>
 
     <!-- +=============================================== -->
-    <!-- | Section 2:  Module definitions                 -->
+    <!-- | Section 2:  Dependency (management) settings   -->
     <!-- +=============================================== -->
-    <modules>
-        [modules]
-    </modules>
+    <dependencies>
+        <!--
+            External dependencies.
+        -->
+        <dependency>
+            <groupId>se.jguru.nazgul.test.xmlbinding</groupId>
+            <artifactId>nazgul-core-xmlbinding-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>se.jguru.nazgul.core.persistence.api</groupId>
+            <artifactId>nazgul-core-persistence-api</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.openjpa</groupId>
+                    <artifactId>openjpa</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>se.jguru.nazgul.test.persistence</groupId>
+            <artifactId>nazgul-core-persistence-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.openjpa</groupId>
+                    <artifactId>openjpa</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
 
     <!-- +=============================================== -->
     <!-- | Section 4:  External systems                   -->
@@ -76,5 +111,4 @@
         <url>${reactor.url.remote.prefix}/${reactor.name}</url>
         <tag>HEAD</tag>
     </scm>
-
 </project>
