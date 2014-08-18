@@ -30,6 +30,7 @@ import se.jguru.nazgul.core.quickstart.api.InvalidStructureException;
 import se.jguru.nazgul.core.quickstart.api.analyzer.AbstractNamingStrategy;
 import se.jguru.nazgul.core.quickstart.api.analyzer.NamingStrategy;
 import se.jguru.nazgul.core.quickstart.api.PomType;
+import se.jguru.nazgul.core.quickstart.api.generator.parser.SingleBracketPomTokenParserFactory;
 import se.jguru.nazgul.core.quickstart.model.Name;
 import se.jguru.nazgul.core.quickstart.model.Project;
 import se.jguru.nazgul.core.quickstart.model.SimpleArtifact;
@@ -94,12 +95,12 @@ public abstract class AbstractProjectFactory extends AbstractFactory implements 
         }
 
         // Create the project structure.
-        createPom(projectRootDir, "", PomType.ROOT_REACTOR, projectDefinition, reverseDNS);
-        createPom(projectRootDir, "poms", PomType.REACTOR, projectDefinition, reverseDNS);
-        createPom(projectRootDir, "poms", PomType.PARENT, projectDefinition, reverseDNS);
-        createPom(projectRootDir, "poms", PomType.API_PARENT, projectDefinition, reverseDNS);
-        createPom(projectRootDir, "poms", PomType.MODEL_PARENT, projectDefinition, reverseDNS);
-        createPom(projectRootDir, "poms", PomType.WAR_PARENT, projectDefinition, reverseDNS);
+        createParentPom(projectRootDir, "", PomType.ROOT_REACTOR, projectDefinition, reverseDNS);
+        createParentPom(projectRootDir, "poms", PomType.REACTOR, projectDefinition, reverseDNS);
+        createParentPom(projectRootDir, "poms", PomType.PARENT, projectDefinition, reverseDNS);
+        createParentPom(projectRootDir, "poms", PomType.API_PARENT, projectDefinition, reverseDNS);
+        createParentPom(projectRootDir, "poms", PomType.MODEL_PARENT, projectDefinition, reverseDNS);
+        createParentPom(projectRootDir, "poms", PomType.WAR_PARENT, projectDefinition, reverseDNS);
 
         // All done.
         return true;
@@ -127,18 +128,17 @@ public abstract class AbstractProjectFactory extends AbstractFactory implements 
     // Helpers
     //
 
-    private void createPom(final File rootDirectory,
-                           final String relativePomDirectory,
-                           final PomType pomType,
-                           final Project project,
-                           final String packagePrefix) throws InvalidStructureException {
+    private void createParentPom(final File rootDirectory,
+                                 final String relativePomDirectory,
+                                 final PomType pomType,
+                                 final Project project,
+                                 final String packagePrefix) throws InvalidStructureException {
 
         // Sane state?
         final String directoryName = getDirectoryName(project.getName(), pomType, project.getPrefix());
         final String relativePath = relativePomDirectory.isEmpty() ? "" : relativePomDirectory + "/";
         final File pomDirectory = FileUtils.makeDirectory(rootDirectory, relativePath + directoryName);
         final File pomFile = new File(pomDirectory, "pom.xml");
-        final String nameSuffix = "";
 
         if (FileUtils.exists(pomFile, false)) {
             throw new InvalidStructureException("POM file [" + FileUtils.getCanonicalPath(pomFile)
@@ -150,7 +150,19 @@ public abstract class AbstractProjectFactory extends AbstractFactory implements 
         }
 
         // Read the POM resource, and write the POM file.
-        final TokenParser tokenParser = getTokenParser(pomType, relativePath, project, packagePrefix, nameSuffix);
+        final TokenParser tokenParser = SingleBracketPomTokenParserFactory
+                .create(pomType, project)
+                .withRelativeDirectoryPath(relativePath)
+                .withProjectGroupIdPrefix(packagePrefix)
+                .withoutProjectSuffix()
+                .build();
+
+                /*getTokenParser(pomType,
+                relativePath,
+                project,
+                packagePrefix,
+                "");
+                */
         final String pomData = tokenParser.substituteTokens(getTemplateResource(pomType + "/pom.xml"));
         FileUtils.writeFile(pomFile, pomData);
     }

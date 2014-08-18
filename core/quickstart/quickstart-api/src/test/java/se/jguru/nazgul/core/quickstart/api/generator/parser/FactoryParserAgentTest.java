@@ -65,7 +65,7 @@ public class FactoryParserAgentTest {
                 "${project:reactorParent.mavenVersion}.";
         final String expected = "Your project is " + project.getName() + ", with reactorParent version " +
                 reactorParent.getMavenVersion() + ".";
-        tokenParser.addAgent(new FactoryParserAgent(project, PomType.API_PARENT));
+        tokenParser.addAgent(new FactoryParserAgent(project));
 
         // Act
         final String result = tokenParser.substituteTokens(data);
@@ -79,7 +79,7 @@ public class FactoryParserAgentTest {
 
         // Assemble
         final String data = "Not a known property [project:foobar]";
-        tokenParser.addAgent(new FactoryParserAgent(project, PomType.API_PARENT));
+        tokenParser.addAgent(new FactoryParserAgent(project));
         tokenParser.initialize(new SingleBracketTokenDefinitions());
 
         // Act
@@ -110,7 +110,7 @@ public class FactoryParserAgentTest {
                         "<pomtype>api-parent</pomtype>\n" +
                         "<pomTypeCaps>API_PARENT</pomTypeCaps>\n" +
                         "</parent>";
-        tokenParser.addAgent(new FactoryParserAgent(project, PomType.API_PARENT));
+        tokenParser.addAgent(new FactoryParserAgent(project));
         tokenParser.initialize(new SingleBracketTokenDefinitions());
 
         // Act

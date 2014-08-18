@@ -111,7 +111,7 @@ public class T_AbstractProjectFactoryTest {
                 "nazgul", "blah", reactorParent, parentParent);
 
         // Act
-        final boolean created = unitUnderTest.createProject(rootDir, projectDefinition);
+        final boolean created = unitUnderTest.createProject(rootDir, projectDefinition, "se.jguru");
 
         // Assert
         Assert.assertTrue(created);

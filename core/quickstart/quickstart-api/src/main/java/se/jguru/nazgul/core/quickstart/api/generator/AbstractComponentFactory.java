@@ -30,6 +30,7 @@ import se.jguru.nazgul.core.quickstart.api.FileUtils;
 import se.jguru.nazgul.core.quickstart.api.InvalidStructureException;
 import se.jguru.nazgul.core.quickstart.api.StructureNavigator;
 import se.jguru.nazgul.core.quickstart.api.analyzer.NamingStrategy;
+import se.jguru.nazgul.core.quickstart.api.generator.parser.SingleBracketPomTokenParserFactory;
 import se.jguru.nazgul.core.quickstart.model.Name;
 import se.jguru.nazgul.core.quickstart.model.Project;
 import se.jguru.nazgul.core.resource.api.extractor.JarExtractor;
@@ -209,14 +210,21 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
                     + "] to extract template files.");
         }
 
-
         // 2) Create a TokenParser to handle template tokens
-        final TokenParser tokenParser = getTokenParser(
+        final TokenParser tokenParser = SingleBracketPomTokenParserFactory
+                .create(part.getComponentPomType(), project)
+                .withRelativeDirectoryPath(navigator.getRelativePath(mavenProjectDir, false))
+                .withProjectGroupIdPrefix(optionalGroupIdPrefix)
+                .withProjectSuffix(partSuffix)
+                .build();
+
+                /*getTokenParser(
                 part.getComponentPomType(),
                 navigator.getRelativePath(mavenProjectDir, false),
                 project,
                 optionalGroupIdPrefix,
                 partSuffix);
+                */
 
         // 3) Tokenize (as appropriate) and move each file to its destination.
         final FileFilter shouldTokenizeFilter = getShouldTokenizeFilter();
@@ -493,8 +501,8 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
 
         // Normal calculation.
         int endIndex = rootReactorGroupId.indexOf(packageSnippet);
-        Validate.isTrue(endIndex != -1, "Could not calculate projectGroupIdPrefix from groupID [" +
-                rootReactorGroupId + "] and artifactID [" + rootReactorArtifactId
+        Validate.isTrue(endIndex != -1, "Could not calculate projectGroupIdPrefix from groupID ["
+                + rootReactorGroupId + "] and artifactID [" + rootReactorArtifactId
                 + "]. (Calculated package snippet [" + packageSnippet + "] not found within groupID).");
 
         // Polish the rootReactorGroupId and return.

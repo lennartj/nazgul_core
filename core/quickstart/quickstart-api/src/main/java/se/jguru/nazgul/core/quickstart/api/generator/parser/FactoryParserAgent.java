@@ -81,10 +81,9 @@ public class FactoryParserAgent extends AbstractParserAgent {
      * <code>${project:reactorParent.groupId}</code>. No extra static tokens are supplied.
      *
      * @param project The Project from which this FactoryParserAgent should read token data.
-     * @param pomType The PomType of the POM to tokenize.
      */
-    public FactoryParserAgent(final Project project, final PomType pomType) {
-        this(project, pomType, null);
+    public FactoryParserAgent(final Project project) {
+        this(project, null);
     }
 
     /**
@@ -93,14 +92,12 @@ public class FactoryParserAgent extends AbstractParserAgent {
      * <code>${proj:reactorParent.groupId}</code>.
      *
      * @param project      The Project from which this FactoryParserAgent should read token data.
-     * @param pomType      The PomType of the POM to tokenize.
      * @param staticTokens An optional Map containing static tokens for substitution.
      */
-    public FactoryParserAgent(final Project project, final PomType pomType, final Map<String, String> staticTokens) {
+    public FactoryParserAgent(final Project project, final Map<String, String> staticTokens) {
 
         // Check sanity
         Validate.notNull(project, "Cannot handle null project argument.");
-        Validate.notNull(pomType, "Cannot handle null pomType argument.");
 
         // Assign internal state
         this.project = project;
@@ -114,8 +111,6 @@ public class FactoryParserAgent extends AbstractParserAgent {
                 addStaticReplacement(current.getKey(), current.getValue());
             }
         }
-        addStaticReplacement("POMTYPE", pomType.name());
-        addStaticReplacement("pomtype", pomType.name().toLowerCase().replace("_", "-"));
 
         // Add the standard dynamic replacement tokens.
         dynamicTokens.add(PROJECT_PREFIX + ".*");

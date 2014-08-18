@@ -31,8 +31,8 @@
         <relativePath />
     </parent>
 
-    <groupId>[project:groupId]</groupId>
-    <artifactId>[project:artifactId]</artifactId>
+    <groupId>[groupId]</groupId>
+    <artifactId>[artifactId]</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>${project.artifactId}</name>
     <packaging>pom</packaging>

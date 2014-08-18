@@ -90,6 +90,11 @@ public enum PomType {
     COMPONENT_IMPLEMENTATION,
 
     /**
+     * The POM of a module test project, part of a Software Component.
+     */
+    COMPONENT_TEST,
+
+    /**
      * Any other POM
      */
     OTHER

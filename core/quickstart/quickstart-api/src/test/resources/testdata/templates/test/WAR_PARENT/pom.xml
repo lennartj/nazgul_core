@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   #%L
   Nazgul Project: nazgul-core-quickstart-api
@@ -31,25 +31,69 @@
     <parent>
         <groupId>[parentGroupId]</groupId>
         <artifactId>[parentArtifactId]</artifactId>
-        <version>[parentVersion]</version>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>[parentPomRelativePath]</relativePath>
     </parent>
 
     <groupId>[groupId]</groupId>
     <artifactId>[artifactId]</artifactId>
     <name>${project.artifactId}</name>
-    <url>${url.prefix}/${path.in.reactor}</url>
     <packaging>pom</packaging>
+    <url>${url.prefix}/${path.in.reactor}</url>
 
     <properties>
         <path.in.reactor>[relativeDirPath]</path.in.reactor>
+        <!--
+            Don't break the build on coverage problems or pmd problems.
+        -->
+        <breakOnFailure.checkstyle>true</breakOnFailure.checkstyle>
+        <breakOnFailure.cobertura>false</breakOnFailure.cobertura>
+        <breakOnFailure.pmd>false</breakOnFailure.pmd>
+        <breakOnFailure.enforcer>false</breakOnFailure.enforcer>
+        <breakOnFailure.license>true</breakOnFailure.license>
     </properties>
 
     <!-- +=============================================== -->
-    <!-- | Section 2:  Module definitions                 -->
+    <!-- | Section 2:  Dependency (management) settings   -->
     <!-- +=============================================== -->
-    <modules>
-        [modules]
-    </modules>
+
+    <!-- +=============================================== -->
+    <!-- | Section 3:  Build settings                     -->
+    <!-- +=============================================== -->
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${pmd.plugin.version}</version>
+                <configuration combine.self="override">
+                    <failurePriority>5</failurePriority>
+                    <failOnViolation>${breakOnFailure.pmd}</failOnViolation>
+                </configuration>
+                <!-- executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                            <goal>cpd-check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>se.jguru.nazgul.tools.codestyle</groupId>
+                        <artifactId>nazgul-codestyle</artifactId>
+                        <version>${nazgul-codestyle.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                        <version>1.2.17</version>
+                    </dependency>
+                </dependencies -->
+            </plugin>
+        </plugins>
+    </build>
 
     <!-- +=============================================== -->
     <!-- | Section 4:  External systems                   -->
@@ -76,5 +120,4 @@
         <url>${reactor.url.remote.prefix}/${reactor.name}</url>
         <tag>HEAD</tag>
     </scm>
-
 </project>
