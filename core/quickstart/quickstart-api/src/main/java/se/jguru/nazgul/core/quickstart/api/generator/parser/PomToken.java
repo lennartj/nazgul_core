@@ -45,6 +45,11 @@ public enum PomToken {
     ARTIFACTID("artifactId"),
 
     /**
+     * The maven version for the active project.
+     */
+    VERSION("mavenVersion"),
+
+    /**
      * The relative path from the VCS project root to the active maven project.
      */
     RELATIVE_DIRPATH("relativeDirPath"),

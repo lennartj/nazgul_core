@@ -1,3 +1,24 @@
+/*
+ * #%L
+ * Nazgul Project: nazgul-core-quickstart-api
+ * %%
+ * Copyright (C) 2010 - 2014 jGuru Europe AB
+ * %%
+ * Licensed under the jGuru Europe AB license (the "License"), based
+ * on Apache License, Version 2.0; you may not use this file except
+ * in compliance with the License.
+ * 
+ * You may obtain a copy of the License at
+ * 
+ *       http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
 package se.jguru.nazgul.core.quickstart.api.generator.parser;
 
 import org.junit.Assert;
@@ -40,14 +61,15 @@ public class SingleBracketPomTokenParserFactoryTest {
     }
 
     @Test
-    public void validateStandardBuilderSteps() {
+    public void validateStandardBuilderStepsForComponentApiProject() {
 
         // Assemble
 
         // Act
         final TokenParser tokenParser = SingleBracketPomTokenParserFactory
                 .create(PomType.COMPONENT_API, acmeFooProject)
-                .withRelativeDirectoryPath("services/finance/finance-api")
+                .withoutProjectNameAsDirectoryPrefix()
+                .inSoftwareComponentWithRelativePath("services/finance")
                 .withProjectGroupIdPrefix("org.acme")
                 .withoutProjectSuffix()
                 .build();
@@ -62,21 +84,161 @@ public class SingleBracketPomTokenParserFactoryTest {
         final Map<String, String> staticTokens = getStaticTokenMapFrom(fpa);
         Assert.assertNotNull(staticTokens);
 
-        System.out.println("Got: " + staticTokens);
-
-        Assert.assertEquals("services/finance/finance-api", staticTokens.get(PomToken.RELATIVE_DIRPATH.getToken()));
-        Assert.assertEquals("services.finance.api", staticTokens.get(PomToken.RELATIVE_PACKAGE.getToken()));
-        Assert.assertEquals("acme-finance-api", staticTokens.get(PomToken.ARTIFACTID.getToken()));
-        Assert.assertEquals("org.acme.services.finance.api", staticTokens.get(PomToken.GROUPID.getToken()));
-        Assert.assertEquals("org.acme", staticTokens.get("groupIdPrefix"));
-        Assert.assertEquals("../../../poms/acme-foo-api-parent",
-                staticTokens.get(PomToken.PARENT_POM_RELATIVE_PATH.getToken()));
         Assert.assertEquals("COMPONENT_API", staticTokens.get(SingleBracketPomTokenParserFactory.POMTYPE_KEY));
         Assert.assertEquals("component-api",
                 staticTokens.get(SingleBracketPomTokenParserFactory.LOWERCASE_POMTYPE_KEY));
 
-        // Parent tokens?
-        // Assert.assertEquals();
+        // Check path and packaging
+        Assert.assertEquals("org.acme", staticTokens.get("groupIdPrefix"));
+        Assert.assertEquals("services/finance/finance-api", staticTokens.get(PomToken.RELATIVE_DIRPATH.getToken()));
+        Assert.assertEquals("services.finance.api", staticTokens.get(PomToken.RELATIVE_PACKAGE.getToken()));
+        Assert.assertEquals("../../../poms/foo-api-parent",
+                staticTokens.get(PomToken.PARENT_POM_RELATIVE_PATH.getToken()));
+
+        // Check local GAV tokens
+        Assert.assertEquals("org.acme.foo.services.finance.api", staticTokens.get(PomToken.GROUPID.getToken()));
+        Assert.assertEquals("acme-foo-finance-api", staticTokens.get(PomToken.ARTIFACTID.getToken()));
+
+        // Check parent GAV tokens
+        Assert.assertEquals("org.acme.foo.poms.foo-api-parent", staticTokens.get(PomToken.PARENT_GROUPID.getToken()));
+        Assert.assertEquals("acme-foo-api-parent", staticTokens.get(PomToken.PARENT_ARTIFACTID.getToken()));
+        Assert.assertEquals("1.0.0-SNAPSHOT", staticTokens.get(PomToken.PARENT_VERSION.getToken()));
+    }
+
+    @Test
+     public void validateStandardBuilderStepsForComponentSpiProject() {
+
+        // Assemble
+
+        // Act
+        final TokenParser tokenParser = SingleBracketPomTokenParserFactory
+                .create(PomType.COMPONENT_SPI, acmeFooProject)
+                .withoutProjectNameAsDirectoryPrefix()
+                .inSoftwareComponentWithRelativePath("services/finance")
+                .withProjectGroupIdPrefix("org.acme")
+                .withProjectSuffix("pojo")
+                .build();
+
+        // Assert
+        Assert.assertTrue(tokenParser instanceof DefaultTokenParser);
+
+        final DefaultTokenParser parser = (DefaultTokenParser) tokenParser;
+        final FactoryParserAgent fpa = getFactoryParserAgent(parser);
+        Assert.assertNotNull(fpa);
+
+        final Map<String, String> staticTokens = getStaticTokenMapFrom(fpa);
+        Assert.assertNotNull(staticTokens);
+
+        Assert.assertEquals("COMPONENT_SPI", staticTokens.get(SingleBracketPomTokenParserFactory.POMTYPE_KEY));
+        Assert.assertEquals("component-spi",
+                staticTokens.get(SingleBracketPomTokenParserFactory.LOWERCASE_POMTYPE_KEY));
+
+        // Check path and packaging
+        Assert.assertEquals("org.acme", staticTokens.get("groupIdPrefix"));
+        Assert.assertEquals("services/finance/finance-spi-pojo",
+                staticTokens.get(PomToken.RELATIVE_DIRPATH.getToken()));
+        Assert.assertEquals("services.finance.spi.pojo", staticTokens.get(PomToken.RELATIVE_PACKAGE.getToken()));
+        Assert.assertEquals("../../../poms/foo-api-parent",
+                staticTokens.get(PomToken.PARENT_POM_RELATIVE_PATH.getToken()));
+
+        // Check local GAV tokens
+        Assert.assertEquals("org.acme.foo.services.finance.spi.pojo", staticTokens.get(PomToken.GROUPID.getToken()));
+        Assert.assertEquals("acme-foo-finance-spi-pojo", staticTokens.get(PomToken.ARTIFACTID.getToken()));
+
+        // Check parent GAV tokens
+        Assert.assertEquals("org.acme.foo.poms.foo-api-parent", staticTokens.get(PomToken.PARENT_GROUPID.getToken()));
+        Assert.assertEquals("acme-foo-api-parent", staticTokens.get(PomToken.PARENT_ARTIFACTID.getToken()));
+        Assert.assertEquals("1.0.0-SNAPSHOT", staticTokens.get(PomToken.PARENT_VERSION.getToken()));
+    }
+
+    @Test
+    public void validateStandardBuilderStepsForApiParentProject() {
+
+        // Assemble
+
+        // Act
+        final TokenParser tokenParser = SingleBracketPomTokenParserFactory
+                .create(PomType.API_PARENT, acmeFooProject)
+                .useProjectNameAsDirectoryPrefix()
+                .isParentProject()
+                .withProjectGroupIdPrefix("org.acme")
+                .withoutProjectSuffix()
+                .build();
+
+        // Assert
+        Assert.assertTrue(tokenParser instanceof DefaultTokenParser);
+
+        final DefaultTokenParser parser = (DefaultTokenParser) tokenParser;
+        final FactoryParserAgent fpa = getFactoryParserAgent(parser);
+        Assert.assertNotNull(fpa);
+
+        final Map<String, String> staticTokens = getStaticTokenMapFrom(fpa);
+        Assert.assertNotNull(staticTokens);
+
+        Assert.assertEquals("API_PARENT", staticTokens.get(SingleBracketPomTokenParserFactory.POMTYPE_KEY));
+        Assert.assertEquals("api-parent",
+                staticTokens.get(SingleBracketPomTokenParserFactory.LOWERCASE_POMTYPE_KEY));
+
+        // Check path and packaging
+        Assert.assertEquals("org.acme", staticTokens.get("groupIdPrefix"));
+        Assert.assertEquals("poms/foo-api-parent",
+                staticTokens.get(PomToken.RELATIVE_DIRPATH.getToken()));
+        Assert.assertEquals("poms.acme-foo-api-parent", staticTokens.get(PomToken.RELATIVE_PACKAGE.getToken()));
+        Assert.assertEquals("../foo-parent", staticTokens.get(PomToken.PARENT_POM_RELATIVE_PATH.getToken()));
+
+        // Check local GAV tokens
+        Assert.assertEquals("org.acme.foo.poms.acme-foo-api-parent", staticTokens.get(PomToken.GROUPID.getToken()));
+        Assert.assertEquals("acme-foo-api-parent", staticTokens.get(PomToken.ARTIFACTID.getToken()));
+
+        // Check parent GAV tokens
+        Assert.assertEquals("org.acme.foo.poms.foo-parent", staticTokens.get(PomToken.PARENT_GROUPID.getToken()));
+        Assert.assertEquals("acme-foo-parent", staticTokens.get(PomToken.PARENT_ARTIFACTID.getToken()));
+        Assert.assertEquals("1.0.0-SNAPSHOT", staticTokens.get(PomToken.PARENT_VERSION.getToken()));
+    }
+
+    @Test
+    public void validateStandardBuilderStepsForPomsReactorProject() {
+
+        // Assemble
+
+        // Act
+        final TokenParser tokenParser = SingleBracketPomTokenParserFactory
+                .create(PomType.REACTOR, acmeFooProject)
+                .useProjectNameAsDirectoryPrefix()
+                .inSoftwareComponentWithRelativePath("poms")
+                .withProjectGroupIdPrefix("org.acme")
+                .withoutProjectSuffix()
+                .build();
+
+        // Assert
+        Assert.assertTrue(tokenParser instanceof DefaultTokenParser);
+
+        final DefaultTokenParser parser = (DefaultTokenParser) tokenParser;
+        final FactoryParserAgent fpa = getFactoryParserAgent(parser);
+        Assert.assertNotNull(fpa);
+
+        final Map<String, String> staticTokens = getStaticTokenMapFrom(fpa);
+        Assert.assertNotNull(staticTokens);
+
+        Assert.assertEquals("REACTOR", staticTokens.get(SingleBracketPomTokenParserFactory.POMTYPE_KEY));
+        Assert.assertEquals("reactor",
+                staticTokens.get(SingleBracketPomTokenParserFactory.LOWERCASE_POMTYPE_KEY));
+
+        // Check path and packaging
+        Assert.assertEquals("org.acme", staticTokens.get("groupIdPrefix"));
+        Assert.assertEquals("poms",
+                staticTokens.get(PomToken.RELATIVE_DIRPATH.getToken()));
+        Assert.assertEquals("poms", staticTokens.get(PomToken.RELATIVE_PACKAGE.getToken()));
+        Assert.assertEquals("", staticTokens.get(PomToken.PARENT_POM_RELATIVE_PATH.getToken()));
+
+        // Check local GAV tokens
+        Assert.assertEquals("org.acme.foo.poms", staticTokens.get(PomToken.GROUPID.getToken()));
+        Assert.assertEquals("acme-foo-poms-reactor", staticTokens.get(PomToken.ARTIFACTID.getToken()));
+
+        // Check parent GAV tokens
+        Assert.assertEquals("org.acme.foo", staticTokens.get(PomToken.PARENT_GROUPID.getToken()));
+        Assert.assertEquals("acme-foo-reactor", staticTokens.get(PomToken.PARENT_ARTIFACTID.getToken()));
+        Assert.assertEquals("1.0.0-SNAPSHOT", staticTokens.get(PomToken.PARENT_VERSION.getToken()));
     }
 
     //

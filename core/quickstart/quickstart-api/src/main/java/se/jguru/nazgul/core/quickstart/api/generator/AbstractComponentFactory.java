@@ -213,7 +213,8 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
         // 2) Create a TokenParser to handle template tokens
         final TokenParser tokenParser = SingleBracketPomTokenParserFactory
                 .create(part.getComponentPomType(), project)
-                .withRelativeDirectoryPath(navigator.getRelativePath(mavenProjectDir, false))
+                .withoutProjectNameAsDirectoryPrefix()
+                .inSoftwareComponentWithRelativePath(navigator.getRelativePath(mavenProjectDir, false))
                 .withProjectGroupIdPrefix(optionalGroupIdPrefix)
                 .withProjectSuffix(partSuffix)
                 .build();

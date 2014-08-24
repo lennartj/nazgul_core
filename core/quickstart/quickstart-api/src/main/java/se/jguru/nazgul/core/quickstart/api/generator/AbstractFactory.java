@@ -101,7 +101,7 @@ public abstract class AbstractFactory {
 
         final String toReturn = dirPrefix + dirSuffix;
         if (log.isDebugEnabled()) {
-            log.debug("PomType [" + aPomType + "] yielded name [" + toReturn + "]");
+            log.debug("PomType [" + aPomType + "] yields directory name [" + toReturn + "]");
         }
 
         // All done.

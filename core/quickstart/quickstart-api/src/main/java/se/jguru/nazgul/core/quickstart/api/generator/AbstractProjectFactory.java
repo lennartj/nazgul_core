@@ -152,7 +152,9 @@ public abstract class AbstractProjectFactory extends AbstractFactory implements 
         // Read the POM resource, and write the POM file.
         final TokenParser tokenParser = SingleBracketPomTokenParserFactory
                 .create(pomType, project)
-                .withRelativeDirectoryPath(relativePath)
+                .withoutProjectNameAsDirectoryPrefix()
+                // .isParentProject()
+                .inSoftwareComponentWithRelativePath(relativePath)
                 .withProjectGroupIdPrefix(packagePrefix)
                 .withoutProjectSuffix()
                 .build();

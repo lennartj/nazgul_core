@@ -1,3 +1,24 @@
+/*
+ * #%L
+ * Nazgul Project: nazgul-core-quickstart-api
+ * %%
+ * Copyright (C) 2010 - 2014 jGuru Europe AB
+ * %%
+ * Licensed under the jGuru Europe AB license (the "License"), based
+ * on Apache License, Version 2.0; you may not use this file except
+ * in compliance with the License.
+ * 
+ * You may obtain a copy of the License at
+ * 
+ *       http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
 package se.jguru.nazgul.core.quickstart.api.generator.parser;
 
 import org.apache.commons.lang3.Validate;
@@ -15,6 +36,7 @@ import se.jguru.nazgul.core.quickstart.model.Project;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.StringTokenizer;
@@ -43,6 +65,11 @@ public final class SingleBracketPomTokenParserFactory {
      */
     public static final String LOWERCASE_POMTYPE_KEY = "pomtype";
 
+    /**
+     * The name of the directory containing all parent POM projects.
+     */
+    public static final String POMS_DIRECTORY_NAME = "poms";
+
     /*
      * Hide factory class constructors.
      */
@@ -58,7 +85,8 @@ public final class SingleBracketPomTokenParserFactory {
      *                created compound TokenParser.
      * @return The Builder used to create the TokenParser.
      */
-    public static RelativePathEnricher create(final PomType pomType, final Project project) {
+    public static DirectoryPrefixEnricher create(final PomType pomType,
+                                                 final Project project) {
 
         // Check sanity
         Validate.notNull(pomType, "Cannot handle null pomType argument.");
@@ -70,7 +98,7 @@ public final class SingleBracketPomTokenParserFactory {
         pomTokens.put(LOWERCASE_POMTYPE_KEY, pomType.name().toLowerCase().replace("_", "-"));
 
         // All done.
-        return new RelativePathEnricher(project, pomType, pomTokens);
+        return new DirectoryPrefixEnricher(project, pomType, pomTokens, false);
     }
 
     /**
@@ -79,7 +107,9 @@ public final class SingleBracketPomTokenParserFactory {
     abstract static class BuilderStep {
 
         // Internal state
+        private boolean parentPomType;
         private boolean requiresProjectSuffix = false;
+        private boolean addProjectNameAsDirectoryPrefix;
         protected Project project;
         protected PomType pomType;
         protected SortedMap<String, String> pomTokens;
@@ -87,17 +117,22 @@ public final class SingleBracketPomTokenParserFactory {
         /**
          * Creates a new BuilderStep wrapping the supplied data. Each can be {@code null}.
          *
-         * @param project   The Project of this BuilderStep.
-         * @param pomType   The POM type of this BuilderStep.
-         * @param pomTokens The pomTokens storage.
+         * @param project                         The Project of this BuilderStep.
+         * @param pomType                         The POM type of this BuilderStep.
+         * @param pomTokens                       The pomTokens storage.
+         * @param addProjectNameAsDirectoryPrefix set to {@code true} if directory names and artifactIDs should
+         *                                        add/prepend the project name as prefix
+         *                                        (i.e. yield {@code project.getName()-} prepended to directory names).
          */
         protected BuilderStep(final Project project,
                               final PomType pomType,
-                              final SortedMap<String, String> pomTokens) {
+                              final SortedMap<String, String> pomTokens,
+                              final boolean addProjectNameAsDirectoryPrefix) {
 
             this.project = project;
             this.pomType = pomType;
             this.pomTokens = pomTokens;
+            this.addProjectNameAsDirectoryPrefix = addProjectNameAsDirectoryPrefix;
 
             // Check sanity
             if (pomType != null) {
@@ -107,6 +142,8 @@ public final class SingleBracketPomTokenParserFactory {
                         requiresProjectSuffix = current.isSuffixRequired();
                     }
                 }
+
+                parentPomType = pomType.name().contains("PARENT");
             }
         }
 
@@ -130,149 +167,366 @@ public final class SingleBracketPomTokenParserFactory {
         protected final boolean isProjectSuffixRequired() {
             return requiresProjectSuffix;
         }
+
+        /**
+         * @return {@code true} if the PomType of this BuilderStep is a Parent POM (as opposed to a Component POM).
+         */
+        protected final boolean isParentPomType() {
+            return parentPomType;
+        }
+
+        /**
+         * @return {@code true} if this BuilderStep should add prefixes with the Project's name
+         * to local project directory names. This means that SoftwareComponent directories should be
+         * given names on the form {@code foo-finance-api} instead of {@code finance-api},
+         * given that the project's name is {@code foo} and the SoftwareComponent's {@code finance}.
+         */
+        protected boolean isProjectNameAddedToDirectories() {
+            return addProjectNameAsDirectoryPrefix;
+        }
+
+        /**
+         * Converts the supplied path to a List of segments, assuming that the path uses '/' chars to separate
+         * directory names. Returning a List containing all directory names (i.e. path parts)
+         * in their order of occurrence.
+         *
+         * @param path The path to tokenize, assumed to use '/' as separator chars.
+         * @return A List whose elements contain the directory names within the supplied path.
+         */
+        protected List<String> tokenize(final String path) {
+
+            final List<String> toReturn = new ArrayList<>();
+            if (path != null) {
+                final StringTokenizer tok = new StringTokenizer(path, "/", false);
+                while (tok.hasMoreTokens()) {
+                    toReturn.add(tok.nextToken());
+                }
+            }
+            return toReturn;
+        }
     }
 
     /**
-     * Class which adds a non-null relativePath and PomTokens {@code PomToken.RELATIVE_DIRPATH}
-     * and {@code PomToken.RELATIVE_PACKAGE}.
+     * Class which defines whether or not the name of the Project should be added as a prefix to
+     * SoftwareComponent directories when their names are synthesized. Given a SoftwareComponent
+     * {@code configuration} in a Project with the name {@code foo}, its API project directory name is
+     * <ul>
+     * <li>{@code configuration-api} if this DirectoryPrefixEnricher is given a false argument
+     * (or the method {@code withoutProjectNameAsDirectoryPrefix()} is called.</li>
+     * <li>{@code foo-configuration-api} if this DirectoryPrefixEnricher is given a true argument
+     * (or the method {@code useProjectNameAsDirectoryPrefix()} is called.</li>
+     * </ul>
+     */
+    public static class DirectoryPrefixEnricher extends BuilderStep {
+
+        public DirectoryPrefixEnricher(final Project project,
+                                       final PomType pomType,
+                                       final SortedMap<String, String> pomTokens,
+                                       final boolean addProjectNameAsDirectoryPrefix) {
+            super(project, pomType, pomTokens, addProjectNameAsDirectoryPrefix);
+        }
+
+        /**
+         * Indicate if the Project's name should be prepended as a prefix to software component directory names.
+         * Given a SoftwareComponent {@code configuration} in a Project with the name {@code foo},
+         * its API project directory name is
+         * <ul>
+         * <li>{@code configuration-api} if this method is called with the argument {@code false}.</li>
+         * <li>{@code foo-configuration-api} if this method is called with the argument {@code true}.</li>
+         * </ul>
+         *
+         * @param yes true to indicate that the project name should be added as a prefix to SoftwareComponent
+         *            directories, and false otherwise.
+         * @return The next BuilderStep subtype in the builder chain.
+         */
+        public RelativePathEnricher prependProjectNameAsDirectoryPrefix(final boolean yes) {
+            return new RelativePathEnricher(project, pomType, pomTokens, yes);
+        }
+
+        /**
+         * Convenience method calling {@code return prependProjectNameAsDirectoryPrefix(true);}
+         *
+         * @return The next BuilderStep subtype in the builder chain.
+         * @see #prependProjectNameAsDirectoryPrefix(boolean)
+         */
+        public RelativePathEnricher useProjectNameAsDirectoryPrefix() {
+            return prependProjectNameAsDirectoryPrefix(true);
+        }
+
+        /**
+         * Convenience method calling {@code return prependProjectNameAsDirectoryPrefix(false);}
+         *
+         * @return The next BuilderStep subtype in the builder chain.
+         * @see #prependProjectNameAsDirectoryPrefix(boolean)
+         */
+        public RelativePathEnricher withoutProjectNameAsDirectoryPrefix() {
+            return prependProjectNameAsDirectoryPrefix(false);
+        }
+    }
+
+    /**
+     * Class which adds the relative path to a SoftwareComponent, as well as temporary pomTokens
+     * {@code SOFTWARE_COMPONENT_RELATIVE_PATH} and {@code SOFTWARE_COMPONENT_NAME}.
+     * <p/>
+     * Adds the relative path to the reactor of the SoftwareComponent in which the active Maven project
+     * which should be tokenized by the resulting TokenParser resides. The reactor for a SoftwareComponentPart project
+     * is its parent directory. (I.e. for the {@code finance-api} project residing within the SoftwareComponent
+     * {@code finance}, the relative path should be {@code services/finance} assuming that we would like the
+     * finance SoftwareComponent to reside in the {@code services} VCS path).
      */
     public static class RelativePathEnricher extends BuilderStep {
 
         /**
-         * The pomToken key holding the name of the local component.
+         * The pomTokens key holding the relative path to the SoftwareComponent containing the active Maven project.
          */
-        public static final String COMPONENT_NAME = "componentName";
+        public static final String SOFTWARE_COMPONENT_RELATIVE_PATH = "softwareComponentRelativePath";
 
         /**
-         * The pomToken key holding the directory name of the local/active project.
+         * The pomTokens key holding the relative name of the SoftwareComponent containing the active Maven project.
          */
-        public static final String LOCAL_PROJECT_DIRNAME = "localProjectDirname";
+        public static final String SOFTWARE_COMPONENT_NAME = "softwareComponentName";
 
-        RelativePathEnricher(final Project project, final PomType pomType, final SortedMap<String, String> pomTokens) {
-            super(project, pomType, pomTokens);
+        /**
+         * The string name of the PomType for the parent of the active Maven project.
+         * (I.e. {@code parentPomType.name()}).
+         */
+        public static final String PARENT_POMTYPE = "parent_pomType";
+
+        RelativePathEnricher(final Project project,
+                             final PomType pomType,
+                             final SortedMap<String, String> pomTokens,
+                             final boolean addProjectNameAsDirectoryPrefix) {
+            super(project, pomType, pomTokens, addProjectNameAsDirectoryPrefix);
         }
 
         /**
-         * Adds the relative path of the active Maven project directory.
+         * Parent projects are not part of a SoftwareComponent; therefore one should call this method instead of
+         * the {@code inSoftwareComponentWithRelativePath()} method.
          *
-         * @param projectRelativeDirectoryPath The non-empty relative directory path from the project VCS root to the
-         *                                     active maven project which should be tokenized by the resulting
-         *                                     TokenParser.
          * @return The next BuilderStep subtype in the builder chain.
          */
-        public PrefixEnricher withRelativeDirectoryPath(final String projectRelativeDirectoryPath) {
+        public PrefixEnricher isParentProject() {
 
             // Check sanity
-            Validate.notEmpty(projectRelativeDirectoryPath,
-                    "Cannot handle null or empty projectRelativeDirectoryPath argument.");
+            Validate.isTrue(isParentPomType(),
+                    "isParentProject should only be called for PARENT PomTypes.");
 
-            // Add the PomTokens for relative directory path and -package
+            // Since all parent poms are located in the [projName]/poms/[xyz-]projName-[something-]parent
+            // directory, we really need not define the software component path at all.
             //
-            // Given a relPath of "services/finance/finance-api",
-            // the relPackage should be "services.finance.api"
-            //
-            pomTokens.put(PomToken.RELATIVE_DIRPATH.getToken(), projectRelativeDirectoryPath);
-            pomTokens.put(PomToken.RELATIVE_PACKAGE.getToken(), getRelativePackage(projectRelativeDirectoryPath));
+            // pomTokens.put(SOFTWARE_COMPONENT_RELATIVE_PATH, "poms");
 
-            // All done.
-            return new PrefixEnricher(project, pomType, pomTokens);
+            // Add the PomType of the parent.
+            final PomType parentPomType = getParentPomType(2);
+            pomTokens.put(PARENT_POMTYPE, parentPomType.name());
+
+            // Add the relative path to the parent POM directory
+            final String parentPomDirName = (isProjectNameAddedToDirectories()
+                    ? project.getName() + Name.DEFAULT_SEPARATOR
+                    : "") + parentPomType.name().replace("_", Name.DEFAULT_SEPARATOR);
+            pomTokens.put(PomToken.PARENT_POM_RELATIVE_PATH.getToken(), "../" + parentPomDirName);
+
+            // All Done.
+            return new PrefixEnricher(project, pomType, pomTokens, isProjectNameAddedToDirectories());
+        }
+
+        /**
+         * Adds the relative path to the reactor of the SoftwareComponent in which the active Maven project which
+         * should be tokenized by the resulting TokenParser resides. The reactor for a SoftwareComponentPart project
+         * is its parent directory. (I.e. for the {@code finance-api} project residing within the SoftwareComponent
+         * {@code finance}, the relative path should be {@code services/finance} assuming that we would like the
+         * finance SoftwareComponent to reside in the {@code services} VCS path).
+         * <p/>
+         * This implies that the directory name of the project itself (such as {@code finance-api}) should not be
+         * provided in the componentRelativePath.
+         * <p/>
+         * Example:<br/>
+         * <pre>
+         *     <code>
+         *         // Assume that we want to create the TokenParser for the project
+         *         //
+         *         // finance-api
+         *         //
+         *         // Then the componentRelativePath provided should be "services/finance"
+         *         // and not "services/finance/finance-api"
+         *         //
+         *         final TokenParser tokenParser = SingleBracketPomTokenParserFactory
+         *         .create(PomType.COMPONENT_API, acmeFooProject, false)
+         *         .inSoftwareComponentWithRelativePath("services/finance")
+         *         .withProjectGroupIdPrefix("org.acme", false)
+         *         .withoutProjectSuffix()
+         *         .build();
+         *     </code>
+         * </pre>
+         *
+         * @param relativePathToSoftwareComponent Cannot be null or empty. The relative directory path from the project VCS
+         *                                        root to the <strong>component directory</strong> containing the Maven
+         *                                        project which should be tokenized by the resulting TokenParser.
+         * @return The next BuilderStep subtype in the builder chain.
+         */
+        public PrefixEnricher inSoftwareComponentWithRelativePath(final String relativePathToSoftwareComponent) {
+
+            // Delegate if required
+            if (isParentPomType()) {
+                return isParentProject();
+            }
+
+            final String invalidRelativePathMsg = "Cannot handle null or empty "
+                    + "projectRelativeDirectoryPath argument for non-RootReactor projects.";
+            final List<String> pathSegments = tokenize(relativePathToSoftwareComponent);
+
+            // We have a non-parent project, so we might need to calculate the relative path.
+            switch (pomType) {
+
+                case ROOT_REACTOR:
+                    pomTokens.put(SOFTWARE_COMPONENT_RELATIVE_PATH, "");
+                    // pomTokens.put(PomToken.PARENT_POM_RELATIVE_PATH.getToken(), "");
+                    // pomTokens.put(SOFTWARE_COMPONENT_NAME, null);
+                    break;
+
+                default:
+                    Validate.notEmpty(relativePathToSoftwareComponent, invalidRelativePathMsg);
+                    pomTokens.put(SOFTWARE_COMPONENT_RELATIVE_PATH, relativePathToSoftwareComponent);
+                    pomTokens.put(SOFTWARE_COMPONENT_NAME, pathSegments.get(pathSegments.size() - 1));
+
+                    final PomType parentPomType = getParentPomType(pathSegments.size());
+                    final String relative = getRelativePathToParentPom(relativePathToSoftwareComponent, parentPomType);
+                    pomTokens.put(PARENT_POMTYPE, parentPomType.name());
+                    pomTokens.put(PomToken.PARENT_POM_RELATIVE_PATH.getToken(), relative);
+                    break;
+            }
+
+            // All Done.
+            return new PrefixEnricher(project, pomType, pomTokens, isProjectNameAddedToDirectories());
         }
 
         //
         // Private helpers
         //
 
-        private String getRelativePackage(final String relativePath) {
+        private String getRelativePathToParentPom(final String relativePathToSoftwareComponent,
+                                                  final PomType parentPomType) {
 
-            List<String> pathSegments = new ArrayList<>();
+            final List<String> tokenizedPath = tokenize(relativePathToSoftwareComponent);
+            final int numCdsUpwards = pomType == PomType.REACTOR
+                    ? tokenizedPath.size()
+                    : tokenizedPath.size() + 1;
 
-            final StringTokenizer tok = new StringTokenizer(relativePath, "/", false);
-            while(tok.hasMoreTokens()) {
-                pathSegments.add(tok.nextToken());
+            final StringBuilder relativePathBuilder = new StringBuilder();
+            for (int i = 0; i < numCdsUpwards; i++) {
+                relativePathBuilder.append("../");
+            }
+            relativePathBuilder.append("poms/");
+
+            final String parentPomDirName = (isParentPomType() || isProjectNameAddedToDirectories()
+                    ? project.getName() + Name.DEFAULT_SEPARATOR
+                    : "") + parentPomType.name().replace("_", Name.DEFAULT_SEPARATOR).toLowerCase();
+
+            relativePathBuilder.append(parentPomDirName);
+            return relativePathBuilder.toString();
+        }
+
+        private PomType getParentPomType(final int numSegmentsInRelativePathToProjectRoot) {
+
+            PomType toReturn = null;
+
+            switch (pomType) {
+                case REACTOR:
+                    toReturn = numSegmentsInRelativePathToProjectRoot < 2
+                            ? PomType.ROOT_REACTOR
+                            : PomType.REACTOR;
+                    break;
+
+                case COMPONENT_MODEL:
+                    toReturn = PomType.MODEL_PARENT;
+                    break;
+
+                case MODEL_PARENT:
+                case COMPONENT_SPI:
+                case COMPONENT_API:
+                    toReturn = PomType.API_PARENT;
+                    break;
+
+                case API_PARENT:
+                case WAR_PARENT:
+                case COMPONENT_TEST:
+                case COMPONENT_IMPLEMENTATION:
+                case OTHER_PARENT:
+                    toReturn = PomType.PARENT;
+                    break;
+
+                default:
+                    toReturn = null;
+                    break;
             }
 
-            // Check sanity
-            if(pomType.name().contains("COMPONENT")) {
-
-                // A relative path of "services/finance/finance-api"
-                // should yield the relative package "services.finance.api"
-
-                // Do we have a last and second-to last pathSegment?
-                if(pathSegments.size() >= 2) {
-
-                    final String componentName = pathSegments.get(pathSegments.size() - 2);
-                    pomTokens.put(COMPONENT_NAME, componentName);
-
-                    final String partName = pathSegments.get(pathSegments.size() - 1);
-                    pomTokens.put(LOCAL_PROJECT_DIRNAME, partName);
-
-                    final String toSlice = componentName + Name.DEFAULT_SEPARATOR;
-
-                    if(partName.startsWith(toSlice)) {
-
-                        // Slice off the initial part of the last segment, and convert the rest to packages.
-                        final String lastPackagePart = partName.substring(toSlice.length())
-                                .replace(Name.DEFAULT_SEPARATOR, ".");
-
-                        final StringBuilder builder = new StringBuilder();
-                        for(int i = 0; i < pathSegments.size() - 1; i++) {
-                            builder.append(pathSegments.get(i)).append(".");
-                        }
-
-                        // All done.
-                        return builder.toString() + lastPackagePart;
-                    }
-                }
-            }
-
-            // TODO: Add the LOCAL_PROJECT_DIRNAME parameter.
-            final String localProjectDirname = pathSegments.size() > 0
-                    ? pathSegments.get(pathSegments.size() - 1)
-                    : "";
-            pomTokens.put(LOCAL_PROJECT_DIRNAME, localProjectDirname);
-
-            // Fallback to default algorithm.
-            return relativePath.replace("/", ".");
+            // All done.
+            return toReturn;
         }
     }
 
+    /**
+     * BuilderStep which adds the prefix of Maven GroupIDs for a relative path within a directory.
+     * A "groupIdPrefix" is normally identical to a reverse DNS of the project's organisation,
+     * similar to {@code se.jguru} or {@code org.acme}. Note that the groupIdPrefix should <strong>not</strong>
+     * include the project name (i.e. {@code project.getName()}), as it will be automatically appended by this builder.
+     * <p/>
+     * Given a SoftwareComponent with the relative path {@code services/finance}, the groupIdPrefix
+     * {@code se.jguru} and the project name {@code foo}, the full groupId of the finance service
+     * SoftwareComponent can be constructed as {@code se.jguru.foo.services.finance}.
+     * This, in turn, implies that the API project in the finance SoftwareComponent will retrieve the groupId
+     * {@code se.jguru.foo.services.finance.api}.
+     */
     public static class PrefixEnricher extends BuilderStep {
 
         static final String GROUPID_PREFIX = "groupIdPrefix";
 
-        PrefixEnricher(final Project project, final PomType pomType, final SortedMap<String, String> pomTokens) {
-            super(project, pomType, pomTokens);
+        PrefixEnricher(final Project project,
+                       final PomType pomType,
+                       final SortedMap<String, String> pomTokens,
+                       final boolean addProjectNameAsDirectoryPrefix) {
+            super(project, pomType, pomTokens, addProjectNameAsDirectoryPrefix);
         }
 
         /**
-         * Adds prefix which should be added to the relative path to generate a groupId for the current project.
+         * Adds prefix which should be prepended to the relative path to generate a groupId for the current project.
+         * A "projectGroupIdPrefix" is normally identical to a reverse DNS of the project's organisation,
+         * similar to {@code se.jguru} or {@code org.acme}. Note that the groupIdPrefix should <strong>not</strong>
+         * include the project name (i.e. {@code project.getName()}), as it will be automatically appended by this
+         * builder.
          *
          * @param projectGroupIdPrefix A non-null prefix string added to the relative path to generate a groupId for
-         *                             the current project. Empty values are permitted, but null are not.
+         *                             the current project. Empty values are permitted, but null are not. Normally
+         *                             identical to a reverse DNS of the project's organisation, similar to
+         *                             {@code se.jguru} or {@code org.acme}. Note that the groupIdPrefix should
+         *                             <strong>not</strong> include the project name (i.e. {@code project.getName()}),
+         *                             as it will be automatically appended by this builder.
          * @return The next BuilderStep subtype in the builder chain.
          */
         public SuffixEnricher withProjectGroupIdPrefix(final String projectGroupIdPrefix) {
 
             // Check sanity
             Validate.notEmpty(projectGroupIdPrefix, "Cannot handle null or empty projectGroupIdPrefix argument.");
-            validateRequiredKeyValuePair(PomToken.RELATIVE_PACKAGE.getToken());
 
             // Add the pomToken
             pomTokens.put(GROUPID_PREFIX, projectGroupIdPrefix);
 
             // All done.
-            return new SuffixEnricher(project, pomType, pomTokens);
+            return new SuffixEnricher(project, pomType, pomTokens, isProjectNameAddedToDirectories());
         }
     }
 
     /**
-     * Builder step which can add a project suffix, for project types which requires it,
-     * and no project suffix for project types that does not.
+     * Builder step which can add a project suffix, for project types which requires it
+     * (and no project suffix for project types that requires none).
      */
     public static class SuffixEnricher extends BuilderStep {
 
-        SuffixEnricher(final Project project, final PomType pomType, final SortedMap<String, String> pomTokens) {
-            super(project, pomType, pomTokens);
+        SuffixEnricher(final Project project,
+                       final PomType pomType,
+                       final SortedMap<String, String> pomTokens,
+                       final boolean addProjectNameAsDirectoryPrefix) {
+            super(project, pomType, pomTokens, addProjectNameAsDirectoryPrefix);
         }
 
         /**
@@ -280,62 +534,173 @@ public final class SingleBracketPomTokenParserFactory {
          * project for ComponentTypes where suffix is required. If the {@code isProjectSuffixRequired()} yields
          * {@code false}, the projectSuffix value is ignored (implying it may be null or empty in these cases).
          *
-         * @param projectSuffix The suffix for the project. May be null or empty.
+         * @param projectSuffix The suffix for the project. May be null or empty, depending on the active projectType.
          * @return The next BuilderStep subtype in the builder chain.
          * @see se.jguru.nazgul.core.quickstart.api.generator.SoftwareComponentPart#isSuffixRequired()
          */
         public Builder withProjectSuffix(final String projectSuffix) {
 
-            // Calculate the artifactId of the current project.
-            final StringBuilder artifactIdBuilder = new StringBuilder();
-            final String projectPrefix = project.getPrefix();
-            if (projectPrefix != null && projectPrefix.length() > 0) {
-                artifactIdBuilder.append(projectPrefix).append(Name.DEFAULT_SEPARATOR);
+            // Get some token parts
+            final String localProjectDirName = getProjectDirectoryName(projectSuffix);
+            final String relativePackage = getRelativePackage(projectSuffix);
+
+            String pathToParentDir = pomTokens.get(RelativePathEnricher.SOFTWARE_COMPONENT_RELATIVE_PATH);
+            if (pathToParentDir == null && isParentPomType()) {
+                pathToParentDir = POMS_DIRECTORY_NAME;
             }
+            final String relativeDirPath = pomType == PomType.REACTOR
+                    ? pathToParentDir
+                    : pathToParentDir + "/" + localProjectDirName;
 
-            // Find the local Maven project name
-            String localProjectName = pomTokens.get(RelativePathEnricher.LOCAL_PROJECT_DIRNAME);
-            if(localProjectName == null) {
-                validateRequiredKeyValuePair(RelativePathEnricher.LOCAL_PROJECT_DIRNAME);
+            pomTokens.put(PomToken.RELATIVE_DIRPATH.getToken(), relativeDirPath);
+            pomTokens.put(PomToken.RELATIVE_PACKAGE.getToken(), relativePackage);
+
+
+            // Now find the groupId and artifactId for the active project.
+            final boolean nonEmptyProjectPrefix = project.getPrefix() != null && project.getPrefix().length() > 0;
+            final boolean addProjectNameAsPrefixToDirs = nonEmptyProjectPrefix && isProjectNameAddedToDirectories();
+
+            final String dirPrefix = addProjectNameAsPrefixToDirs ? project.getName() + Name.DEFAULT_SEPARATOR : "";
+            final String artifactPrefix = nonEmptyProjectPrefix ? project.getPrefix() + Name.DEFAULT_SEPARATOR : "";
+            final List<String> parentDirSegments = tokenize(pathToParentDir);
+
+            // ArtifactID: Calculate for the current project.
+            //
+            // Using the localProjectDirName, add the project name as a prefix if required.
+            // DirName: "finance-api"  --> ArtifactID: "acme-foo-finance-api"
+            // DirName: "foo-finance-api"  --> ArtifactID: "acme-foo-finance-api"
+            //
+            String artifactId = artifactPrefix + project.getName() + Name.DEFAULT_SEPARATOR + localProjectDirName;
+            if (pomType == PomType.REACTOR || pomType == PomType.ROOT_REACTOR) {
+                artifactId = artifactId + "-reactor";
             }
-            artifactIdBuilder.append(localProjectName);
+            pomTokens.put(PomToken.ARTIFACTID.getToken(), artifactId);
 
-            if (projectSuffix != null && projectSuffix.length() > 0) {
-                artifactIdBuilder.append(Name.DEFAULT_SEPARATOR).append(projectSuffix);
-            }
-
-            pomTokens.put(PomToken.ARTIFACTID.getToken(), artifactIdBuilder.toString());
-
-            // Calculate the groupId of the current project.
+            // GroupID: Calculate for the current project.
             final String projectGroupIdPrefix = pomTokens.get(PrefixEnricher.GROUPID_PREFIX);
-            final String relativeDirPath = pomTokens.get(PomToken.RELATIVE_DIRPATH.getToken());
-            final StringBuilder groupIdBuilder = new StringBuilder();
-            if (projectGroupIdPrefix != null) {
-                groupIdBuilder.append(projectGroupIdPrefix.replace("/", "."));
-                groupIdBuilder.append(".");
-            }
-            groupIdBuilder.append(relativeDirPath.replace(Name.DEFAULT_SEPARATOR, "/").replace("/", "."));
+            pomTokens.put(PomToken.GROUPID.getToken(),
+                    projectGroupIdPrefix + "." + project.getName() + "." + relativePackage);
 
-            // Should we add the projectSuffix?
-            if (isProjectSuffixRequired()) {
-                groupIdBuilder.append(projectSuffix);
-            }
-
-            pomTokens.put(PomToken.GROUPID.getToken(), groupIdBuilder.toString());
-
-            // Add the relativePath to the parent directory
-            final PomType parentPomType = getParentPomType();
+            /*
+            // RelativeParentPomPath: Add the relativePath to the parent POM directory
+            final PomType parentPomType = pomTokens.get(RelativePathEnricher.PARENT_POMTYPE) == null
+                    ? null
+                    : PomType.valueOf(pomTokens.get(RelativePathEnricher.PARENT_POMTYPE));
             if (parentPomType != null) {
-                appendRelativePathToParentPomDir(parentPomType);
+
+                String relativePathToParentPomDir = getRelativePathToParentPomDir(
+                        parentPomType, parentDirSegments, dirPrefix);
+                if (isParentPomType()) {
+
+                    relativePathToParentPomDir = "../"
+                            + (isProjectNameAddedToDirectories() ? project.getName() + Name.DEFAULT_SEPARATOR : "")
+                            + parentPomType.name().toLowerCase().replace("_", Name.DEFAULT_SEPARATOR);
+                }
+                pomTokens.put(PomToken.PARENT_POM_RELATIVE_PATH.getToken(), relativePathToParentPomDir);
+
+                // Add the parent POM groupId and artifactId coordinates
+                switch (pomType) {
+
+                    case ROOT_REACTOR:
+                        final SimpleArtifact reactorParent = project.getReactorParent();
+                        pomTokens.put(PomToken.PARENT_GROUPID.getToken(), reactorParent.getGroupId());
+                        pomTokens.put(PomToken.PARENT_ARTIFACTID.getToken(), reactorParent.getArtifactId());
+                        break;
+
+                    case PARENT:
+                        final SimpleArtifact parentParent = project.getParentParent();
+                        pomTokens.put(PomToken.PARENT_GROUPID.getToken(), parentParent.getGroupId());
+                        pomTokens.put(PomToken.PARENT_ARTIFACTID.getToken(), parentParent.getArtifactId());
+                        break;
+
+                    case API_PARENT:
+                    case MODEL_PARENT:
+                    case WAR_PARENT:
+                    case OTHER_PARENT:
+                    case OTHER:
+
+                        //
+                        // Expected form:
+                        // acme-foo-api-parent, that is
+                        // ([projectPrefix]-)[projectName]-[parentPomType]
+                        //
+                        final String parentArtifactId = artifactPrefix + project.getName() + Name.DEFAULT_SEPARATOR
+                                + parentPomType.name().toLowerCase().replace("_", "-");
+
+                        //
+                        // Expected form:
+                        // org.acme.foo.poms.foo-api-parent, that is
+                        // [projectGroupIdPrefix].[projectName].poms.[projectName]-[parentPomType]
+                        //
+                        final String parentGroupId = projectGroupIdPrefix + "." + project.getName() + ".poms."
+                                + project.getName() + Name.DEFAULT_SEPARATOR
+                                + parentPomType.name().toLowerCase().replace("_", "-");
+
+                        pomTokens.put(PomToken.PARENT_ARTIFACTID.getToken(), parentArtifactId);
+                        pomTokens.put(PomToken.PARENT_GROUPID.getToken(), parentGroupId);
+                        break;
+
+                    case REACTOR:
+                        // Typical reactor-to-immediate_parent_reactor structure:
+                        */
+                        /*
+                            <parent>
+                                <groupId>se.jguru.nazgul.core.osgi</groupId>
+                                <artifactId>nazgul-core-osgi-reactor</artifactId>
+                                <version>1.6.1-SNAPSHOT</version>
+                            </parent>
+
+                            <groupId>se.jguru.nazgul.core.osgi.launcher</groupId>
+                            <artifactId>nazgul-core-osgi-launcher-reactor</artifactId>
+                        */
+                        /*
+                        //
+                        // GroupID:     as activeProject's groupID, minus the last segment.
+                        // ArtifactID:  ([projectPrefix]-)[projectName]-[parentDirRelativePathAsRawArtifactId]-reactor
+                        //
+                        final StringBuilder parentGroupIdBuilder = new StringBuilder(projectGroupIdPrefix);
+                        final int numParentPathSegments = parentDirSegments.size() == 0
+                                ? 0
+                                : parentDirSegments.size() - 1;
+                        parentGroupIdBuilder.append(".").append(project.getName());
+                        for (int i = 0; i < numParentPathSegments; i++) {
+                            parentGroupIdBuilder.append(".").append(parentDirSegments.get(i));
+                        }
+
+                        final StringBuilder parentArtifactIdBuilder = new StringBuilder();
+                        if (nonEmptyProjectPrefix) {
+                            parentArtifactIdBuilder.append(project.getPrefix()).append("-");
+                        }
+                        parentArtifactIdBuilder.append(project.getName()).append("-");
+                        for (int i = 0; i < numParentPathSegments; i++) {
+                            parentArtifactIdBuilder.append(parentDirSegments.get(i)).append("-");
+                        }
+                        parentArtifactIdBuilder.append("reactor");
+
+                        // We assume that all reactors will have the same version as the root reactor
+                        pomTokens.put(PomToken.PARENT_GROUPID.getToken(), parentGroupIdBuilder.toString());
+                        pomTokens.put(PomToken.PARENT_ARTIFACTID.getToken(), parentArtifactIdBuilder.toString());
+                        break;
+
+                    default:
+                        // No idea how to treat this...
+                        log.warn("PomType [" + pomType + "] is not handled by the [" + getClass().getSimpleName()
+                                + "] in respect to parent groupID (" + PomToken.PARENT_GROUPID.getToken() + ") and "
+                                + "artifactID (" + PomToken.PARENT_ARTIFACTID.getToken() + ") tokens.\n"
+                                + "This should not happen; please notify the developers ... nicely.");
+                        break;
+
+                }
             } else {
                 log.warn("Could not find parent PomType for PomType [" + pomType
                         + "]. This implies that the [" + PomToken.PARENT_POM_RELATIVE_PATH.getToken()
                         + "] token cannot be set. Validate that your template does not require it, "
                         + "or set it manually.");
             }
+            */
 
             // All done.
-            return new Builder(project, pomType, pomTokens);
+            return new Builder(project, pomType, pomTokens, isProjectNameAddedToDirectories());
         }
 
         /**
@@ -358,64 +723,209 @@ public final class SingleBracketPomTokenParserFactory {
         // Private helpers
         //
 
-        private PomType getParentPomType() {
+        /**
+         * Retrieves the directory name for the active Maven project.
+         *
+         * @param projectSuffix The suffix for the project. May be null or empty, depending on the active projectType.
+         * @return The name of the directory for the active Maven project. Never null or empty.
+         */
+        @SuppressWarnings("all")
+        private String getProjectDirectoryName(final String projectSuffix) {
 
-            PomType toReturn = null;
+            // Check sanity
+            if (pomType == PomType.ROOT_REACTOR) {
+                // This is a special case
+                return project.getName();
+            }
 
-            switch (pomType) {
-                case REACTOR:
-                    toReturn = PomType.REACTOR;
-                    break;
+            final boolean addProjectSuffixToDirName = isProjectSuffixRequired()
+                    && projectSuffix != null
+                    && !projectSuffix.isEmpty();
 
-                case COMPONENT_MODEL:
-                    toReturn = PomType.MODEL_PARENT;
-                    break;
+            final StringBuilder dirNameBuilder = new StringBuilder();
+            if (isProjectNameAddedToDirectories()) {
 
-                case MODEL_PARENT:
-                case COMPONENT_SPI:
-                case COMPONENT_API:
-                    toReturn = PomType.API_PARENT;
-                    break;
+                // In this case, the project dirName should be
+                // "foo-finance-api" instead of
+                // "finance-api".
+                dirNameBuilder.append(project.getName()).append(Name.DEFAULT_SEPARATOR);
+            }
 
-                case API_PARENT:
-                case WAR_PARENT:
-                case COMPONENT_TEST:
-                case COMPONENT_IMPLEMENTATION:
-                    toReturn = PomType.PARENT;
-                    break;
+            // For parent POMs, we should simply add the PomType as the name ...
+            if (!isParentPomType()) {
 
-                default:
-                    toReturn = null;
-                    break;
+                //
+                // The SoftwareComponent's name should not be null or empty for non-parent projects.
+                //
+                final String softwareComponentName = pomTokens.get(RelativePathEnricher.SOFTWARE_COMPONENT_NAME);
+                Validate.notEmpty(softwareComponentName, "SoftwareComponentName was null or empty for non-parent "
+                        + "pomType [" + pomType + "]. Cannot calculate project directory name. "
+                        + "This should not happen.");
+                dirNameBuilder.append(softwareComponentName);
+            }
+
+            // Append the project type to the directory name, minding that reactor POMs are a special case.
+            // Reactor project reside within the software component directory and simply ensure that all
+            // SoftwareComponentPart projects are included within the build reactor.
+            final String lcPomType = pomType.name().toLowerCase().replace("_", Name.DEFAULT_SEPARATOR);
+            if (pomType == PomType.REACTOR) {
+
+                // The reactor POM in the poms reactor is not part of a software component.
+                if (POMS_DIRECTORY_NAME.equals(pomTokens.get(RelativePathEnricher.SOFTWARE_COMPONENT_NAME))) {
+                    return POMS_DIRECTORY_NAME;
+                }
+
+                // Standard component reactor
+                dirNameBuilder.append(Name.DEFAULT_SEPARATOR).append(lcPomType);
+            }
+            if (isParentPomType()) {
+                dirNameBuilder.append(lcPomType);
+            } else {
+
+                // This is a component PomType. Remove the "component-" part of the lcPomType.
+                final String stripOff = "component" + Name.DEFAULT_SEPARATOR;
+                dirNameBuilder.append(Name.DEFAULT_SEPARATOR).append(lcPomType.substring(stripOff.length()));
+            }
+
+            if (addProjectSuffixToDirName) {
+                dirNameBuilder.append(Name.DEFAULT_SEPARATOR).append(projectSuffix);
+            }
+
+            // All done
+            return dirNameBuilder.toString();
+        }
+
+        private String getRelativePackage(final String localProjectSuffix) {
+
+            final StringBuilder relativePackageBuilder = new StringBuilder();
+
+            if(isParentPomType()) {
+
+                // The relative package should be something like
+                // poms.[project.name]-[pomType],
+                //
+                // given that the pomType is made lowercase.
+                relativePackageBuilder
+                        .append(POMS_DIRECTORY_NAME)
+                        .append(".")
+                        .append(project.getName())
+                        .append(".")
+                        .append(pomType.toString().toLowerCase());
+            } else {
+
+                // The first part of the relative package should be
+                //
+                // [relativePathToParent (converted)].[softwareComponent]
+                relativePackageBuilder
+                        .append(pomTokens.get(RelativePathEnricher.SOFTWARE_COMPONENT_RELATIVE_PATH)
+                                .replace("/", "."));
+
+                if(pomType != PomType.REACTOR) {
+
+                    // A relative path of:
+                    // 1) "services/finance/finance-api", or
+                    // 2) "services/finance/foo-finance-api"
+                    //
+                    // ... should yield relative package:
+                    // "services.finance.api"
+                    //
+                    // ... where the last package segment is retrieved from the PomType.
+
+                    final String lcPomTypeName = pomType.name().toLowerCase();
+                    final String pomTypePackage = lcPomTypeName.substring(lcPomTypeName.lastIndexOf("_") + 1);
+                    relativePackageBuilder.append(".").append(pomTypePackage);
+
+                    // Append the project suffix, if required
+                    if (isProjectSuffixRequired()) {
+                        relativePackageBuilder.append(".").append(localProjectSuffix);
+                    }
+                }
             }
 
             // All done.
-            return toReturn;
+            return relativePackageBuilder.toString();
+
+            /*
+            // Define some controlling properties
+            final boolean handleProjectPrefix = project.getPrefix() != null && project.getPrefix().length() > 0;
+            final String prefix = "" + project.getPrefix() + Name.DEFAULT_SEPARATOR;
+
+            final StringBuilder relativePackageBuilder = new StringBuilder("");
+            for (String current : parentDirPathSegments) {
+                relativePackageBuilder.append(current).append(".");
+            }
+
+            // Check sanity
+            if (pomType.name().contains("COMPONENT")) {
+
+                // A relative path of:
+                // 1) "services/finance/finance-api", or
+                // 2) "services/finance/foo-finance-api"
+                //
+                // ... should yield relative package:
+                // "services.finance.api"
+                //
+                // ... where the last package segment is retrieved from the PomType.
+
+                final String lcPomTypeName = pomType.name().toLowerCase();
+                final String pomTypePackage = lcPomTypeName.substring(lcPomTypeName.lastIndexOf("_") + 1);
+
+                relativePackageBuilder.append(pomTypePackage);
+
+                // Append the project suffix, if required
+                if (isProjectSuffixRequired()) {
+                    relativePackageBuilder.append(".").append(localProjectSuffix);
+                }
+
+            } else if (pomType == PomType.REACTOR) {
+
+                // This is a REACTOR. Simply cut off the last '.'
+                relativePackageBuilder.deleteCharAt(relativePackageBuilder.length() - 1);
+
+            } else {
+
+                // This is a PARENT pom type. Peel off the project prefix, unless asked not to, and
+                // add it to the
+                //
+                // <groupId>se.jguru.nazgul.core.poms.core-api-parent</groupId>
+                // <artifactId>nazgul-core-api-parent</artifactId>
+
+                final String toAppend = (handleProjectPrefix ? prefix : "")
+                        + project.getName()
+                        + Name.DEFAULT_SEPARATOR
+                        + pomType.name().toLowerCase().replace("_", "-");
+                relativePackageBuilder.append(toAppend);
+            }
+
+            // All Done.
+            return relativePackageBuilder.toString();
+            */
         }
 
-        private void appendRelativePathToParentPomDir(final PomType parentPom) {
+        private String getRelativePathToParentPomDir(final PomType parentPom,
+                                                     final List<String> parentPathSegments,
+                                                     final String dirPrefix) {
 
             // Check sanity
             Validate.notNull(parentPom, "Cannot handle null parentPom argument.");
+            Validate.notNull(parentPathSegments, "Cannot handle null parentPathSegments argument.");
+            Validate.notNull(dirPrefix, "Cannot handle null dirPrefix argument.");
+
+            final List<PomType> noRelativePath = Arrays.asList(PomType.ROOT_REACTOR, PomType.REACTOR);
 
             String relativePathToParentPom = null;
-            if (parentPom == PomType.ROOT_REACTOR || parentPom == PomType.REACTOR || parentPom == PomType.PARENT) {
+            if (noRelativePath.contains(parentPom)) {
                 relativePathToParentPom = "";
             } else {
-
-                validateRequiredKeyValuePair(PomToken.RELATIVE_DIRPATH.getToken());
 
                 //
                 // #1) Find the directory name of the parent pom directory.
                 //
                 // It is normally on the form:
-                // nazgul-foo-parent, or
+                // foo-api-parent, or
                 // nazgul-foo-api-parent
                 //
-                final String projectPrefix = project.getPrefix() == null
-                        ? ""
-                        : project.getPrefix() + Name.DEFAULT_SEPARATOR;
-                final String parentProjectDirectoryName = projectPrefix + project.getName() + Name.DEFAULT_SEPARATOR
+                final String parentProjectDirectoryName = dirPrefix + project.getName() + Name.DEFAULT_SEPARATOR
                         + parentPom.name().toLowerCase().replace("_", Name.DEFAULT_SEPARATOR);
 
                 //
@@ -424,62 +934,103 @@ public final class SingleBracketPomTokenParserFactory {
                 // Find the directory depth of the current MavenProject to the reactor parent project
                 // (i.e. the VCS project root).
                 //
-                final String relativeDirPath = pomTokens.get(PomToken.RELATIVE_DIRPATH.getToken());
-                final int depth = new StringTokenizer(relativeDirPath, "/").countTokens();
-
                 final StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < depth; i++) {
+                for (String parentPathSegment : parentPathSegments) {
+                    // Ignore the value of the actual segment; we are simply building a relative path here.
                     builder.append("../");
                 }
-                builder.append("poms/").append(parentProjectDirectoryName);
+                builder.append("../poms/").append(parentProjectDirectoryName);
 
                 relativePathToParentPom = builder.toString();
             }
 
             // All done.
-            pomTokens.put(PomToken.PARENT_POM_RELATIVE_PATH.getToken(), relativePathToParentPom);
+            return relativePathToParentPom;
         }
     }
 
-    /*
-    static class ModuleEnricher extends BuilderStep {
+    /**
+     * Either of two Maven versions are generally required to tokenize the &lt;parent&gt;
+     * element within a POM. For {@code PomType.REACTOR} and {@code PomType.ROOT_REACTOR} projects,
+     * the {@code reactorPomMavenVersion} is used, and for other projects the {@code topParentMavenVersion}
+     * version is used.
+     */
+    static class MavenVersionEnricher extends BuilderStep {
 
-        // Internal state
-        private SoftwareComponentPart currentPart;
-        private List<String> modules;
-
-        ModuleEnricher(final Project project, final PomType pomType, final SortedMap<String, String> pomTokens) {
-            super(project, pomType, pomTokens);
-
-            // Create internal state
-            modules = new ArrayList<>();
-
-            for (SoftwareComponentPart current : SoftwareComponentPart.values()) {
-                if (pomType == current.getComponentPomType()) {
-                    currentPart = current;
-                    break;
-                }
-            }
+        MavenVersionEnricher(final Project project,
+                             final PomType pomType,
+                             final SortedMap<String, String> pomTokens,
+                             final boolean addProjectNameAsDirectoryPrefix) {
+            super(project, pomType, pomTokens, addProjectNameAsDirectoryPrefix);
         }
 
-        public Builder withProjectRootDir(final File projectRootDir) {
+        /**
+         * Assigns the two Maven versions used to create POM Tokens within this Builder. For {@code PomType.REACTOR}
+         * and {@code PomType.ROOT_REACTOR} projects, the {@code reactorPomMavenVersion} is used, and for other
+         * projects the {@code topParentMavenVersion} version is used.
+         * <p/>
+         * This BuilderStep provides the possibility to use different Maven versions for the parent POM and the
+         * current POM, which is required in root/top reactor and root/top parent poms. For example, a typical
+         * tokenization for a root reactor template POM uses the following structure:
+         * <pre>
+         *     <code>
+         *             &lt;parent&gt;
+         *                 &lt;groupId&gt;[parentGroupId]&lt;/groupId&gt;
+         *                 &lt;artifactId&gt;[parentArtifactId]&lt;/artifactId&gt;
+         *                 <strong>&lt;version&gt;[project:reactorParent.mavenVersion]&lt;/version&gt;</strong>
+         *                 &lt;relativePath&gt;[parentPomRelativePath]&lt;/relativePath&gt;
+         *             &lt;/parent&gt;
+         *
+         *
+         *             &lt;groupId&gt;[groupId]&lt;/groupId&gt;
+         *             &lt;artifactId&gt;[artifactId]&lt;/artifactId&gt;
+         *             <strong>&lt;version&gt;[mavenVersion]&lt;/version&gt;</strong>
+         *     </code>
+         * </pre>
+         *
+         * @param reactorPomMavenVersion The version of the reactor POMs. Note that this is <strong>not</strong>
+         *                               identical to {@code project.getReactorParent().getMavenVersion()},
+         *                               since the reactor parent's maven version is the version of the
+         *                               <strong>parent</strong> element for the root/topmost reactor POM in the
+         *                               project.
+         * @param topParentMavenVersion  The version of the
+         * @return The next BuilderStep subtype in the builder chain.
+         */
+        public Builder withMavenVersions(final String reactorPomMavenVersion,
+                                         final String topParentMavenVersion) {
 
             // Check sanity
-            Validate.notNull(projectRootDir, "Cannot handle null projectRootDir argument.");
-            if(projectRootDir != null) {
+            Validate.notEmpty(reactorPomMavenVersion, "Cannot handle null or empty reactorPomMavenVersion argument.");
+            Validate.notEmpty(topParentMavenVersion, "Cannot handle null or empty topParentMavenVersion argument.");
 
-                // Add
-                final Model pomModel = FileUtils.getPomModel(new File(parentDirectory, "pom.xml"));
+            // Use the correct parent Maven version
 
-                validateRequiredKeyValuePair(PomToken.ARTIFACTID.getToken());
-                final String artifactId = pomTokens.get(PomToken.ARTIFACTID.getToken());
+            switch (pomType) {
+                case ROOT_REACTOR:
+                    pomTokens.put(PomToken.PARENT_VERSION.getToken(), project.getReactorParent().getMavenVersion());
+                    pomTokens.put(PomToken.VERSION.getToken(), reactorPomMavenVersion);
+                    break;
 
-            } else {
-                log.warn("Not adding the own Module to reactor POM, since a null parentDirectory was given.");
+                case PARENT:
+                    pomTokens.put(PomToken.PARENT_VERSION.getToken(), project.getParentParent().getMavenVersion());
+                    pomTokens.put(PomToken.VERSION.getToken(), topParentMavenVersion);
+                    break;
+
+                case REACTOR:
+                    pomTokens.put(PomToken.PARENT_VERSION.getToken(), reactorPomMavenVersion);
+                    pomTokens.put(PomToken.VERSION.getToken(), reactorPomMavenVersion);
+                    break;
+
+                default:
+                    pomTokens.put(PomToken.PARENT_VERSION.getToken(), topParentMavenVersion);
+                    pomTokens.put(PomToken.VERSION.getToken(), topParentMavenVersion);
+                    break;
             }
+
+            // All done.
+            return new Builder(project, pomType, pomTokens, isProjectNameAddedToDirectories());
         }
     }
-    */
 
     /**
      * Builder class to simplify creating a SortedMap whose keys contains the tokens of each StandardToken.
@@ -490,8 +1041,11 @@ public final class SingleBracketPomTokenParserFactory {
         // Internal state
         private File localProjectDirectory;
 
-        Builder(final Project project, final PomType pomType, final SortedMap<String, String> pomTokens) {
-            super(project, pomType, pomTokens);
+        Builder(final Project project,
+                final PomType pomType,
+                final SortedMap<String, String> pomTokens,
+                final boolean addProjectNameAsDirectoryPrefix) {
+            super(project, pomType, pomTokens, addProjectNameAsDirectoryPrefix);
         }
 
         /**
