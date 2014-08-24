@@ -98,8 +98,6 @@ public class FactoryParserAgentTest {
                         "<groupId>[project:reactorParent.groupId]</groupId>\n" +
                         "<artifactId>[project:reactorParent.artifactId]</artifactId>\n" +
                         "<version>[project:name]</version>\n" +
-                        "<pomtype>[pomtype]</pomtype>\n" +
-                        "<pomTypeCaps>[POMTYPE]</pomTypeCaps>\n" +
                         "</parent>";
 
         final String expected =
@@ -107,8 +105,6 @@ public class FactoryParserAgentTest {
                         "<groupId>" + project.getReactorParent().getGroupId() + "</groupId>\n" +
                         "<artifactId>" + project.getReactorParent().getArtifactId() + "</artifactId>\n" +
                         "<version>" + project.getName() + "</version>\n" +
-                        "<pomtype>api-parent</pomtype>\n" +
-                        "<pomTypeCaps>API_PARENT</pomTypeCaps>\n" +
                         "</parent>";
         tokenParser.addAgent(new FactoryParserAgent(project));
         tokenParser.initialize(new SingleBracketTokenDefinitions());
