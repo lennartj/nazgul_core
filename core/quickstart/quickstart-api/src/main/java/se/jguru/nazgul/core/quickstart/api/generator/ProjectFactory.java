@@ -53,12 +53,17 @@ public interface ProjectFactory {
     /**
      * Creates a new Project using the information found within the supplied projectDefinition.
      *
-     * @param projectParentDir  a directory in which the project should be created.
-     * @param projectDefinition The entity defining the Project's overall data, and holding naming standards.
-     * @param packagePrefix     A non-null (but optionally empty) package prefix prepended to the groupId of the
-     *                          reactor parent POM. Typically the reverse DNS of the organisation creating the
-     *                          project, such as "se.jguru.". (For example, the groupId of the topmost reactor POM
-     *                          created within the projectParentDir is {@code [packagePrefix].[name]}).
+     * @param projectParentDir          a directory in which the project should be created.
+     * @param projectDefinition         The entity defining the Project's overall data, and holding naming standards.
+     * @param packagePrefix             A non-null (but optionally empty) package prefix prepended to the groupId of the
+     *                                  reactor parent POM. Typically the reverse DNS of the organisation creating the
+     *                                  project, such as {@code se.jguru}. (For example, the groupId of the topmost reactor POM
+     *                                  created within the projectParentDir is {@code [packagePrefix].[name]}).
+     * @param reactorParentMavenVersion The non-empty Maven project version of reactor POMs within the project.
+     *                                  Should be identical to the version of the reactor parent POM.
+     * @param topmostParentMavenVersion The non-empty Maven project version of parent POMs within the project (and,
+     *                                  normally, the version of all leaf projects within the Maven project reactor).
+     *                                  Should be identical to the version of the parent parent POM.
      * @return {@code true} if the project could be properly created, and false otherwise.
      * @throws java.lang.IllegalArgumentException if projectParentDir was not an existing directory.
      * @throws java.lang.IllegalStateException    if the projectRootDirectory (typically either on the form
@@ -67,6 +72,8 @@ public interface ProjectFactory {
      */
     boolean createProject(File projectParentDir,
                           Project projectDefinition,
-                          String packagePrefix)
+                          String packagePrefix,
+                          String reactorParentMavenVersion,
+                          String topmostParentMavenVersion)
             throws IllegalArgumentException, IllegalStateException;
 }

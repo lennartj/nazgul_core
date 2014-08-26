@@ -174,10 +174,18 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
         final String prefix = getNamingStrategy().isPrefixRequiredOnAllFolders() ? rootReactorName.getPrefix() : "";
         final Name partName = toAdd.createName(prefix, toAdd.getType(), suffix);
         final File partDir = FileUtils.makeDirectory(componentDir, partName.toString());
+        final String topReactorPomVersion = rootReactorPomModel.getVersion() == null
+                ? projectData.getReactorParent().getMavenVersion()
+                : rootReactorPomModel.getVersion();
+        final String parentPomVersion = parentPomModel.getVersion() == null
+                ? projectData.getParentParent().getMavenVersion()
+                : parentPomModel.getVersion();
 
         // Create a Maven project for the given PomType within PartDir
         createMavenProject(toAdd,
                 partDir,
+                topReactorPomVersion,
+                parentPomVersion,
                 projectData,
                 getProjectGroupIdPrefix(rootReactorPomModel.getGroupId(), rootReactorPomModel.getArtifactId()),
                 suffix);
@@ -186,13 +194,26 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
     /**
      * Creates a maven project of the supplied type within the mavenProjectDir.
      *
-     * @param part            The non-null SoftwareComponentPart indicating which type of project should be created.
-     * @param mavenProjectDir The directory where the maven project should be generated.
-     *                        Must exist and be a directory.
-     * @param project         The non-null Project data, primarily used to initialize the active TokenParser.
+     * @param part                   The non-null SoftwareComponentPart indicating which type of project should be created.
+     * @param mavenProjectDir        The directory where the maven project should be generated.
+     *                               Must exist and be a directory.
+     * @param reactorPomMavenVersion The non-empty Maven project version of reactor POMs within the project.
+     *                               Should be identical to the version of the reactor parent POM.
+     * @param parentPomMavenVersion  The non-empty Maven project version of parent POMs within the project (and,
+     *                               normally, the version of all leaf projects within the Maven project reactor).
+     *                               Should be identical to the version of the parent parent POM.
+     * @param project                The non-null Project data, primarily used to initialize the active TokenParser.
+     * @param optionalGroupIdPrefix  The groupId prefix (commonly the reverse DNS, similar to {@code se.jguru} or
+     *                               {@code org.apache}) of the organisation that owns the project created.
+     *                               The groupId prefix is prepended to the groupId of the created Maven project.
+     * @param partSuffix             The suffix of the project SoftwareComponentPart project,
+     *                               used only if {@code SoftwareComponentPart.isSuffixRequired()} yields {@code true}.
      */
+    @SuppressWarnings("All")
     protected void createMavenProject(final SoftwareComponentPart part,
                                       final File mavenProjectDir,
+                                      final String reactorPomMavenVersion,
+                                      final String parentPomMavenVersion,
                                       final Project project,
                                       final String optionalGroupIdPrefix,
                                       final String partSuffix) {
@@ -202,6 +223,8 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
         Validate.notNull(mavenProjectDir, "Cannot handle null mavenProjectDir argument.");
         Validate.isTrue(mavenProjectDir.exists() && mavenProjectDir.isDirectory(), "Maven project directory ["
                 + FileUtils.getCanonicalPath(mavenProjectDir) + "] must exist and be a directory.");
+        Validate.notEmpty(reactorPomMavenVersion, "Cannot handle null or empty reactorPomMavenVersion argument.");
+        Validate.notEmpty(parentPomMavenVersion, "Cannot handle null or empty parentPomMavenVersion argument.");
 
         // 1) Extract all template files corresponding to the SoftwareComponentPart to a temporary directory
         final File tmpExtractedFilesRoot = extractTemplateFiles(mavenProjectDir.getName(), part.name());
@@ -217,6 +240,7 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
                 .inSoftwareComponentWithRelativePath(navigator.getRelativePath(mavenProjectDir, false))
                 .withProjectGroupIdPrefix(optionalGroupIdPrefix)
                 .withProjectSuffix(partSuffix)
+                .withMavenVersions(reactorPomMavenVersion, parentPomMavenVersion)
                 .build();
 
                 /*getTokenParser(
@@ -468,12 +492,12 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
      * path snippet, used as a delimiter to strip of the previous part from the rootReactorGroupId. This is
      * illustrated by an example.
      * <ol>
-     *     <li>Given <strong>rootReactorGroupId</strong>: {@code se.jguru.nazgul.core}, and</li>
-     *     <li>Given <strong>rootReactorArtifactId</strong>: {@code nazgul-core-reactor}</li>
-     *     <li>First, the prefix and name of the rootReactorArtifactId is joined with the
-     *     {@code Name.DEFAULT_SEPARATOR} yielding {@code nazgul.core}</li>
-     *     <li>The return value is found as a substring of the rootReactorGroupId up until the prefix snippet is
-     *     found, stripping off the tralining ".": {@code se.jguru}</li>
+     * <li>Given <strong>rootReactorGroupId</strong>: {@code se.jguru.nazgul.core}, and</li>
+     * <li>Given <strong>rootReactorArtifactId</strong>: {@code nazgul-core-reactor}</li>
+     * <li>First, the prefix and name of the rootReactorArtifactId is joined with the
+     * {@code Name.DEFAULT_SEPARATOR} yielding {@code nazgul.core}</li>
+     * <li>The return value is found as a substring of the rootReactorGroupId up until the prefix snippet is
+     * found, stripping off the trailing ".": {@code se.jguru}</li>
      * </ol>
      * <p/>
      * Override this method if your concrete ComponentFactory uses another algorithm to acquire the

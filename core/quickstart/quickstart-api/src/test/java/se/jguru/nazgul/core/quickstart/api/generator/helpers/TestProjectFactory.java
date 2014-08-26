@@ -21,7 +21,6 @@
  */
 package se.jguru.nazgul.core.quickstart.api.generator.helpers;
 
-import se.jguru.nazgul.core.parser.api.TokenParser;
 import se.jguru.nazgul.core.quickstart.api.DefaultStructureNavigator;
 import se.jguru.nazgul.core.quickstart.api.PomType;
 import se.jguru.nazgul.core.quickstart.api.StructureNavigator;
@@ -69,13 +68,23 @@ public class TestProjectFactory extends AbstractProjectFactory {
         return Thread.currentThread().getContextClassLoader().getResource(enrichedPath);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean createProject(final File projectParentDir,
-                                 final Project projectDefinition,
-                                 final String packagePrefix)
+                                 final Project project,
+                                 final String packagePrefix,
+                                 final String reactorParentMavenVersion,
+                                 final String topmostParentMavenVersion)
             throws IllegalArgumentException, IllegalStateException {
+
         callTrace.add("createProject");
-        return super.createProject(projectParentDir, projectDefinition, packagePrefix);
+        return super.createProject(projectParentDir,
+                project,
+                packagePrefix,
+                reactorParentMavenVersion,
+                topmostParentMavenVersion);
     }
 
     @Override
