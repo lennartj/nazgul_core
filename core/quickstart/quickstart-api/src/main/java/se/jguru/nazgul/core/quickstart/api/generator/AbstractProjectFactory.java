@@ -61,30 +61,34 @@ public abstract class AbstractProjectFactory extends AbstractFactory implements 
      */
     @Override
     public boolean createProject(final File projectParentDir,
-                                 final Project projectDefinition,
-                                 final String packagePrefix)
+                                 final Project project,
+                                 final String packagePrefix,
+                                 final String reactorParentMavenVersion,
+                                 final String topmostParentMavenVersion)
             throws IllegalArgumentException, IllegalStateException {
 
         // Check sanity
-        Validate.notNull(projectDefinition, "Cannot handle null projectDefinition argument.");
+        Validate.notNull(project, "Cannot handle null projectDefinition argument.");
         Validate.notNull(projectParentDir, "Cannot handle null projectParentDir argument.");
         Validate.isTrue(projectParentDir.exists() && projectParentDir.isDirectory(),
                 "Project parent directory [" + FileUtils.getCanonicalPath(projectParentDir)
                         + "] must exist and be a directory.");
+        Validate.notEmpty(reactorParentMavenVersion, "Cannot handle null or empty reactorParentMavenVersion argument.");
+        Validate.notEmpty(topmostParentMavenVersion, "Cannot handle null or empty topmostParentMavenVersion argument.");
 
         final String reverseDNS = packagePrefix == null ? "" : packagePrefix.replace("/", ".");
 
         // Synthesize the Name from the supplied project, and validate it.
         final Name projectName = new Name(
-                projectDefinition.getPrefix(),
-                projectDefinition.getName(),
+                project.getPrefix(),
+                project.getName(),
                 AbstractNamingStrategy.REACTOR_SUFFIX);
         getNamingStrategy().validate(projectName, PomType.ROOT_REACTOR);
 
         // Find the directory of the new project, which should be on the form [parent]/[name].
         final String projectRootDirName = getNamingStrategy().isPrefixRequiredOnAllFolders()
-                ? projectDefinition.getPrefix() + Name.DEFAULT_SEPARATOR + projectDefinition.getName()
-                : projectDefinition.getName();
+                ? project.getPrefix() + Name.DEFAULT_SEPARATOR + project.getName()
+                : project.getName();
         final File projectRootDir = new File(projectParentDir, projectRootDirName);
         if (log.isInfoEnabled()) {
             log.info("Using project root directory [" + projectRootDir.getAbsolutePath() + "].");
@@ -95,12 +99,18 @@ public abstract class AbstractProjectFactory extends AbstractFactory implements 
         }
 
         // Create the project structure.
-        createParentPom(projectRootDir, "", PomType.ROOT_REACTOR, projectDefinition, reverseDNS);
-        createParentPom(projectRootDir, "poms", PomType.REACTOR, projectDefinition, reverseDNS);
-        createParentPom(projectRootDir, "poms", PomType.PARENT, projectDefinition, reverseDNS);
-        createParentPom(projectRootDir, "poms", PomType.API_PARENT, projectDefinition, reverseDNS);
-        createParentPom(projectRootDir, "poms", PomType.MODEL_PARENT, projectDefinition, reverseDNS);
-        createParentPom(projectRootDir, "poms", PomType.WAR_PARENT, projectDefinition, reverseDNS);
+        createParentPom(projectRootDir, "", PomType.ROOT_REACTOR, project,
+                reactorParentMavenVersion, topmostParentMavenVersion, reverseDNS);
+        createParentPom(projectRootDir, "poms", PomType.REACTOR, project,
+                reactorParentMavenVersion, topmostParentMavenVersion, reverseDNS);
+        createParentPom(projectRootDir, "poms", PomType.PARENT, project,
+                reactorParentMavenVersion, topmostParentMavenVersion, reverseDNS);
+        createParentPom(projectRootDir, "poms", PomType.API_PARENT, project,
+                reactorParentMavenVersion, topmostParentMavenVersion, reverseDNS);
+        createParentPom(projectRootDir, "poms", PomType.MODEL_PARENT, project,
+                reactorParentMavenVersion, topmostParentMavenVersion, reverseDNS);
+        createParentPom(projectRootDir, "poms", PomType.WAR_PARENT, project,
+                reactorParentMavenVersion, topmostParentMavenVersion, reverseDNS);
 
         // All done.
         return true;
@@ -128,10 +138,13 @@ public abstract class AbstractProjectFactory extends AbstractFactory implements 
     // Helpers
     //
 
+    @SuppressWarnings("all")
     private void createParentPom(final File rootDirectory,
                                  final String relativePomDirectory,
                                  final PomType pomType,
                                  final Project project,
+                                 final String reactorPomMavenVersion,
+                                 final String parentPomMavenVersion,
                                  final String packagePrefix) throws InvalidStructureException {
 
         // Sane state?
@@ -153,18 +166,13 @@ public abstract class AbstractProjectFactory extends AbstractFactory implements 
         final TokenParser tokenParser = SingleBracketPomTokenParserFactory
                 .create(pomType, project)
                 .withoutProjectNameAsDirectoryPrefix()
-                // .isParentProject()
+                        // .isParentProject()
                 .inSoftwareComponentWithRelativePath(relativePath)
                 .withProjectGroupIdPrefix(packagePrefix)
                 .withoutProjectSuffix()
+                .withMavenVersions(reactorPomMavenVersion, parentPomMavenVersion)
                 .build();
 
-                /*getTokenParser(pomType,
-                relativePath,
-                project,
-                packagePrefix,
-                "");
-                */
         final String pomData = tokenParser.substituteTokens(getTemplateResource(pomType + "/pom.xml"));
         FileUtils.writeFile(pomFile, pomData);
     }

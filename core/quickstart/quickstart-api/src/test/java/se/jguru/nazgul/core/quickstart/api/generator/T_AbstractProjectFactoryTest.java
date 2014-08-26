@@ -25,15 +25,11 @@ import org.apache.maven.model.Model;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import se.jguru.nazgul.core.quickstart.api.DefaultStructureNavigator;
 import se.jguru.nazgul.core.quickstart.api.FileUtils;
 import se.jguru.nazgul.core.quickstart.api.FileUtilsTest;
 import se.jguru.nazgul.core.quickstart.api.PomType;
-import se.jguru.nazgul.core.quickstart.api.StructureNavigator;
 import se.jguru.nazgul.core.quickstart.api.analyzer.NamingStrategy;
-import se.jguru.nazgul.core.quickstart.api.analyzer.PomAnalyzer;
 import se.jguru.nazgul.core.quickstart.api.analyzer.helpers.TestNamingStrategy;
-import se.jguru.nazgul.core.quickstart.api.analyzer.helpers.TestPatternPomAnalyzer;
 import se.jguru.nazgul.core.quickstart.api.generator.helpers.TestProjectFactory;
 import se.jguru.nazgul.core.quickstart.model.Project;
 import se.jguru.nazgul.core.quickstart.model.SimpleArtifact;
@@ -47,9 +43,8 @@ import java.net.URL;
 public class T_AbstractProjectFactoryTest {
 
     // Shared state
-    private StructureNavigator structureNavigator;
+    // private StructureNavigator structureNavigator;
     private NamingStrategy namingStrategy;
-    private PomAnalyzer pomAnalyzer;
     private File testDataDir;
 
     @Before
@@ -58,7 +53,7 @@ public class T_AbstractProjectFactoryTest {
         namingStrategy = new TestNamingStrategy(false);
         final URL testdata = getClass().getClassLoader().getResource("testdata");
         testDataDir = new File(testdata.getPath());
-        structureNavigator = new DefaultStructureNavigator(namingStrategy, new TestPatternPomAnalyzer());
+        // structureNavigator = new DefaultStructureNavigator(namingStrategy, new TestPatternPomAnalyzer());
 
         Assert.assertTrue(testDataDir.exists() && testDataDir.isDirectory());
     }
@@ -119,7 +114,12 @@ public class T_AbstractProjectFactoryTest {
                 "acme", "blah", reactorParent, parentParent);
 
         // Act
-        final boolean created = unitUnderTest.createProject(rootDir, projectDefinition, "se.jguru");
+        final boolean created = unitUnderTest.createProject(
+                rootDir,
+                projectDefinition,
+                "se.jguru",
+                "1.0.0-SNAPSHOT",
+                "1.0.0-SNAPSHOT");
 
         // Assert
         Assert.assertTrue(created);
