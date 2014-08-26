@@ -34,7 +34,6 @@ import se.jguru.nazgul.core.quickstart.api.generator.SoftwareComponentPart;
 import se.jguru.nazgul.core.quickstart.model.Name;
 import se.jguru.nazgul.core.quickstart.model.Project;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
@@ -833,11 +832,7 @@ public final class SingleBracketPomTokenParserFactory {
 
             // Now find the groupId and artifactId for the active project.
             final boolean nonEmptyProjectPrefix = project.getPrefix() != null && project.getPrefix().length() > 0;
-            final boolean addProjectNameAsPrefixToDirs = nonEmptyProjectPrefix && isProjectNameAddedToDirectories();
-
-            final String dirPrefix = addProjectNameAsPrefixToDirs ? project.getName() + Name.DEFAULT_SEPARATOR : "";
             final String artifactPrefix = nonEmptyProjectPrefix ? project.getPrefix() + Name.DEFAULT_SEPARATOR : "";
-            final List<String> parentDirSegments = tokenize(pathToParentDir);
 
             // ArtifactID: Calculate for the current project.
             //
@@ -1207,9 +1202,6 @@ public final class SingleBracketPomTokenParserFactory {
      * This Map can be used for token replacements in text template files.
      */
     public static class Builder extends BuilderStep {
-
-        // Internal state
-        private File localProjectDirectory;
 
         Builder(final Project project,
                 final PomType pomType,
