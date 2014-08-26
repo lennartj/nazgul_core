@@ -27,9 +27,9 @@ import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.parser.api.TokenParser;
 import se.jguru.nazgul.core.quickstart.api.FileUtils;
 import se.jguru.nazgul.core.quickstart.api.InvalidStructureException;
+import se.jguru.nazgul.core.quickstart.api.PomType;
 import se.jguru.nazgul.core.quickstart.api.analyzer.AbstractNamingStrategy;
 import se.jguru.nazgul.core.quickstart.api.analyzer.NamingStrategy;
-import se.jguru.nazgul.core.quickstart.api.PomType;
 import se.jguru.nazgul.core.quickstart.api.generator.parser.SingleBracketPomTokenParserFactory;
 import se.jguru.nazgul.core.quickstart.model.Name;
 import se.jguru.nazgul.core.quickstart.model.Project;
@@ -101,8 +101,6 @@ public abstract class AbstractProjectFactory extends AbstractFactory implements 
         // Create the project structure.
         createParentPom(projectRootDir, "", PomType.ROOT_REACTOR, project,
                 reactorParentMavenVersion, topmostParentMavenVersion, reverseDNS);
-        createParentPom(projectRootDir, "poms", PomType.REACTOR, project,
-                reactorParentMavenVersion, topmostParentMavenVersion, reverseDNS);
         createParentPom(projectRootDir, "poms", PomType.PARENT, project,
                 reactorParentMavenVersion, topmostParentMavenVersion, reverseDNS);
         createParentPom(projectRootDir, "poms", PomType.API_PARENT, project,
@@ -110,6 +108,8 @@ public abstract class AbstractProjectFactory extends AbstractFactory implements 
         createParentPom(projectRootDir, "poms", PomType.MODEL_PARENT, project,
                 reactorParentMavenVersion, topmostParentMavenVersion, reverseDNS);
         createParentPom(projectRootDir, "poms", PomType.WAR_PARENT, project,
+                reactorParentMavenVersion, topmostParentMavenVersion, reverseDNS);
+        createParentPom(projectRootDir, "poms", PomType.REACTOR, project,
                 reactorParentMavenVersion, topmostParentMavenVersion, reverseDNS);
 
         // All done.
@@ -163,15 +163,25 @@ public abstract class AbstractProjectFactory extends AbstractFactory implements 
         }
 
         // Read the POM resource, and write the POM file.
-        final TokenParser tokenParser = SingleBracketPomTokenParserFactory
+        final SingleBracketPomTokenParserFactory.Builder builder = SingleBracketPomTokenParserFactory
                 .create(pomType, project)
                 .withoutProjectNameAsDirectoryPrefix()
-                        // .isParentProject()
                 .inSoftwareComponentWithRelativePath(relativePath)
                 .withProjectGroupIdPrefix(packagePrefix)
                 .withoutProjectSuffix()
-                .withMavenVersions(reactorPomMavenVersion, parentPomMavenVersion)
-                .build();
+                .withMavenVersions(reactorPomMavenVersion, parentPomMavenVersion);
+
+        if(pomType == PomType.REACTOR) {
+
+            // Find all module names for the active reactor directory.
+            final StringBuilder moduleBuilder = new StringBuilder();
+            for(String current : FileUtils.getModuleNames(pomDirectory)) {
+                moduleBuilder.append("<module>").append(current).append("</module>\n");
+            }
+            builder.addToken("modules", moduleBuilder.toString());
+        }
+
+        final TokenParser tokenParser = builder.build();
 
         final String pomData = tokenParser.substituteTokens(getTemplateResource(pomType + "/pom.xml"));
         FileUtils.writeFile(pomFile, pomData);

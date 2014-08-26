@@ -39,6 +39,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.SortedMap;
@@ -76,6 +77,22 @@ public final class FileUtils {
         @Override
         public boolean accept(final File pathname) {
             return pathname.isFile();
+        }
+    };
+
+    /**
+     * A FileFilter which accepts Maven module directories only (i.e. directories containing a 'pom.xml' file).
+     */
+    public static final FileFilter MODULE_NAME_FILTER = new FileFilter() {
+        @Override
+        public boolean accept(final File moduleCandidate) {
+            if (moduleCandidate.exists() && moduleCandidate.isDirectory()) {
+                File subPomFile = new File(moduleCandidate, "pom.xml");
+                return subPomFile.exists() && subPomFile.isFile();
+            }
+
+            // Not a module directory/name.
+            return false;
         }
     };
 
@@ -202,6 +219,33 @@ public final class FileUtils {
         } catch (Exception e) {
             throw new IllegalArgumentException("Could not read POM file [" + getCanonicalPath(aPomFile) + "]", e);
         }
+    }
+
+    /**
+     * Given a directory within a Maven project reactor, list the names of all subdirectories
+     * containing a 'pom.xml' file. These directories typically correspond to module names within a
+     * reactor POM found in the supplied reactorDirectory.
+     *
+     * @param reactorDirectory An existing directory.
+     * @return The names of all subdirectories to the provided reactorDirectory where a file called "pom.xml" exists.
+     * The names of these directories should typically be used as module names within a reactor pom located within
+     * the supplied reactorDirectory. No validation of any found pom.xml files (consistency, well-formed-ness etc.)
+     * are done within this method.
+     */
+    public static List<String> getModuleNames(final File reactorDirectory) {
+
+        // Check sanity
+        Validate.notNull(reactorDirectory, "Cannot handle null or empty reactorDirectory argument.");
+        Validate.isTrue(reactorDirectory.exists() && reactorDirectory.isDirectory(), "reactorDirectory argument ["
+                + getCanonicalPath(reactorDirectory) + "] must refer to an existing directory.");
+
+        final List<String> toReturn = new ArrayList<>();
+        for (File current : reactorDirectory.listFiles(MODULE_NAME_FILTER)) {
+            toReturn.add(current.getName());
+        }
+
+        // All done.
+        return toReturn;
     }
 
     /**
@@ -345,7 +389,7 @@ public final class FileUtils {
         final StringBuilder result = new StringBuilder();
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
-            for(String aLine = reader.readLine(); aLine != null; aLine = reader.readLine()) {
+            for (String aLine = reader.readLine(); aLine != null; aLine = reader.readLine()) {
                 result.append(aLine).append(LINE_ENDING);
             }
         } catch (IOException e) {

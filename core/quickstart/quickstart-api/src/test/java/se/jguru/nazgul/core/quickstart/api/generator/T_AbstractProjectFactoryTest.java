@@ -36,6 +36,8 @@ import se.jguru.nazgul.core.quickstart.model.SimpleArtifact;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -132,34 +134,43 @@ public class T_AbstractProjectFactoryTest {
         validateDirectory(new File(reactorRoot, "poms/blah-model-parent"), PomType.MODEL_PARENT);
         validateDirectory(new File(reactorRoot, "poms/blah-war-parent"), PomType.WAR_PARENT);
 
-        System.out.println("Got calltrace:\n" + unitUnderTest.callTrace);
+        final List<String> callTrace = unitUnderTest.callTrace;
+        final List<PomType> pomTypeOrderedList = Arrays.asList(PomType.ROOT_REACTOR, PomType.PARENT,
+                PomType.API_PARENT, PomType.MODEL_PARENT, PomType.WAR_PARENT, PomType.REACTOR);
 
-        // [
-        //  createProjectDefinition(nazgul,
+        for(int i = 0; i < pomTypeOrderedList.size(); i++) {
+
+            int index = i * 3 + 2;
+            final String pomTypeName = pomTypeOrderedList.get(i).name();
+            Assert.assertEquals(callTrace.get(index), "getDirectoryName(blah, " + pomTypeName + ", acme)");
+            Assert.assertEquals(callTrace.get(index + 1), "getTemplateResource(" + pomTypeName + "/pom.xml)");
+            Assert.assertEquals(callTrace.get(index + 2), "getTemplateResourceURL(" + pomTypeName + "/pom.xml)");
+        }
+
+        // createProjectDefinition(acme,
         //      blah,
         //      se.jguru.nazgul.tools.poms.external/nazgul-tools-external-reactor-parent/4.0.0,
         //      se.jguru.nazgul.core.poms.core-parent/nazgul-core-parent/1.6.1),
         //
-        //  createProject,
-        //  getDirectoryName(blah, ROOT_REACTOR, nazgul),
-        //  getTemplateResource(ROOT_REACTOR/pom.xml),
-        //  getTemplateResourceURL(ROOT_REACTOR/pom.xml),
-        //  getDirectoryName(blah, REACTOR, nazgul),
-        //  getTemplateResource(REACTOR/pom.xml),
-        //  getTemplateResourceURL(REACTOR/pom.xml),
-        //  getDirectoryName(blah, PARENT, nazgul),
-        //  getTemplateResource(PARENT/pom.xml),
-        //  getTemplateResourceURL(PARENT/pom.xml),
-        //  getDirectoryName(blah, API_PARENT, nazgul),
-        //  getTemplateResource(API_PARENT/pom.xml),
-        //  getTemplateResourceURL(API_PARENT/pom.xml),
-        //  getDirectoryName(blah, MODEL_PARENT, nazgul),
-        //  getTemplateResource(MODEL_PARENT/pom.xml),
-        //  getTemplateResourceURL(MODEL_PARENT/pom.xml),
-        //  getDirectoryName(blah, WAR_PARENT, nazgul),
-        //  getTemplateResource(WAR_PARENT/pom.xml),
-        //  getTemplateResourceURL(WAR_PARENT/pom.xml)
-        // ]
+        // createProject,
+        // getDirectoryName(blah, ROOT_REACTOR, acme),
+        // getTemplateResource(ROOT_REACTOR/pom.xml),
+        // getTemplateResourceURL(ROOT_REACTOR/pom.xml),
+        // getDirectoryName(blah, PARENT, acme),
+        // getTemplateResource(PARENT/pom.xml),
+        // getTemplateResourceURL(PARENT/pom.xml),
+        // getDirectoryName(blah, API_PARENT, acme),
+        // getTemplateResource(API_PARENT/pom.xml),
+        // getTemplateResourceURL(API_PARENT/pom.xml),
+        // getDirectoryName(blah, MODEL_PARENT, acme),
+        // getTemplateResource(MODEL_PARENT/pom.xml),
+        // getTemplateResourceURL(MODEL_PARENT/pom.xml),
+        // getDirectoryName(blah, WAR_PARENT, acme),
+        // getTemplateResource(WAR_PARENT/pom.xml),
+        // getTemplateResourceURL(WAR_PARENT/pom.xml),
+        // getDirectoryName(blah, REACTOR, acme),
+        // getTemplateResource(REACTOR/pom.xml),
+        // getTemplateResourceURL(REACTOR/pom.xml)
 
         /*
         Assert.assertEquals("[] ==> [ROOT_REACTOR]", unitUnderTest.callTrace.get(0));
