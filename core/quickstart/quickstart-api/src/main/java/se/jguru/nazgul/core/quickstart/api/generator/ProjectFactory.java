@@ -57,8 +57,9 @@ public interface ProjectFactory {
      * @param projectDefinition         The entity defining the Project's overall data, and holding naming standards.
      * @param packagePrefix             A non-null (but optionally empty) package prefix prepended to the groupId of the
      *                                  reactor parent POM. Typically the reverse DNS of the organisation creating the
-     *                                  project, such as {@code se.jguru}. (For example, the groupId of the topmost reactor POM
-     *                                  created within the projectParentDir is {@code [packagePrefix].[name]}).
+     *                                  project, such as {@code se.jguru}. (For example, the groupId of the topmost
+     *                                  reactor POM created within the projectParentDir is
+     *                                  {@code [packagePrefix].[name]}).
      * @param reactorParentMavenVersion The non-empty Maven project version of reactor POMs within the project.
      *                                  Should be identical to the version of the reactor parent POM.
      * @param topmostParentMavenVersion The non-empty Maven project version of parent POMs within the project (and,

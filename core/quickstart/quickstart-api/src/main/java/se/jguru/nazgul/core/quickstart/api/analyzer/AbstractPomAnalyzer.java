@@ -253,13 +253,16 @@ public abstract class AbstractPomAnalyzer implements PomAnalyzer {
         final boolean versionMatches = toVerify.getVersion() == null
                 || requiredParent.getVersion().equals(parentToValidate.getVersion());
         if (!versionMatches) {
-            errors.add("Required version mismatch (" + requiredParent.getVersion() + ")");
+            errors.add("Required version mismatch (Required: " +  requiredParent.getVersion() + ", Actual: "
+                    + parentToValidate.getVersion() + ")");
         }
         if (!requiredParent.getGroupId().equals(parentToValidate.getGroupId())) {
-            errors.add("Required groupId mismatch (" + requiredParent.getGroupId() + ")");
+            errors.add("Required groupId mismatch (Required: " + requiredParent.getGroupId() + ", Actual: "
+                    + parentToValidate.getGroupId() + ")");
         }
         if (!requiredParent.getArtifactId().equals(parentToValidate.getArtifactId())) {
-            errors.add("Required artifactId mismatch (" + requiredParent.getArtifactId() + ")");
+            errors.add("Required artifactId mismatch (Required: " + requiredParent.getArtifactId() + ", Actual: "
+                    + parentToValidate.getArtifactId() + ")");
         }
 
         if (errors.size() > 0) {

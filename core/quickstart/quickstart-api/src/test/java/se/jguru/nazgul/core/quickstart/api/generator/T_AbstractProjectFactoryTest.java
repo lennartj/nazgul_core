@@ -45,7 +45,6 @@ import java.util.List;
 public class T_AbstractProjectFactoryTest {
 
     // Shared state
-    // private StructureNavigator structureNavigator;
     private NamingStrategy namingStrategy;
     private File testDataDir;
 
@@ -55,7 +54,6 @@ public class T_AbstractProjectFactoryTest {
         namingStrategy = new TestNamingStrategy(false);
         final URL testdata = getClass().getClassLoader().getResource("testdata");
         testDataDir = new File(testdata.getPath());
-        // structureNavigator = new DefaultStructureNavigator(namingStrategy, new TestPatternPomAnalyzer());
 
         Assert.assertTrue(testDataDir.exists() && testDataDir.isDirectory());
     }

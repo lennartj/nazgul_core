@@ -102,7 +102,7 @@ public class SingleBracketPomTokenParserFactoryTest {
         Assert.assertEquals("foobar-foo-finance-api", staticTokens.get(PomToken.ARTIFACTID.getToken()));
 
         // Check parent GAV tokens
-        Assert.assertEquals("org.acme.foobar.foo.poms.foo-api-parent",
+        Assert.assertEquals("org.acme.foobar.foo.poms.foobar-foo-api-parent",
                 staticTokens.get(PomToken.PARENT_GROUPID.getToken()));
         Assert.assertEquals("foobar-foo-api-parent", staticTokens.get(PomToken.PARENT_ARTIFACTID.getToken()));
         Assert.assertEquals("2.3.4-SNAPSHOT", staticTokens.get(PomToken.PARENT_VERSION.getToken()));
@@ -152,7 +152,7 @@ public class SingleBracketPomTokenParserFactoryTest {
         Assert.assertEquals("foobar-foo-finance-spi-pojo", staticTokens.get(PomToken.ARTIFACTID.getToken()));
 
         // Check parent GAV tokens
-        Assert.assertEquals("org.acme.foobar.foo.poms.foo-api-parent",
+        Assert.assertEquals("org.acme.foobar.foo.poms.foobar-foo-api-parent",
                 staticTokens.get(PomToken.PARENT_GROUPID.getToken()));
         Assert.assertEquals("foobar-foo-api-parent", staticTokens.get(PomToken.PARENT_ARTIFACTID.getToken()));
         Assert.assertEquals("4.5.6-SNAPSHOT", staticTokens.get(PomToken.PARENT_VERSION.getToken()));
@@ -201,7 +201,7 @@ public class SingleBracketPomTokenParserFactoryTest {
         Assert.assertEquals("foobar-foo-api-parent", staticTokens.get(PomToken.ARTIFACTID.getToken()));
 
         // Check parent GAV tokens
-        Assert.assertEquals("org.acme.foobar.foo.poms.foo-parent",
+        Assert.assertEquals("org.acme.foobar.foo.poms.foobar-foo-parent",
                 staticTokens.get(PomToken.PARENT_GROUPID.getToken()));
         Assert.assertEquals("foobar-foo-parent", staticTokens.get(PomToken.PARENT_ARTIFACTID.getToken()));
         Assert.assertEquals("4.5.6-SNAPSHOT", staticTokens.get(PomToken.PARENT_VERSION.getToken()));
@@ -239,8 +239,7 @@ public class SingleBracketPomTokenParserFactoryTest {
         // Check path and packaging
         Assert.assertEquals("org.acme",
                 staticTokens.get(SingleBracketPomTokenParserFactory.PrefixEnricher.REVERSE_DNS_OF_ORGANISATION));
-        Assert.assertEquals("poms",
-                staticTokens.get(PomToken.RELATIVE_DIRPATH.getToken()));
+        Assert.assertEquals("poms", staticTokens.get(PomToken.RELATIVE_DIRPATH.getToken()));
         Assert.assertEquals("poms", staticTokens.get(PomToken.RELATIVE_PACKAGE.getToken()));
         Assert.assertEquals("", staticTokens.get(PomToken.PARENT_POM_RELATIVE_PATH.getToken()));
 
@@ -252,6 +251,55 @@ public class SingleBracketPomTokenParserFactoryTest {
         Assert.assertEquals("org.acme.foobar.foo", staticTokens.get(PomToken.PARENT_GROUPID.getToken()));
         Assert.assertEquals("foobar-foo-reactor", staticTokens.get(PomToken.PARENT_ARTIFACTID.getToken()));
         Assert.assertEquals("1.2.3-SNAPSHOT", staticTokens.get(PomToken.PARENT_VERSION.getToken()));
+    }
+
+    @Test
+    public void validateStandardBuilderStepsForRootReactorProject() {
+
+        // Assemble
+
+        // Act
+        final TokenParser tokenParser = SingleBracketPomTokenParserFactory
+                .create(PomType.ROOT_REACTOR, acmeFooProject)
+                .useProjectNameAsDirectoryPrefix()
+                .inSoftwareComponentWithRelativePath("")
+                .withProjectGroupIdPrefix("org.acme")
+                .withoutProjectSuffix()
+                .withMavenVersions("1.2.3-SNAPSHOT", "4.5.6-SNAPSHOT")
+                .build();
+
+        // Assert
+        Assert.assertTrue(tokenParser instanceof DefaultTokenParser);
+
+        final DefaultTokenParser parser = (DefaultTokenParser) tokenParser;
+        final FactoryParserAgent fpa = getFactoryParserAgent(parser);
+        Assert.assertNotNull(fpa);
+
+        final Map<String, String> staticTokens = getStaticTokenMapFrom(fpa);
+        Assert.assertNotNull(staticTokens);
+
+        Assert.assertEquals("ROOT_REACTOR", staticTokens.get(SingleBracketPomTokenParserFactory.POMTYPE_KEY));
+        Assert.assertEquals("root-reactor",
+                staticTokens.get(SingleBracketPomTokenParserFactory.LOWERCASE_POMTYPE_KEY));
+
+        // Check path and packaging
+        Assert.assertEquals("org.acme",
+                staticTokens.get(SingleBracketPomTokenParserFactory.PrefixEnricher.REVERSE_DNS_OF_ORGANISATION));
+        Assert.assertEquals("", staticTokens.get(PomToken.RELATIVE_DIRPATH.getToken()));
+        Assert.assertEquals("", staticTokens.get(PomToken.RELATIVE_PACKAGE.getToken()));
+        Assert.assertNull(staticTokens.get(PomToken.PARENT_POM_RELATIVE_PATH.getToken()));
+
+        // Check local GAV tokens
+        Assert.assertEquals("org.acme.foobar.foo", staticTokens.get(PomToken.GROUPID.getToken()));
+        Assert.assertEquals("foobar-foo-reactor", staticTokens.get(PomToken.ARTIFACTID.getToken()));
+
+        // Check parent GAV tokens
+        Assert.assertEquals(acmeFooProject.getReactorParent().getGroupId(),
+                staticTokens.get(PomToken.PARENT_GROUPID.getToken()));
+        Assert.assertEquals(acmeFooProject.getReactorParent().getArtifactId(),
+                staticTokens.get(PomToken.PARENT_ARTIFACTID.getToken()));
+        Assert.assertEquals(acmeFooProject.getReactorParent().getMavenVersion(),
+                staticTokens.get(PomToken.PARENT_VERSION.getToken()));
     }
 
     //

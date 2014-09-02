@@ -37,10 +37,7 @@ import se.jguru.nazgul.core.resource.api.extractor.JarExtractor;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.IOException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -105,7 +102,9 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
         }
 
         // Create the software component's directory.
-        final File rootDir = navigator.getProjectRootDirectory(componentDirectory);
+        final File componentPomFile = new File(componentDirectory, "pom.xml");
+        File originatingDirectory = componentPomFile.exists() ? componentDirectory : componentDirectory.getParentFile();
+        final File rootDir = navigator.getProjectRootDirectory(originatingDirectory);
         final String relativePath = navigator.getRelativePath(componentDirectory, false);
 
         File componentDir = componentDirectory;
@@ -170,10 +169,18 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
                 FileUtils.getSimpleArtifact(rootReactorPomModel),
                 FileUtils.getSimpleArtifact(parentPomModel));
 
-        // Create the part directory
-        final String prefix = getNamingStrategy().isPrefixRequiredOnAllFolders() ? rootReactorName.getPrefix() : "";
-        final Name partName = toAdd.createName(prefix, toAdd.getType(), suffix);
-        final File partDir = FileUtils.makeDirectory(componentDir, partName.toString());
+        //
+        // Find the name of the part directory, and then create it.
+        // The directory name here is something like "messaging-model", or
+        // "foobar-messaging-model" depending on the desired prefix structure.
+        //
+        final String dirPrefix = rootReactorName.getPrefix() != null && !"".equals(rootReactorName.getPrefix())
+                ? rootReactorName.getPrefix() + Name.DEFAULT_SEPARATOR
+                : "";
+        final String dirSuffix = toAdd.isSuffixRequired() ? Name.DEFAULT_SEPARATOR + suffix : "";
+        final String dirName = dirPrefix + rootReactorName.getName() + dirSuffix;
+
+        final File partDir = FileUtils.makeDirectory(componentDir, dirName);
         final String topReactorPomVersion = rootReactorPomModel.getVersion() == null
                 ? projectData.getReactorParent().getMavenVersion()
                 : rootReactorPomModel.getVersion();
@@ -227,7 +234,9 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
         Validate.notEmpty(parentPomMavenVersion, "Cannot handle null or empty parentPomMavenVersion argument.");
 
         // 1) Extract all template files corresponding to the SoftwareComponentPart to a temporary directory
-        final File tmpExtractedFilesRoot = extractTemplateFiles(mavenProjectDir.getName(), part.name());
+        final File tmpExtractedFilesRoot = extractTemplateFiles(
+                mavenProjectDir.getName(),
+                part.getComponentPomType().name());
         if (log.isDebugEnabled()) {
             log.debug("Using temporary directory [" + FileUtils.getCanonicalPath(tmpExtractedFilesRoot)
                     + "] to extract template files.");
@@ -429,7 +438,7 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
         }
 
         // Find the template retrieval specification.
-        final URL templateRootURL = getUrlFor(templateResourcePath);
+        final URL templateRootURL = getTemplateResourceURL(templateResourcePath);
         final String protocol = templateRootURL.getProtocol();
 
         // Update the error message if other resource URL protocols are supported.
@@ -446,13 +455,13 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
         } else if ("file".equalsIgnoreCase(protocol)) {
 
             // Check sanity
-            final File templateRootDir = new File(templateRootURL.getPath());
-            Validate.isTrue(templateRootDir.exists() && templateRootDir.isDirectory(),
+            final File templateDirectory = new File(templateRootURL.getPath());
+            Validate.isTrue(FileUtils.DIRECTORY_FILTER.accept(templateDirectory),
                     "File template root directory must exist and be a directory. (Got: ["
-                            + templateRootDir.getAbsolutePath() + "]");
+                            + templateDirectory.getAbsolutePath() + "]");
 
             // Copy all resources to the tmpExtractedFilesRoot directory.
-            final SortedMap<String, File> path2File = FileUtils.listFilesRecursively(templateRootDir);
+            final SortedMap<String, File> path2File = FileUtils.listFilesRecursively(templateDirectory);
 
             for (Map.Entry<String, File> current : path2File.entrySet()) {
 
@@ -516,7 +525,7 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
         Validate.notEmpty(rootReactorArtifactId, "Cannot handle null or empty rootReactorArtifactId argument.");
 
         final Name artifactIdName = Name.parse(rootReactorArtifactId);
-        final String packageSnippet = (artifactIdName.getPrefix() != null ? artifactIdName.getPrefix() + Name.DEFAULT_SEPARATOR : "")
+        final String packageSnippet = (artifactIdName.getPrefix() != null ? artifactIdName.getPrefix() + "." : "")
                 + artifactIdName.getName();
 
         if (log.isDebugEnabled()) {
@@ -536,11 +545,16 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
         return candidate.substring(0, cutoffIndex);
     }
 
-    //
-    // Private helpers
-    //
+    /**
+     * Retrieves the URL to the supplied templateResourcePath.
+     *
+     * @param templateResourcePath The resource path (not starting with '/') for a template to find.
+     * @return The URL to the template resource.
 
     private URL getUrlFor(final String templateResourcePath) {
+
+        // Check sanity
+        Validate.notEmpty(templateResourcePath, "Cannot handle null or empty templateResourcePath argument.");
 
         final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         final List<URL> resourceURLs;
@@ -569,4 +583,6 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
         // We have exactly one templateRootUrl.
         return resourceURLs.get(0);
     }
+
+     */
 }
