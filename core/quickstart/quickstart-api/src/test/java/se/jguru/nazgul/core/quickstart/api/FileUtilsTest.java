@@ -29,6 +29,10 @@ import se.jguru.nazgul.core.quickstart.model.SimpleArtifact;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -46,8 +50,8 @@ public class FileUtilsTest {
         testDataDir = new File(testDataURL.getPath());
         fooReactorRootDir = new File(testDataDir, "foo");
 
-        Assert.assertTrue(testDataDir.exists() && testDataDir.isDirectory());
-        Assert.assertTrue(fooReactorRootDir.exists() && fooReactorRootDir.isDirectory());
+        Assert.assertTrue(FileUtils.DIRECTORY_FILTER.accept(testDataDir));
+        Assert.assertTrue(FileUtils.DIRECTORY_FILTER.accept(fooReactorRootDir));
     }
 
     @Test
@@ -81,6 +85,126 @@ public class FileUtilsTest {
         FileUtils.getPomModel(incorrectPom);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void validateExceptionOnTryingToReadNonexistentFile() {
+
+        // Assemble
+        final String resourceURL = "a/non/existent/file";
+
+        // Act & Assert
+        FileUtils.readFile(resourceURL);
+    }
+
+    @Test
+    public void validateReadingTextFile() {
+
+        // Assemble
+        final String expected = "This is row 1 in the simple text file.\n" +
+                "This is row 2 in the simple text file.\n";
+        final String filePath = "testdata/directory/simple.txt";
+
+        // Act
+        final String data = FileUtils.readFile(filePath);
+
+        // Assert
+        Assert.assertEquals(expected, data);
+    }
+
+    @Test
+    public void validateRecursiveListing() {
+
+        // Assemble
+        final String simpleTextFilePath = "simple.txt";
+        final String anotherSimpleTextFilePath = "subdirectory/anotherSimple.txt";
+        final String binFilePath = "binary/orange_ball.png";
+        final List<String> expectedFileNames = Arrays.asList(simpleTextFilePath,
+                anotherSimpleTextFilePath,
+                binFilePath);
+
+        final String dirPath = "testdata/directory";
+        final URL resource = getClass().getClassLoader().getResource(dirPath);
+        final File path = new File(resource.getPath());
+
+        // Act
+        final SortedMap<String, File> files = FileUtils.listFilesRecursively(path);
+
+        // Assert
+        Assert.assertEquals(expectedFileNames.size(), files.size());
+        for(String current : expectedFileNames) {
+
+            if(current.equals(binFilePath)) {
+                Assert.assertFalse(FileUtils.CHARACTER_DATAFILE_FILTER.accept(files.get(current)));
+            } else {
+                Assert.assertTrue(FileUtils.CHARACTER_DATAFILE_FILTER.accept(files.get(current)));
+            }
+            Assert.assertTrue(expectedFileNames.contains(current));
+        }
+
+        final File simpleTextFile = files.get(simpleTextFilePath);
+        final File anotherSimpleTextFile = files.get(anotherSimpleTextFilePath);
+
+        Assert.assertEquals(
+                FileUtils.getCanonicalPath(new File(path, simpleTextFilePath)),
+                FileUtils.getCanonicalPath(simpleTextFile));
+        Assert.assertEquals(
+                FileUtils.getCanonicalPath(new File(path, anotherSimpleTextFilePath)),
+                FileUtils.getCanonicalPath(anotherSimpleTextFile));
+    }
+
+    @Test
+    public void validateReadingFiles() {
+
+        // Assemble
+        final String simpleTextFilePath = "simple.txt";
+        final String anotherSimpleTextFilePath = "subdirectory/anotherSimple.txt";
+        final File path = new File(getClass().getClassLoader().getResource("testdata/directory").getPath());
+        final SortedMap<String, File> textFiles = FileUtils.listFilesRecursively(path);
+
+        // Act
+        final String simpleTextFileData = FileUtils.readFile(textFiles.get(simpleTextFilePath));
+        final String anotherTextFileData = FileUtils.readFile(textFiles.get(anotherSimpleTextFilePath));
+
+        // Assert
+        Assert.assertEquals("This is row 1 in the simple text file.\nThis is row 2 in the simple text file.\n",
+                simpleTextFileData);
+        Assert.assertEquals("This is row 1 in another simple text file.\nThis is row 2 in another simple text file.\n",
+                anotherTextFileData);
+    }
+
+    @Test
+    public void validateCharDataFileDetection() {
+
+        // Assemble
+        final String binFilePath = "binary/orange_ball.png";
+        final File path = new File(getClass().getClassLoader().getResource("testdata/directory").getPath());
+        final SortedMap<String, File> textFiles = FileUtils.listFilesRecursively(path);
+        final File nonexistent = new File(path, "aNonexistentFile.txt");
+
+        // Act & Assert
+        for(Map.Entry<String, File> current : textFiles.entrySet()) {
+
+            final boolean isCharacterFile = !current.getKey().equals(binFilePath);
+            Assert.assertEquals(isCharacterFile, FileUtils.CHARACTER_DATAFILE_FILTER.accept(current.getValue()));
+        }
+        Assert.assertFalse(FileUtils.CHARACTER_DATAFILE_FILTER.accept(nonexistent));
+    }
+
+    @Test
+    public void validateExistenceRequiredForFilters() {
+
+        // Assemble
+        final File path = new File(getClass().getClassLoader().getResource("testdata/directory").getPath());
+        final File nonexistent = new File(path, "aNonexistentFile.txt");
+
+        // Act & Assert
+        Assert.assertFalse(FileUtils.MODULE_NAME_FILTER.accept(path));
+        Assert.assertFalse(FileUtils.MODULE_NAME_FILTER.accept(nonexistent));
+    }
+
+    //
+    // Helpers
+    //
+
     public static File createUniqueDirectoryUnderTestData(final String name) {
 
         // Get the testdata directory
@@ -88,11 +212,11 @@ public class FileUtilsTest {
         final File testdataDir = new File(testdata.getPath());
 
         Assert.assertTrue("Required testdata directory [" + FileUtils.getCanonicalPath(testdataDir)
-                        + "] nonexistent.", testdataDir.exists());
-        for(int i = 0; true; i++) {
+                + "] nonexistent.", testdataDir.exists());
+        for (int i = 0; true; i++) {
             final String dirName = name + "_" + i;
             final File toReturn = new File(testdataDir, dirName);
-            if(!toReturn.exists()) {
+            if (!toReturn.exists()) {
                 return FileUtils.makeDirectory(testdataDir, dirName);
             }
         }

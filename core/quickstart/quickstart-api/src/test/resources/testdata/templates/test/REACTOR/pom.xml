@@ -31,7 +31,7 @@
     <parent>
         <groupId>[parentGroupId]</groupId>
         <artifactId>[parentArtifactId]</artifactId>
-        <version>[parentVersion]</version>
+        <version>[parentMavenVersion]</version>
     </parent>
 
     <groupId>[groupId]</groupId>

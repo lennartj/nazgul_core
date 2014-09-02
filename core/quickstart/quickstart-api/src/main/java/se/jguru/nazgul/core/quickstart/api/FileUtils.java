@@ -66,7 +66,7 @@ public final class FileUtils {
     public static final FileFilter DIRECTORY_FILTER = new FileFilter() {
         @Override
         public boolean accept(final File pathname) {
-            return pathname.isDirectory();
+            return pathname.exists() && pathname.isDirectory();
         }
     };
 
@@ -76,7 +76,7 @@ public final class FileUtils {
     public static final FileFilter FILE_FILTER = new FileFilter() {
         @Override
         public boolean accept(final File pathname) {
-            return pathname.isFile();
+            return pathname.exists() && pathname.isFile();
         }
     };
 
@@ -87,8 +87,7 @@ public final class FileUtils {
         @Override
         public boolean accept(final File moduleCandidate) {
             if (moduleCandidate.exists() && moduleCandidate.isDirectory()) {
-                File subPomFile = new File(moduleCandidate, "pom.xml");
-                return subPomFile.exists() && subPomFile.isFile();
+                return FILE_FILTER.accept(new File(moduleCandidate, "pom.xml"));
             }
 
             // Not a module directory/name.
@@ -119,7 +118,7 @@ public final class FileUtils {
         @Override
         public boolean accept(final File aFile) {
 
-            if (aFile.exists() && aFile.isFile()) {
+            if(FILE_FILTER.accept(aFile)) {
 
                 // Find the file suffix to compare with.
                 final String fileName = aFile.getName();
@@ -211,7 +210,7 @@ public final class FileUtils {
 
         // Check sanity
         Validate.notNull(aPomFile, "Cannot handle null aPomFile argument.");
-        Validate.isTrue(aPomFile.exists() && aPomFile.isFile(), "File [" + getCanonicalPath(aPomFile)
+        Validate.isTrue(FILE_FILTER.accept(aPomFile), "File [" + getCanonicalPath(aPomFile)
                 + "] must exist and be a File.");
 
         try {
@@ -236,7 +235,7 @@ public final class FileUtils {
 
         // Check sanity
         Validate.notNull(reactorDirectory, "Cannot handle null or empty reactorDirectory argument.");
-        Validate.isTrue(reactorDirectory.exists() && reactorDirectory.isDirectory(), "reactorDirectory argument ["
+        Validate.isTrue(DIRECTORY_FILTER.accept(reactorDirectory), "reactorDirectory argument ["
                 + getCanonicalPath(reactorDirectory) + "] must refer to an existing directory.");
 
         final List<String> toReturn = new ArrayList<>();
@@ -279,7 +278,7 @@ public final class FileUtils {
     public static boolean exists(final File fileOrDir, final boolean isDirectory) {
 
         Validate.notNull(fileOrDir, "Cannot handle null fileOrDir argument.");
-        return fileOrDir.exists() && (isDirectory ? fileOrDir.isDirectory() : fileOrDir.isFile());
+        return isDirectory ? DIRECTORY_FILTER.accept(fileOrDir) : FILE_FILTER.accept(fileOrDir);
     }
 
     /**
@@ -313,7 +312,7 @@ public final class FileUtils {
 
         // Check sanity
         Validate.notNull(aFile, "Cannot handle null aFile argument.");
-        Validate.isTrue(aFile.exists() && aFile.isFile(), "File [" + getCanonicalPath(aFile)
+        Validate.isTrue(FILE_FILTER.accept(aFile), "File [" + getCanonicalPath(aFile)
                 + "] must exist and be a (text) file.");
 
         try {
@@ -340,7 +339,9 @@ public final class FileUtils {
         // Peel off any initial '/' chars
         final String effectiveURL = resourceURL.startsWith("/") ? resourceURL.substring(1) : resourceURL;
         final InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(effectiveURL);
-        Validate.notNull(in, "Resource [" + effectiveURL + "] yielded null input stream.");
+        if (in == null) {
+            throw new IllegalArgumentException("No file (or stream) found for resource [" + effectiveURL + "].");
+        }
 
         // All done.
         return readFully(in, resourceURL);
@@ -359,7 +360,7 @@ public final class FileUtils {
 
         // Check sanity
         Validate.notNull(aDirectory, "Cannot handle null aDirectory argument.");
-        Validate.isTrue(aDirectory.exists() && aDirectory.isDirectory(),
+        Validate.isTrue(DIRECTORY_FILTER.accept(aDirectory),
                 "Argument aDirectory must point to an existing directory. Got [" + getCanonicalPath(aDirectory) + "]");
 
         final SortedMap<String, File> toReturn = new TreeMap<>();
@@ -424,7 +425,9 @@ public final class FileUtils {
         // Calculate the relative path
         final String rootDirPath = getCanonicalPath(rootDirectory);
         final String currentDirPath = getCanonicalPath(currentDirectory);
-        final String tmp = currentDirPath.substring(currentDirPath.indexOf(rootDirPath) + rootDirPath.length());
+        final String tmp = currentDirPath.substring(currentDirPath.indexOf(rootDirPath)
+                + rootDirPath.length()
+                + (rootDirPath.equals(currentDirPath) ? 0 : 1));
         final String prefix = tmp.length() == 0 ? "" : tmp + "/";
 
         // Map all files in the current directory

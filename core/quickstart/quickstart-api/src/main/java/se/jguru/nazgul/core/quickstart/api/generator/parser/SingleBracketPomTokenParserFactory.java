@@ -316,7 +316,7 @@ public final class SingleBracketPomTokenParserFactory {
 
             // Add the PomType of the parent, which is non-null for PomTypes other than PomType.PARENT.
             final PomType parentPomType = getParentPomType(2);
-            if(parentPomType != null) {
+            if (parentPomType != null) {
                 pomTokens.put(PARENT_POMTYPE, parentPomType.name());
 
                 // Add the relative path to the parent POM directory
@@ -389,7 +389,12 @@ public final class SingleBracketPomTokenParserFactory {
 
                 case REACTOR:
                     Validate.notEmpty(relativePathToSoftwareComponent, invalidRelativePathMsg);
-                    pomTokens.put(SOFTWARE_COMPONENT_RELATIVE_PATH, relativePathToSoftwareComponent);
+                    final String pathSegmentSeparator = "/";
+                    String paddedRelativePath = relativePathToSoftwareComponent.endsWith(pathSegmentSeparator)
+                            ? relativePathToSoftwareComponent.substring(0,
+                                relativePathToSoftwareComponent.lastIndexOf(pathSegmentSeparator))
+                            : relativePathToSoftwareComponent;
+                    pomTokens.put(SOFTWARE_COMPONENT_RELATIVE_PATH, paddedRelativePath);
                     pomTokens.put(SOFTWARE_COMPONENT_NAME, pathSegments.get(pathSegments.size() - 1));
 
                     PomType parentPomType = getParentPomType(pathSegments.size());
@@ -470,7 +475,7 @@ public final class SingleBracketPomTokenParserFactory {
 
                 default:
 
-                    if(log.isWarnEnabled()) {
+                    if (log.isWarnEnabled()) {
                         log.warn("Could not determine parent PomType for pomType [" + pomType + "].");
                     }
                     toReturn = null;
@@ -600,8 +605,12 @@ public final class SingleBracketPomTokenParserFactory {
 
                     // Check sanity
                     Validate.notNull(parentPomType, "Parent PomType should not be null for pomType [" + pomType + "]");
+                    final String projectPrefixSegment = project.getPrefix() != null
+                            ? project.getPrefix() + Name.DEFAULT_SEPARATOR
+                            : "";
                     groupIdBuilder.append(POMS_DIRECTORY_NAME)
                             .append(delimiter)
+                            .append(projectPrefixSegment)
                             .append(project.getName())
                             .append(Name.DEFAULT_SEPARATOR)
                             .append(parentPomType.name().replace("_", Name.DEFAULT_SEPARATOR).toLowerCase());
@@ -822,7 +831,7 @@ public final class SingleBracketPomTokenParserFactory {
             if (pathToParentDir == null && isParentPomType()) {
                 pathToParentDir = POMS_DIRECTORY_NAME;
             }
-            final String relativeDirPath = pomType == PomType.REACTOR
+            final String relativeDirPath = (pomType == PomType.REACTOR || pomType == PomType.ROOT_REACTOR)
                     ? pathToParentDir
                     : pathToParentDir + "/" + localProjectDirName;
 
@@ -846,8 +855,10 @@ public final class SingleBracketPomTokenParserFactory {
                     : localProjectDirName;
             String artifactId = artifactPrefix + project.getName() + Name.DEFAULT_SEPARATOR + rawProjectDirName;
 
-            if (pomType == PomType.REACTOR || pomType == PomType.ROOT_REACTOR) {
+            if (pomType == PomType.REACTOR) {
                 artifactId = artifactId + "-reactor";
+            } else if (pomType == PomType.ROOT_REACTOR) {
+                artifactId = artifactPrefix + project.getName() + Name.DEFAULT_SEPARATOR + "reactor";
             }
             pomTokens.put(PomToken.ARTIFACTID.getToken(), artifactId);
 
@@ -856,8 +867,7 @@ public final class SingleBracketPomTokenParserFactory {
             final String groupId = projectGroupIdPrefix + "."
                     + (nonEmptyProjectPrefix ? project.getPrefix() + "." : "")
                     + project.getName()
-                    + "."
-                    + relativePackage;
+                    + ("".equals(relativePackage) ? "" : "." + relativePackage);
             pomTokens.put(PomToken.GROUPID.getToken(), groupId);
 
             // All done.
@@ -974,6 +984,8 @@ public final class SingleBracketPomTokenParserFactory {
                         .append(project.getName())
                         .append(Name.DEFAULT_SEPARATOR)
                         .append(pomType.toString().toLowerCase().replace("_", Name.DEFAULT_SEPARATOR));
+            } else if (pomType == PomType.ROOT_REACTOR) {
+                return "";
             } else {
 
                 // The first part of the relative package should be
