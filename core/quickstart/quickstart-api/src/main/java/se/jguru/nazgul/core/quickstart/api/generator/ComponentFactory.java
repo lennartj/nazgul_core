@@ -55,7 +55,8 @@ public interface ComponentFactory {
     /**
      * Adds a SoftwareComponentPart to the SoftwareComponent found within the supplied componentDirectory.
      *
-     * @param componentDirectory An directory containing an existing SoftwareComponent.
+     * @param componentDirectory A directory containing an existing SoftwareComponent
+     *                           (i.e. containing the reactor POM of the SoftwareComponent).
      * @param toAdd              The SoftwareComponentPart to add to the supplied SoftwareComponent.
      * @param suffix             The suffix of the SoftwareComponent's type. Ignored unless
      *                           {@code toAdd.isSuffixRequired()} yields {@code true}.

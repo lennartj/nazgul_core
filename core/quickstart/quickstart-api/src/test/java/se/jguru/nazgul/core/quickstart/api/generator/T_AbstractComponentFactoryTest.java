@@ -122,13 +122,24 @@ public class T_AbstractComponentFactoryTest {
         unitUnderTest.createSoftwareComponent(compDirectory, parts2SuffixMap);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void validateExceptionOnMissingRequiredProjectSuffix() {
+
+        // Assemble
+        final File compDirectory = FileUtils.makeDirectory(factoryRootDir, "incorrectComponent");
+        parts2SuffixMap.put(SoftwareComponentPart.SPI, "");
+
+        // Act & Assert
+        unitUnderTest.createSoftwareComponent(compDirectory, parts2SuffixMap);
+    }
+
     @Test
     public void validateCreatingSoftwareComponent() {
 
         // Assemble
         final String componentName = "messaging";
         final File componentDir = new File(factoryRootDir, project.getName() + "/" + componentName);
-        componentDir.mkdirs();
+        // componentDir.mkdirs();
 
         // Act
         unitUnderTest.createSoftwareComponent(componentDir, parts2SuffixMap);
