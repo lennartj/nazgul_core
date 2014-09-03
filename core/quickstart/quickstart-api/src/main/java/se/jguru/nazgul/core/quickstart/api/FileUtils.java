@@ -96,6 +96,36 @@ public final class FileUtils {
     };
 
     /**
+     * A FileFilter which accepts nonexistent or empty directories.
+     * For this FileFilter, an "empty" directory implies that no directories or files are present within a successful
+     * candidate. All files except those whose names starts with "." are considered files.
+     */
+    public static final FileFilter NONEXISTENT_OR_EMPTY_DIRECTORY_FILTER = new FileFilter() {
+        @Override
+        public boolean accept(final File candidate) {
+
+            boolean okCandidate = !candidate.exists();
+            if (!okCandidate && DIRECTORY_FILTER.accept(candidate)) {
+
+                final File[] childFiles = candidate.listFiles();
+                if (childFiles != null && childFiles.length != 0) {
+                    for (File current : childFiles) {
+                        if (!current.getName().startsWith(".")) {
+                            return false;
+                        }
+                    }
+                }
+
+                // All seems well.
+                okCandidate = true;
+            }
+
+            // All done.
+            return okCandidate;
+        }
+    };
+
+    /**
      * A list containing file suffixes of files normally containing character data, implying that the
      * content of such files can normally be manipulated using TokenParsers.
      */
@@ -118,7 +148,7 @@ public final class FileUtils {
         @Override
         public boolean accept(final File aFile) {
 
-            if(FILE_FILTER.accept(aFile)) {
+            if (FILE_FILTER.accept(aFile)) {
 
                 // Find the file suffix to compare with.
                 final String fileName = aFile.getName();

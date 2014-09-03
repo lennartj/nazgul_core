@@ -28,19 +28,25 @@ import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.parser.api.TokenParser;
 import se.jguru.nazgul.core.quickstart.api.FileUtils;
 import se.jguru.nazgul.core.quickstart.api.InvalidStructureException;
+import se.jguru.nazgul.core.quickstart.api.PomType;
 import se.jguru.nazgul.core.quickstart.api.StructureNavigator;
 import se.jguru.nazgul.core.quickstart.api.analyzer.NamingStrategy;
+import se.jguru.nazgul.core.quickstart.api.generator.parser.PomToken;
 import se.jguru.nazgul.core.quickstart.api.generator.parser.SingleBracketPomTokenParserFactory;
 import se.jguru.nazgul.core.quickstart.model.Name;
 import se.jguru.nazgul.core.quickstart.model.Project;
+import se.jguru.nazgul.core.quickstart.model.SimpleArtifact;
 import se.jguru.nazgul.core.resource.api.extractor.JarExtractor;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.StringTokenizer;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
@@ -71,6 +77,7 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
 
         // Assign internal state
         Validate.notNull(structureNavigator, "Cannot handle null structureNavigator argument.");
+
         this.navigator = structureNavigator;
     }
 
@@ -78,15 +85,21 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
      * {@inheritDoc}
      */
     @Override
-    public void createSoftwareComponent(final File componentDirectory,
-                                        final SortedMap<SoftwareComponentPart, String> parts2SuffixMap)
+    public final void createSoftwareComponent(final File componentDirectory,
+                                              final SortedMap<SoftwareComponentPart, String> parts2SuffixMap)
             throws InvalidStructureException {
 
         // Check sanity
         Validate.notNull(componentDirectory, "Cannot handle null componentDirectory argument.");
         Validate.notEmpty(parts2SuffixMap, "Cannot handle null or empty parts2SuffixMap argument.");
+        Validate.isTrue(!FileUtils.FILE_FILTER.accept(componentDirectory),
+                "ComponentDirectory [" + FileUtils.getCanonicalPath(componentDirectory)
+                        + "] must not refer to an existing file.");
+        Validate.isTrue(FileUtils.NONEXISTENT_OR_EMPTY_DIRECTORY_FILTER.accept(componentDirectory),
+                "ComponentDirectory [" + FileUtils.getCanonicalPath(componentDirectory)
+                        + "] must refer to a nonexistent or empty directory.");
 
-        // Check sanity
+        // Check structure of the supplied arguments
         final Set<SoftwareComponentPart> parts = parts2SuffixMap.keySet();
         if (parts.contains(SoftwareComponentPart.IMPLEMENTATION)
                 && !(parts.contains(SoftwareComponentPart.API) || parts.contains(SoftwareComponentPart.SPI))) {
@@ -101,12 +114,63 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
             }
         }
 
-        // Create the software component's directory.
+        // Validate that we should be able to create a component here.
         final File componentPomFile = new File(componentDirectory, "pom.xml");
-        File originatingDirectory = componentPomFile.exists() ? componentDirectory : componentDirectory.getParentFile();
+        if (FileUtils.FILE_FILTER.accept(componentPomFile)) {
+
+            // The componentPomFile must be either of type REACTOR or ROOT_REACTOR.
+            final Model pomModel = FileUtils.getPomModel(componentPomFile);
+            final PomType pomType = getNamingStrategy().getPomType(pomModel);
+
+            Validate.isTrue(pomType == PomType.REACTOR || pomType == PomType.ROOT_REACTOR,
+                    "ComponentPart projects can only be added to components. This implies that ["
+                            + FileUtils.getCanonicalPath(componentPomFile)
+                            + "] must either be of type REACTOR or ROOT_REACTOR. (Detected type [" + pomType + "])");
+        }
+
+        // TODO: Ensure that existing parent directories contain REACTOR or ROOT_REACTOR poms.
+        final File originatingDirectory = componentPomFile.exists()
+                ? componentDirectory
+                : componentDirectory.getParentFile();
         final File rootDir = navigator.getProjectRootDirectory(originatingDirectory);
         final String relativePath = navigator.getRelativePath(componentDirectory, false);
 
+        final List<String> pathSegments = new ArrayList<>();
+        if (relativePath != null) {
+            final StringTokenizer tok = new StringTokenizer(relativePath, File.separator, false);
+            while (tok.hasMoreTokens()) {
+                pathSegments.add(tok.nextToken());
+            }
+        }
+
+        File tmp = new File(rootDir, "pom.xml");
+        for (String current : pathSegments) {
+            if (FileUtils.FILE_FILTER.accept(tmp)) {
+
+                if (log.isDebugEnabled()) {
+                    log.debug("Validating that [" + FileUtils.getCanonicalPath(tmp)
+                            + "] is a REACTOR or ROOT_REACTOR pom to enable creating a SoftwareComponent.");
+                }
+
+                // The current POM should be of the correct type.
+                final Model pomModel = FileUtils.getPomModel(componentPomFile);
+                final PomType pomType = getNamingStrategy().getPomType(pomModel);
+
+                Validate.isTrue(pomType == PomType.REACTOR || pomType == PomType.ROOT_REACTOR,
+                        "ComponentPart projects can only be added to components. This implies that ["
+                                + FileUtils.getCanonicalPath(tmp) + "] must either be of type REACTOR "
+                                + "or ROOT_REACTOR. (Detected type [" + pomType + "])");
+
+                // Descend
+                tmp = new File(tmp, current + "/pom.xml");
+            } else {
+
+                // No point in going deeper.
+                break;
+            }
+        }
+
+        // Sane to create the SoftwareComponentPart
         File componentDir = componentDirectory;
         if (!FileUtils.exists(componentDir, true)) {
             componentDir = FileUtils.makeDirectory(rootDir, relativePath);
@@ -119,11 +183,22 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
             addSoftwareComponentPart(componentDir, current.getKey(), current.getValue());
         }
 
-        // Synthesize the Software Component's reactor POM.
+        // Now, create or update the reactor POM for the software component.
+        // First - find the existing modules.
         final StringBuilder modulesElementBuilder = new StringBuilder();
-        for (File current : componentDir.listFiles(FileUtils.DIRECTORY_FILTER)) {
+        for (File current : componentDir.listFiles(FileUtils.MODULE_NAME_FILTER)) {
             modulesElementBuilder.append("<module>").append(current.getName()).append("</module>\n");
         }
+
+        // (Over-)write the reactor POM.
+        final Model rootReactorPomModel = FileUtils.getPomModel(new File(rootDir, "pom.xml"));
+        final SimpleArtifact rootReactorArtifact = FileUtils.getSimpleArtifact(rootReactorPomModel);
+        createMavenProject(SoftwareComponentPart.REACTOR,
+                componentDir,
+                rootReactorArtifact.getMavenVersion(),
+                "irrelevant",
+                );
+        addSoftwareComponentPart(componentDir, SoftwareComponentPart.REACTOR, null);
 
         // final TokenParser tokenParser = getTokenParser(PomType.REACTOR, relativePath, project);
         // tokenParser.substituteTokens()
@@ -223,7 +298,8 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
                                       final String parentPomMavenVersion,
                                       final Project project,
                                       final String optionalGroupIdPrefix,
-                                      final String partSuffix) {
+                                      final String partSuffix,
+                                      final String optionalModuleXml) {
 
         // Check sanity
         Validate.notNull(part, "Cannot handle null part argument.");
@@ -243,14 +319,19 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
         }
 
         // 2) Create a TokenParser to handle template tokens
-        final TokenParser tokenParser = SingleBracketPomTokenParserFactory
+        final TokenParser tokenParser = null;
+        final SingleBracketPomTokenParserFactory.Builder builder = SingleBracketPomTokenParserFactory
                 .create(part.getComponentPomType(), project)
                 .withoutProjectNameAsDirectoryPrefix()
                 .inSoftwareComponentWithRelativePath(navigator.getRelativePath(mavenProjectDir, false))
                 .withProjectGroupIdPrefix(optionalGroupIdPrefix)
                 .withProjectSuffix(partSuffix)
-                .withMavenVersions(reactorPomMavenVersion, parentPomMavenVersion)
-                .build();
+                .withMavenVersions(reactorPomMavenVersion, parentPomMavenVersion);
+        if(optionalModuleXml != null
+                && !"".equals(optionalModuleXml)
+                && part.getComponentPomType() == PomType.REACTOR) {
+            builder.addToken()
+        }
 
                 /*getTokenParser(
                 part.getComponentPomType(),
@@ -545,44 +626,26 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
         return candidate.substring(0, cutoffIndex);
     }
 
+    //
+    // Private helpers
+    //
+
     /**
-     * Retrieves the URL to the supplied templateResourcePath.
+     * Adds a SoftwareComponentPart to the SoftwareComponent found within the supplied componentDirectory.
      *
-     * @param templateResourcePath The resource path (not starting with '/') for a template to find.
-     * @return The URL to the template resource.
-
-    private URL getUrlFor(final String templateResourcePath) {
-
-        // Check sanity
-        Validate.notEmpty(templateResourcePath, "Cannot handle null or empty templateResourcePath argument.");
-
-        final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        final List<URL> resourceURLs;
-        try {
-            resourceURLs = Collections.list(contextClassLoader.getResources(templateResourcePath));
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Could not extract URLs from TemplateResourcePath ["
-                    + templateResourcePath + "]", e);
-        }
-
-        if (resourceURLs.size() > 1) {
-            final StringBuilder builder = new StringBuilder("Found [" + resourceURLs.size()
-                    + "] resource URLs corresponding to templateResourcePath [" + templateResourcePath
-                    + "]. Expected exactly 1 match, but got the following URLs:\n");
-
-            for (int i = 0; i < resourceURLs.size(); i++) {
-                builder.append("[" + i + "]: " + resourceURLs.get(i) + "\n");
-            }
-            throw new IllegalArgumentException(builder.toString());
-        } else if (resourceURLs.size() == 0) {
-            throw new IllegalArgumentException("templateResourcePath [" + templateResourcePath
-                    + "] was not found in thread context ClassLoader. "
-                    + "This implies that the project templates cannot be found, which is a configuration error.");
-        }
-
-        // We have exactly one templateRootUrl.
-        return resourceURLs.get(0);
-    }
-
+     * @param componentReactorDirectory A directory containing an existing SoftwareComponent.
+     * @param toAdd                     The SoftwareComponentPart to add to the supplied SoftwareComponent.
+     * @param suffix                    The suffix of the SoftwareComponent's type. Ignored unless
+     *                                  {@code toAdd.isSuffixRequired()} yields {@code true}.
+     * @throws InvalidStructureException if the supplied componentDirectory did not contain a SoftwareComponent,
+     *                                   or if the toAdd SoftwareComponentPart was already present within
+     *                                   the {@code componentDirectory} directory.
+     * @see SoftwareComponentPart#isSuffixRequired()
      */
+    private void createSoftwareComponentPart(final File componentReactorDirectory,
+                                             final SoftwareComponentPart toAdd,
+                                             final String suffix,
+                                             final String moduleElementsXml) throws InvalidStructureException {
+
+    }
 }
