@@ -948,14 +948,19 @@ public final class SingleBracketPomTokenParserFactory {
 
                 // Standard component reactor
                 dirNameBuilder.append(Name.DEFAULT_SEPARATOR).append(lcPomType);
-            }
-            if (isParentPomType()) {
+            } else if (isParentPomType()) {
                 dirNameBuilder.append(lcPomType);
             } else {
 
                 // This is a component PomType. Remove the "component-" part of the lcPomType.
-                final String stripOff = "component" + Name.DEFAULT_SEPARATOR;
-                dirNameBuilder.append(Name.DEFAULT_SEPARATOR).append(lcPomType.substring(stripOff.length()));
+                final int stripOffLength = ("component" + Name.DEFAULT_SEPARATOR).length();
+                if(lcPomType.length() < stripOffLength) {
+                    log.error("Got stripOffLength: [" + stripOffLength + "] and lcPomType.length(): ["
+                            + lcPomType.length() + "] for lcPomType [" + lcPomType + "]");
+                    throw new IllegalStateException("This should not happen...");
+                }
+
+                dirNameBuilder.append(Name.DEFAULT_SEPARATOR).append(lcPomType.substring(stripOffLength));
             }
 
             if (addProjectSuffixToDirName) {

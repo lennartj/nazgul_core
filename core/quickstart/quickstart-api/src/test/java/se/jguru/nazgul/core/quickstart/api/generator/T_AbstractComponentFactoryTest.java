@@ -145,6 +145,12 @@ public class T_AbstractComponentFactoryTest {
         unitUnderTest.createSoftwareComponent(componentDir, parts2SuffixMap);
 
         // Assert
+
+        /*
+        Uhm ...
+        <groupId>org.acme.gnat.foo.messaging.gnat-foo-blah.implementation.blah</groupId>
+        <artifactId>gnat-foo-gnat-foo-blah-implementation-blah</artifactId>
+         */
     }
 
     //
