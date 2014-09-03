@@ -78,7 +78,12 @@ public enum PomToken {
     /**
      * The relative path between the active maven project and its parent POM.
      */
-    PARENT_POM_RELATIVE_PATH("parentPomRelativePath");
+    PARENT_POM_RELATIVE_PATH("parentPomRelativePath"),
+
+    /**
+     * The fully populated modules XML element, usable only in REACTOR and ROOT_REACTOR poms.
+     */
+    MODULES("modules");
 
     // Internal state
     private String token;

@@ -21,6 +21,8 @@
  */
 package se.jguru.nazgul.core.quickstart.api.generator.helpers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.quickstart.api.DefaultStructureNavigator;
 import se.jguru.nazgul.core.quickstart.api.analyzer.NamingStrategy;
 import se.jguru.nazgul.core.quickstart.api.analyzer.helpers.TestPomAnalyzer;
@@ -35,9 +37,11 @@ import java.util.List;
  */
 public class TestComponentFactory extends AbstractComponentFactory {
 
+    // Our log
+    private static final Logger log = LoggerFactory.getLogger(TestComponentFactory.class.getName());
+
     // Shared state
     public String testdataSubDir = "test";
-    public boolean useDefaultPomTemplateImplementation = false;
     public List<String> callTrace;
 
     public TestComponentFactory(final NamingStrategy namingStrategy) {
@@ -46,29 +50,17 @@ public class TestComponentFactory extends AbstractComponentFactory {
         callTrace = new ArrayList<>();
     }
 
-    /*
-    @Override
-    protected String getPom(final PomType pomType,
-                            final String relativeDirPath,
-                            final Project project) {
-
-        if(!useDefaultPomTemplateImplementation) {
-            callTrace.add("[" + relativeDirPath + "] ==> [" + pomType + "]");
-            return "pomData: [" + pomType + "]";
-        } else {
-            return super.getPom(pomType, relativeDirPath, project);
-        }
-    }
-    */
-
     /**
      * {@inheritDoc}
      */
     @Override
     protected URL getTemplateResourceURL(final String templateResourcePath) {
-        // pomType + "/pom.xml"
         final String enrichedPath = "testdata/templates/" + testdataSubDir + "/" + templateResourcePath;
-        System.out.println("TestComponentFactory - Got enrichedPath: " + enrichedPath);
+
+        if(log.isDebugEnabled()) {
+            log.debug("Got enrichedPath: " + enrichedPath);
+        }
+
         final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         return contextClassLoader.getResource(enrichedPath);
     }

@@ -35,7 +35,6 @@ import se.jguru.nazgul.core.quickstart.api.generator.parser.PomToken;
 import se.jguru.nazgul.core.quickstart.api.generator.parser.SingleBracketPomTokenParserFactory;
 import se.jguru.nazgul.core.quickstart.model.Name;
 import se.jguru.nazgul.core.quickstart.model.Project;
-import se.jguru.nazgul.core.quickstart.model.SimpleArtifact;
 import se.jguru.nazgul.core.resource.api.extractor.JarExtractor;
 
 import java.io.File;
@@ -153,7 +152,7 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
                 }
 
                 // The current POM should be of the correct type.
-                final Model pomModel = FileUtils.getPomModel(componentPomFile);
+                final Model pomModel = FileUtils.getPomModel(tmp);
                 final PomType pomType = getNamingStrategy().getPomType(pomModel);
 
                 Validate.isTrue(pomType == PomType.REACTOR || pomType == PomType.ROOT_REACTOR,
@@ -184,24 +183,7 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
         }
 
         // Now, create or update the reactor POM for the software component.
-        // First - find the existing modules.
-        final StringBuilder modulesElementBuilder = new StringBuilder();
-        for (File current : componentDir.listFiles(FileUtils.MODULE_NAME_FILTER)) {
-            modulesElementBuilder.append("<module>").append(current.getName()).append("</module>\n");
-        }
-
-        // (Over-)write the reactor POM.
-        final Model rootReactorPomModel = FileUtils.getPomModel(new File(rootDir, "pom.xml"));
-        final SimpleArtifact rootReactorArtifact = FileUtils.getSimpleArtifact(rootReactorPomModel);
-        createMavenProject(SoftwareComponentPart.REACTOR,
-                componentDir,
-                rootReactorArtifact.getMavenVersion(),
-                "irrelevant",
-                );
         addSoftwareComponentPart(componentDir, SoftwareComponentPart.REACTOR, null);
-
-        // final TokenParser tokenParser = getTokenParser(PomType.REACTOR, relativePath, project);
-        // tokenParser.substituteTokens()
     }
 
     /**
@@ -298,8 +280,7 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
                                       final String parentPomMavenVersion,
                                       final Project project,
                                       final String optionalGroupIdPrefix,
-                                      final String partSuffix,
-                                      final String optionalModuleXml) {
+                                      final String partSuffix) {
 
         // Check sanity
         Validate.notNull(part, "Cannot handle null part argument.");
@@ -319,7 +300,6 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
         }
 
         // 2) Create a TokenParser to handle template tokens
-        final TokenParser tokenParser = null;
         final SingleBracketPomTokenParserFactory.Builder builder = SingleBracketPomTokenParserFactory
                 .create(part.getComponentPomType(), project)
                 .withoutProjectNameAsDirectoryPrefix()
@@ -327,19 +307,18 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
                 .withProjectGroupIdPrefix(optionalGroupIdPrefix)
                 .withProjectSuffix(partSuffix)
                 .withMavenVersions(reactorPomMavenVersion, parentPomMavenVersion);
-        if(optionalModuleXml != null
-                && !"".equals(optionalModuleXml)
-                && part.getComponentPomType() == PomType.REACTOR) {
-            builder.addToken()
-        }
 
-                /*getTokenParser(
-                part.getComponentPomType(),
-                navigator.getRelativePath(mavenProjectDir, false),
-                project,
-                optionalGroupIdPrefix,
-                partSuffix);
-                */
+        if (part.getComponentPomType() == PomType.REACTOR || part.getComponentPomType() == PomType.ROOT_REACTOR){
+
+            // Add or update the modules
+            final StringBuilder modulesElementBuilder = new StringBuilder();
+            for (File current : mavenProjectDir.listFiles(FileUtils.MODULE_NAME_FILTER)) {
+                modulesElementBuilder.append("<module>").append(current.getName()).append("</module>\n");
+            }
+
+            builder.addToken(PomToken.MODULES.getToken(), modulesElementBuilder.toString());
+        }
+        final TokenParser tokenParser = builder.build();
 
         // 3) Tokenize (as appropriate) and move each file to its destination.
         final FileFilter shouldTokenizeFilter = getShouldTokenizeFilter();
@@ -624,28 +603,5 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
         final String candidate = rootReactorGroupId.substring(0, endIndex);
         int cutoffIndex = candidate.endsWith(".") ? candidate.length() - 1 : candidate.length();
         return candidate.substring(0, cutoffIndex);
-    }
-
-    //
-    // Private helpers
-    //
-
-    /**
-     * Adds a SoftwareComponentPart to the SoftwareComponent found within the supplied componentDirectory.
-     *
-     * @param componentReactorDirectory A directory containing an existing SoftwareComponent.
-     * @param toAdd                     The SoftwareComponentPart to add to the supplied SoftwareComponent.
-     * @param suffix                    The suffix of the SoftwareComponent's type. Ignored unless
-     *                                  {@code toAdd.isSuffixRequired()} yields {@code true}.
-     * @throws InvalidStructureException if the supplied componentDirectory did not contain a SoftwareComponent,
-     *                                   or if the toAdd SoftwareComponentPart was already present within
-     *                                   the {@code componentDirectory} directory.
-     * @see SoftwareComponentPart#isSuffixRequired()
-     */
-    private void createSoftwareComponentPart(final File componentReactorDirectory,
-                                             final SoftwareComponentPart toAdd,
-                                             final String suffix,
-                                             final String moduleElementsXml) throws InvalidStructureException {
-
     }
 }
