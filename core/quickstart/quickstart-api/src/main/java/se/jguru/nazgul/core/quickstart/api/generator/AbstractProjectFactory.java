@@ -30,6 +30,7 @@ import se.jguru.nazgul.core.quickstart.api.InvalidStructureException;
 import se.jguru.nazgul.core.quickstart.api.PomType;
 import se.jguru.nazgul.core.quickstart.api.analyzer.AbstractNamingStrategy;
 import se.jguru.nazgul.core.quickstart.api.analyzer.NamingStrategy;
+import se.jguru.nazgul.core.quickstart.api.generator.parser.PomToken;
 import se.jguru.nazgul.core.quickstart.api.generator.parser.SingleBracketPomTokenParserFactory;
 import se.jguru.nazgul.core.quickstart.model.Name;
 import se.jguru.nazgul.core.quickstart.model.Project;
@@ -178,7 +179,7 @@ public abstract class AbstractProjectFactory extends AbstractFactory implements 
             for(String current : FileUtils.getModuleNames(pomDirectory)) {
                 moduleBuilder.append("<module>").append(current).append("</module>\n");
             }
-            builder.addToken("modules", moduleBuilder.toString());
+            builder.addToken(PomToken.MODULES.getToken(), moduleBuilder.toString());
         }
 
         final TokenParser tokenParser = builder.build();

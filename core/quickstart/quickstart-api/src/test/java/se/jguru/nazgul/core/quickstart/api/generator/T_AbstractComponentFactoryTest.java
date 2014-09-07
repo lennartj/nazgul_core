@@ -139,21 +139,97 @@ public class T_AbstractComponentFactoryTest {
         // Assemble
         final String componentName = "messaging";
         final File componentDir = new File(factoryRootDir, project.getName() + "/" + componentName);
-        // componentDir.mkdirs();
 
         // Act
         unitUnderTest.createSoftwareComponent(componentDir, parts2SuffixMap);
 
         // Assert
+        final SortedMap<String, File> relPath2FileMap = FileUtils.listFilesRecursively(componentDir);
 
-        /*
-        Uhm ...
-        <groupId>org.acme.gnat.foo.messaging.gnat-foo-blah.implementation.blah</groupId>
-        <artifactId>gnat-foo-gnat-foo-blah-implementation-blah</artifactId>
-         */
+        // Generated reactor POM validation
+        validatePomModelFile("pom.xml",
+                relPath2FileMap.get("pom.xml"),
+                "org.acme.gnat.foo",
+                "gnat-foo-reactor",
+                "1.0.0-SNAPSHOT",
+                "org.acme.gnat.foo.messaging",
+                "gnat-foo-messaging-reactor",
+                "messaging");
+
+        // Generated model POM validation
+        validatePomModelFile("gnat-foo-messaging-model/pom.xml",
+                relPath2FileMap.get("gnat-foo-messaging-model/pom.xml"),
+                "org.acme.gnat.foo.poms.gnat-foo-model-parent",
+                "gnat-foo-model-parent",
+                "1.0.0-SNAPSHOT",
+                "org.acme.gnat.foo.messaging.model",
+                "gnat-foo-messaging-model",
+                "messaging/gnat-foo-messaging-model");
+
+        // Generated api POM validation
+        validatePomModelFile("gnat-foo-messaging-api/pom.xml",
+                relPath2FileMap.get("gnat-foo-messaging-api/pom.xml"),
+                "org.acme.gnat.foo.poms.gnat-foo-api-parent",
+                "gnat-foo-api-parent",
+                "1.0.0-SNAPSHOT",
+                "org.acme.gnat.foo.messaging.api",
+                "gnat-foo-messaging-api",
+                "messaging/gnat-foo-messaging-api");
+
+        // Generated 'foobar' spi POM validation
+        validatePomModelFile("gnat-foo-messaging-spi-foobar/pom.xml",
+                relPath2FileMap.get("gnat-foo-messaging-spi-foobar/pom.xml"),
+                "org.acme.gnat.foo.poms.gnat-foo-api-parent",
+                "gnat-foo-api-parent",
+                "1.0.0-SNAPSHOT",
+                "org.acme.gnat.foo.messaging.spi.foobar",
+                "gnat-foo-messaging-spi-foobar",
+                "messaging/gnat-foo-messaging-spi-foobar");
+
+        // Generated 'blah' implementation POM validation
+        validatePomModelFile("gnat-foo-messaging-impl-blah/pom.xml",
+                relPath2FileMap.get("gnat-foo-messaging-impl-blah/pom.xml"),
+                "org.acme.gnat.foo.poms.gnat-foo-parent",
+                "gnat-foo-parent",
+                "1.0.0-SNAPSHOT",
+                "org.acme.gnat.foo.messaging.implementation.blah",
+                "gnat-foo-messaging-implementation-blah",
+                "messaging/gnat-foo-messaging-impl-blah");
     }
 
     //
     // Private helpers
     //
+
+    private void validatePomModelFile(final String relativePath,
+                                      final File pomFile,
+                                      final String parentGroupId,
+                                      final String parentArtifactId,
+                                      final String parentMavenVersion,
+                                      final String groupId,
+                                      final String artifactId,
+                                      final String relativePathInReactor) {
+
+        // Find the Maven Model, and compare it with the required data.
+        final Model pomModel = FileUtils.getPomModel(pomFile);
+
+        validatePomModelData(relativePath, "parentGroupId", parentGroupId, pomModel.getParent().getGroupId());
+        validatePomModelData(relativePath, "parentArtifactId", parentArtifactId, pomModel.getParent().getArtifactId());
+        validatePomModelData(relativePath, "parentMavenVersion", parentMavenVersion, pomModel.getParent().getVersion());
+        validatePomModelData(relativePath, "groupId", groupId, pomModel.getGroupId());
+        validatePomModelData(relativePath, "artifactId", artifactId, pomModel.getArtifactId());
+
+        final String actualPathInReactor = pomModel.getProperties().getProperty("path.in.reactor");
+        validatePomModelData(relativePath, "relativePathInReactor", relativePathInReactor, actualPathInReactor);
+    }
+
+    private void validatePomModelData(final String relativePathToPom,
+                                      final String criterion,
+                                      final String required,
+                                      final String actual) {
+
+        final String errorMessage = "Incorrect '" + criterion + "' in POM [" + relativePathToPom
+                + "].\n\t Expected [" + required + "], but got [" + actual + "]";
+        Assert.assertEquals(errorMessage, required, actual);
+    }
 }

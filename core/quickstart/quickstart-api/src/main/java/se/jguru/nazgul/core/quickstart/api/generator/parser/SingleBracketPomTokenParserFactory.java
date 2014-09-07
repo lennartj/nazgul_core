@@ -21,6 +21,7 @@
  */
 package se.jguru.nazgul.core.quickstart.api.generator.parser;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -838,7 +839,6 @@ public final class SingleBracketPomTokenParserFactory {
             pomTokens.put(PomToken.RELATIVE_DIRPATH.getToken(), relativeDirPath);
             pomTokens.put(PomToken.RELATIVE_PACKAGE.getToken(), relativePackage);
 
-
             // Now find the groupId and artifactId for the active project.
             final boolean nonEmptyProjectPrefix = project.getPrefix() != null && project.getPrefix().length() > 0;
             final String artifactPrefix = nonEmptyProjectPrefix ? project.getPrefix() + Name.DEFAULT_SEPARATOR : "";
@@ -849,8 +849,8 @@ public final class SingleBracketPomTokenParserFactory {
             // DirName: "finance-api"  --> ArtifactID: "acme-foo-finance-api"
             // DirName: "foo-finance-api"  --> ArtifactID: "acme-foo-finance-api"
             //
-            final String slice = project.getName() + Name.DEFAULT_SEPARATOR;
-            final String rawProjectDirName = localProjectDirName.startsWith(slice)
+            final String slice = artifactPrefix + project.getName() + Name.DEFAULT_SEPARATOR;
+            String rawProjectDirName = localProjectDirName.startsWith(slice)
                     ? localProjectDirName.substring(slice.length())
                     : localProjectDirName;
             String artifactId = artifactPrefix + project.getName() + Name.DEFAULT_SEPARATOR + rawProjectDirName;
@@ -862,9 +862,24 @@ public final class SingleBracketPomTokenParserFactory {
             }
             pomTokens.put(PomToken.ARTIFACTID.getToken(), artifactId);
 
-            // GroupID: Calculate for the current project.
-            final String projectGroupIdPrefix = pomTokens.get(PrefixEnricher.REVERSE_DNS_OF_ORGANISATION);
-            final String groupId = projectGroupIdPrefix + "."
+            //
+            // GroupID: Calculate for the current project, on the form:
+            //
+            // Component Project [xyz]:
+            //   [reverseDns].[[projectPrefix].][projectName].[relativePathToComponentParent].[componentName].[type],
+            //   i.e:
+            //
+            //   Reverse DNS:    org.acme
+            //   Project Prefix: gnat
+            //   Project Name:   foo
+            //   Relative Path:  messaging
+            //
+            //   a) Project type MODEL           --> groupID: org.acme.gnat.foo.messaging.model
+            //   b) Project type REACTOR         --> groupID: org.acme.gnat.foo.messaging
+            //   c) Project type SPI (jpa)       --> groupID: org.acme.gnat.foo.messaging.spi.jpa
+            //   d) Project type IMPL (pojo)     --> groupID: org.acme.gnat.foo.messaging.impl.pojo
+            //
+            final String groupId = pomTokens.get(PrefixEnricher.REVERSE_DNS_OF_ORGANISATION) + "."
                     + (nonEmptyProjectPrefix ? project.getPrefix() + "." : "")
                     + project.getName()
                     + ("".equals(relativePackage) ? "" : "." + relativePackage);
@@ -916,9 +931,16 @@ public final class SingleBracketPomTokenParserFactory {
             final StringBuilder dirNameBuilder = new StringBuilder();
             if (isProjectNameAddedToDirectories()) {
 
-                // In this case, the project dirName should be
-                // "foo-finance-api" instead of
-                // "finance-api".
+                //
+                // In this case, the project dirName should be prepended with the
+                // project prefix (if it exists) and name, i.e:
+                //
+                // a) foo-gnat-messaging-model, or
+                // b) gnat-messaging-model (if no prefix is defined within the project).
+                //
+                if(project.getPrefix() != null && !"".equals(project.getPrefix())) {
+                    dirNameBuilder.append(project.getPrefix()).append(Name.DEFAULT_SEPARATOR);
+                }
                 dirNameBuilder.append(project.getName()).append(Name.DEFAULT_SEPARATOR);
             }
 
@@ -946,8 +968,8 @@ public final class SingleBracketPomTokenParserFactory {
                     return POMS_DIRECTORY_NAME;
                 }
 
-                // Standard component reactor
-                dirNameBuilder.append(Name.DEFAULT_SEPARATOR).append(lcPomType);
+                // Standard component reactor; don't append anything.
+                // dirNameBuilder.append(Name.DEFAULT_SEPARATOR).append(lcPomType);
             } else if (isParentPomType()) {
                 dirNameBuilder.append(lcPomType);
             } else {
@@ -996,9 +1018,9 @@ public final class SingleBracketPomTokenParserFactory {
                 // The first part of the relative package should be
                 //
                 // [relativePathToParent (converted)].[softwareComponent]
-                relativePackageBuilder
-                        .append(pomTokens.get(RelativePathEnricher.SOFTWARE_COMPONENT_RELATIVE_PATH)
-                                .replace("/", "."));
+                final String relativePathToSoftwareComponent = pomTokens.get(
+                        RelativePathEnricher.SOFTWARE_COMPONENT_RELATIVE_PATH);
+                relativePackageBuilder.append(relativePathToSoftwareComponent.replace("/", "."));
 
                 if (pomType != PomType.REACTOR) {
 
@@ -1024,111 +1046,7 @@ public final class SingleBracketPomTokenParserFactory {
 
             // All done.
             return relativePackageBuilder.toString();
-
-            /*
-            // Define some controlling properties
-            final boolean handleProjectPrefix = project.getPrefix() != null && project.getPrefix().length() > 0;
-            final String prefix = "" + project.getPrefix() + Name.DEFAULT_SEPARATOR;
-
-            final StringBuilder relativePackageBuilder = new StringBuilder("");
-            for (String current : parentDirPathSegments) {
-                relativePackageBuilder.append(current).append(".");
-            }
-
-            // Check sanity
-            if (pomType.name().contains("COMPONENT")) {
-
-                // A relative path of:
-                // 1) "services/finance/finance-api", or
-                // 2) "services/finance/foo-finance-api"
-                //
-                // ... should yield relative package:
-                // "services.finance.api"
-                //
-                // ... where the last package segment is retrieved from the PomType.
-
-                final String lcPomTypeName = pomType.name().toLowerCase();
-                final String pomTypePackage = lcPomTypeName.substring(lcPomTypeName.lastIndexOf("_") + 1);
-
-                relativePackageBuilder.append(pomTypePackage);
-
-                // Append the project suffix, if required
-                if (isProjectSuffixRequired()) {
-                    relativePackageBuilder.append(".").append(localProjectSuffix);
-                }
-
-            } else if (pomType == PomType.REACTOR) {
-
-                // This is a REACTOR. Simply cut off the last '.'
-                relativePackageBuilder.deleteCharAt(relativePackageBuilder.length() - 1);
-
-            } else {
-
-                // This is a PARENT pom type. Peel off the project prefix, unless asked not to, and
-                // add it to the
-                //
-                // <groupId>se.jguru.nazgul.core.poms.core-api-parent</groupId>
-                // <artifactId>nazgul-core-api-parent</artifactId>
-
-                final String toAppend = (handleProjectPrefix ? prefix : "")
-                        + project.getName()
-                        + Name.DEFAULT_SEPARATOR
-                        + pomType.name().toLowerCase().replace("_", "-");
-                relativePackageBuilder.append(toAppend);
-            }
-
-            // All Done.
-            return relativePackageBuilder.toString();
-            */
         }
-
-        /*
-        private String getRelativePathToParentPomDir(final PomType parentPom,
-                                                     final List<String> parentPathSegments,
-                                                     final String dirPrefix) {
-
-            // Check sanity
-            Validate.notNull(parentPom, "Cannot handle null parentPom argument.");
-            Validate.notNull(parentPathSegments, "Cannot handle null parentPathSegments argument.");
-            Validate.notNull(dirPrefix, "Cannot handle null dirPrefix argument.");
-
-            final List<PomType> noRelativePath = Arrays.asList(PomType.ROOT_REACTOR, PomType.REACTOR);
-
-            String relativePathToParentPom = null;
-            if (noRelativePath.contains(parentPom)) {
-                relativePathToParentPom = "";
-            } else {
-
-                //
-                // #1) Find the directory name of the parent pom directory.
-                //
-                // It is normally on the form:
-                // foo-api-parent, or
-                // nazgul-foo-api-parent
-                //
-                final String parentProjectDirectoryName = dirPrefix + project.getName() + Name.DEFAULT_SEPARATOR
-                        + parentPom.name().toLowerCase().replace("_", Name.DEFAULT_SEPARATOR);
-
-                //
-                // #2) Find the directory depth of the current MavenProject directory.
-                //
-                // Find the directory depth of the current MavenProject to the reactor parent project
-                // (i.e. the VCS project root).
-                //
-                final StringBuilder builder = new StringBuilder();
-                for (String parentPathSegment : parentPathSegments) {
-                    // Ignore the value of the actual segment; we are simply building a relative path here.
-                    builder.append("../");
-                }
-                builder.append("../poms/").append(parentProjectDirectoryName);
-
-                relativePathToParentPom = builder.toString();
-            }
-
-            // All done.
-            return relativePathToParentPom;
-        }
-        */
     }
 
     /**
