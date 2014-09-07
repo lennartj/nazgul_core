@@ -39,7 +39,7 @@ public interface ComponentFactory {
      *
      * @param componentDirectory An non-existent or empty directory where a SoftwareComponent should be
      *                           created. The directory name will be identical to the SoftwareComponent name,
-     *                           and must therefore be compliant with the NamingStrategy used.
+     *                           and must therefore be compliant with the NamingStrategy in use.
      * @param parts2SuffixMap    A non-empty Map relating SoftwareComponentParts to be created within the
      *                           SoftwareComponent to their respective suffix. A non-empty value is only required
      *                           within the Map if {@code SoftwareComponentPart.isSuffixRequired()} yields {@code true}.

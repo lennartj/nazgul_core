@@ -59,6 +59,11 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
     // Our log
     private static final Logger log = LoggerFactory.getLogger(AbstractComponentFactory.class.getName());
 
+    /**
+     * Standard directory containing templates.
+     */
+    public static final String STANDARD_TEMPLATE_DIR = "template/";
+
     // Internal state
     private static final String TMP_DIR = System.getProperty("java.io.tmpdir");
     private StructureNavigator navigator;
@@ -127,7 +132,7 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
                             + "] must either be of type REACTOR or ROOT_REACTOR. (Detected type [" + pomType + "])");
         }
 
-        // TODO: Ensure that existing parent directories contain REACTOR or ROOT_REACTOR poms.
+        // Ensure that existing parent directories contain REACTOR or ROOT_REACTOR poms.
         final File originatingDirectory = componentPomFile.exists()
                 ? componentDirectory
                 : componentDirectory.getParentFile();
@@ -169,21 +174,21 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
             }
         }
 
-        // Sane to create the SoftwareComponentPart
+        // OK to create the SoftwareComponentPart.
         File componentDir = componentDirectory;
         if (!FileUtils.exists(componentDir, true)) {
             componentDir = FileUtils.makeDirectory(rootDir, relativePath);
         }
-        Validate.isTrue(FileUtils.exists(componentDir, true), "Could not create directory ["
-                + FileUtils.getCanonicalPath(componentDir) + "]");
 
         // Create each software component part project.
         for (Map.Entry<SoftwareComponentPart, String> current : parts2SuffixMap.entrySet()) {
             addSoftwareComponentPart(componentDir, current.getKey(), current.getValue());
         }
 
-        // Now, create or update the reactor POM for the software component.
-        addSoftwareComponentPart(componentDir, SoftwareComponentPart.REACTOR, null);
+        // Create or update the reactor POM for the software component.
+        generateReactorPom(componentDir);
+
+        // TODO: Update the parent reactor POM to include the currently added component?
     }
 
     /**
@@ -195,15 +200,19 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
                                          final String suffix) throws InvalidStructureException {
 
         // Check sanity
-        Validate.notNull(componentReactorDirectory, "Cannot handle null componentDirectory argument.");
         Validate.notNull(toAdd, "Cannot handle null toAdd argument.");
-        if (toAdd.isSuffixRequired()) {
-            Validate.notEmpty(suffix,
-                    "Cannot handle null or empty suffix argument for SoftwareComponentPart [" + toAdd + "].");
-        }
-        Validate.isTrue(componentReactorDirectory.exists() && componentReactorDirectory.isDirectory(),
+        Validate.notNull(componentReactorDirectory, "Cannot handle null componentDirectory argument.");
+        Validate.isTrue(FileUtils.DIRECTORY_FILTER.accept(componentReactorDirectory),
                 "Software Component Directory [" + FileUtils.getCanonicalPath(componentReactorDirectory)
                         + "] was not an existing directory.");
+        if (toAdd.isSuffixRequired()) {
+            Validate.notEmpty(suffix,
+                    "Cannot handle null or empty suffix argument for SoftwareComponentPart [" + toAdd
+                            + "], as it requires a project suffix.");
+        }
+
+        // Get Project data.
+        final Project projectData = getProjectFor(componentReactorDirectory);
 
         // Proceed to create the structures as instructed.
         final File projectRootDirectory = navigator.getProjectRootDirectory(componentReactorDirectory);
@@ -219,13 +228,6 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
             componentDir = FileUtils.makeDirectory(projectRootDirectory, relativePath);
         }
 
-        // Synthesize the Project data.
-        final Project projectData = new Project(
-                rootReactorName.getPrefix(),
-                rootReactorName.getName(),
-                FileUtils.getSimpleArtifact(rootReactorPomModel),
-                FileUtils.getSimpleArtifact(parentPomModel));
-
         //
         // Find the name of the part directory, and then create it.
         // The directory name here is something like "messaging-model", or
@@ -235,7 +237,10 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
                 ? rootReactorName.getPrefix() + Name.DEFAULT_SEPARATOR
                 : "";
         final String dirSuffix = toAdd.isSuffixRequired() ? Name.DEFAULT_SEPARATOR + suffix : "";
-        final String dirName = dirPrefix + rootReactorName.getName() + dirSuffix;
+        final String dirName = dirPrefix + rootReactorName.getName()
+                + Name.DEFAULT_SEPARATOR + componentDir.getName()
+                + Name.DEFAULT_SEPARATOR + toAdd.getType()
+                + dirSuffix;
 
         final File partDir = FileUtils.makeDirectory(componentDir, dirName);
         final String topReactorPomVersion = rootReactorPomModel.getVersion() == null
@@ -246,7 +251,7 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
                 : parentPomModel.getVersion();
 
         // Create a Maven project for the given PomType within PartDir
-        createMavenProject(toAdd,
+        createMavenProjectForSoftwareComponentPart(toAdd,
                 partDir,
                 topReactorPomVersion,
                 parentPomVersion,
@@ -256,7 +261,9 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
     }
 
     /**
-     * Creates a maven project of the supplied type within the mavenProjectDir.
+     * Creates a maven project within {@code mavenProjectDir} for a SoftwareComponentPart of the supplied type.
+     * This is a convenience method to create Maven project structures for SoftwareComponentParts. (I.e. not a
+     * generic Maven project creation method).
      *
      * @param part                   The non-null SoftwareComponentPart indicating which type of project should be created.
      * @param mavenProjectDir        The directory where the maven project should be generated.
@@ -274,13 +281,13 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
      *                               used only if {@code SoftwareComponentPart.isSuffixRequired()} yields {@code true}.
      */
     @SuppressWarnings("All")
-    protected void createMavenProject(final SoftwareComponentPart part,
-                                      final File mavenProjectDir,
-                                      final String reactorPomMavenVersion,
-                                      final String parentPomMavenVersion,
-                                      final Project project,
-                                      final String optionalGroupIdPrefix,
-                                      final String partSuffix) {
+    protected void createMavenProjectForSoftwareComponentPart(final SoftwareComponentPart part,
+                                                              final File mavenProjectDir,
+                                                              final String reactorPomMavenVersion,
+                                                              final String parentPomMavenVersion,
+                                                              final Project project,
+                                                              final String optionalGroupIdPrefix,
+                                                              final String partSuffix) {
 
         // Check sanity
         Validate.notNull(part, "Cannot handle null part argument.");
@@ -291,182 +298,108 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
         Validate.notEmpty(parentPomMavenVersion, "Cannot handle null or empty parentPomMavenVersion argument.");
 
         // 1) Extract all template files corresponding to the SoftwareComponentPart to a temporary directory
-        final File tmpExtractedFilesRoot = extractTemplateFiles(
-                mavenProjectDir.getName(),
-                part.getComponentPomType().name());
+        final String dirName = mavenProjectDir.getName();
+        final File tmpExtractedFilesRoot = extractTemplateFiles(dirName, part.getComponentPomType().name());
         if (log.isDebugEnabled()) {
             log.debug("Using temporary directory [" + FileUtils.getCanonicalPath(tmpExtractedFilesRoot)
                     + "] to extract template files.");
         }
 
-        // 2) Create a TokenParser to handle template tokens
-        final SingleBracketPomTokenParserFactory.Builder builder = SingleBracketPomTokenParserFactory
+        // 2) If mavenProjectDir starts with the project prefix, we should use that
+        //    setting when creating the tokens as well, and vice versa.
+        final String projectNameSep = project.getName() + Name.DEFAULT_SEPARATOR;
+        final boolean useProjectNameAsDirectoryPrefix = dirName.startsWith(projectNameSep)
+                || dirName.startsWith(project.getPrefix() + Name.DEFAULT_SEPARATOR + projectNameSep);
+
+        // 3) Create a TokenParser to handle template tokens
+        final File softwareComponentDir = part.getComponentPomType().name().startsWith("COMPONENT_")
+                ? mavenProjectDir.getParentFile()
+                : mavenProjectDir;
+        final TokenParser tokenParser = SingleBracketPomTokenParserFactory
                 .create(part.getComponentPomType(), project)
-                .withoutProjectNameAsDirectoryPrefix()
-                .inSoftwareComponentWithRelativePath(navigator.getRelativePath(mavenProjectDir, false))
+                .prependProjectNameAsDirectoryPrefix(useProjectNameAsDirectoryPrefix)
+                .inSoftwareComponentWithRelativePath(navigator.getRelativePath(softwareComponentDir, false))
                 .withProjectGroupIdPrefix(optionalGroupIdPrefix)
                 .withProjectSuffix(partSuffix)
-                .withMavenVersions(reactorPomMavenVersion, parentPomMavenVersion);
-
-        if (part.getComponentPomType() == PomType.REACTOR || part.getComponentPomType() == PomType.ROOT_REACTOR){
-
-            // Add or update the modules
-            final StringBuilder modulesElementBuilder = new StringBuilder();
-            for (File current : mavenProjectDir.listFiles(FileUtils.MODULE_NAME_FILTER)) {
-                modulesElementBuilder.append("<module>").append(current.getName()).append("</module>\n");
-            }
-
-            builder.addToken(PomToken.MODULES.getToken(), modulesElementBuilder.toString());
-        }
-        final TokenParser tokenParser = builder.build();
+                .withMavenVersions(reactorPomMavenVersion, parentPomMavenVersion)
+                .build();
 
         // 3) Tokenize (as appropriate) and move each file to its destination.
-        final FileFilter shouldTokenizeFilter = getShouldTokenizeFilter();
-        final SortedMap<String, File> path2FileMap = FileUtils.listFilesRecursively(tmpExtractedFilesRoot);
-        for (Map.Entry<String, File> current : path2FileMap.entrySet()) {
-
-            // Tokenize the relative path, and the file data if applicable.
-            final String relativePath = tokenParser.substituteTokens(current.getKey());
-            final String data = shouldTokenizeFilter.accept(current.getValue())
-                    ? tokenParser.substituteTokens(FileUtils.readFile(current.getValue()))
-                    : FileUtils.readFile(current.getValue());
-
-            final File toWrite = new File(mavenProjectDir, relativePath);
-            final File parentFile = toWrite.getParentFile();
-            if (!parentFile.exists()) {
-                parentFile.mkdirs();
-            }
-
-            // Finally, write the file.
-            FileUtils.writeFile(toWrite, data);
-        }
+        tokenizeAndDeploy(tmpExtractedFilesRoot, tokenParser, mavenProjectDir);
     }
 
-    /*
-     * Adds the standard project structure for a component project (which should typically be created within the
-     * supplied componentProjectDirectory).
+    /**
+     * Generates a reactor POM in the supplied softwareComponentDir directory.
+     * Also - before calling this method, the REACTOR_ROOT pom must exist.
      *
-     * @param projectParentDirectory The directory within the VCS where the Maven project should be created.
-     * @param projectTopPackage      The top package of the Maven project to create. This could be identical to the
-     *                               groupId of the Maven project itself. Separated by dots,
-     *                               this parameter typically has the structure {@code se.jguru.nazgul.foo.bar} or
-     *                               equivalent.
-     * @param templateResourcePath   The resource path to the template directory. Should <strong>not</strong> start
-     *                               with {@code /}, and therefore typically be on the form
-     *                               {@code my/quickstart/templates/COMPONENT_MODEL} or equivalent.
-
-    protected void createMavenProject(final Project project,
-                                      final File projectParentDirectory,
-                                      final String projectTopPackage,
-                                      final String projectDirectoryName,
-                                      final String templateResourcePath,
-                                      final TokenParser tokenParser) {
+     * @param softwareComponentDir A directory which must exist and be located within a Maven reactor.
+     */
+    protected void generateReactorPom(final File softwareComponentDir) {
 
         // Check sanity
-        Validate.notNull(projectParentDirectory, "Cannot handle null projectParentDirectory argument.");
-        Validate.notEmpty(projectTopPackage, "Cannot handle null or empty projectTopPackage argument.");
-        Validate.notEmpty(projectDirectoryName, "Cannot handle null or empty projectDirectoryName argument.");
-        Validate.notEmpty(templateResourcePath, "Cannot handle null or empty templateResourcePath argument.");
-        Validate.notNull(tokenParser, "Cannot handle null tokenParser argument.");
+        Validate.notNull(softwareComponentDir, "Cannot handle null softwareComponentDir argument.");
+        Validate.isTrue(FileUtils.DIRECTORY_FILTER.accept(softwareComponentDir),
+                "SoftwareComponent directory [" + FileUtils.getCanonicalPath(softwareComponentDir)
+                        + "] must exist and be a directory.");
 
-        final File targetDirectory = new File(projectParentDirectory, projectDirectoryName);
-        Validate.isTrue(!targetDirectory.exists(), "Project directory ["
-                + FileUtils.getCanonicalPath(targetDirectory) + "] must not exist. Aborting creation.");
-
-        // Find an empty temporary file area.
-        File tmpExtractedFilesRoot;
-        for (int i = 0; true; i++) {
-            tmpExtractedFilesRoot = new File(System.getProperty("java.io.tmpdir"),
-                    "template/" + projectParentDirectory.getName() + "_" + i);
-            if (!tmpExtractedFilesRoot.exists()) {
-                tmpExtractedFilesRoot.mkdirs();
-                break;
-            }
-        }
+        // Read the template data
+        final Project projectData = getProjectFor(softwareComponentDir);
+        final String dirName = softwareComponentDir.getName();
+        final String reactorParentVersion = projectData.getReactorParent().getMavenVersion();
+        final String parentParentVersion = projectData.getParentParent().getMavenVersion();
+        final File projectRootDirectory = navigator.getProjectRootDirectory(softwareComponentDir);
+        final Model rootReactorPomModel = FileUtils.getPomModel(new File(projectRootDirectory, "pom.xml"));
+        final PomType pomType = FileUtils.getCanonicalPath(softwareComponentDir)
+                .equals(FileUtils.getCanonicalPath(projectRootDirectory))
+                ? PomType.ROOT_REACTOR
+                : PomType.REACTOR;
+        final String relativePath = navigator.getRelativePath(softwareComponentDir, false);
 
         if (log.isDebugEnabled()) {
-            log.debug("Using temporary directory [" + FileUtils.getCanonicalPath(tmpExtractedFilesRoot)
-                    + "] for all templates.");
+            log.debug("Generating reactor pom within directory [" + FileUtils.getCanonicalPath(softwareComponentDir)
+                    + "], which implies relative path [" + relativePath + "]");
         }
 
-        // Resources:
-        //
-        //      /a/path/theJar.jar!/templates/standard/component_api/pom.xml
-        //      /a/path/theJar.jar!/templates/standard/component_api/src/main/java/__groupId__/FooBar.java
-        //      /a/path/theJar.jar!/templates/standard/component_api/src/test/java/__groupId__/FooBarTest.java
+        // 1) Extract all template files corresponding to the SoftwareComponentPart to a temporary directory
+        final File tmpExtractedFilesRoot = extractTemplateFiles(softwareComponentDir.getName(), pomType.name());
 
-        // 1) Find the JarFile or File (i.e. directory) where the templateRootUrl points to.
-        final URL templateRootURL = getUrlFor(templateResourcePath);
-        final String protocol = templateRootURL.getProtocol();
+        // 2) Calculate the groupId prefix
+        final String projectGroupIdPrefix = getProjectGroupIdPrefix(
+                rootReactorPomModel.getGroupId(),
+                rootReactorPomModel.getArtifactId());
 
-        // Update the error message if other resource URL protocols are supported.
-        if ("jar".equalsIgnoreCase(protocol)) {
-
-            // Find the template JarFile, and extrat all relevant templates to a temporary directory.
-            final JarFile templateJarFile = JarExtractor.getJarFileFor(templateRootURL);
-            JarExtractor.extractResourcesFrom(
-                    templateJarFile,
-                    Pattern.compile(templateResourcePath + "/.*"),
-                    tmpExtractedFilesRoot,
-                    false);
-
-        } else if ("file".equalsIgnoreCase(protocol)) {
-
-            // Check sanity
-            final File templateRootDir = new File(templateRootURL.getPath());
-            Validate.isTrue(templateRootDir.exists() && templateRootDir.isDirectory(),
-                    "File template root directory must exist and be a directory. (Got: ["
-                            + templateRootDir.getAbsolutePath() + "]");
-
-            // Copy all resources to the tmpExtractedFilesRoot directory.
-            final SortedMap<String, File> path2File = FileUtils.listFilesRecursively(templateRootDir);
-
-            for (Map.Entry<String, File> current : path2File.entrySet()) {
-                final File toWrite = new File(tmpExtractedFilesRoot, current.getKey());
-                final File parentDir = toWrite.getParentFile();
-                if (!parentDir.exists()) {
-                    parentDir.mkdirs();
-                }
-
-                // Copy the template file.
-                FileUtils.writeFile(toWrite, FileUtils.readFile(current.getValue()));
-            }
-
-        } else {
-            throw new IllegalStateException("Cannot handle resource URL [" + templateRootURL.toString()
-                    + "]. Supported protocols are ('jar', 'file').");
+        // 3) Generate the modules XML text.
+        final StringBuilder modulesElementBuilder = new StringBuilder("");
+        for (File current : softwareComponentDir.listFiles(FileUtils.MODULE_NAME_FILTER)) {
+            modulesElementBuilder.append("<module>").append(current.getName()).append("</module>\n");
+        }
+        if (modulesElementBuilder.toString().isEmpty() && log.isWarnEnabled()) {
+            log.warn("Directory [" + FileUtils.getCanonicalPath(softwareComponentDir) + "] held no module "
+                    + "subdirectories. This implies a non-functional SoftwareComponent of type ["
+                    + pomType.name() + "] without any parts.");
+            modulesElementBuilder.append("<module/>");
         }
 
-        // 3) Tokenize and move each file.
-        final SortedMap<String, File> path2File = FileUtils.listFilesRecursively(tmpExtractedFilesRoot);
-        for (Map.Entry<String, File> current : path2File.entrySet()) {
+        // 4) If mavenProjectDir starts with the project prefix, we should use that
+        //    setting when creating the tokens as well, and vice versa.
+        final String projectNameSep = projectData.getName() + Name.DEFAULT_SEPARATOR;
+        final boolean useProjectNameAsDirectoryPrefix = dirName.startsWith(projectNameSep)
+                || dirName.startsWith(projectData.getPrefix() + Name.DEFAULT_SEPARATOR + projectNameSep);
 
-            final String relativePath = current.getKey();
-            final String data = tokenParser.substituteTokens(FileUtils.readFile(current.getValue()));
+        // 5) Create a TokenParser to handle template tokens
+        final TokenParser tokenParser = SingleBracketPomTokenParserFactory
+                .create(pomType, projectData)
+                .prependProjectNameAsDirectoryPrefix(useProjectNameAsDirectoryPrefix)
+                .inSoftwareComponentWithRelativePath(relativePath)
+                .withProjectGroupIdPrefix(projectGroupIdPrefix)
+                .withoutProjectSuffix()
+                .withMavenVersions(reactorParentVersion, parentParentVersion)
+                .addToken(PomToken.MODULES.getToken(), modulesElementBuilder.toString())
+                .build();
 
-            final File toWrite = new File(targetDirectory, relativePath);
-            final File parentFile = toWrite.getParentFile();
-            if (!parentFile.exists()) {
-                parentFile.mkdirs();
-            }
-
-            // Finally, write the file.
-            FileUtils.writeFile(toWrite, data);
-        }
-
-        // Create the packages as required within the project.
-        //
-        // src/main/java/[package for project]
-        // src/test/java/[package for project]
-
-        final File sourceDir = FileUtils.makeDirectory(targetDirectory,
-                "src/main/java/" + projectTopPackage.replace(".", "/"));
-        final File testDir = FileUtils.makeDirectory(targetDirectory,
-                "src/test/java/" + projectTopPackage.replace(".", "/"));
-
-        // TODO: Move skeleton source files to the correct package directories?
+        // 5) Tokenize and write the resulting file(s).
+        tokenizeAndDeploy(tmpExtractedFilesRoot, tokenParser, softwareComponentDir);
     }
-    */
 
     /**
      * Performs three tasks:
@@ -490,7 +423,7 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
 
         File toReturn;
         for (int i = 0; true; i++) {
-            toReturn = new File(TMP_DIR, "template/" + tmpDirName + "_" + i);
+            toReturn = new File(TMP_DIR, STANDARD_TEMPLATE_DIR + tmpDirName + "_" + i);
             if (!toReturn.exists()) {
                 toReturn.mkdirs();
                 break;
@@ -502,7 +435,9 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
         final String protocol = templateRootURL.getProtocol();
 
         // Update the error message if other resource URL protocols are supported.
-        if ("jar".equalsIgnoreCase(protocol)) {
+        final boolean usesJarPackaging = "jar".equalsIgnoreCase(protocol);
+        final boolean usesFilePackaging = "file".equalsIgnoreCase(protocol);
+        if (usesJarPackaging) {
 
             // Find the template JarFile, and extract all relevant templates to a temporary directory.
             final JarFile templateJarFile = JarExtractor.getJarFileFor(templateRootURL);
@@ -512,7 +447,7 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
                     toReturn,
                     false);
 
-        } else if ("file".equalsIgnoreCase(protocol)) {
+        } else if (usesFilePackaging) {
 
             // Check sanity
             final File templateDirectory = new File(templateRootURL.getPath());
@@ -556,6 +491,7 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
     /**
      * Retrieves the prefix to be prepended to groupIds within the project. Normally, the project's groupIdPrefix is
      * identical to the reverse DNS of the organisation hosting the project, plus the name of the project itself.
+     * Override this method if you choose to derive the project's groupId prefix in another way.
      * <p/>
      * The default implementation strips the type suffix from rootReactorArtifactId and converts the remainder to a
      * path snippet, used as a delimiter to strip of the previous part from the rootReactorGroupId. This is
@@ -603,5 +539,73 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
         final String candidate = rootReactorGroupId.substring(0, endIndex);
         int cutoffIndex = candidate.endsWith(".") ? candidate.length() - 1 : candidate.length();
         return candidate.substring(0, cutoffIndex);
+    }
+
+    //
+    // Private helpers
+    //
+
+    /**
+     * Creates the Project originating from the supplied dirInReactor directory (which must exist).
+     *
+     * @param dirInReactor A non-null directory within the reactor structure.
+     * @return The Project data for the supplied dirInReactor.
+     */
+    private Project getProjectFor(final File dirInReactor) {
+
+        // Check sanity
+        Validate.notNull(dirInReactor, "Cannot handle null dirInReactor argument.");
+        Validate.isTrue(FileUtils.DIRECTORY_FILTER.accept(dirInReactor),
+                "Software Component Directory [" + FileUtils.getCanonicalPath(dirInReactor)
+                        + "] was not an existing directory.");
+
+        // Proceed to create the structures as instructed.
+        final File projectRootDirectory = navigator.getProjectRootDirectory(dirInReactor);
+        final Model rootReactorPomModel = FileUtils.getPomModel(new File(projectRootDirectory, "pom.xml"));
+        final Name rootReactorName = getNamingStrategy().createName(rootReactorPomModel);
+
+        final File parentPomDir = navigator.getParentPomDirectory(dirInReactor);
+        final Model parentPomModel = FileUtils.getPomModel(new File(parentPomDir, "pom.xml"));
+
+        // All done.
+        return new Project(
+                rootReactorName.getPrefix(),
+                rootReactorName.getName(),
+                FileUtils.getSimpleArtifact(rootReactorPomModel),
+                FileUtils.getSimpleArtifact(parentPomModel));
+    }
+
+    /**
+     * Tokenizes all files found under extractedTemplatesRoot using the supplied tokenParser.
+     * Following the tokenization, the files are copied to their respective relative paths under
+     * the mavenProjectDir.
+     *
+     * @param extractedTemplatesRoot A directory holding the extracted template files.
+     * @param tokenParser            The TokenParser used to tokenize the templates.
+     * @param targetDirectory        The directory where the project should be written.
+     */
+    private void tokenizeAndDeploy(final File extractedTemplatesRoot,
+                                   final TokenParser tokenParser,
+                                   final File targetDirectory) {
+
+        final FileFilter shouldTokenizeFilter = getShouldTokenizeFilter();
+        final SortedMap<String, File> path2FileMap = FileUtils.listFilesRecursively(extractedTemplatesRoot);
+        for (Map.Entry<String, File> current : path2FileMap.entrySet()) {
+
+            // Tokenize the relative path, and the file data if applicable.
+            final String relativePath = tokenParser.substituteTokens(current.getKey());
+            final String data = shouldTokenizeFilter.accept(current.getValue())
+                    ? tokenParser.substituteTokens(FileUtils.readFile(current.getValue()))
+                    : FileUtils.readFile(current.getValue());
+
+            final File toWrite = new File(targetDirectory, relativePath);
+            final File parentFile = toWrite.getParentFile();
+            if (!parentFile.exists()) {
+                parentFile.mkdirs();
+            }
+
+            // Finally, write the file.
+            FileUtils.writeFile(toWrite, data);
+        }
     }
 }

@@ -36,7 +36,7 @@ public enum SoftwareComponentPart {
     /**
      * The reactor SoftwareComponentPart.
      */
-    REACTOR("reactor", false, PomType.REACTOR),
+    // REACTOR("reactor", false, PomType.REACTOR),
 
     /**
      * The model SoftwareComponentPart.
