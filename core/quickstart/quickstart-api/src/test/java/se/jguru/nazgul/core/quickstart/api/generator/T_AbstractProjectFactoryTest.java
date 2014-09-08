@@ -140,7 +140,7 @@ public class T_AbstractProjectFactoryTest {
 
             int index = i * 3 + 2;
             final String pomTypeName = pomTypeOrderedList.get(i).name();
-            Assert.assertEquals(callTrace.get(index), "getDirectoryName(blah, " + pomTypeName + ", acme)");
+            Assert.assertEquals(callTrace.get(index), "getSkeletonPomDirectoryName(blah, " + pomTypeName + ", acme)");
             Assert.assertEquals(callTrace.get(index + 1), "getTemplateResource(" + pomTypeName + "/pom.xml)");
             Assert.assertEquals(callTrace.get(index + 2), "getTemplateResourceURL(" + pomTypeName + "/pom.xml)");
         }
@@ -151,33 +151,47 @@ public class T_AbstractProjectFactoryTest {
         //      se.jguru.nazgul.core.poms.core-parent/nazgul-core-parent/1.6.1),
         //
         // createProject,
-        // getDirectoryName(blah, ROOT_REACTOR, acme),
+        // getSkeletonPomDirectoryName(blah, ROOT_REACTOR, acme),
         // getTemplateResource(ROOT_REACTOR/pom.xml),
         // getTemplateResourceURL(ROOT_REACTOR/pom.xml),
-        // getDirectoryName(blah, PARENT, acme),
+        // getSkeletonPomDirectoryName(blah, PARENT, acme),
         // getTemplateResource(PARENT/pom.xml),
         // getTemplateResourceURL(PARENT/pom.xml),
-        // getDirectoryName(blah, API_PARENT, acme),
+        // getSkeletonPomDirectoryName(blah, API_PARENT, acme),
         // getTemplateResource(API_PARENT/pom.xml),
         // getTemplateResourceURL(API_PARENT/pom.xml),
-        // getDirectoryName(blah, MODEL_PARENT, acme),
+        // getSkeletonPomDirectoryName(blah, MODEL_PARENT, acme),
         // getTemplateResource(MODEL_PARENT/pom.xml),
         // getTemplateResourceURL(MODEL_PARENT/pom.xml),
-        // getDirectoryName(blah, WAR_PARENT, acme),
+        // getSkeletonPomDirectoryName(blah, WAR_PARENT, acme),
         // getTemplateResource(WAR_PARENT/pom.xml),
         // getTemplateResourceURL(WAR_PARENT/pom.xml),
-        // getDirectoryName(blah, REACTOR, acme),
+        // getSkeletonPomDirectoryName(blah, REACTOR, acme),
         // getTemplateResource(REACTOR/pom.xml),
         // getTemplateResourceURL(REACTOR/pom.xml)
+    }
 
-        /*
-        Assert.assertEquals("[] ==> [ROOT_REACTOR]", unitUnderTest.callTrace.get(0));
-        Assert.assertEquals("[poms] ==> [REACTOR]", unitUnderTest.callTrace.get(1));
-        Assert.assertEquals("[poms] ==> [PARENT]", unitUnderTest.callTrace.get(2));
-        Assert.assertEquals("[poms] ==> [API_PARENT]", unitUnderTest.callTrace.get(3));
-        Assert.assertEquals("[poms] ==> [MODEL_PARENT]", unitUnderTest.callTrace.get(4));
-        Assert.assertEquals("[poms] ==> [WAR_PARENT]", unitUnderTest.callTrace.get(5));
-        */
+    @Test
+    public void validateGettingDirectoryName() {
+
+        // Assemble
+        final NamingStrategy noNameRequiredOnDirectories = new TestNamingStrategy(false);
+        final NamingStrategy nameRequiredOnDirectories = new TestNamingStrategy(true);
+
+        final TestProjectFactory nameFactory = new TestProjectFactory(nameRequiredOnDirectories);
+        final TestProjectFactory noNameFactory = new TestProjectFactory(noNameRequiredOnDirectories);
+
+        // Act
+        final String gnatFooComponentApi = nameFactory.getSkeletonPomDirectoryName("foo", PomType.COMPONENT_API, "gnat");
+        final String gnatFooParentApi = nameFactory.getSkeletonPomDirectoryName("foo", PomType.API_PARENT, "gnat");
+        final String fooComponentApi = noNameFactory.getSkeletonPomDirectoryName("foo", PomType.COMPONENT_API, "gnat");
+        final String fooParentApi = noNameFactory.getSkeletonPomDirectoryName("foo", PomType.API_PARENT, "gnat");
+
+        // Assert
+        Assert.assertEquals("gnat-foo-component-api", gnatFooComponentApi);
+        Assert.assertEquals("gnat-foo-api-parent", gnatFooParentApi);
+        Assert.assertEquals("foo-component-api", fooComponentApi);
+        Assert.assertEquals("foo-api-parent", fooParentApi);
     }
 
     //

@@ -201,6 +201,25 @@ public class FileUtilsTest {
         Assert.assertFalse(FileUtils.MODULE_NAME_FILTER.accept(nonexistent));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void validateExceptionOnReadingNonExistentFile() {
+
+        // Act & Assert
+        FileUtils.readFile(new File("/some/nonexistent/file.txt"));
+    }
+
+    @Test
+    public void validateAcceptingEmptyExistingDirectory() {
+
+        // Assemble
+        final File anEmptyDirectory = createUniqueDirectoryUnderTestData("anEmptyDirectory");
+        final File aDotFile = new File(anEmptyDirectory, ".someConfigFile");
+        FileUtils.writeFile(aDotFile, "SomeContent");
+
+        // Act & Assert
+        Assert.assertTrue(FileUtils.NONEXISTENT_OR_EMPTY_DIRECTORY_FILTER.accept(anEmptyDirectory));
+    }
+
     //
     // Helpers
     //

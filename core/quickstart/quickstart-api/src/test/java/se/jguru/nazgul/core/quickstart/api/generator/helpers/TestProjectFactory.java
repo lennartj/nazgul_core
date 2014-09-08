@@ -98,9 +98,9 @@ public class TestProjectFactory extends AbstractProjectFactory {
     }
 
     @Override
-    protected String getDirectoryName(final String projectName, final PomType aPomType, final String projectPrefix) {
-        callTrace.add("getDirectoryName(" + projectName + ", " + aPomType + ", " + projectPrefix + ")");
-        return super.getDirectoryName(projectName, aPomType, projectPrefix);
+    public String getSkeletonPomDirectoryName(final String projectName, final PomType aPomType, final String projectPrefix) {
+        callTrace.add("getSkeletonPomDirectoryName(" + projectName + ", " + aPomType + ", " + projectPrefix + ")");
+        return super.getSkeletonPomDirectoryName(projectName, aPomType, projectPrefix);
     }
 
     @Override

@@ -122,13 +122,43 @@
                         <lineRate>80</lineRate>
                         <haltOnFailure>true</haltOnFailure>
                         <regexes>
-                            <!-- regex>
-                                <pattern>se.jguru.nazgul.core.quickstart.api.DefaultStructureNavigator</pattern>
+                            <regex>
+                                <pattern>se.jguru.nazgul.core.quickstart.api.FileUtils</pattern>
                                 <branchRate>60</branchRate>
                                 <lineRate>80</lineRate>
-                            </regex -->
+                            </regex>
+                            <regex>
+                                <pattern>se.jguru.nazgul.core.quickstart.api.generator.AbstractComponentFactory</pattern>
+                                <branchRate>58</branchRate>
+                                <lineRate>80</lineRate>
+                            </regex>
+                            <regex>
+                                <pattern>se.jguru.nazgul.core.quickstart.api.generator.AbstractFactory</pattern>
+                                <branchRate>20</branchRate>
+                                <lineRate>30</lineRate>
+                            </regex>
                             <regex>
                                 <pattern>se.jguru.nazgul.core.quickstart.api.analyzer.AbstractPomAnalyzer\$1</pattern>
+                                <branchRate>0</branchRate>
+                                <lineRate>0</lineRate>
+                            </regex>
+                            <regex>
+                                <pattern>se.jguru.nazgul.core.quickstart.api.generator.parser.FactoryParserAgent\$1</pattern>
+                                <branchRate>50</branchRate>
+                                <lineRate>80</lineRate>
+                            </regex>
+                            <regex>
+                                <pattern>se.jguru.nazgul.core.quickstart.api.generator.parser.SingleBracketPomTokenParserFactory</pattern>
+                                <branchRate>50</branchRate>
+                                <lineRate>80</lineRate>
+                            </regex>
+                            <regex>
+                                <pattern>se.jguru.nazgul.core.quickstart.api.generator.parser.SingleBracketPomTokenParserFactory\$PrefixEnricher</pattern>
+                                <branchRate>50</branchRate>
+                                <lineRate>70</lineRate>
+                            </regex>
+                            <regex>
+                                <pattern>se.jguru.nazgul.core.quickstart.api.generator.parser.SingleBracketPomTokenParserFactory\$1</pattern>
                                 <branchRate>0</branchRate>
                                 <lineRate>0</lineRate>
                             </regex>

@@ -193,7 +193,7 @@ public class T_AbstractComponentFactoryTest {
                 "gnat-foo-parent",
                 "1.0.0-SNAPSHOT",
                 "org.acme.gnat.foo.messaging.implementation.blah",
-                "gnat-foo-messaging-implementation-blah",
+                "gnat-foo-messaging-impl-blah",
                 "messaging/gnat-foo-messaging-impl-blah");
     }
 

@@ -34,11 +34,6 @@ import se.jguru.nazgul.core.quickstart.model.Name;
 public enum SoftwareComponentPart {
 
     /**
-     * The reactor SoftwareComponentPart.
-     */
-    // REACTOR("reactor", false, PomType.REACTOR),
-
-    /**
      * The model SoftwareComponentPart.
      */
     MODEL("model", false, PomType.COMPONENT_MODEL),
@@ -91,30 +86,5 @@ public enum SoftwareComponentPart {
      */
     public boolean isSuffixRequired() {
         return requiresSuffix;
-    }
-
-    /**
-     * Creates a Name for this SoftwareComponentPart, while using the supplied prefix and name parts.
-     *
-     * @param prefix The prefix of the SoftwareComponent.
-     * @param name   The name of the SoftwareComponent.
-     * @param suffix The suffix of the SoftwareComponent's type. Ignored unless {@code isSuffixRequired()}
-     *               yields {@code true}.
-     * @return A Name for this SoftwareComponentPart.
-     */
-    public Name createName(final String prefix, final String name, final String suffix) {
-
-        // Check sanity
-        Validate.notEmpty(prefix, "Cannot handle null or empty prefix argument.");
-        Validate.notEmpty(name, "Cannot handle null or empty name argument.");
-
-        if (isSuffixRequired()) {
-            Validate.notEmpty(suffix, "Cannot handle null or empty suffix argument for ["
-                    + name() + "] SoftwareComponentPart.");
-        }
-
-        // All done.
-        final String effectiveType = isSuffixRequired() ? getType() + Name.DEFAULT_SEPARATOR + suffix : getType();
-        return new Name(prefix, name, effectiveType);
     }
 }
