@@ -134,6 +134,54 @@ public abstract class AbstractProjectFactory extends AbstractFactory implements 
         return new Project(prefix, name, reactorParent, parentParent);
     }
 
+    /**
+     * Synthesizes the directory name from the supplied Project and PomType.
+     * The resulting name should adhere to the NamingStrategy's
+     * {@code NamingStrategy.isPrefixRequiredOnAllFolders()} property.
+     *
+     * @param projectName   The name of the active project.
+     * @param projectPrefix The optional prefix of the active project. Must be supplied (and non-empty) if
+     *                      the NamingStrategy requires prefixes to be present on all folders' names.
+     * @param aPomType      The PomType for which a directory name should be synthesized.
+     * @return The name of the directory.
+     */
+    protected String getSkeletonPomDirectoryName(final String projectName,
+                                                 final PomType aPomType,
+                                                 final String projectPrefix) {
+
+        // Check sanity
+        Validate.notNull(aPomType, "Cannot handle null aPomType argument.");
+        Validate.notEmpty(projectName, "Cannot handle null or empty projectName argument.");
+        if (getNamingStrategy().isPrefixRequiredOnAllFolders() && (projectPrefix == null || projectPrefix.isEmpty())) {
+            throw new IllegalArgumentException("NamingStrategy [" + getNamingStrategy().getClass().getSimpleName()
+                    + "] requires that project prefix is required on all folders. Therefore, "
+                    + "a nonempty projectPrefix argument must be supplied.");
+        }
+
+        // Reactor directories should only be called their respective component name.
+        if (aPomType == PomType.ROOT_REACTOR || aPomType == PomType.REACTOR) {
+            return getNamingStrategy().isPrefixRequiredOnAllFolders()
+                    ? projectPrefix : "";
+        }
+
+        final String dirPrefix = (getNamingStrategy().isPrefixRequiredOnAllFolders()
+                ? projectPrefix + Name.DEFAULT_SEPARATOR + projectName
+                : projectName)
+                + Name.DEFAULT_SEPARATOR;
+
+        String dirSuffix = aPomType.name().toLowerCase().replace("_", "-");
+        if (aPomType == PomType.OTHER_PARENT) {
+            dirSuffix = AbstractNamingStrategy.PARENT_SUFFIX;
+        }
+
+        final String toReturn = dirPrefix + dirSuffix;
+        if (log.isDebugEnabled()) {
+            log.debug("PomType [" + aPomType + "] yields directory name [" + toReturn + "]");
+        }
+
+        // All done.
+        return toReturn;
+    }
 
     //
     // Helpers
@@ -149,7 +197,7 @@ public abstract class AbstractProjectFactory extends AbstractFactory implements 
                                  final String packagePrefix) throws InvalidStructureException {
 
         // Sane state?
-        final String directoryName = getDirectoryName(project.getName(), pomType, project.getPrefix());
+        final String directoryName = getSkeletonPomDirectoryName(project.getName(), pomType, project.getPrefix());
         final String relativePath = relativePomDirectory.isEmpty() ? "" : relativePomDirectory + "/";
         final File pomDirectory = FileUtils.makeDirectory(rootDirectory, relativePath + directoryName);
         final File pomFile = new File(pomDirectory, "pom.xml");

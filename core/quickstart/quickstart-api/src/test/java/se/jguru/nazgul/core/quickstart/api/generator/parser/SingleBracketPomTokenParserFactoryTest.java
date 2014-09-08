@@ -190,7 +190,7 @@ public class SingleBracketPomTokenParserFactoryTest {
         // Check path and packaging
         Assert.assertEquals("org.acme",
                 staticTokens.get(SingleBracketPomTokenParserFactory.PrefixEnricher.REVERSE_DNS_OF_ORGANISATION));
-        Assert.assertEquals("poms/foo-api-parent",
+        Assert.assertEquals("poms/foobar-foo-api-parent",
                 staticTokens.get(PomToken.RELATIVE_DIRPATH.getToken()));
         Assert.assertEquals("poms.foobar-foo-api-parent", staticTokens.get(PomToken.RELATIVE_PACKAGE.getToken()));
         Assert.assertEquals("../foo-parent", staticTokens.get(PomToken.PARENT_POM_RELATIVE_PATH.getToken()));

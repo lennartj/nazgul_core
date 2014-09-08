@@ -21,7 +21,6 @@
  */
 package se.jguru.nazgul.core.quickstart.api.generator.parser;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -393,7 +392,7 @@ public final class SingleBracketPomTokenParserFactory {
                     final String pathSegmentSeparator = "/";
                     String paddedRelativePath = relativePathToSoftwareComponent.endsWith(pathSegmentSeparator)
                             ? relativePathToSoftwareComponent.substring(0,
-                                relativePathToSoftwareComponent.lastIndexOf(pathSegmentSeparator))
+                            relativePathToSoftwareComponent.lastIndexOf(pathSegmentSeparator))
                             : relativePathToSoftwareComponent;
                     pomTokens.put(SOFTWARE_COMPONENT_RELATIVE_PATH, paddedRelativePath);
                     pomTokens.put(SOFTWARE_COMPONENT_NAME, pathSegments.get(pathSegments.size() - 1));
@@ -938,7 +937,7 @@ public final class SingleBracketPomTokenParserFactory {
                 // a) foo-gnat-messaging-model, or
                 // b) gnat-messaging-model (if no prefix is defined within the project).
                 //
-                if(project.getPrefix() != null && !"".equals(project.getPrefix())) {
+                if (project.getPrefix() != null && !"".equals(project.getPrefix())) {
                     dirNameBuilder.append(project.getPrefix()).append(Name.DEFAULT_SEPARATOR);
                 }
                 dirNameBuilder.append(project.getName()).append(Name.DEFAULT_SEPARATOR);
@@ -976,7 +975,7 @@ public final class SingleBracketPomTokenParserFactory {
 
                 // This is a component PomType. Remove the "component-" part of the lcPomType.
                 final int stripOffLength = ("component" + Name.DEFAULT_SEPARATOR).length();
-                if(lcPomType.length() < stripOffLength) {
+                if (lcPomType.length() < stripOffLength) {
                     log.error("Got stripOffLength: [" + stripOffLength + "] and lcPomType.length(): ["
                             + lcPomType.length() + "] for lcPomType [" + lcPomType + "]");
                     throw new IllegalStateException("This should not happen...");
@@ -989,8 +988,10 @@ public final class SingleBracketPomTokenParserFactory {
                 dirNameBuilder.append(Name.DEFAULT_SEPARATOR).append(projectSuffix);
             }
 
-            // All done
-            return dirNameBuilder.toString();
+            // All done - but shorten the name of the directory somewhat.
+            return dirNameBuilder
+                    .toString()
+                    .replace("implementation", "impl");
         }
 
         private String getRelativePackage(final String localProjectSuffix) {

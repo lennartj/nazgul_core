@@ -22,13 +22,8 @@
 package se.jguru.nazgul.core.quickstart.api.generator;
 
 import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.quickstart.api.FileUtils;
-import se.jguru.nazgul.core.quickstart.api.PomType;
-import se.jguru.nazgul.core.quickstart.api.analyzer.AbstractNamingStrategy;
 import se.jguru.nazgul.core.quickstart.api.analyzer.NamingStrategy;
-import se.jguru.nazgul.core.quickstart.model.Name;
 import se.jguru.nazgul.core.resource.api.extractor.JarExtractor;
 
 import java.io.BufferedReader;
@@ -47,9 +42,6 @@ import java.util.jar.JarFile;
  */
 public abstract class AbstractFactory {
 
-    // Our log
-    private static final Logger log = LoggerFactory.getLogger(AbstractFactory.class.getName());
-
     // Internal state
     private NamingStrategy namingStrategy;
 
@@ -61,51 +53,6 @@ public abstract class AbstractFactory {
     protected AbstractFactory(final NamingStrategy namingStrategy) {
         Validate.notNull(namingStrategy, "Cannot handle null namingStrategy argument.");
         this.namingStrategy = namingStrategy;
-    }
-
-    /**
-     * Synthesizes the directory name from the supplied Project and PomType.
-     * The resulting name should adhere to the NamingStrategy's
-     * {@code NamingStrategy.isPrefixRequiredOnAllFolders()} property.
-     *
-     * @param projectName   The name of the active project.
-     * @param projectPrefix The optional prefix of the active project. Must be supplied (and non-empty) if
-     *                      the NamingStrategy requires prefixes to be present on all folders' names.
-     * @param aPomType      The PomType for which a directory name should be synthesized.
-     * @return The name of the directory.
-     */
-    protected String getDirectoryName(final String projectName, final PomType aPomType, final String projectPrefix) {
-
-        if (namingStrategy.isPrefixRequiredOnAllFolders() && (projectPrefix == null || projectPrefix.isEmpty())) {
-            throw new IllegalArgumentException("NamingStrategy [" + namingStrategy.getClass().getSimpleName()
-                    + "] requires that project prefix is required on all folders. Therefore, "
-                    + "a nonempty projectPrefix argument must be supplied.");
-        }
-
-        // Reactor directories should only be called their respective component name.
-        if (aPomType == PomType.ROOT_REACTOR || aPomType == PomType.REACTOR) {
-            return namingStrategy.isPrefixRequiredOnAllFolders()
-                    ? projectPrefix : "";
-        }
-
-
-        final String dirPrefix = (namingStrategy.isPrefixRequiredOnAllFolders()
-                ? projectPrefix + Name.DEFAULT_SEPARATOR + projectName
-                : projectName)
-                + Name.DEFAULT_SEPARATOR;
-
-        String dirSuffix = aPomType.name().toLowerCase().replace("_", "-");
-        if (aPomType == PomType.OTHER_PARENT) {
-            dirSuffix = AbstractNamingStrategy.PARENT_SUFFIX;
-        }
-
-        final String toReturn = dirPrefix + dirSuffix;
-        if (log.isDebugEnabled()) {
-            log.debug("PomType [" + aPomType + "] yields directory name [" + toReturn + "]");
-        }
-
-        // All done.
-        return toReturn;
     }
 
     /**
