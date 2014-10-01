@@ -50,11 +50,11 @@ public class NazgulComponentFactory extends AbstractComponentFactory {
 
     /**
      * Convenience constructor, creating a new NazgulComponentFactory wrapping the supplied NamingStrategy.
-     *
-     * @param namingStrategy The active NamingStrategy, used to synthesize and validate names.
      */
-    public NazgulComponentFactory(final NamingStrategy namingStrategy) {
-        this(namingStrategy, new DefaultStructureNavigator(namingStrategy, new PatternPomAnalyzer(namingStrategy)));
+    public NazgulComponentFactory() {
+        this(NazgulQuickstartUtils.getNazgulNamingStrategy(),
+                new DefaultStructureNavigator(NazgulQuickstartUtils.getNazgulNamingStrategy(),
+                        new PatternPomAnalyzer(NazgulQuickstartUtils.getNazgulNamingStrategy())));
     }
 
     /**
@@ -62,6 +62,6 @@ public class NazgulComponentFactory extends AbstractComponentFactory {
      */
     @Override
     protected URL getTemplateResourceURL(final String templateResourcePath) {
-        return NazgulTemplateStructure.getTemplateResourceURL(templateResourcePath);
+        return NazgulQuickstartUtils.getTemplateResourceURL(templateResourcePath);
     }
 }

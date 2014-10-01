@@ -32,7 +32,7 @@ import java.net.URL;
 public class NazgulProjectFactory extends AbstractProjectFactory {
 
     public NazgulProjectFactory() {
-        this(new NazgulNamingStrategy());
+        this(NazgulQuickstartUtils.getNazgulNamingStrategy());
     }
 
     /**
@@ -49,6 +49,6 @@ public class NazgulProjectFactory extends AbstractProjectFactory {
      */
     @Override
     protected URL getTemplateResourceURL(final String templateResourcePath) {
-        return NazgulTemplateStructure.getTemplateResourceURL(templateResourcePath);
+        return NazgulQuickstartUtils.getTemplateResourceURL(templateResourcePath);
     }
 }
