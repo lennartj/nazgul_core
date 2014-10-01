@@ -24,6 +24,7 @@ package se.jguru.nazgul.core.quickstart.impl.nazgul.analyzer;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.jguru.nazgul.core.quickstart.api.analyzer.NamingStrategy;
 
 import java.net.URL;
 
@@ -33,10 +34,13 @@ import java.net.URL;
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 @SuppressWarnings("all")
-public final class NazgulTemplateStructure {
+public final class NazgulQuickstartUtils {
 
     // Our log
-    private static final Logger log = LoggerFactory.getLogger(NazgulTemplateStructure.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(NazgulQuickstartUtils.class.getName());
+
+    // Singleton state
+    private static final NamingStrategy nazgulNamingStrategy = new NazgulNamingStrategy();
 
     /**
      * The path where Nazgul-flavoured POM templates are found.
@@ -58,7 +62,7 @@ public final class NazgulTemplateStructure {
 
         // Check sanity
         Validate.notEmpty(templateResourcePath, "Cannot handle null or empty templateResourcePath argument.");
-        final String enrichedPath = TEMPLATE_PATH_PREFIX + "/" + templateResourcePath;
+        final String enrichedPath = TEMPLATE_PATH_PREFIX + templateResourcePath;
 
         if (log.isDebugEnabled()) {
             log.debug("Acquiring template resource for [" + enrichedPath + "]");
@@ -66,5 +70,14 @@ public final class NazgulTemplateStructure {
 
         final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         return contextClassLoader.getResource(enrichedPath);
+    }
+
+    /**
+     * Retrieves the singleton NamingStrategy for the Nazgul quickstart.
+     *
+     * @return the singleton NamingStrategy for the Nazgul quickstart.
+     */
+    public static NamingStrategy getNazgulNamingStrategy() {
+        return nazgulNamingStrategy;
     }
 }

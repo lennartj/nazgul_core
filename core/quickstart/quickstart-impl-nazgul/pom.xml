@@ -65,17 +65,18 @@
                         <includes>
                             <include>se/jguru/nazgul/**/*.class</include>
                         </includes>
-                        <excludes>
-
-                            <!-- Don't check Exception classes -->
-                            <exclude>se/jguru/nazgul/**/*Exception.class</exclude>
-
-                        </excludes>
                     </instrumentation>
                     <check>
                         <branchRate>65</branchRate>
                         <lineRate>80</lineRate>
                         <haltOnFailure>true</haltOnFailure>
+                        <regexes>
+                            <regex>
+                                <pattern>se.jguru.nazgul.core.quickstart.impl.nazgul.analyzer.NazgulQuickstartUtils</pattern>
+                                <branchRate>49</branchRate>
+                                <lineRate>80</lineRate>
+                            </regex>
+                        </regexes>
                     </check>
                 </configuration>
             </plugin>
