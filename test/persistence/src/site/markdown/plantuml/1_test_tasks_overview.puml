@@ -1,0 +1,31 @@
+@startuml
+
+|#AntiqueWhite|Setup|
+start
+:1. Create in-memory DB;
+partition #FEFE5E "JPA" {
+    :2. Create Tables;
+}
+
+|Test|
+partition #LightGray "dbUnit" {
+    :3. Populate Tables;
+    :4. Find Expected State;
+}
+
+partition #FEFE5E "JPA" {
+    :5. Begin EntityTransaction;
+    :6. Fire JPA Queries;
+    :7. Commit/Rollback
+    EntityTransaction;
+}
+
+partition #LightGray "dbUnit" {
+    :8. Verify DB state;
+}
+
+|#AntiqueWhite|Teardown|
+:9. Close Connection;
+:10. Shutdown Database;
+stop
+@enduml

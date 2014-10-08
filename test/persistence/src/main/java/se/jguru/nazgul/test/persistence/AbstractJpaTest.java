@@ -58,7 +58,7 @@ public abstract class AbstractJpaTest {
      */
     @Rule
     @SuppressWarnings("all")
-    public final TestName activeTestName = new TestName();
+    public TestName activeTestName = new TestName();
 
     /**
      * The unit-test scoped access to JpaOperations, created by this AbstractJpaTest.
@@ -281,6 +281,26 @@ public abstract class AbstractJpaTest {
     }
 
     /**
+     * Performs rollback on the currently active EntityTransaction, and starts a new EntityTransaction.
+     *
+     * @see #commit(boolean)
+     */
+    protected final void rollbackAndStartNewTransaction() {
+        rollback(true);
+    }
+
+    /**
+     * Performs rollback on the currently active EntityTransaction, and starts a new EntityTransaction
+     * if told to do so.
+     *
+     * if {@code true}, starts a new EntityTransaction following the rollback of the currently active one.
+     * @throws java.lang.IllegalStateException if the Transaction could not be rolled back or begun anew.
+     */
+    protected final void rollback(final boolean startNewTransaction) throws IllegalStateException {
+        endTransactionAndStartAnother(false, startNewTransaction);
+    }
+
+    /**
      * Commits the currently active EntityTransaction, and starts a new EntityTransaction if so ordered.
      *
      * @param startNewTransaction if {@code true}, starts a new EntityTransaction following the commit of the
@@ -288,10 +308,29 @@ public abstract class AbstractJpaTest {
      * @throws java.lang.IllegalStateException if the Transaction could not be committed or begun anew.
      */
     protected final void commit(final boolean startNewTransaction) throws IllegalStateException {
+        endTransactionAndStartAnother(true, startNewTransaction);
+    }
+
+    //
+    // Private helpers
+    //
+
+    private void endTransactionAndStartAnother(final boolean commitActiveTransaction,
+                                               final boolean startNewTransaction)
+        throws IllegalStateException {
 
         try {
-            transaction.commit();
+
+            // Either commit or rollback the transaction
+            if(commitActiveTransaction) {
+                transaction.commit();
+            } else {
+                transaction.rollback();
+            }
+
+            // Create a new EntityTransaction
             transaction = entityManager.getTransaction();
+
         } catch (Exception e) {
             throw new IllegalStateException("Could not create a new EntityTransaction", e);
         }
