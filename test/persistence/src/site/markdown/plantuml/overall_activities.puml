@@ -1,0 +1,28 @@
+@startuml
+
+(*) -right---> "Setup"
+-right-> "Test"
+-right-> "Teardown"
+-right-> (*)
+
+partition "Setup Tasks" #EEEEEE {
+"Setup" -down-> "Create in-memory Database"
+--> "<<JPA>> Create Tables"
+-up-> "Setup"
+}
+
+partition "In-Test Tasks" #EEEEEE {
+"Test" -down-> "Populate Tables"
+--> "Find Expected State"
+--> "Create / Begin EntityTransaction"
+--> "Fire JPA Queries"
+-up-> "Test"
+}
+
+partition "Teardown Tasks" #EEEEEE {
+"Teardown" -down-> "Close Connection"
+--> "Shutdown Database"
+-up-> "Teardown"
+}
+
+@enduml
