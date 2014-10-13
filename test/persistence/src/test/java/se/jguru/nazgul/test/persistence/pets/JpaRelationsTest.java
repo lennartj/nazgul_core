@@ -125,6 +125,7 @@ public class JpaRelationsTest extends StandardPersistenceTest {
         // Assert
         final IDataSet dbDataSet2 = iDatabaseConnection.createDataSet(); // birdTableName
         final ITable birdTable = dbDataSet2.getTable(birdTableName[0]);
+        System.out.println("Got: " + extractFlatXmlDataSet(dbDataSet2));
 
         // System.out.println("Got: " + extractFlatXmlDataSet(dbDataSet2));
 
