@@ -37,11 +37,8 @@
     <body>
         <menu name="Overview">
             <item name="Introduction" href="index.html"/>
+            <item name="Example: StandardPersistenceTest" href="standard_example.html"/>
             <item name="Approaches" href="approaches.html"/>
-        </menu>
-
-        <menu name="Example">
-            <item name="StandardPersistenceTest" href="standard_example.html"/>
         </menu>
 
         <menu ref="parent" />

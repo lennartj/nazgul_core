@@ -13,13 +13,15 @@ our entities work correctly - and connecting the JPA provider to a real
 of how your JPA annotations affect the physical model. It would also be
 really good to validate the behaviour in a standard unit test setting.
 
-> In a textbook sense, the Nazgul Core: Persistence test project provides 
-> scaffolding to simplify running automated **integration** tests, as the database
-> is not mocked (which is the traditional approach by **unit** tests) but instead
-> an in-memory database created and populated before the tests are started. 
-> At the same time, it is difficult to run meaningful tests on Model entities when 
-> mocking the entire JPA framework since the (JPA) provider certainly plays an
-> important role in any system where it is used.
+### Unit tests or integration tests?
+
+In a textbook sense, the Nazgul Core: Persistence test project provides 
+scaffolding to simplify running automated **integration** tests, as the database
+is not mocked (which is the traditional approach by **unit** tests) but instead
+an in-memory database created and populated before the tests are started. 
+At the same time, it is difficult to run meaningful tests on Model entities when 
+mocking the entire JPA framework since the (JPA) provider certainly plays an
+important role in any system where it is used.
 
 ## StandardPersistenceTest lifecycle
 
@@ -60,5 +62,22 @@ These steps are illustrated in the image below and described in the list followi
 > Enough overviews.
  
 [An example](standard_example.html) could be the best way to illustrate the use of the 
-Nazgul persistence test framework.    
+Nazgul persistence test framework. 
+   
+## Persistence test structure
+
+While the classes of the Nazgul Core: Persistence Test component hides some fairly complex underpinnings,
+there are relatively few classes involved. The image below illustrates the static aspects of the component: 
+ 
+<img src="images/persistenceTestTypes.jpg" style="margin:10px; border:1px solid black;" width="71%" height="71%" />
+
+1. The AbstractJpaTest class holds mechanics for automating JPA tests. As such, it creates a simplified view
+   to the EntityManager, called `JpaPersistenceTestOperations` and exposes it as a variable called `jpa`. 
+   Moreover, the AbstractJpaTest class also creates a custom ClassLoader which simply means that you can use
+   a persistence.xml file located in a location other than the standard `META-INF/persistence.xml`.
+2. The AbstractDbUnitAndJpaTest class extends the AbstractJpaTest class by adding mechanics for populating and
+   validating database content using the [dbUnit](http://dbunit.sourceforge.net/) framework.
+3. Finally, the StandardPersistenceTest implements a set of standards regarding structure, placement, naming
+   and so on. This is also the class your automated tests should extend, as illustrated in the 
+   [standard example](standard_example.html).
  
