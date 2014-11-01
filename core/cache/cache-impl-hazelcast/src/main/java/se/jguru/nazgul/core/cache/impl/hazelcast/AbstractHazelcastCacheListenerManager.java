@@ -22,13 +22,11 @@
 
 package se.jguru.nazgul.core.cache.impl.hazelcast;
 
+import com.hazelcast.core.DistributedObject;
 import com.hazelcast.core.ICollection;
 import com.hazelcast.core.IMap;
-import com.hazelcast.core.Instance;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import se.jguru.nazgul.core.cache.api.CacheListener;
 import se.jguru.nazgul.core.cache.api.distributed.async.DestinationProvider;
 import se.jguru.nazgul.core.cache.api.transaction.AbstractTransactedAction;
@@ -141,15 +139,15 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
     public final boolean addListenerFor(final Object distributedObject, final CacheListener listener)
             throws IllegalArgumentException {
 
-        final Instance instance = cast(distributedObject);
+        final DistributedObject distObject = cast(distributedObject);
 
         // Is the listener already registered onto the shared map?
-        final TreeSet<String> knownListenerIDs = getCacheListenersIDMap().get("" + instance.getId());
+        final TreeSet<String> knownListenerIDs = getCacheListenersIDMap().get("" + distObject.getName());
         if (knownListenerIDs != null && knownListenerIDs.contains(listener.getClusterId())) {
 
             if (log.isWarnEnabled()) {
                 log.warn("(CacheID: " + getClusterId() + "): CacheListener [" + listener.getClusterId()
-                        + "] was already registered to the Instance [" + instance.getId()
+                        + "] was already registered to the Instance [" + distObject.getName()
                         + "]. Aborting registration.");
             }
 
@@ -190,21 +188,41 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
                 public void doInTransaction() throws RuntimeException {
 
                     // Add the listener id to the CLUSTERWIDE_LISTENERID_MAP
-                    addListenerIdFor(instance, toAdd.getId());
+                    addListenerIdFor(distObject, toAdd.getId());
 
                     // Add the listener internally, to enable unregistering later on.
                     locallyRegisteredListeners.put(toAdd.getId(), toAdd);
 
                     // ... and add the listener to the instance it should listen to...
-                    switch (instance.getInstanceType()) {
+                    if(distObject instanceof IMap) {
+                        ((IMap) distObject).addEntryListener(toAdd, true);
+                    } else if(distObject instanceof ICollection) {
+                        ((ICollection) distObject).addItemListener(toAdd, true);
+                    } else {
+
+                        // We can't handle this type of distObject...
+                        final Class<?>[] handleableTypes = {IMap.class, ICollection.class};
+
+                        final StringBuffer permitted = new StringBuffer("[");
+                        for (final Class<?> current : handleableTypes) {
+                            permitted.append(current.getName()).append(", ");
+                        }
+
+                        throw new IllegalArgumentException("Will not add listener to an instance of type ["
+                                + distObject.getClass().getName() + "]. Supported types are "
+                                + permitted.substring(0, permitted.length() - 2) + "].");
+                    }
+
+                    /*
+                    switch (distObject.getInstanceType()) {
                         case MAP:
-                            ((IMap) instance).addEntryListener(toAdd, true);
+                            ((IMap) distObject).addEntryListener(toAdd, true);
                             break;
 
                         case LIST:
                         case SET:
                         case QUEUE:
-                            ((ICollection) instance).addItemListener(toAdd, true);
+                            ((ICollection) distObject).addItemListener(toAdd, true);
                             break;
 
                         default:
@@ -219,9 +237,11 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
                             }
 
                             throw new IllegalArgumentException("Will not add listener to an instance of type ["
-                                    + instance.getInstanceType().name() + "]. Supported types are "
+                                    + distObject.getInstanceType().name() + "]. Supported types are "
                                     + permitted.substring(0, permitted.length() - 2) + "].");
                     }
+
+                    */
                 }
             });
         }
@@ -246,19 +266,19 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
     public final void removeListenerFor(final Object distributedObject, final String cacheListenerId)
             throws IllegalArgumentException {
 
-        final Instance instance = cast(distributedObject);
+        final DistributedObject distObject = cast(distributedObject);
 
         // Is the cacheListenerId registered?
-        final TreeSet<String> listenerIDs = getCacheListenersIDMap().get("" + instance.getId());
+        final TreeSet<String> listenerIDs = getCacheListenersIDMap().get("" + distObject.getName());
         if (listenerIDs == null || !listenerIDs.contains(cacheListenerId)) {
 
             throw new IllegalStateException("(CacheID: " + getClusterId() + "): Listener [" + cacheListenerId
-                    + "] not registered for instance [" + instance.getId() + "] in Hazelcast.");
+                    + "] not registered for instance [" + distObject.getName() + "] in Hazelcast.");
         }
 
         // All seems sane.
         // Send the message that removes the listener.
-        sendAdminMessage(AdminMessage.createRemoveListenerMessage("" + instance.getId(), cacheListenerId));
+        sendAdminMessage(AdminMessage.createRemoveListenerMessage("" + distObject.getName(), cacheListenerId));
     }
 
     /**
@@ -271,7 +291,7 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
     public final List<String> getListenersIDsFor(final Object distributedObject) {
 
         // Cast, and acquire our listeners.
-        final Instance instance = cast(distributedObject);
+        final DistributedObject instance = cast(distributedObject);
 
         // Wrap and return
         return Collections.unmodifiableList(new ArrayList<String>(getListenerIDsFor(instance)));
@@ -307,16 +327,17 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
      * @throws IllegalArgumentException if the distributedObject was not a Hazelcast Instance.
      */
     @Override
-    public Instance cast(final Object distributedObject) throws IllegalArgumentException {
+    public DistributedObject cast(final Object distributedObject) throws IllegalArgumentException {
 
-        if (!(distributedObject instanceof Instance)) {
-            throw new IllegalArgumentException("(CacheID: " + getClusterId() + "): Only Instance objects can be "
+        if (!(distributedObject instanceof DistributedObject)) {
+            throw new IllegalArgumentException("(CacheID: " + getClusterId()
+                    + "): Only DistributedObject objects can be "
                     + "distributed in Hazelcast. Class [" + distributedObject.getClass().getName()
                     + "] is not an instance.");
         }
 
         // Cast the distributedObject for type switching.
-        return (Instance) distributedObject;
+        return (DistributedObject) distributedObject;
     }
 
     /**
@@ -325,9 +346,9 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
      * @param distributedObject The distributedObject Instance whose CacheListener IDs we should retrieve.
      * @return The IDs of all CacheListener instances registered to the provided distributedObject.
      */
-    protected final Set<String> getListenerIDsFor(final Instance distributedObject) {
+    protected final Set<String> getListenerIDsFor(final DistributedObject distributedObject) {
 
-        final TreeSet<String> listenerIDs = getCacheListenersIDMap().get("" + distributedObject.getId());
+        final TreeSet<String> listenerIDs = getCacheListenersIDMap().get("" + distributedObject.getName());
         if (listenerIDs == null) {
 
             // This is not a distributed/replicated structure,

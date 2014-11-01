@@ -22,8 +22,8 @@
 
 package se.jguru.nazgul.core.cache.impl.hazelcast.grid;
 
+import com.hazelcast.core.DistributedObject;
 import com.hazelcast.core.IMap;
-import com.hazelcast.core.Instance;
 
 import java.io.Serializable;
 import java.util.TreeSet;
@@ -36,19 +36,19 @@ import java.util.TreeSet;
 public interface GridOperations {
 
     /**
-     * The clusterwide Map[String, List[String]] relating ID of all distributed objects to a
+     * The cluster-wide Map[String, List[String]] relating ID of all distributed objects to a
      * List holding IDs of its listeners.
      */
     String CLUSTER_KNOWN_LISTENERIDS = "hazelcast_cluster_distributedObjectID2cacheListenerIDsMap";
 
     /**
-     * The id of the clusterwide shared cache map.
+     * The id of the cluster-wide shared cache map.
      */
     String CLUSTER_SHARED_CACHE_MAP = "hazelcast_cluster_commonCacheMap";
 
     /**
-     * The id of the clusterwide topic which transmits AdminMessage instances which - among other things - handles
-     * removal of named listeners.
+     * The id of the cluster-wide topic which transmits AdminMessage instances
+     * which - among other things - handles removal of named listeners.
      */
     String CLUSTER_ADMIN_TOPIC = "hazelcast_cluster_adminTopic";
 
@@ -66,19 +66,19 @@ public interface GridOperations {
 
     /**
      * @return The shared Map relating IDs for distributed objects [key] to
-     *         a Set of String IDs for all registered listeners to the
-     *         given distributed object [value].
+     * a Set of String IDs for all registered listeners to the
+     * given distributed object [value].
      */
     IMap<String, TreeSet<String>> getCacheListenersIDMap();
 
     /**
      * Adds the given listenerID to the listenerIdSet for the provided distributedObject.
      *
-     * @param distributedObject The instance for which a listener ID should be registered.
+     * @param distributedObject The DistributedObject for which a listener ID should be registered.
      * @param listenerId        The id of the Listener to register to the provided distributedObject.
      * @return <code>true</code> if the registration was successful, and false otherwise.
      */
-    boolean addListenerIdFor(final Instance distributedObject, final String listenerId);
+    boolean addListenerIdFor(final DistributedObject distributedObject, final String listenerId);
 
     /**
      * Validates that the provided distributedObject is a Hazelcast Instance.
@@ -87,5 +87,5 @@ public interface GridOperations {
      * @return The distributedObject, type cast to a Hazelcast Instance.
      * @throws IllegalArgumentException if the distributedObject was not a Hazelcast Instance.
      */
-    Instance cast(final Object distributedObject) throws IllegalArgumentException;
+    DistributedObject cast(final Object distributedObject) throws IllegalArgumentException;
 }
