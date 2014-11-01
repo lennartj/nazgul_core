@@ -22,13 +22,14 @@
 
 package se.jguru.nazgul.core.cache.impl.hazelcast;
 
+import com.hazelcast.core.DistributedObject;
+import com.hazelcast.core.DistributedObjectEvent;
+import com.hazelcast.core.DistributedObjectListener;
 import com.hazelcast.core.EntryEvent;
 import com.hazelcast.core.EntryListener;
-import com.hazelcast.core.Instance;
-import com.hazelcast.core.InstanceEvent;
-import com.hazelcast.core.InstanceListener;
 import com.hazelcast.core.ItemEvent;
 import com.hazelcast.core.ItemListener;
+import com.hazelcast.core.MapEvent;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,8 @@ import java.io.Serializable;
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class HazelcastCacheListenerAdapter implements InstanceListener, ItemListener, EntryListener, Serializable {
+public class HazelcastCacheListenerAdapter implements DistributedObjectListener, ItemListener,
+        EntryListener, Serializable {
 
     // Our log
     private static final Logger log = LoggerFactory.getLogger(HazelcastCacheListenerAdapter.class);
@@ -186,31 +188,60 @@ public class HazelcastCacheListenerAdapter implements InstanceListener, ItemList
     }
 
     /**
-     * Invoked when a Hazelcast cacheInstance is created (i.e. joins the cluster).
-     *
-     * @param event The event holding cacheInstance creation data.
+     * {@inheritDoc}
      */
     @Override
-    public void instanceCreated(final InstanceEvent event) {
+    public void distributedObjectCreated(final DistributedObjectEvent event) {
 
-        log.debug("Created instance of type [" + event.getInstance().getInstanceType().name() + "]");
+        log.debug("Created DistributedObject of type [" + event.getDistributedObject().getClass().getName() + "]");
 
-        final Instance theInstance = event.getInstance();
-        listener.onPut("" + theInstance.getId(), (Serializable) theInstance);
+        final DistributedObject theInstance = event.getDistributedObject();
+        listener.onPut("" + theInstance.getName(), (Serializable) theInstance);
     }
 
     /**
-     * Invoked when a Hazelcast cacheInstance is destroyed (i.e. removed from the cluster).
-     *
-     * @param event The event holding cacheInstance creation data.
+     * {@inheritDoc}
      */
     @Override
-    public void instanceDestroyed(final InstanceEvent event) {
+    public void distributedObjectDestroyed(final DistributedObjectEvent event) {
 
-        log.debug("Destroyed instance of type [" + event.getInstance().getInstanceType().name() + "]");
+        log.debug("Destroyed DistributedObject of type [" + event.getDistributedObject().getClass().getName() + "]");
 
-        final Instance theInstance = event.getInstance();
-        listener.onRemove("" + theInstance.getId(), (Serializable) theInstance);
+        final DistributedObject theInstance = event.getDistributedObject();
+        listener.onRemove("" + theInstance.getName(), (Serializable) theInstance);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void mapEvicted(final MapEvent event) {
+
+        log.debug("Evicted IMap [" + event.getName() + "]");
+
+        final Object eventSource = event.getSource();
+        final String eventSourceType = eventSource == null ? "<null EventSource>" : eventSource.getClass().getName();
+        final Serializable src = eventSource instanceof Serializable
+                ? (Serializable) eventSource
+                : "<non-serializable eventSource of type [" + eventSourceType + "]>";
+
+        listener.onRemove("" + event.getName(), src);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void mapCleared(final MapEvent event) {
+        log.debug("Cleared IMap [" + event.getName() + "]");
+
+        final Object eventSource = event.getSource();
+        final String eventSourceType = eventSource == null ? "<null EventSource>" : eventSource.getClass().getName();
+        final Serializable src = eventSource instanceof Serializable
+                ? (Serializable) eventSource
+                : "<non-serializable eventSource of type [" + eventSourceType + "]>";
+
+        listener.onRemove("" + event.getName(), src);
     }
 
     /**

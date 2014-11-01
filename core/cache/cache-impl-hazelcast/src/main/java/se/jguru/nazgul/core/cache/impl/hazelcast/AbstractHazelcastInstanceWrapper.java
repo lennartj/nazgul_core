@@ -22,6 +22,7 @@
 
 package se.jguru.nazgul.core.cache.impl.hazelcast;
 
+import com.hazelcast.core.DistributedObject;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ICollection;
 import com.hazelcast.core.IMap;
@@ -30,11 +31,9 @@ import com.hazelcast.core.ITopic;
 import com.hazelcast.core.Instance;
 import com.hazelcast.core.Message;
 import com.hazelcast.core.MessageListener;
-import com.hazelcast.core.Transaction;
-
+import com.hazelcast.transaction.TransactionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import se.jguru.nazgul.core.cache.api.CacheListener;
 import se.jguru.nazgul.core.cache.api.ReadOnlyIterator;
 import se.jguru.nazgul.core.cache.api.distributed.DistributedCache;
@@ -56,7 +55,7 @@ import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 
 /**
- * Abstract implementation managing registration and deregistration of HazelcastCacheListenerAdapter instances.
+ * Abstract implementation managing registration and de-registration of HazelcastCacheListenerAdapter instances.
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
@@ -66,6 +65,9 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
 
     // Our log
     private static final Logger log = LoggerFactory.getLogger(AbstractHazelcastInstanceWrapper.class);
+
+    // Constants
+    private static final String EXECUTOR_NAME = "NazulCoreCacheImplHazelcast_Executor";
 
     // Internal state
     private HazelcastInstance cacheInstance;
@@ -101,7 +103,7 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
         synchronized (lock) {
             final HazelcastCacheListenerAdapter wrapper = new HazelcastCacheListenerAdapter(listener);
             getLocallyRegisteredListeners().put(listener.getClusterId(), wrapper);
-            cacheInstance.addInstanceListener(wrapper);
+            cacheInstance.addDistributedObjectListener(wrapper);
         }
     }
 
@@ -147,19 +149,19 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
     public final void performTransactedAction(final TransactedAction action)
             throws UnsupportedOperationException {
 
-        final Transaction trans = cacheInstance.getTransaction();
-        trans.begin();
+        final TransactionContext trans = cacheInstance.newTransactionContext();
+        trans.beginTransaction();
 
         try {
 
             // Perform the action, and commit.
             action.doInTransaction();
-            trans.commit();
+            trans.commitTransaction();
 
         } catch (final Exception ex) {
 
             // Whoops.
-            trans.rollback();
+            trans.rollbackTransaction();
 
             // Perform custom rollback, if applicable.
             if (action instanceof AbstractTransactedAction) {
@@ -187,7 +189,7 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
      */
     @Override
     public final ExecutorService getExecutorService() {
-        return cacheInstance.getExecutorService();
+        return cacheInstance.getExecutorService(EXECUTOR_NAME);
     }
 
     /**
@@ -362,14 +364,14 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
     /**
      * Adds the given listenerID to the listenerIdSet for the provided distributedObject.
      *
-     * @param distributedObject The instance for which a listener ID should be registered.
+     * @param distributedObject The DistributedObject for which a listener ID should be registered.
      * @param listenerId        The id of the Listener to register to the provided distributedObject.
      * @return <code>true</code> if the registration was successful, and false otherwise.
      */
     @Override
-    public boolean addListenerIdFor(final Instance distributedObject, final String listenerId) {
+    public boolean addListenerIdFor(final DistributedObject distributedObject, final String listenerId) {
 
-        TreeSet<String> listenerIDs = getCacheListenersIDMap().get("" + distributedObject.getId());
+        TreeSet<String> listenerIDs = getCacheListenersIDMap().get("" + distributedObject.getName());
 
         if (listenerIDs == null) {
             listenerIDs = new TreeSet<String>();
@@ -420,11 +422,11 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
 					@Override
                     public void doInTransaction() throws RuntimeException {
 
-                        Instance distributedObject = null;
+                        DistributedObject distributedObject = null;
 
                         // Find the distributed object from which to remove the listener
-                        for (final Instance current : getInstances()) {
-                            if (distributedObjectiD.equals("" + current.getId())) {
+                        for (final DistributedObject current : getInstances()) {
+                            if (distributedObjectiD.equals("" + current.getName())) {
                                 distributedObject = current;
                                 break;
                             }
@@ -441,6 +443,25 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
                         getCacheListenersIDMap().put(distributedObjectiD, idSet);
 
                         // Remove the listener from the distributedObject.
+                        if(distributedObject instanceof IMap) {
+                            ((IMap) distributedObject).removeEntryListener(toRemoveId);
+                        } else if(distributedObject instanceof ICollection) {
+                            ((ICollection) distributedObject).removeItemListener();
+                        } else {
+
+                            // We can't handle this type of distObject...
+                            final Class<?>[] handleableTypes = {IMap.class, ICollection.class};
+
+                            final StringBuffer permitted = new StringBuffer("[");
+                            for (final Class<?> current : handleableTypes) {
+                                permitted.append(current.getName()).append(", ");
+                            }
+
+                            throw new IllegalArgumentException("Will not add listener to an instance of type ["
+                                    + distObject.getClass().getName() + "]. Supported types are "
+                                    + permitted.substring(0, permitted.length() - 2) + "].");
+                        }
+
                         switch (distributedObject.getInstanceType()) {
                             case MAP:
                                 ((IMap) distributedObject).removeEntryListener(removed);
@@ -466,7 +487,7 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
                 }
 
                 // Unregister all keys for listeners that we own.
-                for (final Instance current : getInstances()) {
+                for (final DistributedObject current : getInstances()) {
 
                     final Set<String> listenerIDs = getListenerIDsFor(current);
                     for (final String currentID : getLocallyRegisteredListeners().keySet()) {
@@ -548,11 +569,10 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
     }
 
     /**
-     * @return A Collection holding the (distributed) Instances known
-     *         to the wrapped HazelcastInstance.
+     * @return A Collection holding the DistributedObjects known to the wrapped HazelcastInstance.
      */
-    protected final Collection<Instance> getInstances() {
-        return cacheInstance.getInstances();
+    protected final Collection<DistributedObject> getInstances() {
+        return cacheInstance.getDistributedObjects();
     }
 
     //

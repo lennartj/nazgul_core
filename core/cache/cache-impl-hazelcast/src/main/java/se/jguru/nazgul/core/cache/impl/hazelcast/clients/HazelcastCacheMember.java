@@ -22,8 +22,8 @@
 package se.jguru.nazgul.core.cache.impl.hazelcast.clients;
 
 import com.hazelcast.config.Config;
-import com.hazelcast.config.Interfaces;
-import com.hazelcast.config.Join;
+import com.hazelcast.config.InterfacesConfig;
+import com.hazelcast.config.JoinConfig;
 import com.hazelcast.config.MulticastConfig;
 import com.hazelcast.config.TcpIpConfig;
 import com.hazelcast.config.XmlConfigBuilder;
@@ -63,8 +63,8 @@ public class HazelcastCacheMember extends AbstractHazelcastInstanceWrapper {
      * @param clusterMembers A list of all other members within the cluster, on the
      *                       form [ip/dns]:[port],[ip/dns]:[port].
      * @return A newly created AbstractHazelcastInstanceWrapper using the configuration as created from
-     *         the provided properties. The returned instance uses TCP/IP clustering only
-     *         (Multicast is switched off).
+     * the provided properties. The returned instance uses TCP/IP clustering only
+     * (Multicast is switched off).
      * @throws IllegalArgumentException If any argument was null or empty or if the
      *                                  clusterMembers argument was not correctly formatted.
      */
@@ -89,8 +89,8 @@ public class HazelcastCacheMember extends AbstractHazelcastInstanceWrapper {
      *                          form [ip/dns]:[port],[ip/dns]:[port].
      * @param configurationFile The resource path to the Hazelcast configuration file.
      * @return A newly created AbstractHazelcastInstanceWrapper using the configuration as created from
-     *         the provided properties. The returned instance uses TCP/IP clustering only
-     *         (Multicast is switched off).
+     * the provided properties. The returned instance uses TCP/IP clustering only
+     * (Multicast is switched off).
      * @throws IllegalArgumentException If any argument was null or empty or if the
      *                                  clusterMembers argument was not correctly formatted.
      */
@@ -110,21 +110,21 @@ public class HazelcastCacheMember extends AbstractHazelcastInstanceWrapper {
      * Multicast networking switched off, participating within the provided clusterID and connected
      * to the given clusterMembers.
      *
-     * @param clusterID         The human-readable ID of the cluster, as provided by the startup
-     *                          script. (i.e. "Nazgul_Production", "Dev_002", etc.)
-     * @param localInterfaces   The ip where this HazelCast instance listens
-     * @param localPort         The port where this HazelCast instance listens.
-     * @param clusterMembers    A list of all other members within the cluster, on the
-     *                          form [ip/dns]:[port],[ip/dns]:[port].
-     * @param configurationFile The resource path to the Hazelcast configuration file.
+     * @param clusterID             The human-readable ID of the cluster, as provided by the startup
+     *                              script. (i.e. "Nazgul_Production", "Dev_002", etc.)
+     * @param localNetworkAddresses The ip where this HazelCast instance listens
+     * @param localPort             The port where this HazelCast instance listens.
+     * @param clusterMembers        A list of all other members within the cluster, on the
+     *                              form [ip/dns]:[port],[ip/dns]:[port].
+     * @param configurationFile     The resource path to the Hazelcast configuration file.
      * @return A newly created AbstractHazelcastInstanceWrapper using the configuration as created from
-     *         the provided properties. The returned instance uses TCP/IP clustering only
-     *         (Multicast is switched off).
+     * the provided properties. The returned instance uses TCP/IP clustering only
+     * (Multicast is switched off).
      * @throws IllegalArgumentException If any argument was null or empty or if the
      *                                  clusterMembers argument was not correctly formatted.
      */
     public static HazelcastCacheMember create(final String clusterID,
-                                              final List<String> localInterfaces,
+                                              final List<String> localNetworkAddresses,
                                               final int localPort,
                                               final String clusterMembers,
                                               final String configurationFile)
@@ -132,7 +132,7 @@ public class HazelcastCacheMember extends AbstractHazelcastInstanceWrapper {
 
         // Check sanity
         Validate.notEmpty(clusterID, "Cannot handle null or empty clusterID. Aborting.");
-        Validate.notEmpty(localInterfaces, "Local interface list can not be null or empty. Aborting.");
+        Validate.notEmpty(localNetworkAddresses, "Local interface list can not be null or empty. Aborting.");
         Validate.notEmpty(clusterMembers, "Cannot handle null or empty clusterID. Aborting.");
 
         // Parse the clusterMembers definition
@@ -164,8 +164,8 @@ public class HazelcastCacheMember extends AbstractHazelcastInstanceWrapper {
         final Config config = HazelcastCacheMember.readConfigFile(configurationFile);
 
         // Configure local interfaces
-        final Interfaces interfaces = config.getNetworkConfig().getInterfaces();
-        interfaces.setInterfaces(localInterfaces);
+        final InterfacesConfig interfaces = config.getNetworkConfig().getInterfaces();
+        interfaces.setInterfaces(localNetworkAddresses);
 
         // Configure local port
         config.getNetworkConfig().setPortAutoIncrement(false);
@@ -176,13 +176,14 @@ public class HazelcastCacheMember extends AbstractHazelcastInstanceWrapper {
         config.getGroupConfig().setPassword("giveMeAccess2_" + clusterID);
 
         // Remake the NetworkConfig altogether.
-        final Join activeJoin = config.getNetworkConfig().getJoin();
+        final JoinConfig activeJoin = config.getNetworkConfig().getJoin();
         final TcpIpConfig tcpIpConfig = new TcpIpConfig();
         tcpIpConfig.setEnabled(true);
 
         // Add the clusterMembers.
         for (final Address current : clusterMemberDefinitions) {
-            tcpIpConfig.addAddress(current);
+            // tcpIpConfig.addAddress(current);
+            tcpIpConfig.addMember(current.getHost());
         }
 
         // Update the active Join, and carry on.

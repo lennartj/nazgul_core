@@ -21,9 +21,10 @@
  */
 package se.jguru.nazgul.core.cache.impl.hazelcast.clients;
 
-import com.hazelcast.client.ClientConfig;
 import com.hazelcast.client.HazelcastClient;
+import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.config.GroupConfig;
+import org.apache.commons.lang3.Validate;
 import se.jguru.nazgul.core.cache.impl.hazelcast.AbstractHazelcastInstanceWrapper;
 
 /**
@@ -33,6 +34,21 @@ import se.jguru.nazgul.core.cache.impl.hazelcast.AbstractHazelcastInstanceWrappe
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 public class HazelcastCacheClient extends AbstractHazelcastInstanceWrapper {
+
+    /**
+     * The number of milliseconds before this HazelcastCacheClient considers a connection to be a timed out.
+     */
+    public static final int DEFAULT_RECONNECTION_TIMEOUT = 5000;
+
+    /**
+     * The number of milliseconds after a timeout before this HazelcastCacheClient will attempt another connection.
+     */
+    public static final int DEFAULT_CONNECTION_ATTEMPT_PERIOD = 3000;
+
+    /**
+     * The amount of connections which will be attempted initially.
+     */
+    public static final int DEFAULT_INITIAL_CONNECTION_ATTEMPTS = 5;
 
     /**
      * Creates a new HazelcastCacheClient instance using the provided ClientProperties and
@@ -52,26 +68,51 @@ public class HazelcastCacheClient extends AbstractHazelcastInstanceWrapper {
     /**
      * Creates ClientConfig from the provided primitives.
      *
-     * @param groupName                   The name of the Hazelcast group.
-     * @param groupPassword               The password for the given Hazelcast group.
-     * @param initConnectionAttemptsLimit The maximum initial connection attempts.
-     * @param reconnectAttemptsLimit      The maximum number of reconnection attempts.
-     * @param reconnectionTimeoutInMillis The timeout for each reconnection in milliseconds.
-     * @return The fully configured ClientProperties.
+     * @param groupName              The name of the Hazelcast group to which this HazelcastCacheClient
+     *                               should belong.
+     * @param groupPassword          The password for the given Hazelcast group.
+     * @param connectionAttemptLimit The number of attempts made by this HazelcastCacheClient to connect to
+     *                               its cluster instance nodes before giving up. A value of zero implies no
+     *                               limit on the number of attempts to connect (i.e. attempt indefinitely).
+     * @param connectionTimeout      The number of milliseconds for nodes to accept a connection from this
+     *                               HazelcastCacheClient before indicating timeout. A value of zero implies no
+     *                               limit on the connection wait (i.e. wait until the connection is established or
+     *                               an exception is raised).
+     * @param reconnectInterval      If the HazelcastCacheClient fails to connect to its cluster instance,
+     *                               it should wait this many milliseconds before attempting another connection.
+     * @return The fully configured ClientConfig.
+     * @see com.hazelcast.client.config.ClientConfig
      */
     public static ClientConfig getClientConfig(final String groupName,
                                                final String groupPassword,
-                                               final int initConnectionAttemptsLimit,
-                                               final int reconnectAttemptsLimit,
-                                               final int reconnectionTimeoutInMillis) {
+                                               final int connectionAttemptLimit,
+                                               final int connectionTimeout,
+                                               final int reconnectInterval) {
+
+        // Check sanity
+        Validate.notNull(groupName, "Cannot handle null groupName argument.");
+        Validate.notNull(groupPassword, "Cannot handle null groupPassword argument.");
+
+        final ClientConfig toReturn = new ClientConfig()
+                .setGroupConfig(new GroupConfig(groupName, groupPassword));
+
+        // Configure the Network setting sin the ClientConfig.
+        toReturn.getNetworkConfig()
+                .setConnectionAttemptLimit(connectionAttemptLimit)
+                .setConnectionTimeout(connectionTimeout)
+                .setConnectionAttemptPeriod(reconnectInterval);
+
+        /*
+        // Hazelcast version 2.x configuration settings.
 
         ClientConfig config = new ClientConfig();
         config.setInitialConnectionAttemptLimit(initConnectionAttemptsLimit)
                 .setReconnectionAttemptLimit(reconnectAttemptsLimit)
                 .setReConnectionTimeOut(reconnectionTimeoutInMillis)
-                .setGroupConfig(new GroupConfig(groupName, groupPassword));
+        */
 
-        return config;
+        // All done.
+        return toReturn;
     }
 
     /**
@@ -83,6 +124,10 @@ public class HazelcastCacheClient extends AbstractHazelcastInstanceWrapper {
      * @return The fully configured ClientProperties.
      */
     public static ClientConfig getClientConfig(final String groupName, final String groupPassword) {
-        return getClientConfig(groupName, groupPassword, 5, 5, 5000);
+        return getClientConfig(groupName,
+                groupPassword,
+                DEFAULT_INITIAL_CONNECTION_ATTEMPTS,
+                DEFAULT_CONNECTION_ATTEMPT_PERIOD,
+                DEFAULT_RECONNECTION_TIMEOUT);
     }
 }

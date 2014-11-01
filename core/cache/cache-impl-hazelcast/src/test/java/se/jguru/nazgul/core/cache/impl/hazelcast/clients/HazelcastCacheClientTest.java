@@ -21,7 +21,7 @@
  */
 package se.jguru.nazgul.core.cache.impl.hazelcast.clients;
 
-import com.hazelcast.client.ClientConfig;
+import com.hazelcast.client.config.ClientConfig;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -30,7 +30,7 @@ import se.jguru.nazgul.core.cache.impl.hazelcast.AbstractHazelcastCacheTest;
 import se.jguru.nazgul.core.cache.impl.hazelcast.DebugCacheListener;
 
 import java.io.Serializable;
-import java.net.InetSocketAddress;
+import java.util.Arrays;
 import java.util.TreeMap;
 
 /**
@@ -54,7 +54,8 @@ public class HazelcastCacheClientTest extends AbstractHazelcastCacheTest {
 
         final ClientConfig clientConfig = HazelcastCacheClient.getClientConfig(
                 "unittest-cache-group", "unittest-pass");
-        clientConfig.addInetSocketAddress(new InetSocketAddress("localhost", 5701));
+        clientConfig.getNetworkConfig().setAddresses(Arrays.asList("localhost:5701"));
+        // .addInetSocketAddress(new InetSocketAddress("localhost", 5701));
 
         cacheClient = new HazelcastCacheClient(clientConfig);
     }
