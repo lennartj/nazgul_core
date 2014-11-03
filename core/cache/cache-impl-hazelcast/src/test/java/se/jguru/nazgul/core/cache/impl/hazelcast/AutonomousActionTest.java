@@ -100,6 +100,10 @@ public class AutonomousActionTest extends AbstractHazelcastCacheTest {
         }
     }
 
+    //
+    // Private helpers
+    //
+
     private void putValues(final int numValues, final Map<String, String> map) {
         for (int i = 0; i < numValues; i++) {
             map.put(key + "_" + i, value + "_" + i);

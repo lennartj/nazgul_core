@@ -21,8 +21,8 @@
  */
 package se.jguru.nazgul.core.cache.impl.hazelcast;
 
-import com.hazelcast.core.AtomicNumber;
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IAtomicLong;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -177,7 +177,7 @@ public class HazelcastCacheTest extends AbstractHazelcastCacheTest {
         final DebugCacheListener listener1 = new DebugCacheListener("listener_1");
 
         // Act & Assert
-        final AtomicNumber number = internalInstance.getAtomicNumber("foo");
+        final IAtomicLong number = internalInstance.getAtomicLong("foo");
         hzCache1.addListenerFor(number, listener1);
     }
 
@@ -191,7 +191,7 @@ public class HazelcastCacheTest extends AbstractHazelcastCacheTest {
                 + "Supported types are [LIST, SET, QUEUE, MAP].";
 
         // Act
-        final AtomicNumber number = internalInstance.getAtomicNumber("foo");
+        final IAtomicLong number = internalInstance.getAtomicLong("foo");
         String errorMessage = null;
 
         try {

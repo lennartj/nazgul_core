@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ #%L
   Nazgul Project: nazgul-core-cache-impl-hazelcast
@@ -20,8 +21,15 @@
   limitations under the License.
   #L%
   -->
+<hazelcast
+        xsi:schemaLocation="http://www.hazelcast.com/schema/config http://www.hazelcast.com/schema/config/hazelcast-config-3.1.xsd"
+        xmlns="http://www.hazelcast.com/schema/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-<hazelcast>
+    <!--
+        Defines the name and password of the Hazelcast member group.
+        These are normally overridden by the configurator within
+        the Nazgul Core: Hazelcast cache implementation project.
+    -->
     <group>
         <name>UNCONFIGURED</name>
         <password>UNCONFIGURED</password>
@@ -42,10 +50,23 @@
         Define the boundaries for the Executor service, which is the
         in-cache command pattern execution thread pool.
     -->
-    <executor-service>
-        <core-pool-size>16</core-pool-size>
-        <max-pool-size>64</max-pool-size>
-        <keep-alive-seconds>60</keep-alive-seconds>
+    <executor-service name="nazgul_hazelcast_executorservice">
+        <pool-size>16</pool-size>
+
+        <!--
+            Definition:         The Hazelcast queue depth.
+            Permitted range:    [0, Integer.MAX_VALUE]
+            Special values:     The value 0 is subtituted for Integer.MAX_VALUE.
+
+            When a JVM's local queue size reaches the maximum, all put/offer operations will
+            get blocked until the queue size of the JVM goes down below the maximum.
+        -->
+        <queue-capacity>10</queue-capacity>
+
+        <!--
+            Set to true to enable statistics harvest within the Executor service.
+        -->
+        <statistics-enabled>false</statistics-enabled>
     </executor-service>
 
     <!--
@@ -60,7 +81,7 @@
             When a JVM's local queue size reaches the maximum, all put/offer operations will
             get blocked until the queue size of the JVM goes down below the maximum.
         -->
-        <max-size-per-jvm>0</max-size-per-jvm>
+        <max-size>0</max-size>
 
         <!--
             Definition:         Max number of seconds for each item to stay in the queue.
@@ -70,7 +91,7 @@
             Items that are not consumed in <time-to-live-seconds> will
             automatically get evicted from the queue.
         -->
-        <time-to-live-seconds>0</time-to-live-seconds>
+        <empty-queue-ttl>0</empty-queue-ttl>
     </queue>
 
     <!--
@@ -139,16 +160,6 @@
     -->
     <map name="clusterWide_commonCacheMap">
         <near-cache>
-            <!--
-                Definition:         Number of backups.
-                Permitted range:    [0, 3]
-                Special values:     The value 0 means no backup.
-
-                Number of backups (extra copies) of the instances within each distributed map.
-                If 1 is set as the backup-count for example, then all entries of the map will
-                be copied to 1 other JVM for fail-safety.
-            -->
-            <backup-count>1</backup-count>
 
             <!--
                 Definition:         Eviction policy, implying how cache eviction is done.
@@ -162,38 +173,27 @@
             <eviction-policy>NONE</eviction-policy>
 
             <!--
+                Definition: Invalidates the near-cache map on changes.
+            -->
+            <invalidate-on-change>true</invalidate-on-change>
+
+            <!--
+                Definition:         Use a Binary/proprietary format for storage.
+                Permitted range:    BINARY, CACHED, OBJECT
+
+                The storage format for the data within the near-cache map.
+            -->
+            <in-memory-format>BINARY</in-memory-format>
+
+            <!--
                 Definition:         Max mapSize.
                 Permitted range:    [0, Integer.MAX_VALUE]
                 Special values:     The value 0 is subtituted for Integer.MAX_VALUE.
 
                 When max size is reached, map is evicted based on the policy defined.
-            -->
+
             <max-size>0</max-size>
-
-            <!--
-                Definition:         The percentage of the map that will be evicted when the max-size is reached.
-                Permitted values:   [0, 100]
-
-                Any integer between 0 and 100. If 25 is set for example, 25% of the entries will get evicted.
             -->
-            <eviction-percentage>25</eviction-percentage>
-
-            <!--
-                Definition:         While recovering from split-brain (network partitioning), map entries in the
-                                    small cluster will merge into the bigger cluster based on the policy set here.
-                                    When an entry merge into the cluster, there might an existing entry with the
-                                    same key already. Values of these entries might be different for that same key.
-                                    Which value should be set for the key? Conflict is resolved by
-                                    the policy set here. Default policy is hz.ADD_NEW_ENTRY
-                Permitted values:   {hz.NO_MERGE, hz.ADD_NEW_ENTRY, hz.HIGHER_HITS, hz.LATEST_UPDATE}
-
-                Value explanation:
-                    hz.NO_MERGE         := No entry will merge.
-                    hz.ADD_NEW_ENTRY    := Entry will be added if the merging entry's key doesn't exist in the cluster.
-                    hz.HIGHER_HITS      := Entry with the higher hits wins.
-                    hz.LATEST_UPDATE    := Entry with the latest update wins.
-            -->
-            <merge-policy>hz.ADD_NEW_ENTRY</merge-policy>
         </near-cache>
     </map>
 
@@ -233,19 +233,21 @@
             <eviction-policy>LRU</eviction-policy>
 
             <!--
-                Definition:         Max mapSize.
-                Permitted range:    [0, Integer.MAX_VALUE]
-                Special values:     The value 0 is subtituted for Integer.MAX_VALUE.
-
-                When max size is reached, map is evicted based on the policy defined.
-            -->
-            <max-size>5000</max-size>
-
-            <!--
                 Definition:         Should the cached entries get evicted if the entries are changed (updated or removed).
                 Permitted range:    [true, false]
             -->
             <invalidate-on-change>true</invalidate-on-change>
+
+            <!--
+                Definition:         Data type that will be used for storing recordMap.
+                Permitted values:   {BINARY, OBJECT, OFFHEAP}
+
+                Value explanation:
+                    BINARY  :=      keys and values will be stored as binary data
+                    OBJECT  :=      values will be stored in their object forms
+                    OFFHEAP :=      values will be stored in non-heap region of JVM
+             -->
+            <in-memory-format>BINARY</in-memory-format>
         </near-cache>
     </map>
 
@@ -456,5 +458,13 @@
             <invalidate-on-change>false</invalidate-on-change>
         </near-cache>
     </map>
+
+    <!--
+        Use SLF4J for logging.
+    -->
+
+    <properties>
+        <property name="hazelcast.logging.type">slf4j</property>
+    </properties>
 
 </hazelcast>

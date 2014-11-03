@@ -45,7 +45,9 @@ import java.util.TreeSet;
 
 /**
  * Abstract identifiable handling local registration and de-registration of
- * HazelcastCacheListenerAdapters to cached objects.
+ * HazelcastCacheListenerAdapters to cached objects. The AbstractHazelcastCacheListenerManager contains a local
+ * (in-memory) listener Map, since Hazelcast (version 2) requires that the actual listener object is used to
+ * de-register the listener.
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
@@ -57,7 +59,7 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
     private static final Logger log = LoggerFactory.getLogger(AbstractHazelcastCacheListenerManager.class);
 
     // Internal state
-    private Map<String, HazelcastCacheListenerAdapter> locallyRegisteredListeners = new TreeMap<String, HazelcastCacheListenerAdapter>();
+    private Map<String, HazelcastCacheListenerAdapter> locallyRegisteredListeners = new TreeMap<>();
     protected final Object lock = new Object();
 
     /**
@@ -99,8 +101,8 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
      * cache.
      *
      * @return a List holding all IDs of the active Listeners onto this (local member) Cache. Note that this does not
-     *         include CacheListener instances wired to distributed objects, nor nor CacheListener instances wired to
-     *         other members within a distributed cache.
+     * include CacheListener instances wired to distributed objects, nor nor CacheListener instances wired to
+     * other members within a distributed cache.
      */
     @Override
     public final List<String> getListenerIds() {
@@ -115,7 +117,7 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
         }
 
         // Return an unmodifiable copy.
-        return Collections.unmodifiableList(new ArrayList<String>(tmp));
+        return Collections.unmodifiableList(new ArrayList<>(tmp));
     }
 
     /**
@@ -130,7 +132,7 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
      *                          listen to changes.
      * @param listener          The CacheListener to register to the given distributed object.
      * @return <code>true</code> if the CacheListener was successfully registered,
-     *         and <code>false</code> otherwise.
+     * and <code>false</code> otherwise.
      * @throws IllegalArgumentException If the distributedObject was not appropriate for
      *                                  registering a CacheListener (i.e. incorrect type
      *                                  for the underlying cache implementation).
@@ -151,6 +153,7 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
                         + "]. Aborting registration.");
             }
 
+            // Bail out.
             return false;
         }
 
@@ -164,9 +167,7 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
                         + alreadyRegistered.getCacheListener().getClass().getName() + "]. Aborting registration.");
             }
 
-            // TODO: Loop through all Instances and remove the dangling locallyRegisteredListener instance.
-            // for(Instance current : cacheInstance.getInstances()) {
-            // }
+            // We should not re-register the listener.
             return false;
         }
 
@@ -194,16 +195,16 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
                     locallyRegisteredListeners.put(toAdd.getId(), toAdd);
 
                     // ... and add the listener to the instance it should listen to...
-                    if(distObject instanceof IMap) {
+                    if (distObject instanceof IMap) {
                         ((IMap) distObject).addEntryListener(toAdd, true);
-                    } else if(distObject instanceof ICollection) {
+                    } else if (distObject instanceof ICollection) {
                         ((ICollection) distObject).addItemListener(toAdd, true);
                     } else {
 
                         // We can't handle this type of distObject...
                         final Class<?>[] handleableTypes = {IMap.class, ICollection.class};
 
-                        final StringBuffer permitted = new StringBuffer("[");
+                        final StringBuilder permitted = new StringBuilder("[");
                         for (final Class<?> current : handleableTypes) {
                             permitted.append(current.getName()).append(", ");
                         }

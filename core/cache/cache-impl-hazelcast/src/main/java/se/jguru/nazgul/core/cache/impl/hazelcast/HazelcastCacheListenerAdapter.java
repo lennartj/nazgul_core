@@ -38,6 +38,8 @@ import se.jguru.nazgul.core.cache.api.CacheListener;
 import java.io.Serializable;
 
 /**
+ * Adapter delegating Hazelcast event calls to the CacheListener interface.
+ *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 public class HazelcastCacheListenerAdapter implements DistributedObjectListener, ItemListener,
@@ -76,10 +78,8 @@ public class HazelcastCacheListenerAdapter implements DistributedObjectListener,
     @Override
     public boolean equals(final Object obj) {
 
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof HazelcastCacheListenerAdapter)) {
+        // Check sanity
+        if (obj == null || !(obj instanceof HazelcastCacheListenerAdapter)) {
             return false;
         }
 
@@ -93,10 +93,14 @@ public class HazelcastCacheListenerAdapter implements DistributedObjectListener,
      */
     @Override
     public int hashCode() {
-        final int prime = 37;
-        int result = 1;
-        result = prime * result + ((listener == null) ? 0 : listener.getClusterId().hashCode());
-        return result;
+
+        int toReturn = 0;
+        if(listener != null)  {
+            toReturn = listener.getClusterId().hashCode();
+        }
+
+        // All done
+        return toReturn;
     }
 
     /**
@@ -279,7 +283,7 @@ public class HazelcastCacheListenerAdapter implements DistributedObjectListener,
                     : entryEvent.getMember().localMember() ? " (local member)" : "";
             final String memberIP = entryEvent.getMember() == null
                     ? ""
-                    : entryEvent.getMember().getInetSocketAddress().toString();
+                    : entryEvent.getMember().getSocketAddress().toString();
 
             log.debug("(Listener " + getId() + "): " + action + " entry [" + entryEvent.getName() + "] from member ["
                     + memberIP + "]" + localMember + ". Key: " + entryEvent.getKey() + ", Value: "
