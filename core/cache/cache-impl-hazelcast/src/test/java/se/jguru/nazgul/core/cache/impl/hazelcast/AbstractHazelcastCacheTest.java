@@ -25,9 +25,9 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import com.hazelcast.config.Config;
+import com.hazelcast.core.DistributedObject;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.Instance;
 import com.hazelcast.core.MultiMap;
 import org.junit.AfterClass;
 import org.slf4j.Logger;
@@ -119,28 +119,27 @@ public abstract class AbstractHazelcastCacheTest {
         try {
             final HazelcastInstance current = getInternalInstance(cache);
 
-            for (final Instance instance : current.getInstances()) {
-                final String instanceId = (String) instance.getId();
+            for (final DistributedObject currentDistributedObject : current.getDistributedObjects()) {
+
+                final String instanceName = currentDistributedObject.getName();
+
                 // We don't want to destroy our internal maps for the cache
-                if (!(instanceId.endsWith(GridOperations.CLUSTER_ADMIN_TOPIC))) {
+                if (!(instanceName.endsWith(GridOperations.CLUSTER_ADMIN_TOPIC))) {
 
-                    final Instance.InstanceType instanceType = instance.getInstanceType();
-
-                    // see http://code.google.com/p/hazelcast/issues/detail?id=516
-                    if (instanceType.isMultiMap()) {
-                        MultiMap map = (MultiMap) instance;
+                    if(currentDistributedObject instanceof MultiMap) {
+                        MultiMap map = (MultiMap) currentDistributedObject;
                         map.clear();
-                    } else if (instanceType.isMap()) {
-                        Map map = (Map) instance;
+                    } else if (currentDistributedObject instanceof Map) {
+                        Map map = (Map) currentDistributedObject;
                         map.clear();
-                    } else if (instanceType.isList() || instanceType.isSet() || instanceType.isQueue()) {
-                        Collection collection = (Collection) instance;
+                    } else if (currentDistributedObject instanceof Collection) {
+                        Collection collection = (Collection) currentDistributedObject;
                         collection.clear();
                     }
 
-                    final Set<String> listeners = new TreeSet<String>(cache.getListenerIDsFor(instance));
+                    final Set<String> listeners = new TreeSet<String>(cache.getListenerIDsFor(currentDistributedObject));
                     for (final String listenerId : listeners) {
-                        cache.removeListenerFor(instance, listenerId);
+                        cache.removeListenerFor(currentDistributedObject, listenerId);
                     }
 
                     //                    can't use this - it clears internal state of hazelcast

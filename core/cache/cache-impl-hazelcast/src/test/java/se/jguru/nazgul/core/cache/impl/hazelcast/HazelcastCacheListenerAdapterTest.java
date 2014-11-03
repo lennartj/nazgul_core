@@ -22,6 +22,7 @@
 package se.jguru.nazgul.core.cache.impl.hazelcast;
 
 import com.hazelcast.core.EntryEvent;
+import com.hazelcast.core.EntryEventType;
 import org.junit.Assert;
 import org.junit.Test;
 import se.jguru.nazgul.core.cache.api.CacheListener;
@@ -51,10 +52,10 @@ public class HazelcastCacheListenerAdapterTest {
         final HazelcastCacheListenerAdapter unitUnderTest = new HazelcastCacheListenerAdapter(cacheListener);
 
         // Act
-        unitUnderTest.entryAdded(getEntryEvent(EntryEvent.TYPE_ADDED));
-        unitUnderTest.entryRemoved(getEntryEvent(EntryEvent.TYPE_REMOVED));
-        unitUnderTest.entryUpdated(getEntryEvent(EntryEvent.TYPE_UPDATED));
-        unitUnderTest.entryEvicted(getEntryEvent(EntryEvent.TYPE_UPDATED));
+        unitUnderTest.entryAdded(getEntryEvent(EntryEventType.ADDED));
+        unitUnderTest.entryRemoved(getEntryEvent(EntryEventType.REMOVED));
+        unitUnderTest.entryUpdated(getEntryEvent(EntryEventType.UPDATED));
+        unitUnderTest.entryEvicted(getEntryEvent(EntryEventType.UPDATED));
         // unitUnderTest.instanceCreated(new InstanceEvent(InstanceEvent.InstanceEventType.CREATED, null));
         // unitUnderTest.instanceDestroyed(new InstanceEvent(InstanceEvent.InstanceEventType.DESTROYED, null));
 
@@ -94,8 +95,7 @@ public class HazelcastCacheListenerAdapterTest {
     // Private helpers
     //
 
-    private EntryEvent<String, String> getEntryEvent(int type) {
-        return new EntryEvent<String, String>("irrelevantSource", null,
-                EntryEvent.TYPE_ADDED, "key", "value");
+    private EntryEvent<String, String> getEntryEvent(EntryEventType type) {
+        return new EntryEvent<String, String>("irrelevantSource", null, type.getType(), "key", "value");
     }
 }

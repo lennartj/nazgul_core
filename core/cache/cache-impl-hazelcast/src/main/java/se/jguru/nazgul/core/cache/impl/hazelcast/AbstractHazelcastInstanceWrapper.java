@@ -28,7 +28,6 @@ import com.hazelcast.core.ICollection;
 import com.hazelcast.core.IMap;
 import com.hazelcast.core.ISet;
 import com.hazelcast.core.ITopic;
-import com.hazelcast.core.Instance;
 import com.hazelcast.core.Message;
 import com.hazelcast.core.MessageListener;
 import com.hazelcast.transaction.TransactionContext;
@@ -43,9 +42,7 @@ import se.jguru.nazgul.core.cache.api.distributed.async.LightweightTopic;
 import se.jguru.nazgul.core.cache.api.transaction.AbstractTransactedAction;
 import se.jguru.nazgul.core.cache.api.transaction.TransactedAction;
 import se.jguru.nazgul.core.cache.impl.hazelcast.grid.AdminMessage;
-import se.jguru.nazgul.core.cache.impl.hazelcast.grid.DataSerializableAdapter;
 
-import java.io.Externalizable;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
@@ -120,7 +117,8 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
         }
 
         synchronized (lock) {
-            cacheInstance.removeInstanceListener(getLocallyRegisteredListeners().remove(listenerID));
+            getLocallyRegisteredListeners().remove(listenerID);
+            cacheInstance.removeDistributedObjectListener(listenerID);
         }
 
         return true;
@@ -208,7 +206,7 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
      */
     @Override
     public final Serializable get(final String key) {
-        return extractExternalizableIfWrapped(getSharedMap().get(key));
+        return getSharedMap().get(key);
     }
 
     /**
@@ -221,13 +219,6 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
      */
     @Override
     public final Serializable put(final String key, final Serializable value) {
-
-        if (value instanceof Externalizable) {
-            // Wrap in Dataserializable
-            return getSharedMap().put(key, new DataSerializableAdapter((Externalizable) value));
-        }
-
-        // Fall through.
         return getSharedMap().put(key, value);
     }
 
@@ -240,7 +231,7 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
      */
     @Override
     public final Serializable remove(final String key) {
-        return extractExternalizableIfWrapped(getSharedMap().remove(key));
+        return getSharedMap().remove(key);
     }
 
     /**
@@ -258,10 +249,9 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
      *             etc.
      * @param key  The key where the distributed collection resides or will be created to.
      * @return The created (empty) or acquired (potentially not empty) distributed collection cached at the given key.
-     * @throws ClassCastException if the cache key [key] maps to an object not of the given type.
-     * @throws UnsupportedDistributionException
-     *                            if the underlying cache implementation could not support creating
-     *                            a distributed collection of the given type.
+     * @throws ClassCastException               if the cache key [key] maps to an object not of the given type.
+     * @throws UnsupportedDistributionException if the underlying cache implementation could not support creating
+     *                                          a distributed collection of the given type.
      */
     @Override
     public final Collection<? extends Serializable> getDistributedCollection(final DistributedCollectionType type,
@@ -308,7 +298,7 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
 
     /**
      * @return The shared Map relating ids for distributed objects [String::key] to a List of ids for all registered
-     *         listeners to the given distributed object [List[String]::value].
+     * listeners to the given distributed object [List[String]::value].
      */
     @Override
     public final IMap<String, TreeSet<String>> getCacheListenersIDMap() {
@@ -352,8 +342,7 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
      * @param <V> The value type of the distributed Map returned.
      * @param key The key where the distributed Map resides or will be created to.
      * @return The created (empty) or acquired (potentially not empty) distributed Map cached at the given key.
-     * @throws UnsupportedDistributionException
-     *          if the underlying cache implementation could not support creating a distributed Map.
+     * @throws UnsupportedDistributionException if the underlying cache implementation could not support creating a distributed Map.
      */
     @Override
     public final <K extends Serializable, V extends Serializable> Map<K, V> getDistributedMap(final String key)
@@ -380,7 +369,7 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
         // Add the new listenerId, and update the listenersIdMap.
         // Remember, this is the lifecycle required for non-proxy stored collections in HC.
         listenerIDs.add(listenerId);
-        getCacheListenersIDMap().put("" + distributedObject.getId(), listenerIDs);
+        getCacheListenersIDMap().put(distributedObject.getName(), listenerIDs);
 
         return true;
     }
@@ -418,8 +407,8 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
 
                 performTransactedAction(new AbstractTransactedAction(rollbackMessage) {
 
-                    @SuppressWarnings({ "incomplete-switch", "unused" })
-					@Override
+                    @SuppressWarnings({"incomplete-switch", "unused"})
+                    @Override
                     public void doInTransaction() throws RuntimeException {
 
                         DistributedObject distributedObject = null;
@@ -443,35 +432,26 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
                         getCacheListenersIDMap().put(distributedObjectiD, idSet);
 
                         // Remove the listener from the distributedObject.
-                        if(distributedObject instanceof IMap) {
+                        if (distributedObject instanceof IMap) {
                             ((IMap) distributedObject).removeEntryListener(toRemoveId);
-                        } else if(distributedObject instanceof ICollection) {
-                            ((ICollection) distributedObject).removeItemListener();
+                        } else if (distributedObject instanceof ICollection) {
+                            ((ICollection) distributedObject).removeItemListener(toRemoveId);
                         } else {
 
                             // We can't handle this type of distObject...
                             final Class<?>[] handleableTypes = {IMap.class, ICollection.class};
 
-                            final StringBuffer permitted = new StringBuffer("[");
+                            final String distObjectType = distributedObject == null
+                                    ? "<null>"
+                                    : distributedObject.getClass().getName();
+                            final StringBuilder permitted = new StringBuilder("[");
                             for (final Class<?> current : handleableTypes) {
                                 permitted.append(current.getName()).append(", ");
                             }
 
                             throw new IllegalArgumentException("Will not add listener to an instance of type ["
-                                    + distObject.getClass().getName() + "]. Supported types are "
+                                    + distObjectType + "]. Supported types are "
                                     + permitted.substring(0, permitted.length() - 2) + "].");
-                        }
-
-                        switch (distributedObject.getInstanceType()) {
-                            case MAP:
-                                ((IMap) distributedObject).removeEntryListener(removed);
-                                break;
-
-                            case LIST:
-                            case SET:
-                            case QUEUE:
-                                ((ICollection) distributedObject).removeItemListener(removed);
-                                break;
                         }
                     }
                 });
@@ -573,25 +553,5 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
      */
     protected final Collection<DistributedObject> getInstances() {
         return cacheInstance.getDistributedObjects();
-    }
-
-    //
-    // Private helpers.
-    //
-
-    private Serializable extractExternalizableIfWrapped(final Serializable serializable) {
-
-        // Check sanity
-        if (serializable == null) {
-            return null;
-        }
-
-        // If this is a DataSerializableAdapter, extract its content.
-        if (serializable instanceof DataSerializableAdapter) {
-            return ((DataSerializableAdapter) serializable).getWrappedExternalizable();
-        }
-
-        // All done.
-        return serializable;
     }
 }

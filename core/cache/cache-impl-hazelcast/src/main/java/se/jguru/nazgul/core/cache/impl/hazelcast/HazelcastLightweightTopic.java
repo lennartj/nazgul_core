@@ -109,7 +109,9 @@ public class HazelcastLightweightTopic<MessageType extends Serializable> impleme
         }
 
         synchronized (lock) {
-            hazelcastTopic.removeMessageListener(knownListeners.remove(listener.getClusterId()));
+            final String clusterId = listener.getClusterId();
+            knownListeners.remove(clusterId);
+            hazelcastTopic.removeMessageListener(clusterId);
         }
     }
 

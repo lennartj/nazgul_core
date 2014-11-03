@@ -21,6 +21,11 @@
  */
 package se.jguru.nazgul.core.cache.impl.hazelcast.grid;
 
+import com.hazelcast.nio.ObjectDataInput;
+import com.hazelcast.nio.ObjectDataOutput;
+import com.hazelcast.nio.serialization.DataSerializable;
+
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +38,9 @@ import java.util.List;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public final class AdminMessage implements Serializable {
+public final class AdminMessage implements Serializable, DataSerializable {
+
+    private static final long serialVersionUID = 88299913L;
 
     /**
      * A listing of all known commands.
@@ -77,8 +84,14 @@ public final class AdminMessage implements Serializable {
     }
 
     // State
-    private final Command command;
-    private final List<String> arguments = new ArrayList<String>();
+    private Command command;
+    private List<String> arguments = new ArrayList<String>();
+
+    /**
+     * Serializable-friendly constructor.
+     */
+    public AdminMessage() {
+    }
 
     private AdminMessage(final Command command, final String[] values) {
         this.command = command;
@@ -134,5 +147,27 @@ public final class AdminMessage implements Serializable {
                                                                 final String uniqueID) {
         return new AdminMessage(AdminMessage.Command.CREATE_INCACHE_INSTANCE,
                 new String[]{typeDefinition.name(), uniqueID});
+    }
+
+    //
+    // DataSerializable implementation
+    //
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void writeData(final ObjectDataOutput out) throws IOException {
+        out.writeUTF(this.command.name());
+        out.writeObject(this.arguments);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void readData(final ObjectDataInput in) throws IOException {
+        this.command = Command.valueOf(in.readUTF());
+        this.arguments = in.readObject();
     }
 }
