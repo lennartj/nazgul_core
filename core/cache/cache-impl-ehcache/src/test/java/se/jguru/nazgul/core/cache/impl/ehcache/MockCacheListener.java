@@ -35,7 +35,7 @@ import java.util.concurrent.CountDownLatch;
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class MockCacheListener extends AbstractCacheListener<String> {
+public class MockCacheListener extends AbstractCacheListener<String, Serializable> {
 
     private CountDownLatch evictionLatch;
     public List<String> callStack = new ArrayList<String>();

@@ -40,14 +40,14 @@ import java.io.Serializable;
 public class EhCacheListenerAdapter implements CacheEventListener, Serializable {
 
     // Internal state
-    private CacheListener<String> listener;
+    private CacheListener<String, Serializable> listener;
 
     /**
      * Wraps the provided CacheListener within this EhCacheListenerAdapter.
      *
      * @param listener The CacheListener to wrap.
      */
-    public EhCacheListenerAdapter(final CacheListener listener) {
+    public EhCacheListenerAdapter(final CacheListener<String, Serializable> listener) {
 
         // Check sanity
         if (listener == null) {
