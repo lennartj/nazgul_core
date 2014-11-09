@@ -54,7 +54,7 @@ import java.util.TreeMap;
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
-public class NonDistributedEhCache extends AbstractClusterable implements Cache<String> {
+public class NonDistributedEhCache extends AbstractClusterable implements Cache<String, Serializable> {
 
     // Our log
     private static final Logger log = LoggerFactory.getLogger(NonDistributedEhCache.class);
@@ -267,7 +267,7 @@ public class NonDistributedEhCache extends AbstractClusterable implements Cache<
      * {@inheritDoc}
      */
     @Override
-    public boolean addListener(final CacheListener<String> listener) {
+    public boolean addListener(final CacheListener<String, Serializable> listener) {
 
         // Wrap the CacheListener inside an EhCacheListenerAdapter.
         final EhCacheListenerAdapter toAdd = new EhCacheListenerAdapter(listener);
