@@ -38,7 +38,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -50,12 +49,12 @@ import java.util.concurrent.Executors;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class InMemoryMapCache extends AbstractSwiftClusterable implements Cache<String> {
+public class InMemoryMapCache extends AbstractSwiftClusterable implements Cache<String, Serializable> {
 
     // Internal state
     private long timeoutMillis;
     private ConcurrentMap<String, Serializable> cache;
-    private ConcurrentMap<String, CacheListener<String>> listeners;
+    private ConcurrentMap<String, CacheListener<String, Serializable>> listeners;
     private boolean fakeTransactions;
     private String threadPoolPrefix;
     private int numEventListenerThreads;
@@ -71,7 +70,7 @@ public class InMemoryMapCache extends AbstractSwiftClusterable implements Cache<
 
         this(new UUIDGenerator(), 20*60*60L,
                 new ConcurrentHashMap<String, Serializable>(),
-                new ConcurrentHashMap<String, CacheListener<String>>(),
+                new ConcurrentHashMap<String, CacheListener<String, Serializable>>(),
                 15,
                 false);
     }
@@ -91,7 +90,7 @@ public class InMemoryMapCache extends AbstractSwiftClusterable implements Cache<
     public InMemoryMapCache(final IdGenerator idGenerator,
                             final long timeoutMillis,
                             final ConcurrentMap<String, Serializable> cache,
-                            final ConcurrentMap<String, CacheListener<String>> listeners,
+                            final ConcurrentMap<String, CacheListener<String, Serializable>> listeners,
                             final int numEventListenerThreads,
                             final boolean fakeTransactions) {
         super(idGenerator);
@@ -124,7 +123,8 @@ public class InMemoryMapCache extends AbstractSwiftClusterable implements Cache<
         // Notify any listeners
         if (!listeners.isEmpty()) {
 
-            final Set<CacheListener<String>> localListeners = new HashSet<CacheListener<String>>(listeners.values());
+            final Set<CacheListener<String, Serializable>> localListeners
+                    = new HashSet<CacheListener<String, Serializable>>(listeners.values());
 
             listenerThreadService.execute(
                     new CacheListenerNotificationWorker(localListeners, CacheEventType.REMOVE, key, oldValue, null));
@@ -146,7 +146,8 @@ public class InMemoryMapCache extends AbstractSwiftClusterable implements Cache<
         // Notify any listeners
         if (!listeners.isEmpty()) {
 
-            final Set<CacheListener<String>> localListeners = new HashSet<CacheListener<String>>(listeners.values());
+            final Set<CacheListener<String, Serializable>> localListeners
+                    = new HashSet<CacheListener<String, Serializable>>(listeners.values());
             final CacheEventType cacheEventType = oldValue == null ? CacheEventType.PUT : CacheEventType.UPDATE;
 
             listenerThreadService.execute(
@@ -187,8 +188,9 @@ public class InMemoryMapCache extends AbstractSwiftClusterable implements Cache<
      * {@inheritDoc}
      */
     @Override
-    public boolean addListener(final CacheListener<String> listener) {
-        final CacheListener<String> putListener = listeners.putIfAbsent(listener.getClusterId(), listener);
+    public boolean addListener(final CacheListener<String, Serializable> listener) {
+        final CacheListener<String, Serializable> putListener
+                = listeners.putIfAbsent(listener.getClusterId(), listener);
         return putListener == listener;
     }
 
@@ -236,7 +238,7 @@ public class InMemoryMapCache extends AbstractSwiftClusterable implements Cache<
         fakeTransactions = in.readBoolean();
         numEventListenerThreads = in.readInt();
         threadPoolPrefix = in.readUTF();
-        listeners = (ConcurrentMap<String, CacheListener<String>>) in.readObject();
+        listeners = (ConcurrentMap<String, CacheListener<String, Serializable>>) in.readObject();
         cache = (ConcurrentMap<String, Serializable>) in.readObject();
 
         // Re-create the (transient) ExecutorService
@@ -270,7 +272,7 @@ public class InMemoryMapCache extends AbstractSwiftClusterable implements Cache<
     class CacheListenerNotificationWorker implements Runnable {
 
         // Internal state
-        private Set<CacheListener<String>> listeners;
+        private Set<CacheListener<String, Serializable>> listeners;
         private CacheEventType event;
         private String key;
         private Serializable oldValue;
@@ -286,7 +288,7 @@ public class InMemoryMapCache extends AbstractSwiftClusterable implements Cache<
          * @param oldValue  The old value of the cache entry.
          * @param newValue  The new value of the cache entry.
          */
-        CacheListenerNotificationWorker(final Set<CacheListener<String>> listeners,
+        CacheListenerNotificationWorker(final Set<CacheListener<String, Serializable>> listeners,
                                         final CacheEventType event,
                                         final String key,
                                         final Serializable oldValue,
@@ -313,7 +315,7 @@ public class InMemoryMapCache extends AbstractSwiftClusterable implements Cache<
         @SuppressWarnings("all")
         public void run() {
 
-            for (CacheListener<String> current : listeners) {
+            for (CacheListener<String, Serializable> current : listeners) {
 
                 switch (event) {
 
