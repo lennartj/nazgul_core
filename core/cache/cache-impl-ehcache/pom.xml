@@ -42,7 +42,7 @@
 
     <properties>
         <path.in.reactor>core/cache/cache-api</path.in.reactor>
-        <ehcache.version>2.7.0</ehcache.version>
+        <ehcache.version>2.9.0</ehcache.version>
     </properties>
 
     <!-- +=============================================== -->
