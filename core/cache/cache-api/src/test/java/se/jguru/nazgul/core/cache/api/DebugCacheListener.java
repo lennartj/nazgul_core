@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class DebugCacheListener extends AbstractCacheListener<String> {
+public class DebugCacheListener extends AbstractCacheListener<String, Serializable> {
 
     // Internal state
     public List<String> callTrace;

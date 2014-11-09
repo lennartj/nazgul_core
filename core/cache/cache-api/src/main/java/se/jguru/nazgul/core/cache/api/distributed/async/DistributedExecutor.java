@@ -23,7 +23,6 @@ package se.jguru.nazgul.core.cache.api.distributed.async;
 
 import se.jguru.nazgul.core.cache.api.distributed.DistributedCache;
 
-import java.io.Serializable;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -35,7 +34,7 @@ import java.util.concurrent.ExecutorService;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public interface DistributedExecutor<KeyType extends Serializable> extends DistributedCache<KeyType> {
+public interface DistributedExecutor<K, V> extends DistributedCache<K, V> {
 
     /**
      * @return The ExecutorService of the underlying cache implementation.

@@ -24,7 +24,6 @@ package se.jguru.nazgul.core.cache.api.distributed;
 import se.jguru.nazgul.core.cache.api.Cache;
 import se.jguru.nazgul.core.cache.api.CacheListener;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -32,10 +31,11 @@ import java.util.Map;
 /**
  * Service interface definition for a distributed (clustered) cache.
  *
- * @param <KeyType> The type of keys used within this DistributedCache.
+ * @param <K> The type of key used within this DistributedCache.
+ * @param <V> The type of value used within this DistributedCache.
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public interface DistributedCache<KeyType extends Serializable> extends Cache<KeyType> {
+public interface DistributedCache<K, V> extends Cache<K, V> {
 
     /**
      * Type indication for the distributed collection.
@@ -93,7 +93,7 @@ public interface DistributedCache<KeyType extends Serializable> extends Cache<Ke
      *                            not support creating a distributed collection
      *                            of the given type.
      */
-    Collection<? extends Serializable> getDistributedCollection(DistributedCollectionType type, String key)
+    Collection<? extends V> getDistributedCollection(DistributedCollectionType type, String key)
             throws ClassCastException, UnsupportedDistributionException;
 
     /**
@@ -101,8 +101,8 @@ public interface DistributedCache<KeyType extends Serializable> extends Cache<Ke
      * Note that the distributed Map will be created on the provided key
      * if it does not already exist.
      *
-     * @param <K> The key type used within the distributed Map.
-     * @param <V> The value type used within the distributed Map.
+     * @param <MapKeyType> The key type used within the distributed Map.
+     * @param <MapValueType> The value type used within the distributed Map.
      * @param key The key where the distributed Map resides or will be created to.
      * @return The created (empty) or acquired (potentially not empty)
      *         distributed Map cached at the given key.
@@ -110,7 +110,7 @@ public interface DistributedCache<KeyType extends Serializable> extends Cache<Ke
      *          if the underlying cache implementation could
      *          not support creating a distributed Map.
      */
-    <K extends Serializable, V extends Serializable> Map<K, V> getDistributedMap(String key)
+    <MapKeyType, MapValueType> Map<MapKeyType, MapValueType> getDistributedMap(String key)
             throws UnsupportedDistributionException;
 
     /**
@@ -121,8 +121,7 @@ public interface DistributedCache<KeyType extends Serializable> extends Cache<Ke
      * <strong>This operation may be an asynchronous operation depending
      * on the underlying cache implementation.</strong>
      *
-     * @param distributedObject The distributed object from which we should
-     *                          listen to changes.
+     * @param distributedObject The distributed object from which we should listen to changes.
      * @param listener          The CacheListener to register to the given distributed object.
      * @return <code>true</code> if the CacheListener was successfully registered,
      *         and <code>false</code> otherwise.
@@ -130,7 +129,7 @@ public interface DistributedCache<KeyType extends Serializable> extends Cache<Ke
      *                                  registering a CacheListener (i.e. incorrect type
      *                                  for the underlying cache implementation).
      */
-    boolean addListenerFor(Object distributedObject, CacheListener<?> listener)
+    boolean addListenerFor(Object distributedObject, CacheListener<K, V> listener)
             throws IllegalArgumentException;
 
     /**

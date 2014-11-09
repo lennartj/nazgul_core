@@ -24,18 +24,19 @@ package se.jguru.nazgul.core.cache.api;
 import se.jguru.nazgul.core.cache.api.transaction.TransactedAction;
 import se.jguru.nazgul.core.clustering.api.Clusterable;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
- * Service interface definition for a cache with a parameterized key type. Since all keys may be sent across a
+ * Service interface definition for a cache with a parametrized key type. Since all keys may be sent across a
  * distributed system, KeyType must be Serializable. While this Cache is Iterable, iterating
  * over all keys within a Cache may be a very expensive operation - use such operations with
  * restraint and temperance.
  *
+ * @param <K> The type of key used within this Cache.
+ * @param <V> The type of value used within this Cache.
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public interface Cache<KeyType extends Serializable> extends Clusterable, Iterable<KeyType> {
+public interface Cache<K, V> extends Clusterable, Iterable<K> {
 
     /**
      * Retrieves an object from this Cache.
@@ -43,7 +44,7 @@ public interface Cache<KeyType extends Serializable> extends Clusterable, Iterab
      * @param key The key of the instance to retrieve.
      * @return The value corresponding to the provided key, or <code>null</code> if no object was found.
      */
-    Serializable get(KeyType key);
+    V get(K key);
 
     /**
      * Stores the provided object in this Cache, associated with the provided key. Will overwrite existing objects with
@@ -53,7 +54,7 @@ public interface Cache<KeyType extends Serializable> extends Clusterable, Iterab
      * @param value The value to cache.
      * @return The previous value associated with <code>key</code>, or <code>null</code> if no such object exists.
      */
-    Serializable put(KeyType key, Serializable value);
+    V put(K key, V value);
 
     /**
      * Removes the object with the given key from the underlying cache implementation, returning the value held before
@@ -62,7 +63,7 @@ public interface Cache<KeyType extends Serializable> extends Clusterable, Iterab
      * @param key The cache key for which the value should be removed.
      * @return The object to remove.
      */
-    Serializable remove(KeyType key);
+    V remove(K key);
 
     /**
      * Adds a listener to events on this cache. All listeners on the local cache node must have unique IDs; should a
@@ -72,9 +73,9 @@ public interface Cache<KeyType extends Serializable> extends Clusterable, Iterab
      *
      * @param listener The listener to add.
      * @return <code>true</true> if the CacheListener was properly added
-     *         or <code>false</code> if it could not be added.
+     * or <code>false</code> if it could not be added.
      */
-    boolean addListener(CacheListener<KeyType> listener);
+    boolean addListener(CacheListener<K, V> listener);
 
     /**
      * Acquires the list of all active Listeners of this Cache instance. Note that this does not include CacheListener
@@ -82,8 +83,8 @@ public interface Cache<KeyType extends Serializable> extends Clusterable, Iterab
      * cache.
      *
      * @return a List holding all IDs of the active Listeners onto this (local member) Cache. Note that this does not
-     *         include CacheListener instances wired to distributed objects, nor nor CacheListener instances wired to
-     *         other members within a distributed cache.
+     * include CacheListener instances wired to distributed objects, nor nor CacheListener instances wired to
+     * other members within a distributed cache.
      */
     List<String> getListenerIds();
 
@@ -93,7 +94,7 @@ public interface Cache<KeyType extends Serializable> extends Clusterable, Iterab
      *
      * @param key The unique identifier for the given CacheListener to remove from operating on this Cache.
      */
-    void removeListener(KeyType key);
+    void removeListener(K key);
 
     /**
      * Returns true if this cache contains a mapping for the specified key
@@ -101,7 +102,7 @@ public interface Cache<KeyType extends Serializable> extends Clusterable, Iterab
      * @param key The <code>key</code> whose presence in this map is to be tested.
      * @return <code>true</code> if this map contains a mapping for the specified key.
      */
-    boolean containsKey(KeyType key);
+    boolean containsKey(K key);
 
     /**
      * Acquires a Transactional context from this Cache, and Executes the

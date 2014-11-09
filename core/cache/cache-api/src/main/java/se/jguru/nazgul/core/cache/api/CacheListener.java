@@ -23,16 +23,16 @@ package se.jguru.nazgul.core.cache.api;
 
 import se.jguru.nazgul.core.clustering.api.Clusterable;
 
-import java.io.Serializable;
 import java.util.EventListener;
 
 /**
  * Callback listener for a Cache with KeyType type keys.
  *
+ * @param <K> The type of key used within the cache to which this CacheListener should be attached.
+ * @param <V> The type of value used within the cache to which this CacheListener should be attached.
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public interface CacheListener<KeyType extends Serializable>
-        extends Clusterable, EventListener {
+public interface CacheListener<K, V> extends Clusterable, EventListener {
 
     /**
      * Callback method invoked when the object with the given key
@@ -44,7 +44,7 @@ public interface CacheListener<KeyType extends Serializable>
      * @param key   The cache key.
      * @param value The new value (i.e. the value which was created)
      */
-    void onPut(KeyType key, Serializable value);
+    void onPut(K key, final V value);
 
     /**
      * Callback method invoked when the object with the given key
@@ -59,7 +59,7 @@ public interface CacheListener<KeyType extends Serializable>
      *                 underlying cache implementation, this value may be <code>null</code> if not known
      *                 and transmitted at the time of invocation.
      */
-    void onUpdate(final KeyType key, final Serializable newValue, final Serializable oldValue);
+    void onUpdate(K key, V newValue, V oldValue);
 
     /**
      * Callback method invoked when the object with the given
@@ -72,7 +72,7 @@ public interface CacheListener<KeyType extends Serializable>
      * @param key   The key of the object which got evicted from the cache.
      * @param value The object that was removed.
      */
-    void onRemove(KeyType key, Serializable value);
+    void onRemove(K key, V value);
 
     /**
      * Callback method invoked when the underlying cache
@@ -94,7 +94,7 @@ public interface CacheListener<KeyType extends Serializable>
      * @param key   The key of the object which got loaded into the cache.
      * @param value The Object that was loaded.
      */
-    void onAutonomousLoad(KeyType key, Serializable value);
+    void onAutonomousLoad(K key, V value);
 
     /**
      * Callback method invoked when the object with the given
@@ -115,7 +115,7 @@ public interface CacheListener<KeyType extends Serializable>
      * @param value The object that was evicted, or null if the underlying
      *              cache implementation does not know the value at eviction time.
      */
-    void onAutonomousEvict(final KeyType key, final Serializable value);
+    void onAutonomousEvict(K key, V value);
 
     /**
      * Assigns a filter, making this CacheListener only receive
@@ -124,5 +124,5 @@ public interface CacheListener<KeyType extends Serializable>
      *
      * @param patternFilter The java regexp pattern filter.
      */
-    void setFilter(final String patternFilter);
+    void setFilter(String patternFilter);
 }
