@@ -34,8 +34,8 @@ import java.util.regex.Pattern;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public abstract class AbstractCacheListener<KeyType extends Serializable> extends AbstractSwiftClusterable
-        implements CacheListener<KeyType> {
+public abstract class AbstractCacheListener<K extends Serializable, V>
+        extends AbstractSwiftClusterable implements CacheListener<K, V> {
 
     // Internal state
     private transient Pattern filter;
@@ -82,7 +82,7 @@ public abstract class AbstractCacheListener<KeyType extends Serializable> extend
      * @param value The value which was put.
      */
     @Override
-    public final void onPut(final KeyType key, final Serializable value) {
+    public final void onPut(final K key, final V value) {
 
         if (accept(key)) {
             doOnPut(key, value);
@@ -99,7 +99,7 @@ public abstract class AbstractCacheListener<KeyType extends Serializable> extend
      * @param key   The key of the object
      * @param value The value which was put.
      */
-    protected void doOnPut(final KeyType key, final Serializable value) {
+    protected void doOnPut(final K key, final V value) {
 
     }
 
@@ -115,7 +115,7 @@ public abstract class AbstractCacheListener<KeyType extends Serializable> extend
      * @param oldValue The former value - before the update.
      */
     @Override
-    public final void onUpdate(final KeyType key, final Serializable newValue, final Serializable oldValue) {
+    public final void onUpdate(final K key, final V newValue, final V oldValue) {
 
         if (accept(key)) {
             doOnUpdate(key, newValue, oldValue);
@@ -133,7 +133,7 @@ public abstract class AbstractCacheListener<KeyType extends Serializable> extend
      * @param newValue The new value - after the update.
      * @param oldValue The former value - before the update.
      */
-    protected void doOnUpdate(final KeyType key, final Serializable newValue, final Serializable oldValue) {
+    protected void doOnUpdate(final K key, final V newValue, final V oldValue) {
 
     }
 
@@ -149,7 +149,7 @@ public abstract class AbstractCacheListener<KeyType extends Serializable> extend
      * @param value The object that was removed.
      */
     @Override
-    public final void onRemove(final KeyType key, final Serializable value) {
+    public final void onRemove(final K key, final V value) {
 
         if (accept(key)) {
             doOnRemove(key, value);
@@ -167,7 +167,7 @@ public abstract class AbstractCacheListener<KeyType extends Serializable> extend
      * @param key   The key of the object which got evicted from the cache.
      * @param value The object that was removed.
      */
-    protected void doOnRemove(final KeyType key, final Serializable value) {
+    protected void doOnRemove(final K key, final V value) {
 
     }
 
@@ -195,7 +195,7 @@ public abstract class AbstractCacheListener<KeyType extends Serializable> extend
      * @param value The Object that was loaded.
      */
     @Override
-    public final void onAutonomousLoad(final KeyType key, final Serializable value) {
+    public final void onAutonomousLoad(final K key, final V value) {
         if (accept(key)) {
             doOnAutonomousLoad(key, value);
         }
@@ -214,7 +214,7 @@ public abstract class AbstractCacheListener<KeyType extends Serializable> extend
      * @param key   The key of the object which got loaded into the cache.
      * @param value The Object that was loaded.
      */
-    protected void doOnAutonomousLoad(final KeyType key, final Serializable value) {
+    protected void doOnAutonomousLoad(final K key, final V value) {
 
     }
 
@@ -233,7 +233,7 @@ public abstract class AbstractCacheListener<KeyType extends Serializable> extend
      * @param value The object that was evicted.
      */
     @Override
-    public final void onAutonomousEvict(final KeyType key, final Serializable value) {
+    public final void onAutonomousEvict(final K key, final V value) {
         if (accept(key)) {
             doOnAutonomousEvict(key, value);
         }
@@ -253,7 +253,7 @@ public abstract class AbstractCacheListener<KeyType extends Serializable> extend
      * @param key   The key of the object which got evicted from the cache.
      * @param value The object that was evicted.
      */
-    protected void doOnAutonomousEvict(final KeyType key, final Serializable value) {
+    protected void doOnAutonomousEvict(final K key, final V value) {
 
     }
 
@@ -273,7 +273,7 @@ public abstract class AbstractCacheListener<KeyType extends Serializable> extend
     // Private helpers
     //
 
-    private boolean accept(final KeyType key) {
+    private boolean accept(final K key) {
 
         // No filter ==> accept all keys.
         return this.filter == null || filter.matcher(key.toString()).matches();

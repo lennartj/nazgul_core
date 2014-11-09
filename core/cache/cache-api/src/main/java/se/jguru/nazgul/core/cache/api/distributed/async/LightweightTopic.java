@@ -29,17 +29,17 @@ import java.io.Serializable;
  * Lightweight Topic definition, implying a distributed cluster-wide Topic
  * which exists within the context of a distributed cache.
  *
- * @param <MessageType> T
+ * @param <M> The type of Message published by this LightweightTopic.
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public interface LightweightTopic<MessageType extends Serializable> extends Clusterable {
+public interface LightweightTopic<M> extends Clusterable {
 
     /**
      * Sends/Publishes the provided message through this LightweightTopic.
      *
      * @param message The message to publish in this Topic.
      */
-    void publish(MessageType message);
+    void publish(M message);
 
     /**
      * Adds a new LightweightTopicListener to this Topic.
@@ -48,12 +48,12 @@ public interface LightweightTopic<MessageType extends Serializable> extends Clus
      *
      * @param listener The LightweightTopicListener to register to this Topic.
      */
-    void addListener(LightweightTopicListener<MessageType> listener);
+    void addListener(LightweightTopicListener<M> listener);
 
     /**
      * Removes the provided LightweightTopicListener from this LightweightTopic.
      *
      * @param listener The listener to remove.
      */
-    void removeListener(LightweightTopicListener<MessageType> listener);
+    void removeListener(LightweightTopicListener<M> listener);
 }

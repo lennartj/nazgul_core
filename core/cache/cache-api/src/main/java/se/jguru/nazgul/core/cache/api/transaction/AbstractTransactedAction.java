@@ -24,7 +24,7 @@ package se.jguru.nazgul.core.cache.api.transaction;
 
 /**
  * Abstract implementation of the TransactedAction specification, providing
- * all implementation userdetails with the exception of
+ * all implementation user details with the exception of
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */

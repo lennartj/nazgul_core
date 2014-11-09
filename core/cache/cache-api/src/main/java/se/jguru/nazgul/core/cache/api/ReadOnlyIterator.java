@@ -23,7 +23,6 @@ package se.jguru.nazgul.core.cache.api;
 
 import org.apache.commons.lang3.Validate;
 
-import java.io.Serializable;
 import java.util.Iterator;
 
 /**
@@ -31,7 +30,7 @@ import java.util.Iterator;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public final class ReadOnlyIterator<E extends Serializable> implements Iterator<E> {
+public final class ReadOnlyIterator<E> implements Iterator<E> {
 
     // Internal state
     private Iterator<E> delegate;

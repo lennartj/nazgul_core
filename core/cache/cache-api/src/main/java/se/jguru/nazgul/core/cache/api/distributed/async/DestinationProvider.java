@@ -29,10 +29,10 @@ import java.io.Serializable;
  * Service interface definition for a distributed (clustered) cache which
  * provides Destinations leading into a distributed cache.
  *
- * @param <KeyType> The type of Keys used within the DistributedCache.
+ * @param <K> The type of Keys used within the DistributedCache.
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public interface DestinationProvider<KeyType extends Serializable> extends DistributedCache<KeyType> {
+public interface DestinationProvider<K, V> extends DistributedCache<K, V> {
 
     /**
      * Retrieves a LightweightTopic with the provided topicId from

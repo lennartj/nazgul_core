@@ -23,7 +23,7 @@ package se.jguru.nazgul.core.cache.api.distributed;
 
 /**
  * Exception type indicating that a particular cache distribution
- * operation could not be perfomed.
+ * operation could not be performed.
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
