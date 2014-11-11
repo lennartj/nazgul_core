@@ -35,8 +35,8 @@ import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.cache.api.distributed.DistributedCache;
 import se.jguru.nazgul.core.cache.api.distributed.async.LightweightTopic;
 import se.jguru.nazgul.core.cache.impl.hazelcast.AbstractHazelcastCacheTest;
-import se.jguru.nazgul.core.cache.impl.hazelcast.DebugCacheListener;
-import se.jguru.nazgul.core.cache.impl.hazelcast.HazelcastCacheListenerAdapter;
+import se.jguru.nazgul.core.cache.impl.hazelcast.helpers.DebugCacheListener;
+import se.jguru.nazgul.core.cache.impl.hazelcast.AbstractHazelcastCacheListenerAdapter;
 import se.jguru.nazgul.core.cache.impl.hazelcast.grid.AdminMessage;
 import se.jguru.nazgul.core.cache.impl.hazelcast.grid.GridOperations;
 
@@ -126,8 +126,8 @@ public class HazelcastClientCacheListenerTest extends AbstractHazelcastCacheTest
         Assert.assertEquals(0, listeners2.size());
 
         // Assert #2: Validate the Lifecycle of the CacheListeners.
-        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap1 = unitUnderTest1.eventId2KeyValueMap;
-        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap2 = unitUnderTest2.eventId2KeyValueMap;
+        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap1 = unitUnderTest1.eventId2EventInfoMap;
+        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap2 = unitUnderTest2.eventId2EventInfoMap;
 
         Assert.assertEquals(2, traceMap1.size());
         Assert.assertEquals(2, traceMap2.size());
@@ -186,8 +186,8 @@ public class HazelcastClientCacheListenerTest extends AbstractHazelcastCacheTest
         Assert.assertEquals(listenerID2, listeners2.get(0));
 
         // Assert #2: Validate the Lifecycle of the CacheListeners.
-        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap1 = unitUnderTest1.eventId2KeyValueMap;
-        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap2 = unitUnderTest2.eventId2KeyValueMap;
+        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap1 = unitUnderTest1.eventId2EventInfoMap;
+        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap2 = unitUnderTest2.eventId2EventInfoMap;
 
         Assert.assertEquals(2, traceMap1.size());
         Assert.assertEquals(2, traceMap2.size());
@@ -241,8 +241,8 @@ public class HazelcastClientCacheListenerTest extends AbstractHazelcastCacheTest
         Assert.assertEquals(0, listeners2.size());
 
         // Assert #2: Validate the Lifecycle of the CacheListeners.
-        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap1 = unitUnderTest1.eventId2KeyValueMap;
-        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap2 = unitUnderTest2.eventId2KeyValueMap;
+        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap1 = unitUnderTest1.eventId2EventInfoMap;
+        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap2 = unitUnderTest2.eventId2EventInfoMap;
 
         Assert.assertEquals(2, traceMap1.size());
         Assert.assertEquals(2, traceMap2.size());
@@ -322,7 +322,7 @@ public class HazelcastClientCacheListenerTest extends AbstractHazelcastCacheTest
 
         validateEventInfo(info,
                 expectedType,
-                HazelcastCacheListenerAdapter.ILLUSORY_KEY_FOR_COLLECTIONS,
+                AbstractHazelcastCacheListenerAdapter.ILLUSORY_KEY_FOR_COLLECTIONS,
                 expectedValue);
     }
 

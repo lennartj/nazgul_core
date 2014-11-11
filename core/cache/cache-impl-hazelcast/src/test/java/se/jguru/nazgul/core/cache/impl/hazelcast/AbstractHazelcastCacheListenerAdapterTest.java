@@ -26,30 +26,32 @@ import com.hazelcast.core.EntryEventType;
 import org.junit.Assert;
 import org.junit.Test;
 import se.jguru.nazgul.core.cache.api.CacheListener;
+import se.jguru.nazgul.core.cache.impl.hazelcast.helpers.DebugCacheListener;
 
 import java.util.TreeMap;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class HazelcastCacheListenerAdapterTest {
+public class AbstractHazelcastCacheListenerAdapterTest {
 
     @Test(expected = NullPointerException.class)
     public void validateExceptionOnIncorrectConstruction() {
 
         // Assemble
-        final CacheListener incorrectNullCacheListener = null;
+        final CacheListener<String, String> incorrectNullCacheListener = null;
 
         // Act & Assert
-        new HazelcastCacheListenerAdapter(incorrectNullCacheListener);
+        new StringKeyedHazelcastListenerAdapter<String>(incorrectNullCacheListener);
     }
 
     @Test
     public void validateFoo() {
 
         // Assemble
-        final DebugCacheListener cacheListener = new DebugCacheListener("testId1");
-        final HazelcastCacheListenerAdapter unitUnderTest = new HazelcastCacheListenerAdapter(cacheListener);
+        final DebugCacheListener<String> cacheListener = new DebugCacheListener<String>("testId1");
+        final StringKeyedHazelcastListenerAdapter<String> unitUnderTest
+                = new StringKeyedHazelcastListenerAdapter<String>(cacheListener);
 
         // Act
         unitUnderTest.entryAdded(getEntryEvent(EntryEventType.ADDED));
@@ -61,7 +63,7 @@ public class HazelcastCacheListenerAdapterTest {
 
         // Assert
         Assert.assertSame(cacheListener, unitUnderTest.getCacheListener());
-        final TreeMap<Integer, DebugCacheListener.EventInfo> map = cacheListener.eventId2KeyValueMap;
+        final TreeMap<Integer, DebugCacheListener<String>.EventInfo> map = cacheListener.eventId2EventInfoMap;
 
         // {1=put:key:value, 2=remove:key:value, 3=update:key:value, 4=autonomousEvict:key:value}
         Assert.assertEquals("put:key:value", map.get(1).toString());
@@ -74,11 +76,13 @@ public class HazelcastCacheListenerAdapterTest {
     public void validateIdentityManagement() {
 
         // Assemble
-        final DebugCacheListener cacheListener1 = new DebugCacheListener("testId1");
-        final DebugCacheListener cacheListener2 = new DebugCacheListener("testId1");
-        final HazelcastCacheListenerAdapter unitUnderTest1 = new HazelcastCacheListenerAdapter(cacheListener1);
-        final HazelcastCacheListenerAdapter unitUnderTest2 = new HazelcastCacheListenerAdapter(cacheListener2);
-        final HazelcastCacheListenerAdapter incorrectNull = null;
+        final DebugCacheListener<String> cacheListener1 = new DebugCacheListener<String>("testId1");
+        final DebugCacheListener<String> cacheListener2 = new DebugCacheListener<String>("testId1");
+        final StringKeyedHazelcastListenerAdapter<String> unitUnderTest1
+                = new StringKeyedHazelcastListenerAdapter<String>(cacheListener1);
+        final StringKeyedHazelcastListenerAdapter<String> unitUnderTest2
+                = new StringKeyedHazelcastListenerAdapter<String>(cacheListener2);
+        final AbstractHazelcastCacheListenerAdapter incorrectNull = null;
 
         // Act
         final boolean result1 = unitUnderTest1.equals(unitUnderTest2);

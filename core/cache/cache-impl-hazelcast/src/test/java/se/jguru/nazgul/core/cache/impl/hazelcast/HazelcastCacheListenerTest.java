@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.cache.api.distributed.DistributedCache;
 import se.jguru.nazgul.core.cache.impl.hazelcast.clients.HazelcastCacheMember;
+import se.jguru.nazgul.core.cache.impl.hazelcast.helpers.DebugCacheListener;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -74,7 +75,7 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
     public void validateExceptionOnAddIncorrectInstanceType() {
 
         // Assemble
-        final DebugCacheListener listener1 = new DebugCacheListener(hzCache1.getClusterUniqueID());
+        final DebugCacheListener<Object> listener1 = new DebugCacheListener<Object>(hzCache1.getClusterUniqueID());
 
         // Act & Assert
         hzCache1.addListenerFor("notAnInstance", listener1);
@@ -110,7 +111,7 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
         // Assemble
         final String existentListenerID = "testListener";
         final Map<String, Serializable> distMap = hzCache1.getDistributedMap(distributedMapKey);
-        final boolean addedOK = hzCache1.addListenerFor(distMap, new DebugCacheListener(existentListenerID));
+        final boolean addedOK = hzCache1.addListenerFor(distMap, new DebugCacheListener<Object>(existentListenerID));
 
         // Act & Assert
         Assert.assertTrue(addedOK);
@@ -121,9 +122,10 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
     public void validateCacheListenerStateInCache() throws InterruptedException {
 
         // Assemble
-        final DebugCacheListener listener1 = new DebugCacheListener("listener_1");
-        final DebugCacheListener listener2 = new DebugCacheListener("listener_2");
-        final DebugCacheListener listener3WithSameIdAsListener2 = new DebugCacheListener(listener2.getClusterId());
+        final DebugCacheListener<Object> listener1 = new DebugCacheListener<Object>("listener_1");
+        final DebugCacheListener<Object> listener2 = new DebugCacheListener<Object>("listener_2");
+        final DebugCacheListener<Object> listener3WithSameIdAsListener2 = new DebugCacheListener<Object>(
+                listener2.getClusterId());
 
         // Act
         final boolean listener1Added = hzCache1.addListener(listener1);
@@ -173,18 +175,18 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
         // Assemble
         final HazelcastInstance internalInstance1 = getInternalInstance(hzCache1);
         final HazelcastInstance internalInstance2 = getInternalInstance(hzCache2);
-        final DebugCacheListener listener = new DebugCacheListener("listener_1");
+        final DebugCacheListener<Object> listener = new DebugCacheListener<Object>("listener_1");
         final String listenerID = listener.getClusterId();
 
         // Act
         final boolean addedSuccessfully = hzCache1.addListener(listener);
 
-        final Serializable previous = hzCache1.put(key, value);
+        final Object previous = hzCache1.put(key, value);
         // internalInstance1.getCountDownLatch("FooBar").
-        final Serializable updated = hzCache1.put(key, value + "2");
-        final Serializable updatedAgain = hzCache1.put(key, value);
-        final Serializable result = hzCache1.get(key);
-        final Serializable after = hzCache1.remove(key);
+        final Object updated = hzCache1.put(key, value + "2");
+        final Object updatedAgain = hzCache1.put(key, value);
+        final Object result = hzCache1.get(key);
+        final Object after = hzCache1.remove(key);
 
         // Assert
         Assert.assertTrue(addedSuccessfully);
@@ -199,7 +201,7 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
         Assert.assertEquals(1, listeners.size());
         Assert.assertEquals(listenerID, listeners.get(0));
 
-        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap = listener.eventId2KeyValueMap;
+        final TreeMap<Integer, DebugCacheListener<Object>.EventInfo> traceMap = listener.eventId2EventInfoMap;
         Assert.assertEquals(4, traceMap.size());
 
         validateEventInfo(traceMap.get(1), "put");
@@ -212,8 +214,8 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
     public void validateCacheListenerLifecycleInDistributedCache() throws InterruptedException {
 
         // Assemble
-        final DebugCacheListener unitUnderTest1 = new DebugCacheListener("listener_1");
-        final DebugCacheListener unitUnderTest2 = new DebugCacheListener("listener_2");
+        final DebugCacheListener<Object> unitUnderTest1 = new DebugCacheListener<Object>("listener_1");
+        final DebugCacheListener<Object> unitUnderTest2 = new DebugCacheListener<Object>("listener_2");
 
         // Act
         hzCache1.addListener(unitUnderTest1);
@@ -221,9 +223,9 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
         hzCache2.addListener(unitUnderTest2);
         Thread.sleep(200);
 
-        final Serializable previous_1 = hzCache1.put(key, value);
-        final Serializable result_2 = hzCache2.get(key);
-        final Serializable after_2 = hzCache2.remove(key);
+        final Object previous_1 = hzCache1.put(key, value);
+        final Object result_2 = hzCache2.get(key);
+        final Object after_2 = hzCache2.remove(key);
 
         // Assert #1: Check cache state.
         Assert.assertNotSame(hzCache1, hzCache2);
@@ -243,8 +245,8 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
         Assert.assertEquals(unitUnderTest2.getClusterId(), listenerIDs2.get(1));
 
         // Assert #2: Validate the Lifecycle of the CacheListeners.
-        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap1 = unitUnderTest1.eventId2KeyValueMap;
-        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap2 = unitUnderTest2.eventId2KeyValueMap;
+        final TreeMap<Integer, DebugCacheListener<Object>.EventInfo> traceMap1 = unitUnderTest1.eventId2EventInfoMap;
+        final TreeMap<Integer, DebugCacheListener<Object>.EventInfo> traceMap2 = unitUnderTest2.eventId2EventInfoMap;
 
         Assert.assertEquals(2, traceMap1.size());
         Assert.assertEquals(2, traceMap2.size());
@@ -260,8 +262,8 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
     public void validateCacheListenerLifecycleOnDistributedMapInDistributedCache() throws InterruptedException {
 
         // Assemble
-        final DebugCacheListener unitUnderTest1 = new DebugCacheListener("cacheListener1");
-        final DebugCacheListener unitUnderTest2 = new DebugCacheListener("cacheListener2");
+        final DebugCacheListener<Object> unitUnderTest1 = new DebugCacheListener<Object>("cacheListener1");
+        final DebugCacheListener<Object> unitUnderTest2 = new DebugCacheListener<Object>("cacheListener2");
 
         final Map<String, String> distributedMap1 = hzCache1.getDistributedMap(distributedMapKey);
         final Map<String, String> distributedMap2 = hzCache2.getDistributedMap(distributedMapKey);
@@ -299,8 +301,8 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
         Assert.assertEquals(unitUnderTest2.getClusterId(), listeners2.get(1));
 
         // Assert #2: Validate the Lifecycle of the CacheListeners.
-        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap1 = unitUnderTest1.eventId2KeyValueMap;
-        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap2 = unitUnderTest2.eventId2KeyValueMap;
+        final TreeMap<Integer, DebugCacheListener<Object>.EventInfo> traceMap1 = unitUnderTest1.eventId2EventInfoMap;
+        final TreeMap<Integer, DebugCacheListener<Object>.EventInfo> traceMap2 = unitUnderTest2.eventId2EventInfoMap;
 
         Assert.assertEquals(2, traceMap1.size());
         Assert.assertEquals(2, traceMap2.size());
@@ -317,8 +319,8 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
 
         // Assemble
         final String distributedListKey = "distList";
-        final DebugCacheListener unitUnderTest1 = new DebugCacheListener("cacheListener1");
-        final DebugCacheListener unitUnderTest2 = new DebugCacheListener("cacheListener2");
+        final DebugCacheListener<Object> unitUnderTest1 = new DebugCacheListener<Object>("cacheListener1");
+        final DebugCacheListener<Object> unitUnderTest2 = new DebugCacheListener<Object>("cacheListener2");
 
         final Collection<String> distributedCollection =
                 (Collection<String>) hzCache1.getDistributedCollection(
@@ -355,8 +357,8 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
         Assert.assertEquals(0, listeners2.size());
 
         // Assert #2: Validate the Lifecycle of the CacheListeners.
-        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap1 = unitUnderTest1.eventId2KeyValueMap;
-        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap2 = unitUnderTest2.eventId2KeyValueMap;
+        final TreeMap<Integer, DebugCacheListener<Object>.EventInfo> traceMap1 = unitUnderTest1.eventId2EventInfoMap;
+        final TreeMap<Integer, DebugCacheListener<Object>.EventInfo> traceMap2 = unitUnderTest2.eventId2EventInfoMap;
 
         Assert.assertEquals(2, traceMap1.size());
         Assert.assertEquals(2, traceMap2.size());
@@ -381,8 +383,8 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
                         distributedSetKey);
 
         // Act
-        final DebugCacheListener unitUnderTest1 = new DebugCacheListener(listenerID1);
-        final DebugCacheListener unitUnderTest2 = new DebugCacheListener(listenerID2);
+        final DebugCacheListener<Object> unitUnderTest1 = new DebugCacheListener<Object>(listenerID1);
+        final DebugCacheListener<Object> unitUnderTest2 = new DebugCacheListener<Object>(listenerID2);
         hzCache1.addListenerFor(distributedSet, unitUnderTest1);
         hzCache2.addListenerFor(distributedSet, unitUnderTest2);
 
@@ -415,8 +417,8 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
         Assert.assertEquals(listenerID2, listeners2.get(0));
 
         // Assert #2: Validate the Lifecycle of the CacheListeners.
-        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap1 = unitUnderTest1.eventId2KeyValueMap;
-        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap2 = unitUnderTest2.eventId2KeyValueMap;
+        final TreeMap<Integer, DebugCacheListener<Object>.EventInfo> traceMap1 = unitUnderTest1.eventId2EventInfoMap;
+        final TreeMap<Integer, DebugCacheListener<Object>.EventInfo> traceMap2 = unitUnderTest2.eventId2EventInfoMap;
 
         Assert.assertEquals(2, traceMap1.size());
         Assert.assertEquals(2, traceMap2.size());
@@ -434,8 +436,8 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
         // Assemble
         final String distributedQueueKey = "distQueue";
 
-        final DebugCacheListener unitUnderTest1 = new DebugCacheListener("testID_1");
-        final DebugCacheListener unitUnderTest2 = new DebugCacheListener("testID_2");
+        final DebugCacheListener<Object> unitUnderTest1 = new DebugCacheListener<Object>("testID_1");
+        final DebugCacheListener<Object> unitUnderTest2 = new DebugCacheListener<Object>("testID_2");
 
         final Queue<String> distributedQueue =
                 (Queue<String>) hzCache1.getDistributedCollection(DistributedCache.DistributedCollectionType.QUEUE,
@@ -470,8 +472,8 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
         Assert.assertEquals(0, listeners2.size());
 
         // Assert #2: Validate the Lifecycle of the CacheListeners.
-        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap1 = unitUnderTest1.eventId2KeyValueMap;
-        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap2 = unitUnderTest2.eventId2KeyValueMap;
+        final TreeMap<Integer, DebugCacheListener<Object>.EventInfo> traceMap1 = unitUnderTest1.eventId2EventInfoMap;
+        final TreeMap<Integer, DebugCacheListener<Object>.EventInfo> traceMap2 = unitUnderTest2.eventId2EventInfoMap;
 
         Thread.sleep(200); // Wait for the async remove operation to complete
 
@@ -489,20 +491,21 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
     public void validateInstanceListeners() throws InterruptedException {
 
         // Assemble
-        final DebugCacheListener listener1 = new DebugCacheListener("listener_1");
+        final DebugCacheListener<Object> listener1 = new DebugCacheListener<Object>("listener_1");
         hzCache1.addInstanceListener(listener1);
 
         // Act
         final Queue<String> queue =
                 (Queue<String>) hzCache1.getDistributedCollection(
                         DistributedCache.DistributedCollectionType.QUEUE, "queue_1");
+        Assert.assertNotNull(queue);
         Thread.sleep(500);
 
         final boolean successfullyRemoved = hzCache1.removeInstanceListener(listener1.getClusterId());
 
         // Assert
         Assert.assertTrue(successfullyRemoved);
-        final TreeMap<Integer, DebugCacheListener.EventInfo> eventMap1 = listener1.eventId2KeyValueMap;
+        final TreeMap<Integer, DebugCacheListener<Object>.EventInfo> eventMap1 = listener1.eventId2EventInfoMap;
 
         Assert.assertTrue(eventMap1.size() > 0);
         final DebugCacheListener.EventInfo info = eventMap1.get(1);
@@ -516,7 +519,7 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
     public void validateExceptionOnAddingNullInstanceListener() throws InterruptedException {
 
         // Assemble
-        final DebugCacheListener incorrectNull = null;
+        final DebugCacheListener<Object> incorrectNull = null;
 
         // Act & Assert
         hzCache1.addInstanceListener(incorrectNull);
@@ -526,8 +529,8 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
     public void validateExceptionOnAddingAlreadyAddedInstanceListener() throws InterruptedException {
 
         // Assemble
-        final DebugCacheListener listener1 = new DebugCacheListener("listener_1");
-        final DebugCacheListener listener2WithSameIDasListener1 = new DebugCacheListener("listener_1");
+        final DebugCacheListener<Object> listener1 = new DebugCacheListener<Object>("listener_1");
+        final DebugCacheListener<Object> listener2WithSameIDasListener1 = new DebugCacheListener<Object>("listener_1");
 
         // Act & Assert
         try {
@@ -543,7 +546,7 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
     public void validateGracefulReturnOnRemovingNullOrNonexistentInstanceListener() throws InterruptedException {
 
         // Assemble
-        final DebugCacheListener listener1 = new DebugCacheListener("listener_1");
+        final DebugCacheListener<Object> listener1 = new DebugCacheListener<Object>("listener_1");
         hzCache1.addInstanceListener(listener1);
 
         // Act
@@ -560,30 +563,32 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
     // private helpers
     //
 
-    private void validateEventInfo(final DebugCacheListener.EventInfo info, final String expectedType,
-                                   final String expectedKey, final String expectedValue) {
+    private void validateEventInfo(final DebugCacheListener<Object>.EventInfo info,
+                                   final String expectedType,
+                                   final String expectedKey,
+                                   final String expectedValue) {
 
         Assert.assertEquals(expectedType, info.eventType);
         Assert.assertEquals(expectedKey, info.key);
         Assert.assertEquals(expectedValue, info.value);
     }
 
-    private void validateCollectionEventInfo(final DebugCacheListener.EventInfo info, final String expectedType,
+    private void validateCollectionEventInfo(final DebugCacheListener<Object>.EventInfo info, final String expectedType,
                                              final String expectedValue) {
 
-        validateEventInfo(info, expectedType, HazelcastCacheListenerAdapter.ILLUSORY_KEY_FOR_COLLECTIONS, expectedValue);
+        validateEventInfo(info, expectedType, AbstractHazelcastCacheListenerAdapter.ILLUSORY_KEY_FOR_COLLECTIONS, expectedValue);
     }
 
-    private void validateEventInfo(final DebugCacheListener.EventInfo info, final String expectedType) {
+    private void validateEventInfo(final DebugCacheListener<Object>.EventInfo info, final String expectedType) {
 
         validateEventInfo(info, expectedType, key, value);
     }
 
-    private void printEventInfoMap(final TreeMap<Integer, DebugCacheListener.EventInfo> map) {
+    private void printEventInfoMap(final TreeMap<Integer, DebugCacheListener<Object>.EventInfo> map) {
 
         log.info(" logging eventInfoMap ");
 
-        for (final Map.Entry<Integer, DebugCacheListener.EventInfo> current : map.entrySet()) {
+        for (final Map.Entry<Integer, DebugCacheListener<Object>.EventInfo> current : map.entrySet()) {
             log.info("[" + current.getKey() + "]: " + current.getValue());
         }
     }

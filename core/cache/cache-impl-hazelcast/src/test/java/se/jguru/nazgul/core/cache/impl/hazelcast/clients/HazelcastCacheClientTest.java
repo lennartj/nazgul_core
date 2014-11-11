@@ -27,9 +27,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import se.jguru.nazgul.core.cache.impl.hazelcast.AbstractHazelcastCacheTest;
-import se.jguru.nazgul.core.cache.impl.hazelcast.DebugCacheListener;
+import se.jguru.nazgul.core.cache.impl.hazelcast.helpers.DebugCacheListener;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.TreeMap;
 
@@ -69,10 +68,10 @@ public class HazelcastCacheClientTest extends AbstractHazelcastCacheTest {
     @Test
     public void validateCacheClientOperations() {
         // Act
-        final Serializable before = hzCache1.put(key, value);
-        final Serializable valueInClient = cacheClient.get(key);
-        final Serializable removedValueInClient = cacheClient.remove(key);
-        final Serializable afterInCache = hzCache1.get(key);
+        final Object before = hzCache1.put(key, value);
+        final Object valueInClient = cacheClient.get(key);
+        final Object removedValueInClient = cacheClient.remove(key);
+        final Object afterInCache = hzCache1.get(key);
 
         // Assert
         // Assert.assertTrue(successAddition);
@@ -86,14 +85,14 @@ public class HazelcastCacheClientTest extends AbstractHazelcastCacheTest {
     public void validateExceptionOnCacheClientListenerAddition() {
 
         // Assemble
-        final DebugCacheListener cacheListener = new DebugCacheListener("cacheClientListener");
+        final DebugCacheListener<Object> cacheListener = new DebugCacheListener<Object>("cacheClientListener");
 
         // Act
         final boolean successAddition = cacheClient.addListener(cacheListener);
-        final Serializable before = hzCache1.put(key, value);
-        final Serializable valueInClient = cacheClient.get(key);
-        final Serializable removedValueInClient = cacheClient.remove(key);
-        final Serializable afterInCache = hzCache1.get(key);
+        final Object before = hzCache1.put(key, value);
+        final Object valueInClient = cacheClient.get(key);
+        final Object removedValueInClient = cacheClient.remove(key);
+        final Object afterInCache = hzCache1.get(key);
 
         // Assert
         Assert.assertTrue(successAddition);
@@ -102,7 +101,7 @@ public class HazelcastCacheClientTest extends AbstractHazelcastCacheTest {
         Assert.assertEquals(value, removedValueInClient);
         Assert.assertNull(afterInCache);
 
-        final TreeMap<Integer, DebugCacheListener.EventInfo> events = cacheListener.eventId2KeyValueMap;
+        final TreeMap<Integer, DebugCacheListener<Object>.EventInfo> events = cacheListener.eventId2EventInfoMap;
         System.out.println("Got: " + events);
     }
 }

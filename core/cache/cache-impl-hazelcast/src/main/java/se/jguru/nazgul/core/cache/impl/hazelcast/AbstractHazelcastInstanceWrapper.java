@@ -58,7 +58,7 @@ import java.util.concurrent.ExecutorService;
  */
 @SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
 public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcastCacheListenerManager
-        implements MessageListener<AdminMessage>, DistributedExecutor<String> {
+        implements MessageListener<AdminMessage>, DistributedExecutor<String, Object> {
 
     // Our log
     private static final Logger log = LoggerFactory.getLogger(AbstractHazelcastInstanceWrapper.class);
@@ -91,14 +91,14 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
      *
      * @param listener The listener to add.
      */
-    public final void addInstanceListener(final CacheListener<String> listener) {
+    public final void addInstanceListener(final CacheListener<String, Object> listener) {
 
         if (listener == null || isLocallyRegistered(listener)) {
             throw new IllegalArgumentException("Cannot add null or already registered listener");
         }
 
         synchronized (lock) {
-            final HazelcastCacheListenerAdapter wrapper = new HazelcastCacheListenerAdapter(listener);
+            final StringKeyedHazelcastListenerAdapter wrapper = new StringKeyedHazelcastListenerAdapter(listener);
             getLocallyRegisteredListeners().put(listener.getClusterId(), wrapper);
             cacheInstance.addDistributedObjectListener(wrapper);
         }
@@ -118,10 +118,8 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
 
         synchronized (lock) {
             getLocallyRegisteredListeners().remove(listenerID);
-            cacheInstance.removeDistributedObjectListener(listenerID);
+            return cacheInstance.removeDistributedObjectListener(listenerID);
         }
-
-        return true;
     }
 
     /**
@@ -205,7 +203,7 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
      * @return The value corresponding to the provided key, or <code>null</code> if no object was found.
      */
     @Override
-    public final Serializable get(final String key) {
+    public final Object get(final String key) {
         return getSharedMap().get(key);
     }
 
@@ -218,8 +216,8 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
      * @return The previous value associated with <code>key</code>, or <code>null</code> if no such object exists.
      */
     @Override
-    public final Serializable put(final String key, final Serializable value) {
-        return getSharedMap().put(key, value);
+    public final Object put(final String key, final Object value) {
+        return getSharedMap().put(key, getSerializable(value));
     }
 
     /**
@@ -230,7 +228,7 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
      * @return The object to remove.
      */
     @Override
-    public final Serializable remove(final String key) {
+    public final Object remove(final String key) {
         return getSharedMap().remove(key);
     }
 
@@ -292,7 +290,7 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
      * @return The shared Map holding the default (direct-level) cached instances.
      */
     @Override
-    public final IMap<String, Serializable> getSharedMap() {
+    public final IMap<String, Object> getSharedMap() {
         return cacheInstance.getMap(CLUSTER_SHARED_CACHE_MAP);
     }
 
@@ -345,8 +343,7 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
      * @throws UnsupportedDistributionException if the underlying cache implementation could not support creating a distributed Map.
      */
     @Override
-    public final <K extends Serializable, V extends Serializable> Map<K, V> getDistributedMap(final String key)
-            throws UnsupportedDistributionException {
+    public <K, V> Map<K, V> getDistributedMap(final String key) throws UnsupportedDistributionException {
         return cacheInstance.getMap(key);
     }
 
@@ -422,7 +419,7 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
                         }
 
                         // Remove the listener locally.
-                        final HazelcastCacheListenerAdapter removed
+                        final AbstractHazelcastCacheListenerAdapter removed
                                 = getLocallyRegisteredListeners().remove(toRemoveId);
 
                         // Remove the listener ID from the listenersIdMap,
@@ -553,5 +550,19 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
      */
     protected final Collection<DistributedObject> getInstances() {
         return cacheInstance.getDistributedObjects();
+    }
+
+    //
+    // Private helpers
+    //
+
+    private Serializable getSerializable(final Object object) {
+
+        if(object == null || object instanceof Serializable) {
+            return (Serializable) object;
+        }
+
+        // This is a non-null object which is not Serializable.
+        throw new IllegalArgumentException("Could not convert [" + object.getClass().getName() + "] to Serializable.");
     }
 }

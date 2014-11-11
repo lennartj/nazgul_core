@@ -206,7 +206,7 @@ public class HazelcastCacheFactoryTest {
         List<Integer> toReturn = new ArrayList<Integer>();
 
         for (Member current : members) {
-            toReturn.add(current.getInetSocketAddress().getPort());
+            toReturn.add(current.getSocketAddress().getPort());
         }
 
         Collections.sort(toReturn);

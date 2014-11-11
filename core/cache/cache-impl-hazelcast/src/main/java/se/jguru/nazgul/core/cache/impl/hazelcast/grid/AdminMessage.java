@@ -150,7 +150,7 @@ public final class AdminMessage implements Serializable, DataSerializable {
     }
 
     //
-    // DataSerializable implementation
+    // DataSerializable implementation, to improve Hazelcast performance.
     //
 
     /**

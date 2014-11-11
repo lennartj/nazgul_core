@@ -62,7 +62,7 @@ public interface GridOperations {
     /**
      * @return The shared Map holding the default (direct-level) cached instances.
      */
-    IMap<String, Serializable> getSharedMap();
+    IMap<String, Object> getSharedMap();
 
     /**
      * @return The shared Map relating IDs for distributed objects [key] to
