@@ -21,13 +21,23 @@
  */
 package se.jguru.nazgul.core.cache.impl.hazelcast;
 
+import com.hazelcast.config.Config;
+import com.hazelcast.config.MapConfig;
+import com.hazelcast.config.MaxSizeConfig;
+import com.hazelcast.config.NetworkConfig;
+import com.hazelcast.core.EntryAdapter;
+import com.hazelcast.core.EntryEvent;
+import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import com.hazelcast.core.MapEvent;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.cache.api.distributed.DistributedCache;
 import se.jguru.nazgul.core.cache.impl.hazelcast.clients.HazelcastCacheMember;
 import se.jguru.nazgul.core.cache.impl.hazelcast.trivialmodel.DebugSerializationEntity;
@@ -40,9 +50,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * This testcase is *very important* in that it tracks how the currently used release of
@@ -51,6 +65,9 @@ import java.util.TreeSet;
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 public class HazelcastCacheStrangeInternalBehaviourTest extends AbstractHazelcastCacheTest {
+
+    // Our log
+    private static final Logger log = LoggerFactory.getLogger(HazelcastCacheStrangeInternalBehaviourTest.class);
 
     private static final String SLF4J_CONFIGURATION_PATH = "config/logging/logback-test-silent.xml";
     private static final String configFile = "config/hazelcast/StandaloneConfig.xml";
@@ -303,38 +320,131 @@ public class HazelcastCacheStrangeInternalBehaviourTest extends AbstractHazelcas
         System.out.println("unsortedDistSet.clear() missed [" + unsortedSetSizeAfter + "] elements.");
     }
 
-    /*
-     * public void validateBrokenClearInDistributedCollection() { // Assemble final int numEntities = 150; final Config
-     * conf = AbstractHazelcastInstanceWrapper.readConfigFile("config/hazelcast/StandaloneConfig.xml"); final
-     * HazelcastInstance hzInstance = Hazelcast.newHazelcastInstance(conf); final Set<CollectionWrappingEntity>
-     * distSetWithSortedCollection = hzInstance.getSet("distSetWithSortedCollection"); final
-     * Set<CollectionWrappingEntity> distSetWithUnsortedCollection = hzInstance.getSet("distSetWithUnsortedCollection");
-     * final Collection<CollectionWrappingEntity> distCollectionWithSortedCollection =
-     * hzInstance.getList("distCollectionWithSortedCollection"); final Collection<CollectionWrappingEntity>
-     * distCollectionWithUnsortedCollection = hzInstance.getList("distCollectionWithUnsortedCollection"); final
-     * Queue<CollectionWrappingEntity> distQueueWithSortedCollection =
-     * hzInstance.getQueue("distQueueWithSortedCollection"); final Queue<CollectionWrappingEntity>
-     * distQueueWithUnsortedCollection = hzInstance.getQueue("distQueueWithUnsortedCollection"); final Set<String>
-     * sortedCollection = new TreeSet<String>(); final Set<String> unsortedCollection = new HashSet<String>(); final
-     * List<String> list1 = new ArrayList<String>(); final List<String> list2 = new LinkedList<String>(); for(int i = 0;
-     * i < numEntities; i++) { sortedCollection.add("entry_" + i); unsortedCollection.add("entry_" + i);
-     * list1.add("entry_" + i); list2.add("entry_" + i); } // Act for (int i = 0; i < numEntities; i++) {
-     * distSetWithSortedCollection.add(new CollectionWrappingEntity("Name_" + i, sortedCollection));
-     * distSetWithUnsortedCollection.add(new CollectionWrappingEntity("Name_" + i, unsortedCollection));
-     * distCollectionWithSortedCollection.add(new DebugSerializationEntity("name_" + i, i, friends));
-     * distQueueWithSortedCollection.add(new DebugSerializationEntity("name_" + i, i, friends)); } final int setSize =
-     * distSetWithSortedCollection.size(); final int collSize = distCollectionWithSortedCollection.size(); final int
-     * queueSize = distQueueWithSortedCollection.size(); distSetWithSortedCollection.clear();
-     * distCollectionWithSortedCollection.clear(); distQueueWithSortedCollection.clear(); // Assert
-     * Assert.assertEquals(numEntities, setSize); Assert.assertEquals(numEntities, collSize);
-     * Assert.assertEquals(numEntities, queueSize); Assert.assertEquals(0, distSetWithSortedCollection.size());
-     * Assert.assertEquals(0, distCollectionWithSortedCollection.size()); Assert.assertEquals(0,
-     * distQueueWithSortedCollection.size()); }
-     */
+    class SynchronizedEntryListener extends EntryAdapter<String, String> {
 
-    //
-    // Private helpers
-    //
+        // Internal state
+        private final Object[] lock = new Object[0];
+        private AtomicInteger counter = new AtomicInteger();
+        private SortedMap<String, SortedMap<Integer, String>> threadName2OrderedMessagesMap
+                = new TreeMap<String, SortedMap<Integer, String>>();
+
+        @Override
+        public void onEntryEvent(final EntryEvent<String, String> event) {
+            synchronized (lock) {
+
+                final SortedMap<Integer, String> orderedMessages = getOrderedMessageMap();
+                final String message = "onEntryEvent: " + event.getEventType().toString()
+                        + " - [" + event.getKey() + "]: " + event.getOldValue() + " --> " + event.getValue();
+                orderedMessages.put(counter.getAndIncrement(), message);
+            }
+        }
+
+        @Override
+        public void onMapEvent(final MapEvent event) {
+            synchronized (lock) {
+                final SortedMap<Integer, String> orderedMessages = getOrderedMessageMap();
+                final String message = "onMapEvent: " + event.getEventType().toString()
+                        + " - [" + event.getName() + "(" + event.getNumberOfEntriesAffected() + "]: "
+                        + event.getEventType();
+                orderedMessages.put(counter.getAndIncrement(), message);
+            }
+        }
+
+        @Override
+        public String toString() {
+
+            StringBuilder builder = new StringBuilder("\n\n\n######################################\n");
+            for (Map.Entry<String, SortedMap<Integer, String>> current : threadName2OrderedMessagesMap.entrySet()) {
+
+                final String threadName = current.getKey();
+                for (Map.Entry<Integer, String> currentMessageTuple : current.getValue().entrySet()) {
+                    builder.append("(" + threadName + ") [" + currentMessageTuple.getKey() + "]: "
+                            + currentMessageTuple.getValue() + "\n");
+                }
+            }
+            return builder.toString() + "######################################\n\n\n";
+        }
+
+        public SortedMap<String, SortedMap<Integer, String>> getThreadName2OrderedMessagesMap() {
+            return threadName2OrderedMessagesMap;
+        }
+
+        private SortedMap<Integer, String> getOrderedMessageMap() {
+
+            final String threadName = Thread.currentThread().getName();
+
+            SortedMap<Integer, String> orderedMessages = threadName2OrderedMessagesMap.get(threadName);
+            if (orderedMessages == null) {
+                orderedMessages = new TreeMap<Integer, String>();
+                threadName2OrderedMessagesMap.put(threadName, orderedMessages);
+            }
+
+            return orderedMessages;
+        }
+    }
+
+    @Test
+    public void validateStrangeOrderingInListenerEvents() throws Exception {
+
+        // Assemble
+        final String key = "key";
+        final String value = "value";
+        final String quickEvictionMapId = "quickEvictionMap";
+        final int maxCacheSize = 4;
+        final int evictionPercentage = 25;
+
+        final Config config = new Config("orderingTestInstance");
+        final MapConfig mapConfig = config.getMapConfig(quickEvictionMapId);
+        mapConfig.setEvictionPolicy(MapConfig.EvictionPolicy.LFU);
+        mapConfig.setEvictionPercentage(evictionPercentage);
+        mapConfig.setMaxSizeConfig(new MaxSizeConfig().setSize(maxCacheSize));
+        final NetworkConfig networkConfig = config.getNetworkConfig();
+        networkConfig.getJoin().getMulticastConfig().setEnabled(false);
+
+        final HazelcastInstance cache = Hazelcast.getOrCreateHazelcastInstance(config);
+
+        final int expectedRemainingAfterEviction = (int) (mapConfig.getMaxSizeConfig().getSize()
+                * (100.0d - (double) mapConfig.getEvictionPercentage()) / 100.0d) - 1;
+
+
+        final SynchronizedEntryListener listener = new SynchronizedEntryListener();
+
+        // Act
+        final IMap<String, String> map = cache.getMap(quickEvictionMapId);
+        map.addEntryListener(listener, true);
+        Thread.sleep(200);
+
+        for (int i = 0; i < maxCacheSize + 1; i++) {
+            map.put(key + "_" + i, value + "_" + i);
+        }
+        Thread.sleep(200);
+
+        // Assert
+        System.out.println(listener.toString());
+        Assert.assertEquals(expectedRemainingAfterEviction, map.size());
+
+        final SortedMap<String, SortedMap<Integer, String>> threadName2OrderedMessagesMap
+                = listener.getThreadName2OrderedMessagesMap();
+        SortedMap<Integer, String> firstThreadWithTwoEvents = null;
+        for (Map.Entry<String, SortedMap<Integer, String>> current : threadName2OrderedMessagesMap.entrySet()) {
+
+            // Do we have exactly 2 events recorded in the current Map?
+            final SortedMap<Integer, String> currentMap = current.getValue();
+            if (currentMap.size() == 2) {
+                firstThreadWithTwoEvents = currentMap;
+                log.info("Found 2 events for thread [" + current.getKey() + "]");
+            }
+        }
+
+        final List<String> orderedEvents = new ArrayList<>();
+        for (Map.Entry<Integer, String> current : firstThreadWithTwoEvents.entrySet()) {
+            orderedEvents.add(current.getValue());
+        }
+
+        // Verify the incorrect ordering.
+        Assert.assertTrue(orderedEvents.get(0).contains("EVICTED"));
+        Assert.assertTrue(orderedEvents.get(1).contains("ADDED"));
+    }
 
     @Test
     public void showSerializationProblem() throws Exception {
@@ -369,6 +479,11 @@ public class HazelcastCacheStrangeInternalBehaviourTest extends AbstractHazelcas
         Assert.assertTrue(before2List.equals(after2List));
         Assert.assertFalse(before1List.equals(after1List));
     }
+
+    //
+    // Private helpers
+    //
+
 
     private Set<String> populate(final int numElements, final Set<String> coll, final String prefix) {
 

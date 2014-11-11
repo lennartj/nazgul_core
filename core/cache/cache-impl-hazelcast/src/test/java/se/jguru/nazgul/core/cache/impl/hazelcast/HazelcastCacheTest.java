@@ -31,6 +31,7 @@ import se.jguru.nazgul.core.cache.api.distributed.async.LightweightTopic;
 import se.jguru.nazgul.core.cache.impl.hazelcast.clients.HazelcastCacheMember;
 import se.jguru.nazgul.core.cache.impl.hazelcast.grid.AdminMessage;
 import se.jguru.nazgul.core.cache.impl.hazelcast.grid.GridOperations;
+import se.jguru.nazgul.core.cache.impl.hazelcast.helpers.DebugCacheListener;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -84,8 +85,8 @@ public class HazelcastCacheTest extends AbstractHazelcastCacheTest {
         final String cacheIDEnd = "_unittest-cache-group";
 
         // Act
-        final Serializable previous = hzCache1.put(key, value);
-        final Serializable result = hzCache1.get(key);
+        final Object previous = hzCache1.put(key, value);
+        final Object result = hzCache1.get(key);
 
         // Assert
         Assert.assertNull(previous);
@@ -100,8 +101,8 @@ public class HazelcastCacheTest extends AbstractHazelcastCacheTest {
     public void validateDirectCachingInDistributedCache() {
 
         // Act
-        final Serializable previous = hzCache1.put(key, value);
-        final Serializable result = hzCache2.get(key);
+        final Object previous = hzCache1.put(key, value);
+        final Object result = hzCache2.get(key);
 
         // Assert
         Assert.assertNotSame(hzCache1, hzCache2);
@@ -117,7 +118,7 @@ public class HazelcastCacheTest extends AbstractHazelcastCacheTest {
         // Act
         final Map<String, String> distMap1 = hzCache1.getDistributedMap(TEST_DIST_MAP);
         final Serializable previous = distMap1.put(key, value);
-        final Serializable result = hzCache2.getDistributedMap(TEST_DIST_MAP).get(key);
+        final Object result = hzCache2.getDistributedMap(TEST_DIST_MAP).get(key);
 
         // Assert
         Assert.assertNotNull(distMap1);
@@ -135,7 +136,7 @@ public class HazelcastCacheTest extends AbstractHazelcastCacheTest {
         hzCache1.stopCache();
         Thread.sleep(200);      // Wait for the cache instance to make a full stop.
 
-        final Serializable result = hzCache2.getDistributedMap(TEST_DIST_MAP).get(key);
+        final Object result = hzCache2.getDistributedMap(TEST_DIST_MAP).get(key);
 
         // Restore cache instance
         hzCache1 = getCache(configFile);
@@ -158,7 +159,7 @@ public class HazelcastCacheTest extends AbstractHazelcastCacheTest {
         adminTopic.publish(AdminMessage.createShutdownInstanceMessage(hzCache1.getClusterId()));
         Thread.sleep(200);      // Wait for the cache instance to make a full stop.
 
-        final Serializable result = hzCache2.getDistributedMap(TEST_DIST_MAP).get(key);
+        final Object result = hzCache2.getDistributedMap(TEST_DIST_MAP).get(key);
 
         // Restore cache instance
         hzCache1 = getCache(configFile);
@@ -174,7 +175,7 @@ public class HazelcastCacheTest extends AbstractHazelcastCacheTest {
 
         // Assemble
         final HazelcastInstance internalInstance = getInternalInstance(hzCache1);
-        final DebugCacheListener listener1 = new DebugCacheListener("listener_1");
+        final DebugCacheListener<Object> listener1 = new DebugCacheListener<Object>("listener_1");
 
         // Act & Assert
         final IAtomicLong number = internalInstance.getAtomicLong("foo");
@@ -186,7 +187,8 @@ public class HazelcastCacheTest extends AbstractHazelcastCacheTest {
 
         // Assemble
         final HazelcastInstance internalInstance = getInternalInstance(hzCache1);
-        final DebugCacheListener listener1 = new DebugCacheListener("listener_validateHazelcastTransactionRollback");
+        final DebugCacheListener<Object> listener1
+                = new DebugCacheListener<Object>("listener_validateHazelcastTransactionRollback");
         final String expectedErrorMessage = "Will not add listener to an instance of type [ATOMIC_NUMBER]. "
                 + "Supported types are [LIST, SET, QUEUE, MAP].";
 

@@ -462,7 +462,6 @@
     <!--
         Use SLF4J for logging.
     -->
-
     <properties>
         <property name="hazelcast.logging.type">slf4j</property>
     </properties>

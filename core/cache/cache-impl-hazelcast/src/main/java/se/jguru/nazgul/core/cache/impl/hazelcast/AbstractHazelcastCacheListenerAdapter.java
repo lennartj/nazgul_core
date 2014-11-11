@@ -42,11 +42,11 @@ import java.io.Serializable;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class HazelcastCacheListenerAdapter implements DistributedObjectListener, ItemListener,
-        EntryListener, Serializable {
+public abstract class AbstractHazelcastCacheListenerAdapter<K, V>
+        implements DistributedObjectListener, ItemListener<V>, EntryListener<K, V>, Serializable {
 
     // Our log
-    private static final Logger log = LoggerFactory.getLogger(HazelcastCacheListenerAdapter.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractHazelcastCacheListenerAdapter.class);
 
     /**
      * Key used for callback methods whenever this cacheListenerAdapter is wired to a distributed Collection, and a key
@@ -55,7 +55,7 @@ public class HazelcastCacheListenerAdapter implements DistributedObjectListener,
     public static final String ILLUSORY_KEY_FOR_COLLECTIONS = "collectionsDontUseKeys-OnlyValues";
 
     // Internal state
-    private CacheListener listener;
+    private CacheListener<K, V> listener;
 
     /**
      * Creates a new HazelcastCacheListenerAdapter for a Cache instance.
@@ -63,7 +63,7 @@ public class HazelcastCacheListenerAdapter implements DistributedObjectListener,
      * @param listener A cacheListener to which we the events of this HazelcastCacheListenerAdapter will be delegated.
      * @throws IllegalArgumentException if the listener argument is null.
      */
-    public HazelcastCacheListenerAdapter(final CacheListener listener) throws IllegalArgumentException {
+    public AbstractHazelcastCacheListenerAdapter(final CacheListener<K, V> listener) throws IllegalArgumentException {
 
         // Check sanity
         Validate.notNull(listener, "Cannot handle null listener argument.");
@@ -79,12 +79,12 @@ public class HazelcastCacheListenerAdapter implements DistributedObjectListener,
     public boolean equals(final Object obj) {
 
         // Check sanity
-        if (obj == null || !(obj instanceof HazelcastCacheListenerAdapter)) {
+        if (obj == null || !(obj instanceof AbstractHazelcastCacheListenerAdapter)) {
             return false;
         }
 
         // Delegate to our identifier.
-        final HazelcastCacheListenerAdapter that = (HazelcastCacheListenerAdapter) obj;
+        final AbstractHazelcastCacheListenerAdapter that = (AbstractHazelcastCacheListenerAdapter) obj;
         return getId().equals(that.getId());
     }
 
@@ -95,7 +95,7 @@ public class HazelcastCacheListenerAdapter implements DistributedObjectListener,
     public int hashCode() {
 
         int toReturn = 0;
-        if(listener != null)  {
+        if (listener != null) {
             toReturn = listener.getClusterId().hashCode();
         }
 
@@ -116,11 +116,9 @@ public class HazelcastCacheListenerAdapter implements DistributedObjectListener,
      * @param entryEvent entry event
      */
     @Override
-    public void entryAdded(final EntryEvent entryEvent) {
-
+    public void entryAdded(final EntryEvent<K, V> entryEvent) {
         logEntryEvent(entryEvent, "Added");
-
-        listener.onPut(getSerializable(entryEvent.getKey()), (Serializable) entryEvent.getValue());
+        listener.onPut(entryEvent.getKey(), entryEvent.getValue());
     }
 
     /**
@@ -129,11 +127,9 @@ public class HazelcastCacheListenerAdapter implements DistributedObjectListener,
      * @param entryEvent entry event
      */
     @Override
-    public void entryRemoved(final EntryEvent entryEvent) {
-
+    public void entryRemoved(final EntryEvent<K, V> entryEvent) {
         logEntryEvent(entryEvent, "Removed");
-
-        listener.onRemove(getSerializable(entryEvent.getKey()), (Serializable) entryEvent.getValue());
+        listener.onRemove(entryEvent.getKey(), entryEvent.getValue());
     }
 
     /**
@@ -142,12 +138,9 @@ public class HazelcastCacheListenerAdapter implements DistributedObjectListener,
      * @param entryEvent entry event
      */
     @Override
-    public void entryUpdated(final EntryEvent entryEvent) {
-
+    public void entryUpdated(final EntryEvent<K, V> entryEvent) {
         logEntryEvent(entryEvent, "Updated");
-
-        listener.onUpdate(getSerializable(entryEvent.getKey()), (Serializable) entryEvent.getValue(),
-                (Serializable) entryEvent.getOldValue());
+        listener.onUpdate(entryEvent.getKey(), entryEvent.getValue(), entryEvent.getOldValue());
     }
 
     /**
@@ -156,11 +149,9 @@ public class HazelcastCacheListenerAdapter implements DistributedObjectListener,
      * @param entryEvent entry event
      */
     @Override
-    public void entryEvicted(final EntryEvent entryEvent) {
-
+    public void entryEvicted(final EntryEvent<K, V> entryEvent) {
         logEntryEvent(entryEvent, "Evicted");
-
-        listener.onAutonomousEvict(getSerializable(entryEvent.getKey()), (Serializable) entryEvent.getValue());
+        listener.onAutonomousEvict(entryEvent.getKey(), entryEvent.getValue());
     }
 
     /**
@@ -169,13 +160,31 @@ public class HazelcastCacheListenerAdapter implements DistributedObjectListener,
      * @param itemEvent event with the removed item.
      */
     @Override
-    public void itemAdded(final ItemEvent itemEvent) {
+    public void itemAdded(final ItemEvent<V> itemEvent) {
 
-        final Object item = itemEvent.getItem();
+        final V item = itemEvent.getItem();
         log.debug("Added item of type [" + item.getClass().getName() + "]");
 
-        listener.onPut(ILLUSORY_KEY_FOR_COLLECTIONS, (Serializable) item);
+        // Create the synthetic key and delegate the put to the
+        listener.onPut(convertFrom(ILLUSORY_KEY_FOR_COLLECTIONS), item);
     }
+
+    /**
+     * Acquires a synthetic key of type K used to pad the Cache listener specification when a cache key
+     * is not available from an event generated by the cache. Typically, this is the case when
+     *
+     * @param distributedObjectId The ID of the distributed object for which this synthetic key should be retrieved.
+     * @return a synthetic key of type K used to satisfy the Cache listener API when a cache key is not available.
+     */
+    protected abstract K convertFrom(final String distributedObjectId);
+
+    /**
+     * Creates a V type value from the supplied source object.
+     *
+     * @param source a non-null source.
+     * @return A cache-compliant value source.
+     */
+    protected abstract V createFrom(final Object source);
 
     /**
      * Invoked when an item is removed.
@@ -183,12 +192,12 @@ public class HazelcastCacheListenerAdapter implements DistributedObjectListener,
      * @param itemEvent event with the removed item.
      */
     @Override
-    public void itemRemoved(final ItemEvent itemEvent) {
+    public void itemRemoved(final ItemEvent<V> itemEvent) {
 
-        final Object item = itemEvent.getItem();
+        final V item = itemEvent.getItem();
         log.debug("Removed item of type [" + item.getClass().getName() + "]");
 
-        listener.onRemove(ILLUSORY_KEY_FOR_COLLECTIONS, (Serializable) item);
+        listener.onRemove(convertFrom(ILLUSORY_KEY_FOR_COLLECTIONS), item);
     }
 
     /**
@@ -200,7 +209,7 @@ public class HazelcastCacheListenerAdapter implements DistributedObjectListener,
         log.debug("Created DistributedObject of type [" + event.getDistributedObject().getClass().getName() + "]");
 
         final DistributedObject theInstance = event.getDistributedObject();
-        listener.onPut("" + theInstance.getName(), (Serializable) theInstance);
+        listener.onPut(convertFrom(theInstance.getName()), createFrom(theInstance));
     }
 
     /**
@@ -212,7 +221,7 @@ public class HazelcastCacheListenerAdapter implements DistributedObjectListener,
         log.debug("Destroyed DistributedObject of type [" + event.getDistributedObject().getClass().getName() + "]");
 
         final DistributedObject theInstance = event.getDistributedObject();
-        listener.onRemove("" + theInstance.getName(), (Serializable) theInstance);
+        listener.onRemove(convertFrom(theInstance.getName()), createFrom(theInstance));
     }
 
     /**
@@ -221,15 +230,11 @@ public class HazelcastCacheListenerAdapter implements DistributedObjectListener,
     @Override
     public void mapEvicted(final MapEvent event) {
 
-        log.debug("Evicted IMap [" + event.getName() + "]");
-
-        final Object eventSource = event.getSource();
-        final String eventSourceType = eventSource == null ? "<null EventSource>" : eventSource.getClass().getName();
-        final Serializable src = eventSource instanceof Serializable
-                ? (Serializable) eventSource
-                : "<non-serializable eventSource of type [" + eventSourceType + "]>";
-
-        listener.onRemove("" + event.getName(), src);
+        if (log.isDebugEnabled()) {
+            log.debug("Evicted IMap [" + event.getName() + "], affecting ["
+                    + event.getNumberOfEntriesAffected() + "] entries.");
+        }
+        listener.onRemove(convertFrom(event.getName()), createFrom(event.getSource()));
     }
 
     /**
@@ -238,14 +243,7 @@ public class HazelcastCacheListenerAdapter implements DistributedObjectListener,
     @Override
     public void mapCleared(final MapEvent event) {
         log.debug("Cleared IMap [" + event.getName() + "]");
-
-        final Object eventSource = event.getSource();
-        final String eventSourceType = eventSource == null ? "<null EventSource>" : eventSource.getClass().getName();
-        final Serializable src = eventSource instanceof Serializable
-                ? (Serializable) eventSource
-                : "<non-serializable eventSource of type [" + eventSourceType + "]>";
-
-        listener.onRemove("" + event.getName(), src);
+        listener.onRemove(convertFrom(event.getName()), createFrom(event.getSource()));
     }
 
     /**
@@ -275,7 +273,7 @@ public class HazelcastCacheListenerAdapter implements DistributedObjectListener,
      * @param entryEvent The EntryEvent from Hazelcast.
      * @param action     The EntryEvent action, such as "Added".
      */
-    private void logEntryEvent(final EntryEvent entryEvent, final String action) {
+    private void logEntryEvent(final EntryEvent<K, V> entryEvent, final String action) {
 
         if (log.isDebugEnabled()) {
 
@@ -289,27 +287,5 @@ public class HazelcastCacheListenerAdapter implements DistributedObjectListener,
                     + memberIP + "]" + localMember + ". Key: " + entryEvent.getKey() + ", Value: "
                     + entryEvent.getValue());
         }
-    }
-
-    /**
-     * Converts the provided object to a Serializable to be used for CacheListener keys.
-     *
-     * @param obj The object to convert.
-     * @return The serializable to be used as a key.
-     */
-    private Serializable getSerializable(final Object obj) {
-
-        if (obj instanceof Serializable) {
-            return (Serializable) obj;
-        }
-
-        final String toReturn = obj.toString();
-
-        if (log.isWarnEnabled()) {
-            log.warn("Got non-serializable key [" + obj.getClass().getName() + "]. Emitting string version ["
-                    + toReturn + "]");
-        }
-
-        return toReturn;
     }
 }

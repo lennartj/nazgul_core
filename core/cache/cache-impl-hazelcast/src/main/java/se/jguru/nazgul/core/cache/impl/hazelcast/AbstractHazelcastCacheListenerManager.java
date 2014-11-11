@@ -53,13 +53,13 @@ import java.util.TreeSet;
  */
 @SuppressWarnings({"rawtypes", "unchecked", "serial"})
 public abstract class AbstractHazelcastCacheListenerManager extends AbstractClusterable
-        implements GridOperations, DestinationProvider<String> {
+        implements GridOperations, DestinationProvider<String, Object> {
 
     // Our log
     private static final Logger log = LoggerFactory.getLogger(AbstractHazelcastCacheListenerManager.class);
 
     // Internal state
-    private Map<String, HazelcastCacheListenerAdapter> locallyRegisteredListeners = new TreeMap<>();
+    private Map<String, AbstractHazelcastCacheListenerAdapter> locallyRegisteredListeners = new TreeMap<>();
     protected final Object lock = new Object();
 
     /**
@@ -79,7 +79,7 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
      * @return true if the cacheListener was added, and false otherwise.
      */
     @Override
-    public final boolean addListener(final CacheListener listener) {
+    public final boolean addListener(final CacheListener<String, Object> listener) {
         return addListenerFor(getSharedMap(), listener);
     }
 
@@ -138,7 +138,7 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
      *                                  for the underlying cache implementation).
      */
     @Override
-    public final boolean addListenerFor(final Object distributedObject, final CacheListener listener)
+    public final boolean addListenerFor(final Object distributedObject, final CacheListener<String, Object> listener)
             throws IllegalArgumentException {
 
         final DistributedObject distObject = cast(distributedObject);
@@ -160,7 +160,7 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
         // Do we have a mismatch between the knownListenerIDs and our locallyRegisteredListeners map?
         if (locallyRegisteredListeners.containsKey(listener.getClusterId())) {
             if (log.isWarnEnabled()) {
-                final HazelcastCacheListenerAdapter alreadyRegistered =
+                final AbstractHazelcastCacheListenerAdapter alreadyRegistered =
                         locallyRegisteredListeners.get(listener.getClusterId());
                 log.warn("Already registered listener [" + alreadyRegistered.getId()
                         + "] holding CacheListener of type ["
@@ -172,7 +172,18 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
         }
 
         // Wrap the CacheListener inside a HazelcastCacheListenerAdapter.
-        final HazelcastCacheListenerAdapter toAdd = new HazelcastCacheListenerAdapter(listener);
+        final AbstractHazelcastCacheListenerAdapter<String, Object> toAdd =
+                new AbstractHazelcastCacheListenerAdapter(listener) {
+                    @Override
+                    protected Object convertFrom(final String distributedObjectId) {
+                        return "" + distributedObjectId;
+                    }
+
+                    @Override
+                    protected Object createFrom(final Object source) {
+                        return source;
+                    }
+                };
 
         synchronized (lock) {
             performTransactedAction(new AbstractTransactedAction("Could not add listener [" + listener.getClusterId()
@@ -308,7 +319,7 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
      * @param listener The CacheListener to check.
      * @return <code>true</code> if the CacheListener is registered within this AbstractHazelcastCacheListenerManager.
      */
-    protected final boolean isLocallyRegistered(final CacheListener listener) {
+    protected final boolean isLocallyRegistered(final CacheListener<String, Object> listener) {
 
         return listener != null && locallyRegisteredListeners.containsKey(listener.getClusterId());
     }
@@ -316,7 +327,7 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
     /**
      * @return The Map of locally registered listeners.
      */
-    protected Map<String, HazelcastCacheListenerAdapter> getLocallyRegisteredListeners() {
+    protected Map<String, AbstractHazelcastCacheListenerAdapter> getLocallyRegisteredListeners() {
         return locallyRegisteredListeners;
     }
 

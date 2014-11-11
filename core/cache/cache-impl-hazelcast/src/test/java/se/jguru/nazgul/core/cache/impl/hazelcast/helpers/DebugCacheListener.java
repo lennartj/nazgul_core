@@ -19,7 +19,7 @@
  * limitations under the License.
  * #L%
  */
-package se.jguru.nazgul.core.cache.impl.hazelcast;
+package se.jguru.nazgul.core.cache.impl.hazelcast.helpers;
 
 import se.jguru.nazgul.core.cache.api.AbstractCacheListener;
 
@@ -27,33 +27,44 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.io.Serializable;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Debug / Test CacheListenerAdapter implementation.
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class DebugCacheListener extends AbstractCacheListener<String> {
+public class DebugCacheListener<T> extends AbstractCacheListener<String, T> {
 
     // Internal state
-    private int index = 1;
-    public TreeMap<Integer, EventInfo> eventId2KeyValueMap = new TreeMap<Integer, EventInfo>();
+    private final Object[] lock = new Object[0];
+    private AtomicInteger index = new AtomicInteger(1);
+    public TreeMap<Integer, DebugCacheListener<T>.EventInfo> eventId2EventInfoMap
+            = new TreeMap<Integer, DebugCacheListener<T>.EventInfo>();
 
     public class EventInfo implements Externalizable {
 
-        public EventInfo(final String eventType, final String key, final Object value) {
+        // Shared state
+        public String eventType;
+        public String key;
+        public Object value;
+        public String threadName;
+
+        public EventInfo(final String eventType, final String key, final String threadName, final Object value) {
             this.eventType = eventType;
             this.key = key;
             this.value = value;
+            this.threadName = threadName;
         }
 
         @Override
         public void writeExternal(final ObjectOutput out) throws IOException {
             out.writeUTF(eventType);
             out.writeUTF(key);
+            out.writeUTF(threadName);
             out.writeObject(value);
         }
 
@@ -61,12 +72,9 @@ public class DebugCacheListener extends AbstractCacheListener<String> {
         public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
             eventType = in.readUTF();
             key = in.readUTF();
+            threadName = in.readUTF();
             value = in.readObject();
         }
-
-        public String eventType;
-        public String key;
-        public Object value;
 
         @Override
         public String toString() {
@@ -98,7 +106,7 @@ public class DebugCacheListener extends AbstractCacheListener<String> {
      * @param value The value which was put.
      */
     @Override
-    public void doOnPut(String key, Serializable value) {
+    public void doOnPut(String key, T value) {
         addEvent("put", key, value);
     }
 
@@ -114,7 +122,7 @@ public class DebugCacheListener extends AbstractCacheListener<String> {
      * @param oldValue The former value - before the update.
      */
     @Override
-    public void doOnUpdate(String key, Serializable newValue, Serializable oldValue) {
+    public void doOnUpdate(String key, T newValue, T oldValue) {
         addEvent("update", key, newValue);
     }
 
@@ -130,7 +138,7 @@ public class DebugCacheListener extends AbstractCacheListener<String> {
      * @param value The object that was removed.
      */
     @Override
-    public void doOnRemove(String key, Serializable value) {
+    public void doOnRemove(String key, T value) {
         addEvent("remove", key, value);
     }
 
@@ -158,7 +166,7 @@ public class DebugCacheListener extends AbstractCacheListener<String> {
      * @param value The Object that was loaded.
      */
     @Override
-    public void doOnAutonomousLoad(String key, Serializable value) {
+    public void doOnAutonomousLoad(String key, T value) {
         addEvent("autonomousLoad", key, value);
     }
 
@@ -177,7 +185,7 @@ public class DebugCacheListener extends AbstractCacheListener<String> {
      * @param value The object that was evicted.
      */
     @Override
-    public void doOnAutonomousEvict(String key, Serializable value) {
+    public void doOnAutonomousEvict(String key, T value) {
         addEvent("autonomousEvict", key, value);
     }
 
@@ -222,11 +230,11 @@ public class DebugCacheListener extends AbstractCacheListener<String> {
     @Override
     protected void performWriteExternal(ObjectOutput out) throws IOException {
 
-        out.writeInt(index);
+        out.writeInt(index.get());
 
-        // Write the eventId2KeyValueMap
-        out.writeInt(eventId2KeyValueMap.size());
-        for (Map.Entry<Integer, EventInfo> current : eventId2KeyValueMap.entrySet()) {
+        // Write the eventId2EventInfoMap
+        out.writeInt(eventId2EventInfoMap.size());
+        for (Map.Entry<Integer, DebugCacheListener<T>.EventInfo> current : eventId2EventInfoMap.entrySet()) {
             out.writeInt(current.getKey());
             current.getValue().writeExternal(out);
         }
@@ -275,21 +283,60 @@ public class DebugCacheListener extends AbstractCacheListener<String> {
     @Override
     protected void performReadExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 
-        index = in.readInt();
+        index = new AtomicInteger(in.readInt());
         final int size = in.readInt();
 
         // Check sanity
-        if (eventId2KeyValueMap == null) {
-            eventId2KeyValueMap = new TreeMap<Integer, EventInfo>();
+        if (eventId2EventInfoMap == null) {
+            eventId2EventInfoMap = new TreeMap<Integer, DebugCacheListener<T>.EventInfo>();
         }
         for (int i = 0; i < size; i++) {
             Integer currentKey = in.readInt();
-            EventInfo currentValue = new EventInfo(null, null, null);
+            final DebugCacheListener<T> outer = new DebugCacheListener<T>();
+            final DebugCacheListener<T>.EventInfo currentValue = outer.new EventInfo(null, null, null, null);
             currentValue.readExternal(in);
 
             // ... and re-create the entry.
-            eventId2KeyValueMap.put(currentKey, currentValue);
+            eventId2EventInfoMap.put(currentKey, currentValue);
         }
+    }
+
+    public SortedMap<String, SortedMap<Integer, DebugCacheListener<T>.EventInfo>>
+    getThreadName2SortedEventInfoMap() {
+
+        final SortedMap<String, SortedMap<Integer, DebugCacheListener<T>.EventInfo>> toReturn
+                = new TreeMap<String, SortedMap<Integer, DebugCacheListener<T>.EventInfo>>();
+
+        for (Map.Entry<Integer, DebugCacheListener<T>.EventInfo> current : eventId2EventInfoMap.entrySet()) {
+            DebugCacheListener<T>.EventInfo info = current.getValue();
+
+            SortedMap<Integer, DebugCacheListener<T>.EventInfo> innerMap = toReturn.get(info.threadName);
+            if (innerMap == null) {
+                innerMap = new TreeMap<Integer, DebugCacheListener<T>.EventInfo>();
+                toReturn.put(info.threadName, innerMap);
+            }
+
+            innerMap.put(current.getKey(), info);
+        }
+
+        return toReturn;
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder builder = new StringBuilder("\n\n\n######################################\n");
+        for (Map.Entry<String, SortedMap<Integer, DebugCacheListener<T>.EventInfo>> current
+                : getThreadName2SortedEventInfoMap().entrySet()) {
+
+            final String threadName = current.getKey();
+            for (Map.Entry<Integer, DebugCacheListener<T>.EventInfo> currentMessageTuple
+                    : current.getValue().entrySet()) {
+                builder.append("(" + threadName + ") [" + currentMessageTuple.getKey() + "]: "
+                        + currentMessageTuple.getValue() + "\n");
+            }
+        }
+        return builder.toString() + "######################################\n\n\n";
     }
 
     //
@@ -297,6 +344,12 @@ public class DebugCacheListener extends AbstractCacheListener<String> {
     //
 
     private synchronized void addEvent(String event, String key, Object value) {
-        eventId2KeyValueMap.put(index++, new EventInfo(event, key, value));
+        synchronized (lock) {
+
+            final DebugCacheListener<T> outer = new DebugCacheListener<T>();
+            eventId2EventInfoMap.put(
+                    index.getAndIncrement(),
+                    outer.new EventInfo(event, key, Thread.currentThread().getName(), value));
+        }
     }
 }

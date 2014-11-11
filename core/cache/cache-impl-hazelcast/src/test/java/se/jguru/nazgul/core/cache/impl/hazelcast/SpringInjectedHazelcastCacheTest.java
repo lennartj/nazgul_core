@@ -32,7 +32,6 @@ import se.jguru.nazgul.core.cache.api.Cache;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.io.Serializable;
 
 import static org.junit.Assert.assertEquals;
 
@@ -42,11 +41,11 @@ public class SpringInjectedHazelcastCacheTest {
 
     @Inject
     @Named(value = "cacheOne")
-    private Cache<String> cacheOne;
+    private Cache<String, String> cacheOne;
 
     @Inject
     @Named(value = "cacheTwo")
-    private Cache<String> cacheTwo;
+    private Cache<String, String> cacheTwo;
 
     @AfterClass
     public static void tearDownHazelcastCacheInstance() {
@@ -64,8 +63,8 @@ public class SpringInjectedHazelcastCacheTest {
         // Act
         cacheOne.put(key, value);
         Thread.sleep(300);
-        final Serializable cacheOneValue = cacheOne.get(key);
-        final Serializable cacheTwoValue = cacheTwo.get(key);
+        final String cacheOneValue = cacheOne.get(key);
+        final String cacheTwoValue = cacheTwo.get(key);
 
         // Assert
         assertEquals(value, cacheOneValue);
