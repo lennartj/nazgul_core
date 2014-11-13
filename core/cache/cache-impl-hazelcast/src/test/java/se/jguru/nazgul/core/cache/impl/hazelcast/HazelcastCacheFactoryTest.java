@@ -130,7 +130,7 @@ public class HazelcastCacheFactoryTest {
     }
 
     @Test
-    public void validateOkFactoryMethodCall() {
+    public void validateOkFactoryMethodCall() throws InterruptedException {
 
         // Assemble
         final String clusterID = "unitTestCluster";

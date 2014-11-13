@@ -25,6 +25,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import com.hazelcast.config.Config;
+import com.hazelcast.config.TcpIpConfig;
 import com.hazelcast.core.DistributedObject;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
@@ -66,9 +67,9 @@ public abstract class AbstractHazelcastCacheTest {
         // Add a local, non-loopback interface.
         final Config config = HazelcastCacheMember.readConfigFile(configFile);
 
-        // final TcpIpConfig tcpIpConfig = config.getNetworkConfig().getJoin().getTcpIpConfig();
-        // tcpIpConfig.addAddress(LocalhostIpResolver.getLocalHostAddress());
-        // log.info("Got Config: " + config);
+        final TcpIpConfig tcpIpConfig = config.getNetworkConfig().getJoin().getTcpIpConfig();
+        tcpIpConfig.addMember(LocalhostIpResolver.getLocalHostAddress());
+        log.info("Got Config: " + config);
 
         return new HazelcastCacheMember(config);
     }
@@ -119,40 +120,42 @@ public abstract class AbstractHazelcastCacheTest {
         try {
             final HazelcastInstance current = getInternalInstance(cache);
 
-            for (final DistributedObject currentDistributedObject : current.getDistributedObjects()) {
+            if(current != null) {
+                for (final DistributedObject currentDistributedObject : current.getDistributedObjects()) {
 
-                final String instanceName = currentDistributedObject.getName();
+                    final String instanceName = currentDistributedObject.getName();
 
-                // We don't want to destroy our internal maps for the cache
-                if (!(instanceName.endsWith(GridOperations.CLUSTER_ADMIN_TOPIC))) {
+                    // We don't want to destroy our internal maps for the cache
+                    if (!(instanceName.endsWith(GridOperations.CLUSTER_ADMIN_TOPIC))) {
 
-                    if(currentDistributedObject instanceof MultiMap) {
-                        MultiMap map = (MultiMap) currentDistributedObject;
-                        map.clear();
-                    } else if (currentDistributedObject instanceof Map) {
-                        Map map = (Map) currentDistributedObject;
-                        map.clear();
-                    } else if (currentDistributedObject instanceof Collection) {
-                        Collection collection = (Collection) currentDistributedObject;
-                        collection.clear();
+                        if (currentDistributedObject instanceof MultiMap) {
+                            MultiMap map = (MultiMap) currentDistributedObject;
+                            map.clear();
+                        } else if (currentDistributedObject instanceof Map) {
+                            Map map = (Map) currentDistributedObject;
+                            map.clear();
+                        } else if (currentDistributedObject instanceof Collection) {
+                            Collection collection = (Collection) currentDistributedObject;
+                            collection.clear();
+                        }
+
+                        final Set<String> listeners = new TreeSet<String>(cache.getListenerIDsFor(currentDistributedObject));
+                        for (final String listenerId : listeners) {
+                            cache.removeListenerFor(currentDistributedObject, listenerId);
+                        }
+
+                        //                    can't use this - it clears internal state of hazelcast
+                        //                    if (!(instanceId.endsWith(CLUSTERWIDE_SHARED_CACHE_MAP) ||
+                        //                            instanceId.endsWith(CLUSTERWIDE_LISTENERID_MAP))) {
+                        //                        instance.destroy();
+                        //                    }
                     }
-
-                    final Set<String> listeners = new TreeSet<String>(cache.getListenerIDsFor(currentDistributedObject));
-                    for (final String listenerId : listeners) {
-                        cache.removeListenerFor(currentDistributedObject, listenerId);
-                    }
-
-                    //                    can't use this - it clears internal state of hazelcast
-                    //                    if (!(instanceId.endsWith(CLUSTERWIDE_SHARED_CACHE_MAP) ||
-                    //                            instanceId.endsWith(CLUSTERWIDE_LISTENERID_MAP))) {
-                    //                        instance.destroy();
-                    //                    }
                 }
-            }
 
-            final Set<String> listeners = new TreeSet<String>(cache.getLocallyRegisteredListeners().keySet());
-            for (final String listenerId : listeners) {
-                cache.removeInstanceListener(listenerId);
+                final Set<String> listeners = new TreeSet<String>(cache.getLocallyRegisteredListeners().keySet());
+                for (final String listenerId : listeners) {
+                    cache.removeInstanceListener(listenerId);
+                }
             }
 
         } catch (final Exception e) {
@@ -162,11 +165,18 @@ public abstract class AbstractHazelcastCacheTest {
 
     protected HazelcastInstance getInternalInstance(final AbstractHazelcastInstanceWrapper cache) {
 
+        final String fieldName = "cacheInstance";
+
         try {
-            Field instanceField = cache.getClass().getSuperclass().getDeclaredField("cacheInstance");
+            Field instanceField = cache.getClass().getSuperclass().getDeclaredField(fieldName);
             instanceField.setAccessible(true);
 
-            return (HazelcastInstance) instanceField.get(cache);
+            final HazelcastInstance toReturn = (HazelcastInstance) instanceField.get(cache);
+            if(toReturn == null) {
+                log.warn("Found null HazelcastInstance in field '" + fieldName + "'.");
+            }
+
+            return toReturn;
 
         } catch (Exception e) {
             throw new IllegalArgumentException("Could not acquire the cacheInstance", e);
