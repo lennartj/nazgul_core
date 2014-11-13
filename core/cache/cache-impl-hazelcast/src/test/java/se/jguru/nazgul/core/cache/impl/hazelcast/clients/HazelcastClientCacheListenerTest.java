@@ -26,6 +26,9 @@ import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.client.config.ClientNetworkConfig;
 import com.hazelcast.config.GroupConfig;
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.ICountDownLatch;
+import com.hazelcast.core.ISemaphore;
+import org.apache.commons.lang3.Validate;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -34,19 +37,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.cache.api.distributed.DistributedCache;
 import se.jguru.nazgul.core.cache.api.distributed.async.LightweightTopic;
+import se.jguru.nazgul.core.cache.api.distributed.async.LightweightTopicListener;
 import se.jguru.nazgul.core.cache.impl.hazelcast.AbstractHazelcastCacheTest;
+import se.jguru.nazgul.core.cache.impl.hazelcast.DebugHazelcastLightweightTopicListener;
 import se.jguru.nazgul.core.cache.impl.hazelcast.helpers.DebugCacheListener;
 import se.jguru.nazgul.core.cache.impl.hazelcast.AbstractHazelcastCacheListenerAdapter;
 import se.jguru.nazgul.core.cache.impl.hazelcast.grid.AdminMessage;
 import se.jguru.nazgul.core.cache.impl.hazelcast.grid.GridOperations;
+import se.jguru.nazgul.core.cache.impl.hazelcast.helpers.EventInfo;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -126,8 +135,8 @@ public class HazelcastClientCacheListenerTest extends AbstractHazelcastCacheTest
         Assert.assertEquals(0, listeners2.size());
 
         // Assert #2: Validate the Lifecycle of the CacheListeners.
-        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap1 = unitUnderTest1.eventId2EventInfoMap;
-        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap2 = unitUnderTest2.eventId2EventInfoMap;
+        final TreeMap<Integer, EventInfo> traceMap1 = unitUnderTest1.eventId2EventInfoMap;
+        final TreeMap<Integer, EventInfo> traceMap2 = unitUnderTest2.eventId2EventInfoMap;
 
         Assert.assertEquals(2, traceMap1.size());
         Assert.assertEquals(2, traceMap2.size());
@@ -186,8 +195,8 @@ public class HazelcastClientCacheListenerTest extends AbstractHazelcastCacheTest
         Assert.assertEquals(listenerID2, listeners2.get(0));
 
         // Assert #2: Validate the Lifecycle of the CacheListeners.
-        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap1 = unitUnderTest1.eventId2EventInfoMap;
-        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap2 = unitUnderTest2.eventId2EventInfoMap;
+        final TreeMap<Integer, EventInfo> traceMap1 = unitUnderTest1.eventId2EventInfoMap;
+        final TreeMap<Integer, EventInfo> traceMap2 = unitUnderTest2.eventId2EventInfoMap;
 
         Assert.assertEquals(2, traceMap1.size());
         Assert.assertEquals(2, traceMap2.size());
@@ -241,8 +250,8 @@ public class HazelcastClientCacheListenerTest extends AbstractHazelcastCacheTest
         Assert.assertEquals(0, listeners2.size());
 
         // Assert #2: Validate the Lifecycle of the CacheListeners.
-        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap1 = unitUnderTest1.eventId2EventInfoMap;
-        final TreeMap<Integer, DebugCacheListener.EventInfo> traceMap2 = unitUnderTest2.eventId2EventInfoMap;
+        final TreeMap<Integer, EventInfo> traceMap1 = unitUnderTest1.eventId2EventInfoMap;
+        final TreeMap<Integer, EventInfo> traceMap2 = unitUnderTest2.eventId2EventInfoMap;
 
         Assert.assertEquals(2, traceMap1.size());
         Assert.assertEquals(2, traceMap2.size());
@@ -258,7 +267,26 @@ public class HazelcastClientCacheListenerTest extends AbstractHazelcastCacheTest
     public void validateAdminMessageOperation() throws Exception {
 
         // Assemble
+        final HazelcastInstance cacheInstance = getInternalInstance(cacheClient);
+        final ISemaphore listenerSemaphore = cacheInstance.getSemaphore("listenerSemaphore");
+        log.info("Drained permits: " + listenerSemaphore.drainPermits());
+
         final LightweightTopic<AdminMessage> adminTopic = cacheClient.getTopic(GridOperations.CLUSTER_ADMIN_TOPIC);
+        final List<AdminMessage> adminMessages = new ArrayList<>();
+
+        final LightweightTopicListener<AdminMessage> topicListener = new LightweightTopicListener<AdminMessage>() {
+            @Override
+            public void onMessage(final AdminMessage message) {
+                adminMessages.add(message);
+                listenerSemaphore.release();
+            }
+
+            @Override
+            public String getClusterId() {
+                return "adminTopicListener";
+            }
+        };
+        adminTopic.addListener(topicListener);
 
         final Map<String, String> clientMap1 = cacheClient.getDistributedMap("clientMap1");
         final Map<String, String> clientMap2 = cacheClient.getDistributedMap("clientMap2");
@@ -269,33 +297,67 @@ public class HazelcastClientCacheListenerTest extends AbstractHazelcastCacheTest
         cacheClient.addListenerFor(clientMap1, listener1);
         cacheClient.addListenerFor(clientMap2, listener2);
 
+        /*
+[0]: CREATE_INCACHE_INSTANCE :: [MAP, foo]
+[1]: REMOVE_LISTENER :: [foo, nonexistentListener]
+[2]: REMOVE_LISTENER :: [nonexistentInstance, nonexistentListener]
+[3]: REMOVE_LISTENER :: [clientMap1, listener1]
+[4]: SHUTDOWN_INSTANCE :: [nonexistentInstance]
+[5]: SHUTDOWN_INSTANCE :: [noMatchingInstance]
+         */
+
         // Act
         adminTopic.publish(AdminMessage.createMakeInCacheInstanceMessage(AdminMessage.TypeDefinition.MAP, "foo"));
-        waitAwhile(100);
+        listenerSemaphore.acquire();
         adminTopic.publish(AdminMessage.createRemoveListenerMessage("foo", "nonexistentListener"));
-        waitAwhile(100);
+        listenerSemaphore.acquire();
         adminTopic.publish(AdminMessage.createRemoveListenerMessage("nonexistentInstance", "nonexistentListener"));
-        waitAwhile(100);
+        listenerSemaphore.acquire();
         adminTopic.publish(AdminMessage.createRemoveListenerMessage("clientMap1", "listener1"));
-        waitAwhile(100);
+        listenerSemaphore.acquire();
         adminTopic.publish(AdminMessage.createShutdownInstanceMessage("nonexistentInstance"));
-        waitAwhile(100);
+        listenerSemaphore.acquire();
         adminTopic.publish(AdminMessage.createShutdownInstanceMessage("noMatchingInstance"));
-        waitAwhile(100);
+        listenerSemaphore.acquire();
+
+        // Assert #1
+        final StringBuilder builder = new StringBuilder();
+        for(int i = 0; i < adminMessages.size(); i++) {
+            final AdminMessage adminMessage = adminMessages.get(i);
+            builder.append("[" + i + "]: " + adminMessage.getCommand() + " :: " + adminMessage.getArguments()  + "\n");
+        }
+        Assert.assertEquals(builder.toString(), 6, adminMessages.size());
+
+        /*
+        // Act #2
         adminTopic.publish(AdminMessage.createShutdownInstanceMessage(cacheClient.getClusterId()));
-        waitAwhile(100);
+        listenerSemaphore.acquire();
 
-        final HazelcastInstance cacheInstance = getInternalInstance(cacheClient);
+        builder.delete(0, builder.length());
+        for(int i = 0; i < adminMessages.size(); i++) {
+            final AdminMessage adminMessage = adminMessages.get(i);
+            builder.append("[" + i + "]: " + adminMessage.getCommand() + " :: " + adminMessage.getArguments()  + "\n");
+        }
 
-        // Assert
-
-        // Restore
+        // Assert and restore
+        Assert.assertEquals(builder.toString(), 7, adminMessages.size());
+        Assert.assertNull(cacheInstance);
         cacheClient = new HazelcastCacheClient(clientConfig);
+        */
     }
 
     //
     // private helpers
     //
+
+    private void validateNoTimeout(final ICountDownLatch latch, final int timeout, final TimeUnit timeUnit) {
+        try {
+            Validate.isTrue(latch.await(timeout, timeUnit));
+        } catch (InterruptedException e) {
+            throw new IllegalStateException("Interrupted while waiting for latch [" + latch.getName()
+                    + "] for at least [" + timeout + " " + timeUnit + "]");
+        }
+    }
 
     private void waitAwhile(int numMillis) {
 
@@ -306,7 +368,7 @@ public class HazelcastClientCacheListenerTest extends AbstractHazelcastCacheTest
         }
     }
 
-    private void validateEventInfo(final DebugCacheListener.EventInfo info,
+    private void validateEventInfo(final EventInfo info,
                                    final String expectedType,
                                    final String expectedKey,
                                    final String expectedValue) {
@@ -316,7 +378,7 @@ public class HazelcastClientCacheListenerTest extends AbstractHazelcastCacheTest
         Assert.assertEquals(expectedValue, info.value);
     }
 
-    private void validateCollectionEventInfo(DebugCacheListener.EventInfo info,
+    private void validateCollectionEventInfo(final EventInfo info,
                                              final String expectedType,
                                              final String expectedValue) {
 
@@ -326,16 +388,17 @@ public class HazelcastClientCacheListenerTest extends AbstractHazelcastCacheTest
                 expectedValue);
     }
 
-    private void validateEventInfo(DebugCacheListener.EventInfo info, final String expectedType) {
+    private void validateEventInfo(final EventInfo info,
+                                   final String expectedType) {
 
         validateEventInfo(info, expectedType, key, value);
     }
 
-    private void printEventInfoMap(TreeMap<Integer, DebugCacheListener.EventInfo> map) {
+    private void printEventInfoMap(TreeMap<Integer, EventInfo> map) {
 
         log.info(" logging eventInfoMap ");
 
-        for (Map.Entry<Integer, DebugCacheListener.EventInfo> current : map.entrySet()) {
+        for (Map.Entry<Integer, EventInfo> current : map.entrySet()) {
             log.info("[" + current.getKey() + "]: " + current.getValue());
         }
     }

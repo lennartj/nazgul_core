@@ -21,9 +21,9 @@
  */
 package se.jguru.nazgul.core.cache.impl.hazelcast.helpers;
 
+import com.hazelcast.core.ICountDownLatch;
 import se.jguru.nazgul.core.cache.api.AbstractCacheListener;
 
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -42,45 +42,8 @@ public class DebugCacheListener<T> extends AbstractCacheListener<String, T> {
     // Internal state
     private final Object[] lock = new Object[0];
     private AtomicInteger index = new AtomicInteger(1);
-    public TreeMap<Integer, DebugCacheListener<T>.EventInfo> eventId2EventInfoMap
-            = new TreeMap<Integer, DebugCacheListener<T>.EventInfo>();
-
-    public class EventInfo implements Externalizable {
-
-        // Shared state
-        public String eventType;
-        public String key;
-        public Object value;
-        public String threadName;
-
-        public EventInfo(final String eventType, final String key, final String threadName, final Object value) {
-            this.eventType = eventType;
-            this.key = key;
-            this.value = value;
-            this.threadName = threadName;
-        }
-
-        @Override
-        public void writeExternal(final ObjectOutput out) throws IOException {
-            out.writeUTF(eventType);
-            out.writeUTF(key);
-            out.writeUTF(threadName);
-            out.writeObject(value);
-        }
-
-        @Override
-        public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
-            eventType = in.readUTF();
-            key = in.readUTF();
-            threadName = in.readUTF();
-            value = in.readObject();
-        }
-
-        @Override
-        public String toString() {
-            return eventType + ":" + key + ":" + value;
-        }
-    }
+    private ICountDownLatch optionalLatch;
+    public TreeMap<Integer, EventInfo> eventId2EventInfoMap = new TreeMap<Integer, EventInfo>();
 
     /**
      * Creates a new DebugCacheListener with the given id.
@@ -93,6 +56,19 @@ public class DebugCacheListener<T> extends AbstractCacheListener<String, T> {
 
     public DebugCacheListener() {
         super("This constructor is for Serialization only");
+    }
+
+    /**
+     * Creates a new DebugCacheListener with the given id and using an ICountDownLatch
+     * to ensure that events are registered.
+     *
+     * @param id            a unique ID for this DebugCacheListener.
+     * @param optionalLatch an ICountDownLatch used to ensure that all expected events are received.
+     */
+    public DebugCacheListener(final String id,
+                              final ICountDownLatch optionalLatch) {
+        super(id);
+        this.optionalLatch = optionalLatch;
     }
 
     /**
@@ -234,7 +210,7 @@ public class DebugCacheListener<T> extends AbstractCacheListener<String, T> {
 
         // Write the eventId2EventInfoMap
         out.writeInt(eventId2EventInfoMap.size());
-        for (Map.Entry<Integer, DebugCacheListener<T>.EventInfo> current : eventId2EventInfoMap.entrySet()) {
+        for (Map.Entry<Integer, EventInfo> current : eventId2EventInfoMap.entrySet()) {
             out.writeInt(current.getKey());
             current.getValue().writeExternal(out);
         }
@@ -288,12 +264,11 @@ public class DebugCacheListener<T> extends AbstractCacheListener<String, T> {
 
         // Check sanity
         if (eventId2EventInfoMap == null) {
-            eventId2EventInfoMap = new TreeMap<Integer, DebugCacheListener<T>.EventInfo>();
+            eventId2EventInfoMap = new TreeMap<Integer, EventInfo>();
         }
         for (int i = 0; i < size; i++) {
             Integer currentKey = in.readInt();
-            final DebugCacheListener<T> outer = new DebugCacheListener<T>();
-            final DebugCacheListener<T>.EventInfo currentValue = outer.new EventInfo(null, null, null, null);
+            final EventInfo currentValue = new EventInfo(null, null, null, null);
             currentValue.readExternal(in);
 
             // ... and re-create the entry.
@@ -301,18 +276,18 @@ public class DebugCacheListener<T> extends AbstractCacheListener<String, T> {
         }
     }
 
-    public SortedMap<String, SortedMap<Integer, DebugCacheListener<T>.EventInfo>>
+    public SortedMap<String, SortedMap<Integer, EventInfo>>
     getThreadName2SortedEventInfoMap() {
 
-        final SortedMap<String, SortedMap<Integer, DebugCacheListener<T>.EventInfo>> toReturn
-                = new TreeMap<String, SortedMap<Integer, DebugCacheListener<T>.EventInfo>>();
+        final SortedMap<String, SortedMap<Integer, EventInfo>> toReturn
+                = new TreeMap<String, SortedMap<Integer, EventInfo>>();
 
-        for (Map.Entry<Integer, DebugCacheListener<T>.EventInfo> current : eventId2EventInfoMap.entrySet()) {
-            DebugCacheListener<T>.EventInfo info = current.getValue();
+        for (Map.Entry<Integer, EventInfo> current : eventId2EventInfoMap.entrySet()) {
+            final EventInfo info = current.getValue();
 
-            SortedMap<Integer, DebugCacheListener<T>.EventInfo> innerMap = toReturn.get(info.threadName);
+            SortedMap<Integer, EventInfo> innerMap = toReturn.get(info.threadName);
             if (innerMap == null) {
-                innerMap = new TreeMap<Integer, DebugCacheListener<T>.EventInfo>();
+                innerMap = new TreeMap<Integer, EventInfo>();
                 toReturn.put(info.threadName, innerMap);
             }
 
@@ -326,11 +301,11 @@ public class DebugCacheListener<T> extends AbstractCacheListener<String, T> {
     public String toString() {
 
         StringBuilder builder = new StringBuilder("\n\n\n######################################\n");
-        for (Map.Entry<String, SortedMap<Integer, DebugCacheListener<T>.EventInfo>> current
+        for (Map.Entry<String, SortedMap<Integer, EventInfo>> current
                 : getThreadName2SortedEventInfoMap().entrySet()) {
 
             final String threadName = current.getKey();
-            for (Map.Entry<Integer, DebugCacheListener<T>.EventInfo> currentMessageTuple
+            for (Map.Entry<Integer, EventInfo> currentMessageTuple
                     : current.getValue().entrySet()) {
                 builder.append("(" + threadName + ") [" + currentMessageTuple.getKey() + "]: "
                         + currentMessageTuple.getValue() + "\n");
@@ -345,11 +320,13 @@ public class DebugCacheListener<T> extends AbstractCacheListener<String, T> {
 
     private synchronized void addEvent(String event, String key, Object value) {
         synchronized (lock) {
-
-            final DebugCacheListener<T> outer = new DebugCacheListener<T>();
             eventId2EventInfoMap.put(
                     index.getAndIncrement(),
-                    outer.new EventInfo(event, key, Thread.currentThread().getName(), value));
+                    new EventInfo(event, key, Thread.currentThread().getName(), value));
+
+            if(optionalLatch != null) {
+                optionalLatch.countDown();
+            }
         }
     }
 }

@@ -27,6 +27,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import se.jguru.nazgul.core.cache.api.CacheListener;
 import se.jguru.nazgul.core.cache.impl.hazelcast.helpers.DebugCacheListener;
+import se.jguru.nazgul.core.cache.impl.hazelcast.helpers.EventInfo;
 
 import java.util.TreeMap;
 
@@ -63,7 +64,7 @@ public class AbstractHazelcastCacheListenerAdapterTest {
 
         // Assert
         Assert.assertSame(cacheListener, unitUnderTest.getCacheListener());
-        final TreeMap<Integer, DebugCacheListener<String>.EventInfo> map = cacheListener.eventId2EventInfoMap;
+        final TreeMap<Integer, EventInfo> map = cacheListener.eventId2EventInfoMap;
 
         // {1=put:key:value, 2=remove:key:value, 3=update:key:value, 4=autonomousEvict:key:value}
         Assert.assertEquals("put:key:value", map.get(1).toString());

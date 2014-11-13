@@ -283,6 +283,7 @@ public class HazelcastCacheStrangeInternalBehaviourTest extends AbstractHazelcas
         Assert.assertEquals(value, valueFromMember2.iterator().next());
     }
 
+    @Ignore("Bugfixed in Hazelcast 3.3.2+")
     @Test
     public void validateOperatingClearInDistributedCollectionWithSortedCollection() {
 
@@ -315,7 +316,7 @@ public class HazelcastCacheStrangeInternalBehaviourTest extends AbstractHazelcas
         Assert.assertEquals(numEntities, sortedSetSizeBefore);
         Assert.assertEquals(numEntities, unsortedSetSizeBefore);
         Assert.assertEquals(0, sortedSetSizeAfter);
-        Assert.assertTrue(unsortedSetSizeAfter > 0);
+        Assert.assertEquals(0, unsortedSetSizeAfter);
 
         System.out.println("unsortedDistSet.clear() missed [" + unsortedSetSizeAfter + "] elements.");
     }
@@ -465,6 +466,7 @@ public class HazelcastCacheStrangeInternalBehaviourTest extends AbstractHazelcas
         final ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(outputStream.toByteArray()));
         final Set<String> after1 = (Set<String>) in.readObject();
         final Set<String> after2 = (Set<String>) in.readObject();
+        Thread.sleep(200);
 
         // Assert
         Assert.assertNotSame(before1, after1);

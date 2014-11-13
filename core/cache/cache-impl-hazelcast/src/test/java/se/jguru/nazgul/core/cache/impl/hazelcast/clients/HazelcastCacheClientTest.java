@@ -28,6 +28,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import se.jguru.nazgul.core.cache.impl.hazelcast.AbstractHazelcastCacheTest;
 import se.jguru.nazgul.core.cache.impl.hazelcast.helpers.DebugCacheListener;
+import se.jguru.nazgul.core.cache.impl.hazelcast.helpers.EventInfo;
 
 import java.util.Arrays;
 import java.util.TreeMap;
@@ -101,7 +102,7 @@ public class HazelcastCacheClientTest extends AbstractHazelcastCacheTest {
         Assert.assertEquals(value, removedValueInClient);
         Assert.assertNull(afterInCache);
 
-        final TreeMap<Integer, DebugCacheListener<Object>.EventInfo> events = cacheListener.eventId2EventInfoMap;
+        final TreeMap<Integer, EventInfo> events = cacheListener.eventId2EventInfoMap;
         System.out.println("Got: " + events);
     }
 }

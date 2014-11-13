@@ -90,17 +90,25 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
      * Adds an instanceListener to the wrapped HazelcastInstance.
      *
      * @param listener The listener to add.
+     * @return the HazelCast ID of the listener added.
      */
-    public final void addInstanceListener(final CacheListener<String, Object> listener) {
+    public final String addInstanceListener(final CacheListener<String, Object> listener) {
 
         if (listener == null || isLocallyRegistered(listener)) {
             throw new IllegalArgumentException("Cannot add null or already registered listener");
         }
 
         synchronized (lock) {
-            final StringKeyedHazelcastListenerAdapter wrapper = new StringKeyedHazelcastListenerAdapter(listener);
-            getLocallyRegisteredListeners().put(listener.getClusterId(), wrapper);
-            cacheInstance.addDistributedObjectListener(wrapper);
+            final StringKeyedHazelcastListenerAdapter<Object> wrapper
+                    = new StringKeyedHazelcastListenerAdapter<Object>(listener);
+            final String listenerId = cacheInstance.addDistributedObjectListener(wrapper);
+            if (listenerId != null) {
+                getLocallyRegisteredListeners().put(listener.getClusterId(), wrapper);
+            } else {
+                log.warn("Could not add DistributedObjectListener [" + wrapper.toString() + "]");
+            }
+
+            return listenerId;
         }
     }
 
@@ -117,8 +125,11 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
         }
 
         synchronized (lock) {
-            getLocallyRegisteredListeners().remove(listenerID);
-            return cacheInstance.removeDistributedObjectListener(listenerID);
+            final boolean successfullyRemovedListener = cacheInstance.removeDistributedObjectListener(listenerID);
+            if (successfullyRemovedListener) {
+                getLocallyRegisteredListeners().remove(listenerID);
+            }
+            return successfullyRemovedListener;
         }
     }
 
@@ -558,7 +569,7 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
 
     private Serializable getSerializable(final Object object) {
 
-        if(object == null || object instanceof Serializable) {
+        if (object == null || object instanceof Serializable) {
             return (Serializable) object;
         }
 

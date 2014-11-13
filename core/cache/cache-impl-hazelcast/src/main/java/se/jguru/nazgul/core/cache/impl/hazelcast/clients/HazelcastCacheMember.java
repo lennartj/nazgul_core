@@ -33,6 +33,7 @@ import org.apache.commons.lang3.Validate;
 import se.jguru.nazgul.core.cache.impl.hazelcast.AbstractHazelcastInstanceWrapper;
 
 import java.io.InputStream;
+import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -151,13 +152,8 @@ public class HazelcastCacheMember extends AbstractHazelcastInstanceWrapper {
             // Acquire the clusterMember data.
             final String ipOrDNS = subTok.nextToken();
             final int portNumber = parseAndValidatePort(subTok.nextToken());
-
-            try {
-                clusterMemberDefinitions.add(new Address(ipOrDNS, portNumber));
-            } catch (final UnknownHostException e) {
-                throw new IllegalArgumentException(
-                        "Address " + ipOrDNS + " (" + portNumber + ") could not be resolved", e);
-            }
+            final InetSocketAddress inetSocketAddress = new InetSocketAddress(ipOrDNS, portNumber);
+            clusterMemberDefinitions.add(new Address(inetSocketAddress));
         }
 
         // Get the proto-configuration.
@@ -182,8 +178,7 @@ public class HazelcastCacheMember extends AbstractHazelcastInstanceWrapper {
 
         // Add the clusterMembers.
         for (final Address current : clusterMemberDefinitions) {
-            // tcpIpConfig.addAddress(current);
-            tcpIpConfig.addMember(current.getHost());
+            tcpIpConfig.addMember(current.getHost() + ":" + current.getPort());
         }
 
         // Update the active Join, and carry on.
