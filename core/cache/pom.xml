@@ -51,7 +51,7 @@
         <!-- module>cache-impl-hazelcast</module -->
         <module>cache-impl-ehcache</module>
         <module>cache-impl-inmemory</module>
-        <module>cache-example</module>
+        <!-- module>cache-example</module -->
     </modules>
 
     <!-- +=============================================== -->
