@@ -190,10 +190,7 @@ public class JaxbUtilsTest {
         Assert.assertEquals(1, transportableObjects.size());
         Assert.assertEquals(JaxbAnnotatedTrivialCharSequence.class, transportableObjects.get(0).getClass());
 
-        // TODO: Fix this; should be sufficient with a JaxbAnnotatedTransportType which is not a ClassInformationHolder
-        /*
         Assert.assertEquals(1, transportTypes.size());
-        Assert.assertEquals(JaxbAnnotatedTrivialCharSequence.class.getName(), transportableObjects.get(0));
-        */
+        Assert.assertEquals(JaxbAnnotatedTrivialCharSequence.class.getName(), transportTypes.iterator().next());
     }
 }

@@ -23,6 +23,7 @@ package se.jguru.nazgul.core.persistence.model;
 
 import org.junit.Assert;
 import org.junit.Test;
+import se.jguru.nazgul.core.persistence.model.helpers.MockEntity;
 
 import java.util.ArrayList;
 

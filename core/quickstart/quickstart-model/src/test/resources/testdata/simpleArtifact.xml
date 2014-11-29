@@ -29,7 +29,7 @@
         <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter</entityClass>
     </entityClasses>
     <items>
-        <item xsi:type="core:simpleArtifact" version="0">
+        <item xsi:type="core:simpleArtifact" jpaId="0" version="0">
             <groupId>se.jguru.nazgul.core.quickstart.model</groupId>
             <artifactId>nazgul-core-quickstart-model</artifactId>
             <mavenVersion>1.6.1-SNAPSHOT</mavenVersion>

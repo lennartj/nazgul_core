@@ -1,0 +1,23 @@
+@startuml
+
+object membership {
+    id : long
+    ...
+}
+
+object guildmembership {
+    membership_id : long (FK)
+    guild_id : long (FK)
+    guildmaster : bool
+    ....
+}
+
+object guild {
+    id : long
+    ...
+}
+
+membership "*" -- "*" guildmembership
+guildmembership "*" --> "*" guild
+
+@enduml

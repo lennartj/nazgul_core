@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!--
   #%L
-  Nazgul Project: nazgul-core-algorithms-tree-model
+  Nazgul Project: nazgul-core-persistence-model
   %%
-  Copyright (C) 2010 - 2013 jGuru Europe AB
+  Copyright (C) 2010 - 2014 jGuru Europe AB
   %%
   Licensed under the jGuru Europe AB license (the "License"), based
   on Apache License, Version 2.0; you may not use this file except
@@ -20,20 +20,23 @@
   limitations under the License.
   #L%
   -->
-<core:entityTransporter xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="http://www.jguru.se/nazgul/core"
+
+<core:entityTransporter xmlns:acmePeople="http://www.acme.org/person"
+                        xmlns:core="http://www.jguru.se/nazgul/core"
                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <entityClasses>
         <entityClass>org.aspectj.runtime.reflect.JoinPointImpl$StaticPartImpl</entityClass>
-        <entityClass>se.jguru.nazgul.core.algorithms.tree.model.path.EnumMapPath</entityClass>
+        <entityClass>se.jguru.nazgul.core.persistence.model.helpers.Person</entityClass>
         <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter</entityClass>
     </entityClasses>
     <items>
-        <item xsi:type="core:enumMapPath"
-              enumClassName="se.jguru.nazgul.core.algorithms.tree.model.helpers.CityIdentifier"
-              jpaId="0"
-              version="0">
-            <compoundPath>Sweden/Västra Götaland/Göteborg</compoundPath>
-            <segmentSeparator>/</segmentSeparator>
+        <item xsi:type="core:person" age="27" jpaId="1" version="0">
+            <acmePeople:firstName>Mr</acmePeople:firstName>
+            <lastName>Testo</lastName>
+        </item>
+        <item xsi:type="core:person" age="35" jpaId="2" version="0">
+            <acmePeople:firstName>Miss</acmePeople:firstName>
+            <lastName>Testa</lastName>
         </item>
     </items>
 </core:entityTransporter>

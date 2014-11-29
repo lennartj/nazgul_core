@@ -20,8 +20,9 @@
  * #L%
  */
 
-package se.jguru.nazgul.core.persistence.model;
+package se.jguru.nazgul.core.persistence.model.helpers;
 
+import se.jguru.nazgul.core.persistence.model.NazgulEntity;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException;
 

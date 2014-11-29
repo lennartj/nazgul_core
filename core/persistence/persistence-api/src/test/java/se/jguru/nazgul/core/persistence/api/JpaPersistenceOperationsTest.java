@@ -337,7 +337,7 @@ public class JpaPersistenceOperationsTest extends AbstractInMemoryJpaTest {
         final List<NamedParametersPerson> result = unitUnderTest.fireNamedQueryWithResultLimit("getPersonsByFirstName",
                 5, namedParameters);
 
-        final NamedParametersPerson found = unitUnderTest.findByPrimaryKey(NamedParametersPerson.class, 1);
+        final NamedParametersPerson found = unitUnderTest.findByPrimaryKey(NamedParametersPerson.class, 1l);
         trans.commit();
 
         // Assert

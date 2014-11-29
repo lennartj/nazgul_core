@@ -123,7 +123,6 @@ public class JaxbXmlBinder implements XmlBinder<Object> {
 
         // Validate without requiring resurrecting the items.
         transporter.validateItemState();
-        // validate(transporter);
 
         // Acquire a Marshaller for the provided EntityTransporter
         final JAXBContext ctx = JaxbUtils.getJaxbContext(transporter, true);

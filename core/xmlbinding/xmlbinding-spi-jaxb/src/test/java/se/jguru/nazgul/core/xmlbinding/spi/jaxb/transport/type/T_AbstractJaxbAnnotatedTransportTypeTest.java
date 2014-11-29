@@ -76,6 +76,7 @@ public class T_AbstractJaxbAnnotatedTransportTypeTest {
 
         // Act
         final String result = binder.marshal(sequence);
+        // System.out.println("Got: " + result);
 
         // Assert
         Assert.assertNotNull(result);
