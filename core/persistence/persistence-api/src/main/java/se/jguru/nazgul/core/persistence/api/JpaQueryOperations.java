@@ -80,7 +80,9 @@ public interface JpaQueryOperations {
      * @return The List of resulting Entities.
      * @throws PersistenceOperationException if a JPA-related exception occurred while performing the operation.
      */
-    <T extends NazgulEntity> List<T> fireNamedQueryWithResultLimit(String query, int maxResults, Object... parameters)
+    <T extends NazgulEntity> List<T> fireNamedQueryWithResultLimit(String query,
+                                                                   int maxResults,
+                                                                   Object... parameters)
             throws PersistenceOperationException;
 
     /**
@@ -94,6 +96,8 @@ public interface JpaQueryOperations {
      * @return The List of resulting Entities.
      * @throws PersistenceOperationException if a JPA-related exception occurred while performing the operation.
      */
-    <T extends NazgulEntity> List<T> fireNamedQueryWithResultLimit(String query, int maxResults, Map<String, Object> parameters)
+    <T extends NazgulEntity> List<T> fireNamedQueryWithResultLimit(String query,
+                                                                   int maxResults,
+                                                                   Map<String, Object> parameters)
             throws PersistenceOperationException;
 }

@@ -28,7 +28,8 @@
         <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter</entityClass>
     </entityClasses>
     <items>
-        <item xsi:type="core:enumMapPath" enumClassName="se.jguru.nazgul.core.configuration.model.helpers.DocumentPart" version="0">
+        <item xsi:type="core:enumMapPath"
+              enumClassName="se.jguru.nazgul.core.configuration.model.helpers.DocumentPart" jpaId="0" version="0">
             <compoundPath>chapter 1/Section 3/Subsection 42</compoundPath>
             <segmentSeparator>/</segmentSeparator>
         </item>

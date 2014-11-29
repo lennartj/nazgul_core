@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!--
-  ~ #%L
+  #%L
   Nazgul Project: nazgul-core-xmlbinding-spi-jaxb
   %%
-  Copyright (C) 2010 - 2013 jGuru Europe AB
-  ~
+  Copyright (C) 2010 - 2014 jGuru Europe AB
   %%
   Licensed under the jGuru Europe AB license (the "License"), based
   on Apache License, Version 2.0; you may not use this file except
@@ -21,14 +20,7 @@
   limitations under the License.
   #L%
   -->
-<core:entityTransporter xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="http://www.jguru.se/nazgul/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <entityClasses>
-        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter</entityClass>
-        <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.helper.JaxbAnnotatedTrivialCharSequence</entityClass>
-    </entityClasses>
-    <items>
-        <item xsi:type="core:jaxbAnnotatedTrivialCharSequence">
-            <transportForm>FooBar!</transportForm>
-        </item>
-    </items>
-</core:entityTransporter>
+
+<fooPrefix:fooRoot xmlns:fooPrefix="http://some.com/foo/bar">
+    <name>someName</name>
+</fooPrefix:fooRoot>

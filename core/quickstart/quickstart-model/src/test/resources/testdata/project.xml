@@ -30,15 +30,15 @@
         <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter</entityClass>
     </entityClasses>
     <items>
-        <item xsi:type="core:project" version="0">
+        <item xsi:type="core:project" jpaId="0" version="0">
             <name>name</name>
             <prefix>prefix</prefix>
-            <reactorParent version="0">
+            <reactorParent jpaId="0" version="0">
                 <groupId>reactorGroupId</groupId>
                 <artifactId>reactorArtifactId</artifactId>
                 <mavenVersion>reactorMavenVersion</mavenVersion>
             </reactorParent>
-            <parentParent version="0">
+            <parentParent jpaId="0" version="0">
                 <groupId>groupId</groupId>
                 <artifactId>artifactId</artifactId>
                 <mavenVersion>mavenVersion</mavenVersion>

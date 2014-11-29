@@ -30,7 +30,7 @@
         <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter</entityClass>
     </entityClasses>
     <items>
-        <item xsi:type="core:name" version="0">
+        <item xsi:type="core:name" jpaId="0" version="0">
             <prefix>somePrefix</prefix>
             <name>someName</name>
             <type>some-type-with-separators</type>

@@ -178,7 +178,7 @@
                                     se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.AbstractJaxbAnnotatedTransportType
                                 </pattern>
                                 <branchRate>45</branchRate>
-                                <lineRate>75</lineRate>
+                                <lineRate>73</lineRate>
                             </regex>
                         </regexes>
                     </check>

@@ -29,7 +29,7 @@
         <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter</entityClass>
     </entityClasses>
     <items>
-        <item xsi:type="core:stringProperty" valueClassName="java.lang.String" version="0">
+        <item xsi:type="core:stringProperty" valueClassName="java.lang.String" jpaId="0" version="0">
             <key>key</key>
             <value>value</value>
         </item>

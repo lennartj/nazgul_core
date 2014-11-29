@@ -34,7 +34,7 @@
         <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
 
         <class>se.jguru.nazgul.core.persistence.model.NazgulEntity</class>
-        <class>se.jguru.nazgul.core.persistence.model.MockEntity</class>
+        <class>se.jguru.nazgul.core.persistence.model.helpers.MockEntity</class>
 
         <!--
             When set to true then only listed classes and jars will

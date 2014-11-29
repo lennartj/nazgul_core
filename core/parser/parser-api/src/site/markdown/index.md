@@ -14,7 +14,7 @@ The Nazgul Core Parser API revolves around three concepts:
         find the token name from a token string. For example, the DefaultTokenDefinitions class 
         defines <code>${</code> to be a string which identifies the start of a token, and 
         <code>}</code> a string which identifies its end - implying that a Pattern to identify
-        tokens within a text would be <em>\\$\\{[^}]*\\}</em>. 
+        tokens within a text would be <em>\\$\\{[^}]*\\}</em>.</dd>
 
     <dt>ParserAgent</dt>
     <dd>A <em>ParserAgent</em> is an object that has information/algorithms about which tokens should be

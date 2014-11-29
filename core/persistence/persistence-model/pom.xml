@@ -54,6 +54,18 @@
             <artifactId>nazgul-core-xmlbinding-api</artifactId>
             <version>1.6.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>se.jguru.nazgul.test.xmlbinding</groupId>
+            <artifactId>nazgul-core-xmlbinding-test</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>se.jguru.nazgul.core.xmlbinding.spi.jaxb</groupId>
+            <artifactId>nazgul-core-xmlbinding-spi-jaxb</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
 
         <!-- External dependencies -->
         <dependency>

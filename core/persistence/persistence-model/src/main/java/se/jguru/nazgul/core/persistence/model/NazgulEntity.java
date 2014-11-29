@@ -37,7 +37,6 @@ import javax.persistence.Version;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 
@@ -48,7 +47,7 @@ import java.io.Serializable;
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 @MappedSuperclass
-@XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"version"})
+@XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"id", "version"})
 @XmlAccessorType(XmlAccessType.FIELD)
 @Access(value = AccessType.FIELD)
 public abstract class NazgulEntity implements Serializable, Cloneable, Validatable {
@@ -58,12 +57,12 @@ public abstract class NazgulEntity implements Serializable, Cloneable, Validatab
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @XmlTransient
-    private int id;
+    @XmlAttribute(required = false, name = "jpaId")
+    private long id;
 
     @Version
     @XmlAttribute(required = false)
-    private int version;
+    private long version;
 
     /**
      * JAXB / JPA-friendly constructor.
@@ -74,14 +73,27 @@ public abstract class NazgulEntity implements Serializable, Cloneable, Validatab
     /**
      * @return the primary key value (i.e. Database-generated ID) of this NazgulEntity.
      */
-    public final int getId() {
+    public long getId() {
         return id;
+    }
+
+    /**
+     * Assigns the ID property of this NazgulEntity. Note that this is not permitted/recommended according to the JPA
+     * specification, since it is the equivalent of changing the primary key of an Entity. However, since the JPA
+     * specification is insufficient when working with database views (which cannot be mapped to JPA entities in a
+     * standardized, annotation-based, manner) this setId method may be of use in a data access object implementation
+     * to create synthetic NazgulEntity objects corresponding to view rows.
+     *
+     * @param id The new ID of this NazgulEntity.
+     */
+    protected void setId(final long id) {
+        this.id = id;
     }
 
     /**
      * @return the Database-generated version/revision of this NazgulEntity.
      */
-    public int getVersion() {
+    public long getVersion() {
         return version;
     }
 
@@ -124,7 +136,7 @@ public abstract class NazgulEntity implements Serializable, Cloneable, Validatab
      * @throws IllegalStateException if cloning this instance failed with a {@code CloneNotSupportedException}.
      */
     @SuppressWarnings("unchecked")
-    public final <T extends NazgulEntity> T copy() throws IllegalStateException {
+    public <T extends NazgulEntity> T copy() throws IllegalStateException {
 
         try {
             return (T) this.clone();

@@ -29,7 +29,7 @@
         <entityClass>se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter</entityClass>
     </entityClasses>
     <items>
-        <item xsi:type="core:dateTimeProperty" valueClassName="org.joda.time.DateTime" version="0">
+        <item xsi:type="core:dateTimeProperty" valueClassName="org.joda.time.DateTime" jpaId="0" version="0">
             <key>aDateTimePropertyKey</key>
             <value>2013-05-06T07:08:09Z</value>
         </item>

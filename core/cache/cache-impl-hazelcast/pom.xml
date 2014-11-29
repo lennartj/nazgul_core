@@ -42,7 +42,7 @@
 
     <properties>
         <path.in.reactor>core/cache/cache-impl-hazelcast</path.in.reactor>
-        <hazelcast.version>3.3.2</hazelcast.version>
+        <hazelcast.version>3.3.3</hazelcast.version>
     </properties>
 
     <!-- +=============================================== -->
