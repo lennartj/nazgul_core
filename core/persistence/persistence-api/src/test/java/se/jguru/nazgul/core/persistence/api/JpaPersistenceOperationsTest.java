@@ -35,8 +35,6 @@ import se.jguru.nazgul.core.persistence.model.NazgulEntity;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.persistence.Query;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -49,156 +47,10 @@ public class JpaPersistenceOperationsTest extends AbstractInMemoryJpaTest {
     // Our log
     private static final Logger log = LoggerFactory.getLogger(JpaPersistenceOperationsTest.class);
 
-    /*
-    private static final String JPA_SPECIFICATION_PROPERTY = "jpaSpec";
-    private ClassLoader originalClassLoader;
-    private EntityManager unitTestEM;
-    private EntityTransaction trans;
-    private JpaPersistenceOperations unitUnderTest;
-    private String persistenceXmlFile;
-    private String jpaSpecification;
-
-    @Before
-    public void stashOriginalClassLoader() {
-
-        originalClassLoader = getClass().getClassLoader();
-
-        // Find the JPA specification used, and use openjpa2 as the default.
-        jpaSpecification = System.getProperty(JPA_SPECIFICATION_PROPERTY, "openjpa2");
-        persistenceXmlFile = "testdata/JpaOperationsPersistence_" + jpaSpecification + ".xml";
-        log.info("\njpaSpec: [" + jpaSpecification + "]  ==> persistenceXmlFile: [" + persistenceXmlFile + "]\n");
-
-        final PersistenceRedirectionClassLoader redirectionClassLoader =
-                new PersistenceRedirectionClassLoader(getClass().getClassLoader(), persistenceXmlFile);
-
-        Thread.currentThread().setContextClassLoader(redirectionClassLoader);
-
-        // Create EntityManager and Transaction.
-        unitTestEM = getEntityManager("InmemoryPU");
-        unitUnderTest = new JpaPersistenceOperations(unitTestEM);
-        trans = unitTestEM.getTransaction();
-        trans.begin();
-    }
-    */
-
-    /*
-    @Override
-    protected void doCustomTeardown() {
-
-        if (unitTestEM != null) {
-            if (trans != null && !trans.isActive()) {
-                trans.begin();
-            }
-
-            try {
-
-                //
-                // Be paranoid.
-                //
-                final List<String> tableNames = Arrays.asList("MOCKNAZGULENTITY", "NAMEDPARAMETERSPERSON");
-
-                for (String currentTable : tableNames) {
-                    Query infoQ = unitTestEM.createNativeQuery("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES " +
-                            "WHERE TABLE_NAME = '" + currentTable + "'");
-                    final List resultList = infoQ.getResultList();
-                    if (resultList.size() == 1) {
-
-                        Query q = unitTestEM.createNativeQuery("DROP TABLE " + currentTable);
-                        int affectedRows = q.executeUpdate();
-                        log.info("Removed table [" + currentTable + "]. Rows affected [" + affectedRows + "]");
-
-                        if (trans.getRollbackOnly()) {
-                            trans.rollback();
-                        } else {
-                            trans.commit();
-                        }
-                    }
-                }
-            } catch (final Exception e) {
-
-                log.info("Could not commit the Transaction.", e);
-            }
-
-            try {
-
-                // Close all the JPA resources.
-                if (trans.isActive() && !trans.getRollbackOnly()) {
-                    trans.commit();
-                }
-                if (unitTestEM.isOpen() && trans.isActive()) {
-                    unitTestEM.flush();
-                }
-            } catch (final Exception e) {
-                log.info("Could not close the EntityManager.", e);
-            } finally {
-                unitTestEM.close();
-            }
-
-            // Thread.currentThread().setContextClassLoader(originalClassLoader);
-        }
-    }
-    */
-
     @Override
     protected String getPersistenceFileName() {
         return "JpaOperationsPersistence";
     }
-
-    /*
-    @After
-    public void cleanupAndRestoreOriginalClassLoader() {
-
-        if (trans != null && !trans.isActive()) {
-            trans.begin();
-        }
-
-        try {
-
-            //
-            // Be paranoid.
-            //
-            final List<String> tableNames = Arrays.asList("MOCKNAZGULENTITY", "NAMEDPARAMETERSPERSON");
-
-            for (String currentTable : tableNames) {
-                Query infoQ = unitTestEM.createNativeQuery("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES " +
-                        "WHERE TABLE_NAME = '" + currentTable + "'");
-                final List resultList = infoQ.getResultList();
-                if (resultList.size() == 1) {
-
-                    Query q = unitTestEM.createNativeQuery("DROP TABLE " + currentTable);
-                    int affectedRows = q.executeUpdate();
-                    log.info("Removed table [" + currentTable + "]. Rows affected [" + affectedRows + "]");
-
-                    if (trans.getRollbackOnly()) {
-                        trans.rollback();
-                    } else {
-                        trans.commit();
-                    }
-                }
-            }
-        } catch (final Exception e) {
-
-            log.info("Could not commit the Transaction.", e);
-        }
-
-        try {
-
-            // Close all the JPA resources.
-            if (trans.isActive() && !trans.getRollbackOnly()) {
-                trans.commit();
-            }
-            if (unitTestEM.isOpen() && trans.isActive()) {
-                unitTestEM.flush();
-            }
-        } catch (final Exception e) {
-            log.info("Could not close the EntityManager.", e);
-        } finally {
-            unitTestEM.close();
-        }
-
-        Thread.currentThread().setContextClassLoader(originalClassLoader);
-    }
-    */
 
     @Test(expected = NullPointerException.class)
     public void validateExceptionOnNullEntityManager() {
