@@ -25,7 +25,7 @@
 <project xmlns="http://maven.apache.org/DECORATION/1.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd"
-        name="Nazgul Tools">
+         name="Nazgul Core: Parent" combine.self="override">
 
     <bannerLeft>
         <name>${project.artifactId}</name>
@@ -43,10 +43,10 @@
             <!-- Add syntax highlighter -->
             <link href="http://alexgorbatchev.com/pub/sh/current/styles/shThemeDefault.css"
                   rel="stylesheet"
-                  type="text/css" />
+                  type="text/css"/>
             <link href="http://alexgorbatchev.com/pub/sh/current/styles/shCore.css"
                   rel="stylesheet"
-                  type="text/css" />
+                  type="text/css"/>
             <script src="http://alexgorbatchev.com/pub/sh/current/scripts/shCore.js"
                     type="text/javascript"></script>
             <script src="http://alexgorbatchev.com/pub/sh/current/scripts/shBrushJava.js"

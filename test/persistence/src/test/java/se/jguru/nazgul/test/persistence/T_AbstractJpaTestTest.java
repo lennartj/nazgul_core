@@ -26,6 +26,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.test.persistence.pets.Bird;
 
 import javax.persistence.EntityTransaction;
@@ -41,6 +43,9 @@ import java.util.TreeMap;
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 public class T_AbstractJpaTestTest {
+
+    // Our Log
+    private static final Logger log = LoggerFactory.getLogger(T_AbstractJpaTestTest.class);
 
     // Shared state
     private ClassLoader originalClassLoader;
@@ -72,7 +77,7 @@ public class T_AbstractJpaTestTest {
             try {
                 unitUnderTest.tearDown();
             } catch (Exception e) {
-                System.out.println("Could not teardown MockAbstractJpaTest properly. " + e);
+                log.error("Could not teardown MockAbstractJpaTest properly. " + e);
             }
         }
 

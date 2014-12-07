@@ -59,6 +59,7 @@
         <module>clustering</module>
         <module>cache</module>
         <module>osgi</module>
+        <module>features-assembly</module>
     </modules>
 
     <!-- +=============================================== -->

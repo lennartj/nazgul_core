@@ -21,19 +21,17 @@
  */
 package se.jguru.nazgul.test.persistence;
 
-import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.operation.DatabaseOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
@@ -41,6 +39,9 @@ import java.util.SortedMap;
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 public class MockAbstractJpaTest extends AbstractJpaTest {
+
+    // Our Log
+    private static final Logger log = LoggerFactory.getLogger(MockAbstractJpaTest.class);
 
     public boolean cleanupSchemaInTeardown = true;
 
@@ -124,13 +125,16 @@ public class MockAbstractJpaTest extends AbstractJpaTest {
                 final Statement dropStatement = getJpaUnitTestConnection(true).createStatement();
                 while (tables.next()) {
                     final String schemaAndTableName = tables.getString(2) + "." + tables.getString(3);
-                    System.out.println(" Dropping [" + schemaAndTableName + "] ... ");
+
+                    if(log.isInfoEnabled()) {
+                        log.info(" Dropping [" + schemaAndTableName + "] ... ");
+                    }
 
                     dropStatement.addBatch("drop table " + schemaAndTableName);
                 }
                 final int[] results = dropStatement.executeBatch();
 
-                System.out.println(" ... Done dropping [" + results.length + "] table(s).");
+                log.info(" ... Done dropping [" + results.length + "] table(s).");
 
             } catch (SQLException e) {
                 e.printStackTrace();

@@ -257,6 +257,7 @@ public class JaxbXmlBinder implements XmlBinder<Object> {
      * @throws InternalStateValidationException
      *          if the internal state Validation failed.
      */
+    @SuppressWarnings("PMD")
     private void validate(final EntityTransporter toValidate) throws InternalStateValidationException {
 
         for (Object current : toValidate.getItems()) {

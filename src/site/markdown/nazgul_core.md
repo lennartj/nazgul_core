@@ -1,8 +1,10 @@
 # Nazgul Core reactor and projects
 
 Nazgul Core is a reactor defining library-style building blocks and non-domain
-[Nazgul Software Components](software_components.html), for general use in all
-types of projects.
+[Nazgul Software Components](software_components.html), for general use in all types of projects.
+Most of these components are completely standalone, which means that they **do not** depend on other components from
+the Nazgul Core reactor. (Understandably, implementation projects depend on their Model and API projects,
+respectively, but most other projects do not have inter-dependencies).
 
 ## The core components
 
@@ -16,9 +18,6 @@ The core components are:
     holding classes and methods wrapping generic-use algorithms for functional programming in
     java, as well as simplifying creating standalone applications ("executable JARs"),
     and modeling data in Tree structures.
-
-1. **nazgul-core-analyzer**. Sports an API for interacting with the reactor to validate that projects, directories
-    and POM files comply with given naming standards.
 
 2. **nazgul-core-cache**. The nazgul-core-cache reactor contains API and several implementation projects
     defining generic-use algorithms for working with caches. In this context, a cache can
@@ -45,6 +44,11 @@ The core components are:
 7. **nazgul-core-poms**. Reactor holding all parent poms used for different projects within the Nazgul Core
     reactor, except the parent for reactor poms themselves. Each separate project type (such as model projects)
     requiring a separate - but shared - configuration should define a separate parent pom here.
+
+7. **nazgul-core-quickstart**. Nazgul Software Component for integrating with tools such as Maven Archetype
+   Plugin or JBoss Forge - both of which can use the Quickstart analyzer and generator classes to
+   validate existing project structures, as well as generate software projects complying with
+   the Nazgul Framework's patterns.
 
 8. **nazgul-core-reflection**. Defines an API with tools assisting in type conversion,
     serialization and deserialization and extracting dependencies or type data in runtime.
@@ -76,9 +80,9 @@ The test-scope dependencies are shown below:
     automated tests for OSGi components relying on particular data in their surroundings. Focus here is
     simplicity for developers, not OSGi completeness.
 
-4. **nazgul-core-persistence-test**. Contains scaffolding and abstract superclasses factilitating performing
-    JPA-based tests for several JPA providers. Optionally delegating setup and validation of database data
-    to dbUnit implementations. Also providing a standard process to execute jpa-based tests.
+4. **nazgul-core-persistence-test**. Contains classes simplifying JPA-based tests for several JPA providers.
+   Optionally delegating setup and validation of database data to dbUnit implementations.
+   Also providing a standard setup/process to execute jpa-based tests.
 
 5. **nazgul-core-xmlbinding-test**. Contains utility methods to simplify testing and validating XML and
     XML-based tests, including calculating and visualizing diffs for XML trees.

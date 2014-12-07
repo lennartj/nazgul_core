@@ -98,6 +98,7 @@ public abstract class BundledImageLoader {
      *
      * @return the default Toolkit.
      */
+    @SuppressWarnings("PMD")
     private static Toolkit getToolkit() {
         if (toolkit == null) {
             toolkit = Toolkit.getDefaultToolkit();

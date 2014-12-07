@@ -183,6 +183,7 @@ public abstract class AbstractJaxbAnnotatedTransportType<T>
     // Private helpers
     //
 
+    @SuppressWarnings("PMD")
     private static void populate(final SortedSet<String> typeNames, final TypeVariable typeVariable) {
 
         // Extract the generic declaration information from the TypeVariable
