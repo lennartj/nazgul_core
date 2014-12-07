@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  Nazgul Project: nazgul-core-features-assembly
+  %%
+  Copyright (C) 2010 - 2014 jGuru Europe AB
+  %%
+  Licensed under the jGuru Europe AB license (the "License"), based
+  on Apache License, Version 2.0; you may not use this file except
+  in compliance with the License.
+  
+  You may obtain a copy of the License at
+  
+        http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
+
+<features name="nazgul-core" xmlns="http://karaf.apache.org/xmlns/features/v1.2.0">
+
+    <feature name="nazgul-core-algorithms"
+             resolver="(obr)"
+             version="${parent.version}"
+             description="Nazgul Framework: Algorithms"
+             start-level="50">
+
+        <!-- Include the bundles. -->
+        <bundle>mvn:se.jguru.nazgul.core.algorithms.api/nazgul-core-algorithms-api/${parent.version}</bundle>
+    </feature>
+
+    <feature name="nazgul-core-reflection"
+             resolver="(obr)"
+             version="${parent.version}"
+             description="Nazgul Framework: Reflection API"
+             start-level="50">
+
+        <!-- Include the bundles. -->
+        <bundle>mvn:se.jguru.nazgul.core.reflection.api/nazgul-core-reflection-api/${parent.version}</bundle>
+
+        <!-- Include the dependency features. -->
+        <feature version="${parent.version}">nazgul-core-algorithms</feature>
+    </feature>
+
+    <feature name="nazgul-core-resource-api"
+             resolver="(obr)"
+             version="${parent.version}"
+             description="Nazgul Framework: Resource API"
+             start-level="50">
+
+        <!-- Include the bundles. -->
+        <bundle>mvn:se.jguru.nazgul.core.resource.api/nazgul-core-resource-api/${parent.version}</bundle>
+        <bundle>mvn:org.apache.commons/commons-lang3/${org.apache.commons/commons-lang3/version}</bundle>
+        <bundle>wrap:mvn:org.aspectj/aspectjrt/${org.aspectj/aspectjrt/version}$Bundle-SymbolicName=AspectJ_Runtime&amp;Bundle-Version=${org.aspectj/aspectjrt/version}</bundle>
+        <bundle>mvn:org.slf4j/slf4j-api/${org.slf4j/slf4j-api/version}</bundle>
+    </feature>
+
+    <feature name="nazgul-core-resource-impl-resourcebundle"
+             resolver="(obr)"
+             version="${parent.version}"
+             description="Nazgul Framework: ResourceBundle Resource Implementation"
+             start-level="50">
+
+        <!-- Include the bundles. -->
+        <bundle>mvn:se.jguru.nazgul.core.resource.impl.resourcebundle/nazgul-core-resource-impl-resourcebundle/${parent.version}</bundle>
+
+        <!-- Include the dependency features. -->
+        <feature version="${parent.version}">nazgul-core-resource-api</feature>
+        <feature version="${parent.version}">nazgul-core-parser-api</feature>
+    </feature>
+
+    <feature name="nazgul-core-xmlbinding-api"
+             resolver="(obr)"
+             version="${parent.version}"
+             description="Nazgul Framework: XmlBinding API"
+             start-level="50">
+
+        <!-- Include the bundles. -->
+        <bundle>mvn:org.apache.commons/commons-lang3/${org.apache.commons/commons-lang3/version}</bundle>
+        <bundle>wrap:mvn:org.aspectj/aspectjrt/${org.aspectj/aspectjrt/version}$Bundle-SymbolicName=AspectJ_Runtime&amp;Bundle-Version=${org.aspectj/aspectjrt/version}</bundle>
+        <bundle>mvn:org.slf4j/slf4j-api/${org.slf4j/slf4j-api/version}</bundle>
+
+        <!-- Include the dependency features. -->
+        <feature version="${parent.version}">nazgul-core-reflection</feature>
+    </feature>
+
+    <feature name="nazgul-core-xmlbinding-spi-jaxb"
+             resolver="(obr)"
+             version="${parent.version}"
+             description="Nazgul Framework: XmlBinding JAXB SPI"
+             start-level="50">
+
+        <!-- Include the bundles. -->
+        <bundle>mvn:se.jguru.nazgul.core.xmlbinding.api/nazgul-core-xmlbinding-api/${parent.version}</bundle>
+        <bundle>mvn:joda-time/joda-time/${joda-time/joda-time/version}</bundle>
+        <bundle>mvn:com.google.guava/guava/${com.google.guava/guava/version}</bundle>
+        <bundle>mvn:javax.xml.bind/jaxb-api/${javax.xml.bind/jaxb-api/version}</bundle>
+        <bundle dependency="false">mvn:org.glassfish.jaxb/jaxb-runtime/${org.glassfish.jaxb/jaxb-runtime/version}</bundle>
+
+        <!-- Include the dependency features. -->
+        <feature version="${parent.version}">nazgul-core-xmlbinding-api</feature>
+    </feature>
+
+    <feature name="nazgul-core-clustering-api"
+             resolver="(obr)"
+             version="${parent.version}"
+             description="Nazgul Framework: Clustering API"
+             start-level="50">
+
+        <!-- Include the bundles. -->
+        <bundle>mvn:se.jguru.nazgul.core.clustering.api/nazgul-core-clustering-api/${parent.version}</bundle>
+        <bundle dependency="false">mvn:org.apache.geronimo.specs/geronimo-jpa_2.0_spec/${parent.version}</bundle>
+
+        <!-- Include the dependency features. -->
+        <feature version="${parent.version}">nazgul-core-xmlbinding-api</feature>
+    </feature>
+
+    <feature name="nazgul-core-cache-api"
+             resolver="(obr)"
+             version="${parent.version}"
+             description="Nazgul Framework: Cache API"
+             start-level="50">
+
+        <!-- Include the bundles. -->
+        <bundle>mvn:se.jguru.nazgul.core.cache.api/nazgul-core-cache-api/${parent.version}</bundle>
+
+        <!-- Include the dependency features. -->
+        <feature version="${parent.version}">nazgul-core-clustering-api</feature>
+    </feature>
+
+    <feature name="nazgul-core-impl-ehcache"
+             resolver="(obr)"
+             version="${parent.version}"
+             description="Nazgul Framework: Cache Implementation - EhCache"
+             start-level="50">
+
+        <!-- Include the bundles. -->
+        <bundle>mvn:se.jguru.nazgul.core.cache.impl.ehcache/nazgul-core-cache-impl-ehcache/${parent.version}</bundle>
+
+        <!-- Include the dependency features. -->
+        <feature version="${parent.version}">nazgul-core-cache-api</feature>
+    </feature>
+
+    <feature name="nazgul-core-configuration-model"
+             resolver="(obr)"
+             version="${parent.version}"
+             description="Nazgul Framework: Configuration Model"
+             start-level="50">
+
+        <!-- Include the bundles. -->
+        <bundle>mvn:se.jguru.nazgul.core.configuration.model/nazgul-core-configuration-model/${parent.version}</bundle>
+
+        <!-- Include the dependency features. -->
+        <feature version="${parent.version}">nazgul-core-algorithms-tree-api</feature>
+    </feature>
+
+</features>

@@ -114,6 +114,7 @@ public enum PomToken {
      * Builder class to simplify creating a SortedMap whose keys contains the tokens of each StandardToken.
      * This Map can be used for token replacements in text template files.
      */
+    @SuppressWarnings("PMD")
     static class MapBuilder {
 
         // State

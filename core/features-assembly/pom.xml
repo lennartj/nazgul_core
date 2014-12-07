@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+    ################################################
+    # Section 1:  Project information
+    ################################################
+    -->
+    <parent>
+        <groupId>se.jguru.nazgul.core.poms.core-parent</groupId>
+        <artifactId>nazgul-core-parent</artifactId>
+        <version>1.6.1-SNAPSHOT</version>
+        <relativePath>../poms/core-parent</relativePath>
+    </parent>
+
+    <groupId>se.jguru.nazgul.core.features</groupId>
+    <artifactId>nazgul-core-features-assembly</artifactId>
+    <name>${project.artifactId}</name>
+    <packaging>pom</packaging>
+    <url>${url.prefix}/${path.in.reactor}</url>
+
+    <properties>
+        <path.in.reactor>core/features-assembly</path.in.reactor>
+
+        <!--
+            Build properties
+        -->
+        <depends.file.path>${project.build.outputDirectory}/META-INF/maven/dependencies.properties</depends.file.path>
+    </properties>
+
+    <!--
+    ################################################
+    # Section 2:  Dependency (management) settings
+    ################################################
+    -->
+    <dependencies>
+        <!--
+            Internal dependencies
+         -->
+        <dependency>
+            <groupId>se.jguru.nazgul.core.algorithms.api</groupId>
+            <artifactId>nazgul-core-algorithms-api</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>se.jguru.nazgul.core.algorithms.event.api</groupId>
+            <artifactId>nazgul-core-algorithms-event-api</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>se.jguru.nazgul.core.algorithms.event.spi.eventbus</groupId>
+            <artifactId>nazgul-core-algorithms-event-spi-eventbus</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>se.jguru.nazgul.core.algorithms.tree.model</groupId>
+            <artifactId>nazgul-core-algorithms-tree-model</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>se.jguru.nazgul.core.algorithms.tree.api</groupId>
+            <artifactId>nazgul-core-algorithms-tree-api</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>se.jguru.nazgul.core.cache.api</groupId>
+            <artifactId>nazgul-core-cache-api</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>se.jguru.nazgul.core.cache.impl.ehcache</groupId>
+            <artifactId>nazgul-core-cache-impl-ehcache</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>se.jguru.nazgul.core.cache.impl.inmemory</groupId>
+            <artifactId>nazgul-core-cache-impl-inmemory</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>se.jguru.nazgul.core.clustering.api</groupId>
+            <artifactId>nazgul-core-clustering-api</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>se.jguru.nazgul.core.configuration.model</groupId>
+            <artifactId>nazgul-core-configuration-model</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+        </dependency>
+        <!-- dependency>
+            <groupId>se.jguru.nazgul.core.configuration.api</groupId>
+            <artifactId>nazgul-core-configuration-api</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+        </dependency -->
+
+        <dependency>
+            <groupId>se.jguru.nazgul.core.parser.api</groupId>
+            <artifactId>nazgul-core-parser-api</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>se.jguru.nazgul.core.persistence.model</groupId>
+            <artifactId>nazgul-core-persistence-model</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>se.jguru.nazgul.core.persistence.api</groupId>
+            <artifactId>nazgul-core-persistence-api</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>se.jguru.nazgul.core.quickstart.model</groupId>
+            <artifactId>nazgul-core-quickstart-model</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>se.jguru.nazgul.core.quickstart.api</groupId>
+            <artifactId>nazgul-core-quickstart-api</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>se.jguru.nazgul.core.quickstart.impl.nazgul</groupId>
+            <artifactId>nazgul-core-quickstart-impl-nazgul</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>se.jguru.nazgul.core.reflection.api</groupId>
+            <artifactId>nazgul-core-reflection-api</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>se.jguru.nazgul.core.resource.api</groupId>
+            <artifactId>nazgul-core-resource-api</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>se.jguru.nazgul.core.resource.impl.resourcebundle</groupId>
+            <artifactId>nazgul-core-resource-impl-resourcebundle</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>se.jguru.nazgul.core.xmlbinding.api</groupId>
+            <artifactId>nazgul-core-xmlbinding-api</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>se.jguru.nazgul.core.xmlbinding.spi.jaxb</groupId>
+            <artifactId>nazgul-core-xmlbinding-spi-jaxb</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+        </dependency>
+
+        <!-- External dependencies -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+    <!--
+    ################################################
+    # Section 3:  Build settings
+    ################################################
+    -->
+    <build>
+
+        <!--
+            This filter file will be generated by the depends maven plugin
+        -->
+        <filters>
+            <filter>${depends.file.path}</filter>
+        </filters>
+
+        <!--
+            Now filter the Karaf file.
+        -->
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+        </resources>
+
+        <plugins>
+
+
+            <!--
+                Generate maven dependencies listing file, which holds variables used
+                in filtering the features.xml file.
+            -->
+            <plugin>
+                <groupId>org.apache.servicemix.tooling</groupId>
+                <artifactId>depends-maven-plugin</artifactId>
+                <version>1.2</version>
+                <executions>
+                    <execution>
+                        <id>generate-depends-file</id>
+                        <goals>
+                            <goal>generate-depends-file</goal>
+                        </goals>
+                        <configuration>
+                            <outputFile>${depends.file.path}</outputFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--
+                The assembly project is a POM; we must explicitly tell the resources plugin to fire.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>filter</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--
+                Attach the Karaf artifacts as build process artifacts.
+            -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-artifacts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${pom.basedir}/target/classes/features.xml</file>
+                                    <type>xml</type>
+                                    <classifier>features</classifier>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!--
+    ################################################
+    # Section 4:  External systems
+    ################################################
+    -->
+
+    <!--
+        Define settings for Maven's site plugin.
+    -->
+    <distributionManagement>
+        <site>
+            <id>jGuru_NazgulToolsSite</id>
+            <name>jGuru_NazgulToolsSite</name>
+            <url>${distro.url.prefix}/${path.in.reactor}</url>
+        </site>
+    </distributionManagement>
+
+    <!--
+       Define connections for Maven's Mercurial integration.
+    -->
+    <scm>
+        <connection>${scm.url.prefix}/${reactor.name}</connection>
+        <developerConnection>${scm.url.prefix}/${reactor.name}</developerConnection>
+        <url>${reactor.url.remote.prefix}/${reactor.name}</url>
+        <tag>HEAD</tag>
+    </scm>
+</project>

@@ -111,13 +111,13 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
 
         final Set<Class<?>> toReturn = new HashSet<Class<?>>();
 
-        for(Map.Entry<Integer, Map<Class<?>, TypeConverter<From, ?>>> prioTypeConverterMap
+        for (Map.Entry<Integer, Map<Class<?>, TypeConverter<From, ?>>> prioTypeConverterMap
                 : prioritizedTypeConverterMap.entrySet()) {
 
             // Acquire the current TypeConverter instances.
             final Map<Class<?>, TypeConverter<From, ?>> from2ConverterMap = prioTypeConverterMap.getValue();
 
-            for(Map.Entry<Class<?>, TypeConverter<From, ?>> currentFrom2Converter : from2ConverterMap.entrySet()) {
+            for (Map.Entry<Class<?>, TypeConverter<From, ?>> currentFrom2Converter : from2ConverterMap.entrySet()) {
 
                 final TypeConverter<From, ?> currentTypeConverter = currentFrom2Converter.getValue();
                 final Class<?> currentToType = currentTypeConverter.getToType();
@@ -216,7 +216,7 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
         }
 
         // Find the Method or Constructor as appropriate for the distilled converters.
-        for(Map.Entry<Object, Tuple<List<Method>, List<Constructor<?>>>> currentEntry : validConverterMap.entrySet()) {
+        for (Map.Entry<Object, Tuple<List<Method>, List<Constructor<?>>>> currentEntry : validConverterMap.entrySet()) {
 
             // Map all constructor converters.
             final Tuple<List<Method>, List<Constructor<?>>> typeConverterTuple = currentEntry.getValue();
@@ -251,7 +251,7 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
      * @param targetType The type to which all retrieved TypeConverters should be able to convert to.
      * @param <To>       The target Type desired.
      * @return a prioritized list holding all known TypeConverters able to convert between the
-     *         sourceType to the targetType.
+     * sourceType to the targetType.
      */
     public <To> List<TypeConverter<From, To>> getTypeConverters(final Class<To> targetType) {
 
@@ -280,7 +280,7 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
             final Map<Class<?>, TypeConverter<From, ?>> from2TypeConvMap = current.getValue();
 
             // Fuzzy matches go after exact matches
-            for(Map.Entry<Class<?>, TypeConverter<From, ?>> currentSourceClass2TypeConverter : from2TypeConvMap.entrySet()) {
+            for (Map.Entry<Class<?>, TypeConverter<From, ?>> currentSourceClass2TypeConverter : from2TypeConvMap.entrySet()) {
                 if (currentSourceClass2TypeConverter.getKey().isAssignableFrom(targetType)) {
                     toReturn.add((TypeConverter<From, To>) currentSourceClass2TypeConverter.getValue());
                 }
@@ -329,7 +329,7 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
      * Prints out a debug information string about the state within this PrioritizedTypeConverter instance.
      *
      * @return The source type and possible target types of this PrioritizedTypeConverter instance.
-     *         For simplicity, the target types are sorted in alphabetical order.
+     * For simplicity, the target types are sorted in alphabetical order.
      */
     @Override
     public String toString() {
@@ -601,7 +601,7 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
      * @param <T>   The exact type of AbstractReflectiveTypeConverter added
      * @return the TypeConverter which was replaced, or {@code null} if none was replaced by this add.
      */
-    private <T extends AbstractReflectiveTypeConverter> T addTypeConverter(final T toAdd) {
+    protected final <T extends AbstractReflectiveTypeConverter> T addTypeConverter(final T toAdd) {
 
         // Extract required data
         final int priority = toAdd.converterAnnotation.priority();
