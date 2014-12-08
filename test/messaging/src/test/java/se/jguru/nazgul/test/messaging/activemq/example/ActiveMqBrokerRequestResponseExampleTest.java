@@ -143,8 +143,10 @@ public class ActiveMqBrokerRequestResponseExampleTest extends AbstractRequestRes
 
         // Assert
         Assert.assertTrue(correctlyReceivedMessage);
-        Assert.assertEquals(1, receivedClientResponses.size());
-        Assert.assertEquals(1, serverSideReceivedMessages.size());
+        Assert.assertEquals("Expected 1 received client response message, but got: " + receivedClientResponses,
+                1, receivedClientResponses.size());
+        Assert.assertEquals("Expected 1 received server message, but got: " + serverSideReceivedMessages,
+                1, serverSideReceivedMessages.size());
 
         final TextMessage response = (TextMessage) receivedClientResponses.get(0);
         Assert.assertTrue(response.getText().startsWith("Only text messages are handled."));
@@ -192,8 +194,10 @@ public class ActiveMqBrokerRequestResponseExampleTest extends AbstractRequestRes
 
         // Assert
         Assert.assertTrue(correctlyReceivedMessage);
-        Assert.assertEquals(1, receivedClientResponses.size());
-        Assert.assertEquals(1, serverSideReceivedMessages.size());
+        Assert.assertEquals("Expected 1 received client response message, but got: " + receivedClientResponses,
+                1, receivedClientResponses.size());
+        Assert.assertEquals("Expected 1 received server message, but got: " + serverSideReceivedMessages,
+                1, serverSideReceivedMessages.size());
 
         final TextMessage response = (TextMessage) receivedClientResponses.get(0);
         Assert.assertEquals(response.getText(), "Received inbound: " + clientMessage);
