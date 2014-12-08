@@ -82,7 +82,8 @@ The resulting annotated JPA code is shown below:
     @CollectionTable(name = "member_contactdetails")
     @MapKeyColumn(name = "contact_type")
     @Column(name = "address_or_number")
-    private Map<String, String> contactDetails;]]></pre>
+    private Map<String, String> contactDetails;
+]]></pre>
 
 ## Scenario 2: (Sensibly named) Collections of Entities
 
@@ -111,7 +112,3 @@ java class diagram of the relation above indicates that the GuildMembership is a
 compound key instead of a plain one:
 
 <img src="images/plantuml/jpa_jumptable_compound_key.png" style="margin:10px; border:1px solid black;" />
-
-The corresponding GuildMaster implementation
-
-##### Example 2: JPA primitive Map

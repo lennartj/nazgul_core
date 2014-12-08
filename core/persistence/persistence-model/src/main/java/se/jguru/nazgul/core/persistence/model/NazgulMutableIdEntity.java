@@ -46,6 +46,9 @@ import javax.xml.bind.annotation.XmlType;
 @Access(value = AccessType.FIELD)
 public abstract class NazgulMutableIdEntity extends NazgulEntity {
 
+    // Internal state
+    private static final long serialVersionUID = 8829990012L;
+
     /**
      * JAXB / JPA-friendly constructor.
      */
