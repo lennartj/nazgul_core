@@ -1,4 +1,4 @@
-## Nazgul Core: Persistence Model
+# Nazgul Core: Persistence Model
 
 The Nazgul Core: Persistence Model defines a simple way to combine JPA and JAXB to create
 entities that can be persisted (typically to a database using JPA or SQL) and also marshalled

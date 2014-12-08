@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   #%L
-  Nazgul Project: nazgul-core-persistence-model
+  Nazgul Project: nazgul-core-persistence-api
   %%
   Copyright (C) 2010 - 2014 jGuru Europe AB
   %%
@@ -21,6 +21,7 @@
   #L%
   -->
 
+
 <project xmlns="http://maven.apache.org/DECORATION/1.3.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/DECORATION/1.3.0 http://maven.apache.org/xsd/decoration-1.3.0.xsd">
@@ -32,7 +33,6 @@
     <body>
         <menu name="Overview">
             <item name="Introduction" href="index.html"/>
-            <item name="Example: Standard Cache API usage" href="example_jpa_collections.html"/>
         </menu>
     </body>
 </project>
