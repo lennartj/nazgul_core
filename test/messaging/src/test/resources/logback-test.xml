@@ -40,7 +40,7 @@
     <logger name="se.jguru.nazgul.test.messaging" level="DEBUG"/>
 
     <!-- Make the frameworks shut up. -->
-    <logger name="org.apache.activemq" level="WARN"/>
+    <logger name="org.apache.activemq" level="DEBUG"/>
     <logger name="org.hornetq.core" level="INFO" />
 
 </configuration>

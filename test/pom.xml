@@ -48,7 +48,7 @@
     <!-- +=============================================== -->
     <modules>
         <module>osgi</module>
-        <module>messaging</module>
+        <!-- module>messaging</module -->
         <module>xmlbinding</module>
         <module>blueprint</module>
         <module>persistence</module>

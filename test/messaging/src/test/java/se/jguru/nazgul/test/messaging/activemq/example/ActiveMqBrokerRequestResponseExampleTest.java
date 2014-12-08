@@ -40,6 +40,7 @@ import javax.jms.Session;
 import javax.jms.TextMessage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -143,8 +144,20 @@ public class ActiveMqBrokerRequestResponseExampleTest extends AbstractRequestRes
 
         // Assert
         Assert.assertTrue(correctlyReceivedMessage);
-        Assert.assertEquals("Expected 1 received client response message, but got: " + receivedClientResponses,
-                1, receivedClientResponses.size());
+
+        if(receivedClientResponses.size() != 1) {
+            final List<String> messageClientList = new ArrayList<String>();
+            for(Message current : receivedClientResponses) {
+
+                final TextMessage received = (TextMessage) current;
+                messageClientList.add(received.getJMSMessageID() + " --> [" + received.getText() + "]");
+            }
+
+            Assert.fail("Expected 1 received client response message, but got [" + receivedClientResponses.size()
+                            + "]: " + messageClientList);
+        }
+
+        Assert.assertEquals(1, receivedClientResponses.size());
         Assert.assertEquals("Expected 1 received server message, but got: " + serverSideReceivedMessages,
                 1, serverSideReceivedMessages.size());
 
@@ -159,7 +172,7 @@ public class ActiveMqBrokerRequestResponseExampleTest extends AbstractRequestRes
 
         // Assemble
         final String clientMessage = "This is a client-side originated message.";
-        final List<Message> receivedClientResponses = new ArrayList<Message>();
+        final List<Message> receivedClientResponses = new CopyOnWriteArrayList<Message>();
 
         final Connection clientConnection = createConnection();
         final Session clientRequestSession = createSession(clientConnection);
@@ -194,8 +207,8 @@ public class ActiveMqBrokerRequestResponseExampleTest extends AbstractRequestRes
 
         // Assert
         Assert.assertTrue(correctlyReceivedMessage);
-        Assert.assertEquals("Expected 1 received client response message, but got: " + receivedClientResponses,
-                1, receivedClientResponses.size());
+        Assert.assertEquals("Expected 1 received client response message, but got [" + receivedClientResponses.size()
+                + "]: " + receivedClientResponses, 1, receivedClientResponses.size());
         Assert.assertEquals("Expected 1 received server message, but got: " + serverSideReceivedMessages,
                 1, serverSideReceivedMessages.size());
 
