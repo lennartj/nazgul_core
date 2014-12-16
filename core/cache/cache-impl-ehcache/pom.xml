@@ -30,7 +30,7 @@
     <parent>
         <groupId>se.jguru.nazgul.core.poms.core-parent</groupId>
         <artifactId>nazgul-core-parent</artifactId>
-        <version>1.7.1-SNAPSHOT</version>
+        <version>1.7.1</version>
         <relativePath>../../poms/core-parent</relativePath>
     </parent>
 
@@ -53,18 +53,18 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.cache.api</groupId>
             <artifactId>nazgul-core-cache-api</artifactId>
-            <version>1.7.1-SNAPSHOT</version>
+            <version>1.7.1</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.parser.api</groupId>
             <artifactId>nazgul-core-parser-api</artifactId>
-            <version>1.7.1-SNAPSHOT</version>
+            <version>1.7.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.test.xmlbinding</groupId>
             <artifactId>nazgul-core-xmlbinding-test</artifactId>
-            <version>1.7.1-SNAPSHOT</version>
+            <version>1.7.1</version>
             <scope>test</scope>
         </dependency>
 
@@ -164,6 +164,6 @@
         <connection>${scm.url.prefix}/${reactor.name}</connection>
         <developerConnection>${scm.url.prefix}/${reactor.name}</developerConnection>
         <url>${reactor.url.remote.prefix}/${reactor.name}</url>
-        <tag>HEAD</tag>
+        <tag>nazgul-core-1.7.1</tag>
     </scm>
 </project>
