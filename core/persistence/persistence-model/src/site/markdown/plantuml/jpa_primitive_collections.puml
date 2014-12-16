@@ -1,0 +1,16 @@
+@startuml
+
+object member {
+    id : long
+    ...
+}
+
+object member_contactdetails {
+    member_id : long (FK)
+    address_or_number : varchar(255)
+    contact_type : varchar(255)
+}
+
+member "1" -- "*" member_contactdetails
+
+@enduml

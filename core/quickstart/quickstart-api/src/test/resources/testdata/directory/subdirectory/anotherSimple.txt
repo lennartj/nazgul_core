@@ -1,0 +1,2 @@
+This is row 1 in another simple text file.
+This is row 2 in another simple text file.

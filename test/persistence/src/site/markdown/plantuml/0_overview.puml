@@ -1,0 +1,11 @@
+@startuml
+
+start
+:@Before;
+note right: Create DB and tables
+:Test;
+note right: Populate tables, Fire JPA, Validate tables
+:@After;
+note right: Shutdown DB
+stop
+@enduml

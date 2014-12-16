@@ -1,0 +1,34 @@
+@startuml
+
+class NazgulEntity {
+    private long id;
+    private long version;
+}
+
+class Membership <<Entity>> {
+    private Set<GuildMembership> guildMemberships;
+}
+
+class GuildMembershipId <<Embedded Key>> {
+    public long guildId;
+    public long membershipId;
+}
+
+class GuildMembership <<Entity>> {
+
+    private Guild guild;
+    private Membership membership;
+    private boolean guildMaster;
+}
+
+class Guild <<Entity>> {
+}
+
+Membership -up-|> NazgulEntity
+Guild -up-|> NazgulEntity
+
+Membership --left-- GuildMembership
+GuildMembershipId *-up- GuildMembership : compound key
+GuildMembership --left--> Guild
+
+@enduml
