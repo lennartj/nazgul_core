@@ -62,7 +62,9 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
     /**
      * Standard directory containing templates.
      */
-    public static final String STANDARD_TEMPLATE_DIR = "template/" + System.getProperty("user.name");
+    public static final String STANDARD_TEMPLATE_DIR = "template/"
+            + (System.getProperty("user.name") == null ? "unknown" : System.getProperty("user.name"))
+            + "/";
 
     // Internal state
     private static final String TMP_DIR = System.getProperty("java.io.tmpdir");
