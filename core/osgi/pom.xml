@@ -30,7 +30,7 @@
     <parent>
         <groupId>se.jguru.nazgul.core</groupId>
         <artifactId>nazgul-core-core-reactor</artifactId>
-        <version>1.7.1</version>
+        <version>1.7.2-SNAPSHOT</version>
     </parent>
 
     <groupId>se.jguru.nazgul.core.osgi</groupId>
@@ -74,6 +74,6 @@
         <connection>${scm.url.prefix}/${reactor.name}</connection>
         <developerConnection>${scm.url.prefix}/${reactor.name}</developerConnection>
         <url>${reactor.url.remote.prefix}/${reactor.name}</url>
-        <tag>nazgul-core-1.7.1</tag>
+        <tag>HEAD</tag>
     </scm>
 </project>
