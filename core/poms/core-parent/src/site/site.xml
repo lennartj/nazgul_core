@@ -38,6 +38,18 @@
     <publishDate format="yyyy-MM-dd" position="right"/>
     <version position="left"/>
 
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>1.4</version>
+    </skin>
+
+    <custom>
+        <fluidoSkin>
+            <sourceLineNumbersEnabled>true</sourceLineNumbersEnabled>
+        </fluidoSkin>
+    </custom>
+
     <body>
         <head>
             <!-- Add syntax highlighter -->
