@@ -48,6 +48,7 @@
     <!-- +=============================================== -->
     <modules>
         <module>poms</module>
+        <module>jmx</module>
         <module>algorithms</module>
         <module>configuration</module>
         <module>quickstart</module>
