@@ -68,7 +68,7 @@ public abstract class Utf8ResourceBundle {
     // Private helpers
     //
 
-    private final static class Utf8PropertyResourceBundle extends ResourceBundle {
+    private static final class Utf8PropertyResourceBundle extends ResourceBundle {
 
         // Internal state
         private final PropertyResourceBundle innerBundle;
