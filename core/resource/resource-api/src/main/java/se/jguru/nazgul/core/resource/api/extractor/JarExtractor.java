@@ -144,7 +144,7 @@ public abstract class JarExtractor {
 
         // Peel off the initial '/' to make a valid name.
         Validate.isTrue(tmp.startsWith("/"), "The absolute path within the JAR should start with a '/' char. Got ["
-                       + tmp + "]");
+                + tmp + "]");
         return tmp.substring(1);
     }
 

@@ -116,7 +116,7 @@ public class DefaultJaxbConverterRegistryTest extends AbstractStandardizedTimezo
         expectedTransportTypeMap.put(firstAprilThreePm, JaxbAnnotatedDateTime.class);
 
         // Act & Assert
-        for(Map.Entry<Object, Class<? extends Serializable>> current : expectedTransportTypeMap.entrySet()) {
+        for (Map.Entry<Object, Class<? extends Serializable>> current : expectedTransportTypeMap.entrySet()) {
 
             final Class<?> expectedType = expectedTransportTypeMap.get(current.getKey());
             final Class<?> actualType = unitUnderTest.getTransportType(current.getKey().getClass());

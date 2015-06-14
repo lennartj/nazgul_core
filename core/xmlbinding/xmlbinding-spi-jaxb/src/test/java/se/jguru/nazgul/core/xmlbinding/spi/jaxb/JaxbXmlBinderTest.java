@@ -212,12 +212,12 @@ public class JaxbXmlBinderTest {
 
             final Properties properties = System.getProperties();
             final SortedMap<String, String> sysProps = new TreeMap<String, String>();
-            for(Map.Entry<Object, Object> current : properties.entrySet()) {
+            for (Map.Entry<Object, Object> current : properties.entrySet()) {
                 final String currentKey = "" + current.getKey();
                 sysProps.put(currentKey, "" + current.getValue());
             }
 
-            for(Map.Entry<String, String> current : sysProps.entrySet()) {
+            for (Map.Entry<String, String> current : sysProps.entrySet()) {
                 System.out.println(" [" + current.getKey() + "]: " + current.getValue());
             }
         }

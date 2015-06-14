@@ -26,10 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.JaxbXmlBinder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbNamespacePrefixResolver;
-import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbUtils;
-import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter;
 
-import javax.xml.bind.JAXBContext;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -106,24 +103,24 @@ public class InheritanceStructureTest {
                 // Start by comparing the names of the platters
                 int result = first.getName().compareTo(second.getName());
 
-                if(result == 0) {
+                if (result == 0) {
 
                     // Compare the platter prices
                     result = ((Integer) first.getPrice()).compareTo(second.getPrice());
 
-                    if(result == 0) {
+                    if (result == 0) {
 
                         // Compare the number of AbstractFood instances on the platter
                         result = ((Integer) first.getFoods().size()).compareTo(second.getFoods().size());
 
-                        if(result == 0) {
+                        if (result == 0) {
 
                             final int numFoods = first.getFoods().size();
 
                             // Compare each AbstractFood
-                            for(int i = 0; i < numFoods; i++) {
+                            for (int i = 0; i < numFoods; i++) {
                                 result = first.getFoods().get(i).compareTo(second.getFoods().get(i));
-                                if(result != 0) {
+                                if (result != 0) {
                                     break;
                                 }
                             }

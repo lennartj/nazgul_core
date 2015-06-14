@@ -38,8 +38,8 @@ public interface IdGenerator extends Serializable {
 
     /**
      * @return {@code true} if this IdGenerator can deliver an identifier
-     *         at the time of this method being called, and {@code false}
-     *         otherwise.
+     * at the time of this method being called, and {@code false}
+     * otherwise.
      */
     boolean isIdentifierAvailable();
 }

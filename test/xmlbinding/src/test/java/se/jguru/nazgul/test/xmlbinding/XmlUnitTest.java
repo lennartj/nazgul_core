@@ -22,12 +22,11 @@
 
 package se.jguru.nazgul.test.xmlbinding;
 
-import org.junit.Assert;
 import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.Difference;
+import org.junit.Assert;
 import org.junit.Test;
-import se.jguru.nazgul.test.xmlbinding.helpers.Beverage;
 
 import java.util.List;
 import java.util.SortedMap;

@@ -43,9 +43,9 @@ public class PomTokenTest {
 
         // Assert
         Assert.assertEquals(PomToken.values().length, map.size());
-        for(PomToken current : PomToken.values()) {
+        for (PomToken current : PomToken.values()) {
 
-            if(current == PomToken.GROUPID) {
+            if (current == PomToken.GROUPID) {
                 Assert.assertEquals("myGroupId", map.get(current.getToken()));
             } else {
                 Assert.assertNull(map.get(current.getToken()));

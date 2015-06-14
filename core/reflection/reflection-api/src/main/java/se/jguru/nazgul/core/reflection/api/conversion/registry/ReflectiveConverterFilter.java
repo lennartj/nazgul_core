@@ -69,7 +69,7 @@ public final class ReflectiveConverterFilter {
      *
      * @param object The object which should be inspected for
      * @return {@code null} if the object was {@code null} or no converter methods and constructors
-     *         were found within the supplied object. Otherwise returns a populated Tuple.
+     * were found within the supplied object. Otherwise returns a populated Tuple.
      */
     public static Tuple<List<Method>, List<Constructor<?>>> getConverterMethodsAndConstructors(
             final Object object) {

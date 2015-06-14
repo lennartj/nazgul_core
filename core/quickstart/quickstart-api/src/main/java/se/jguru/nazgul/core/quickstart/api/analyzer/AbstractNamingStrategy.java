@@ -106,7 +106,7 @@ public abstract class AbstractNamingStrategy implements NamingStrategy {
             }
         }
 
-        if(toReturn == null) {
+        if (toReturn == null) {
             throw new IllegalArgumentException("Could not define PomType for POM (" + model.getGroupId() + "/"
                     + model.getArtifactId() + "/" + effectiveVersion + ")");
         }

@@ -130,9 +130,9 @@ public class FileUtilsTest {
 
         // Assert
         Assert.assertEquals(expectedFileNames.size(), files.size());
-        for(String current : expectedFileNames) {
+        for (String current : expectedFileNames) {
 
-            if(current.equals(binFilePath)) {
+            if (current.equals(binFilePath)) {
                 Assert.assertFalse(FileUtils.CHARACTER_DATAFILE_FILTER.accept(files.get(current)));
             } else {
                 Assert.assertTrue(FileUtils.CHARACTER_DATAFILE_FILTER.accept(files.get(current)));
@@ -181,7 +181,7 @@ public class FileUtilsTest {
         final File nonexistent = new File(path, "aNonexistentFile.txt");
 
         // Act & Assert
-        for(Map.Entry<String, File> current : textFiles.entrySet()) {
+        for (Map.Entry<String, File> current : textFiles.entrySet()) {
 
             final boolean isCharacterFile = !current.getKey().equals(binFilePath);
             Assert.assertEquals(isCharacterFile, FileUtils.CHARACTER_DATAFILE_FILTER.accept(current.getValue()));

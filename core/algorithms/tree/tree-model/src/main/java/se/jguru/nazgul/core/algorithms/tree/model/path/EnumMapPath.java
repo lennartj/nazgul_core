@@ -181,7 +181,7 @@ public class EnumMapPath<E extends Enum<E>> extends StringPath implements Semant
         // If JAXB har resurrected this object, the default constructor
         // has been called, but the populateShortcutIfRequired method has
         // not yet been invoked. In that case, do so manually
-        if(shortcut == null && enumClassName != null) {
+        if (shortcut == null && enumClassName != null) {
             populateShortcutIfRequired(null);
         }
 
@@ -227,7 +227,7 @@ public class EnumMapPath<E extends Enum<E>> extends StringPath implements Semant
         // We should be fine; populate the shortcut
         // Since the internal state of this class is immutable, we need to synchronization.
         this.shortcut = new EnumMap<E, String>(eType);
-        for(E current : eType.getEnumConstants()) {
+        for (E current : eType.getEnumConstants()) {
             shortcut.put(current, null);
         }
 

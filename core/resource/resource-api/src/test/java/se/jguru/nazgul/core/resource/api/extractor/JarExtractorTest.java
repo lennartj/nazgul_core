@@ -117,9 +117,9 @@ public class JarExtractorTest {
 
         // Assemble
         File targetExtractionDir = null;
-        for(int i = 0; true; i++) {
+        for (int i = 0; true; i++) {
             targetExtractionDir = new File(targetDir, "some/nested/directory/properExtraction_" + i);
-            if(!targetExtractionDir.exists()) {
+            if (!targetExtractionDir.exists()) {
                 break;
             }
         }
@@ -148,9 +148,9 @@ public class JarExtractorTest {
         // Assemble
         final String filePathPattern = "onlyInJar/textfiles/file1.txt";
         File targetExtractionDir = null;
-        for(int i = 0; true; i++) {
+        for (int i = 0; true; i++) {
             targetExtractionDir = new File(targetDir, "extracted/singleFile/pattern_" + i);
-            if(!targetExtractionDir.exists()) {
+            if (!targetExtractionDir.exists()) {
                 break;
             }
         }
@@ -177,8 +177,8 @@ public class JarExtractorTest {
 
     private void addFiles(final Map<String, File> path2FileMap, final File aDirectory) {
 
-        if(aDirectory.isDirectory()) {
-            for(File current : aDirectory.listFiles(fileFilter)) {
+        if (aDirectory.isDirectory()) {
+            for (File current : aDirectory.listFiles(fileFilter)) {
                 try {
                     path2FileMap.put(current.getCanonicalPath(), current);
                 } catch (IOException e) {
@@ -187,15 +187,15 @@ public class JarExtractorTest {
                 }
             }
 
-            for(File current : aDirectory.listFiles(dirFilter)) {
+            for (File current : aDirectory.listFiles(dirFilter)) {
                 addFiles(path2FileMap, current);
             }
         }
     }
 
     private String getPathEndingWith(final Map<String, File> path2FileMap, final String pathEnd) {
-        for(String current : path2FileMap.keySet()) {
-            if(current.replace(File.separator, "/").endsWith(pathEnd)) {
+        for (String current : path2FileMap.keySet()) {
+            if (current.replace(File.separator, "/").endsWith(pathEnd)) {
                 return current;
             }
         }

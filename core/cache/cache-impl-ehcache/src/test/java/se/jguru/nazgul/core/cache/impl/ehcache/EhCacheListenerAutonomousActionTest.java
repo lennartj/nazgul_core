@@ -96,7 +96,7 @@ public class EhCacheListenerAutonomousActionTest extends AbstractCacheTest {
 
         // Act #2: Put more element in the cache.
         //         This should evict existing elements in FIFO order, as configured.
-        for(int i = 0; i < maxNumElements; i++) {
+        for (int i = 0; i < maxNumElements; i++) {
             unitUnderTest.put("newKey_" + i, "newValue_" + i);
         }
 
@@ -122,12 +122,12 @@ public class EhCacheListenerAutonomousActionTest extends AbstractCacheTest {
         Assert.assertEquals(maxNumElements * 3, callTrace.size());
 
         // Validate the first put operations
-        for(int i = 0; i < maxNumElements; i++) {
+        for (int i = 0; i < maxNumElements; i++) {
             Assert.assertEquals("onPut [key_" + i + "]: value_" + i, callTrace.get(i));
         }
 
         // Validate the onAutonomousEvict/onPut pairs of operations.
-        for(int i = 0; i < maxNumElements; i++) {
+        for (int i = 0; i < maxNumElements; i++) {
             int autonomousEvictIndex = maxNumElements + 2 * i;
             int putIndex = autonomousEvictIndex + 1;
 
@@ -175,18 +175,18 @@ public class EhCacheListenerAutonomousActionTest extends AbstractCacheTest {
         onAutonomousEvict [key_1]: null,
         onAutonomousEvict [key_2]: null
          */
-        for(int i = 0; i < maxNumElements; i++) {
+        for (int i = 0; i < maxNumElements; i++) {
             // Validate that all elements are expired from the cache.
             Assert.assertNull(unitUnderTest.get(keyPrefix + i));
         }
 
         final List<String> callTrace = listener.callStack;
         Assert.assertEquals(2 * maxNumElements, callTrace.size());
-        for(int i = 0; i < maxNumElements; i++) {
+        for (int i = 0; i < maxNumElements; i++) {
             // Validate the first put operations
             Assert.assertEquals("onPut [key_" + i + "]: value_" + i, callTrace.get(i));
         }
-        for(int i = maxNumElements; i < 2 * maxNumElements; i++) {
+        for (int i = maxNumElements; i < 2 * maxNumElements; i++) {
             // Validate the autonomousEvict events
             Assert.assertEquals("onAutonomousEvict [key_" + (i - maxNumElements) + "]: null", callTrace.get(i));
         }

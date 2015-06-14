@@ -21,21 +21,16 @@
  */
 package se.jguru.nazgul.test.persistence;
 
-import liquibase.database.core.H2Database;
-import liquibase.database.core.PostgresDatabase;
-import liquibase.database.core.supplier.H2ConnSupplier;
 import liquibase.database.jvm.HsqlConnection;
 import liquibase.database.jvm.JdbcConnection;
 import org.apache.commons.lang3.Validate;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
-import org.dbunit.ext.h2.H2Connection;
 import org.dbunit.ext.h2.H2DataTypeFactory;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
 import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.text.MessageFormat;
 import java.util.SortedMap;

@@ -35,7 +35,7 @@ public interface Filter<T> {
      *
      * @param candidate The candidate to be tested.
      * @return <code>true</code> if the <code>candidate</code>
-     *         should be included.
+     * should be included.
      */
     boolean accept(T candidate);
 }

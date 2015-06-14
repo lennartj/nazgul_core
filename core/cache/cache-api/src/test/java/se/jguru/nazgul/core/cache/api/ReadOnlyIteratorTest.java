@@ -49,7 +49,7 @@ public class ReadOnlyIteratorTest {
         final List<String> result = new ArrayList<String>();
 
         // Act
-        while(unitUnderTest.hasNext()) {
+        while (unitUnderTest.hasNext()) {
             result.add(unitUnderTest.next());
         }
 

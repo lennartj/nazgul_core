@@ -136,7 +136,7 @@ public class T_AbstractProjectFactoryTest {
         final List<PomType> pomTypeOrderedList = Arrays.asList(PomType.ROOT_REACTOR, PomType.PARENT,
                 PomType.API_PARENT, PomType.MODEL_PARENT, PomType.WAR_PARENT, PomType.REACTOR);
 
-        for(int i = 0; i < pomTypeOrderedList.size(); i++) {
+        for (int i = 0; i < pomTypeOrderedList.size(); i++) {
 
             int index = i * 3 + 2;
             final String pomTypeName = pomTypeOrderedList.get(i).name();

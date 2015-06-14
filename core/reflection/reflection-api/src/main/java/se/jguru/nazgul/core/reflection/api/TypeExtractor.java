@@ -48,7 +48,8 @@ public final class TypeExtractor {
     /**
      * Hidden utility class constructor.
      */
-    private TypeExtractor() {}
+    private TypeExtractor() {
+    }
 
     /**
      * Acquires all interfaces from the provided class which matches
@@ -57,7 +58,7 @@ public final class TypeExtractor {
      * @param clazz    The class from which to derive all appropriate interfaces.
      * @param selector The selector defining which interfaces to filter out.
      * @return All interfaces implemented by the provided class, and which
-     *         matched the supplied selector's acceptance criteria.
+     * matched the supplied selector's acceptance criteria.
      */
     public static List<Class<?>> getInterfaces(final Class<?> clazz, final Filter<Class<?>> selector) {
 
@@ -78,7 +79,7 @@ public final class TypeExtractor {
      * @param clazz    The class from which to retrieve all relevant methods.
      * @param selector The selector defining which methods to filter out.
      * @return All methods (including private ones) found by the provided class, and
-     *         which matched the supplied selector's acceptance criteria.
+     * which matched the supplied selector's acceptance criteria.
      */
     public static List<Method> getMethods(final Class<?> clazz, final Filter<Method> selector) {
 
@@ -118,7 +119,7 @@ public final class TypeExtractor {
      * @param clazz    The class from which to retrieve all relevant fields.
      * @param selector The selector defining which fields to filter out.
      * @return All fields (including private ones) within the provided instance
-     *         or its superclasses, and which matched the supplied selector's acceptance criteria.
+     * or its superclasses, and which matched the supplied selector's acceptance criteria.
      */
     public static List<Field> getFields(final Class<?> clazz, final Filter<Field> selector) {
 
@@ -149,8 +150,8 @@ public final class TypeExtractor {
      * @param source The source type.
      * @param target The target type.
      * @return The number of class hops (i.e. class/superclass relations) between the
-     *         source and target types; if source is a superclass of target, the value
-     *         is negative, and otherwise positive.
+     * source and target types; if source is a superclass of target, the value
+     * is negative, and otherwise positive.
      * @throws IllegalArgumentException if source and target classes are not related.
      */
     public static int getRelationDifference(final Class<?> source, final Class<?> target)

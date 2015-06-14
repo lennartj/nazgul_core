@@ -159,20 +159,20 @@ public class Name extends NazgulEntity implements Comparable<Name> {
     @Override
     public int compareTo(final Name that) {
         int toReturn = getStandardNullComparisonValue(this, that);
-        if(toReturn == UNKNOWN) {
+        if (toReturn == UNKNOWN) {
 
             // Do a detailed comparison.
             final String thisPrefix = this.getPrefix() == null ? "" : this.getPrefix();
             final String thatPrefix = that.getPrefix() == null ? "" : that.getPrefix();
             toReturn = thisPrefix.compareTo(thatPrefix);
 
-            if(toReturn == 0) {
+            if (toReturn == 0) {
                 toReturn = this.getName().compareTo(that.getName());
             }
-            if(toReturn == 0) {
+            if (toReturn == 0) {
                 toReturn = this.getType().compareTo(that.getType());
             }
-            if(toReturn == 0) {
+            if (toReturn == 0) {
                 toReturn = this.getSeparator().compareTo(that.getSeparator());
             }
         }
@@ -188,7 +188,7 @@ public class Name extends NazgulEntity implements Comparable<Name> {
     public boolean equals(final Object obj) {
 
         // Check sanity
-        if(!(obj instanceof Name)) {
+        if (!(obj instanceof Name)) {
             return false;
         }
 
@@ -267,7 +267,7 @@ public class Name extends NazgulEntity implements Comparable<Name> {
      * Standard parsing method which creates a Name from the supplied toParse string, using the given
      * separator to identify the Name parts.
      *
-     * @param toParse A non-empty string which should be parsed into a Name.
+     * @param toParse   A non-empty string which should be parsed into a Name.
      * @param separator A non-empty separator used to separate the parts of the toParse String.
      * @return A Name created from the parts of the toParse string.
      */
@@ -282,10 +282,10 @@ public class Name extends NazgulEntity implements Comparable<Name> {
         final StringTokenizer tok = new StringTokenizer(toParse, separator, false);
         final int numTokens = tok.countTokens();
         Validate.isTrue(numTokens >= 2, "A Name must contain at least 2 parts (name and type). Found ["
-                       + numTokens + "] parts in [" + toParse + "] using separator [" + separator + "].");
+                + numTokens + "] parts in [" + toParse + "] using separator [" + separator + "].");
 
         String prefix = null;
-        if(numTokens > 2) {
+        if (numTokens > 2) {
             // In this case, we have a prefix.
             prefix = tok.nextToken();
         }
@@ -295,9 +295,9 @@ public class Name extends NazgulEntity implements Comparable<Name> {
         // In case we have more separators, simply join the rest of the tokens
         // with the separator to re-create the type.
         final StringBuilder typeBuilder = new StringBuilder();
-        while(tok.hasMoreTokens()) {
+        while (tok.hasMoreTokens()) {
             typeBuilder.append(tok.nextToken());
-            if(tok.hasMoreTokens()) {
+            if (tok.hasMoreTokens()) {
                 typeBuilder.append(separator);
             }
         }

@@ -70,8 +70,7 @@ public class NonDistributedEhCache extends AbstractClusterable implements Cache<
     /**
      * Creates an LocalEhCache instance using the provided classpath-relative configuration file.
      *
-     * @param classpathRelativeConfigurationFile
-     *         The LocalEhCache configuration file.
+     * @param classpathRelativeConfigurationFile The LocalEhCache configuration file.
      */
     public NonDistributedEhCache(final String classpathRelativeConfigurationFile) {
 
@@ -160,7 +159,7 @@ public class NonDistributedEhCache extends AbstractClusterable implements Cache<
                     @Override
                     public void doInTransaction() throws RuntimeException {
 
-                        for(Object current : cacheInstance.getKeys()) {
+                        for (Object current : cacheInstance.getKeys()) {
                             keys.add("" + current);
                         }
                     }
@@ -310,8 +309,8 @@ public class NonDistributedEhCache extends AbstractClusterable implements Cache<
      * cache.
      *
      * @return a List holding all IDs of the active Listeners onto this (local member) Cache. Note that this does not
-     *         include CacheListener instances wired to distributed objects, nor nor CacheListener instances wired to
-     *         other members within a distributed cache.
+     * include CacheListener instances wired to distributed objects, nor nor CacheListener instances wired to
+     * other members within a distributed cache.
      */
     @Override
     public List<String> getListenerIds() {
@@ -439,9 +438,8 @@ public class NonDistributedEhCache extends AbstractClusterable implements Cache<
      * classpathRelativeConfigurationFile, read by the classloader of the
      * EhCacheUtil class.
      *
-     * @param classpathRelativeConfigurationFile
-     *         an ehCache configuration file, i.e.
-     *         read like "config/ehcache/someFile.xml"
+     * @param classpathRelativeConfigurationFile an ehCache configuration file, i.e.
+     *                                           read like "config/ehcache/someFile.xml"
      * @return An instance CacheManager.
      */
     public static CacheManager getCacheManager(final String classpathRelativeConfigurationFile) {

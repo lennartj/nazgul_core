@@ -70,7 +70,7 @@ public class CollectionAlgorithmsInternalTest {
     public void validateDefaultFallbackForAbstractTypes() {
 
         // Act
-		final AbstractList<?> abstractList = cloneEmptyFromType(AbstractList.class);
+        final AbstractList<?> abstractList = cloneEmptyFromType(AbstractList.class);
         final AbstractSet<?> abstractSet = cloneEmptyFromType(AbstractSet.class);
 
         // Assert
@@ -87,7 +87,7 @@ public class CollectionAlgorithmsInternalTest {
         class CollectionWithoutDefaultConstructor extends AbstractList<String> {
 
             @SuppressWarnings("unused")
-			CollectionWithoutDefaultConstructor(final int size) {
+            CollectionWithoutDefaultConstructor(final int size) {
                 super();
             }
 
@@ -110,7 +110,7 @@ public class CollectionAlgorithmsInternalTest {
 
         // Act & Assert #2
         @SuppressWarnings("unused")
-		final CollectionWithoutDefaultConstructor willNotWork
+        final CollectionWithoutDefaultConstructor willNotWork
                 = cloneEmptyFromType(CollectionWithoutDefaultConstructor.class);
     }
 

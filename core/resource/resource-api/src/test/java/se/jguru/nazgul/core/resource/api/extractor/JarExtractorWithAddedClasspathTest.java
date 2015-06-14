@@ -154,9 +154,9 @@ public class JarExtractorWithAddedClasspathTest {
 
         // Assemble
         File targetExtractionDir = null;
-        for(int i = 0; true; i++) {
+        for (int i = 0; true; i++) {
             targetExtractionDir = new File(extractorSubDirectory, "validateGettingOkJarFile_" + i);
-            if(!targetExtractionDir.exists()) {
+            if (!targetExtractionDir.exists()) {
                 break;
             }
         }

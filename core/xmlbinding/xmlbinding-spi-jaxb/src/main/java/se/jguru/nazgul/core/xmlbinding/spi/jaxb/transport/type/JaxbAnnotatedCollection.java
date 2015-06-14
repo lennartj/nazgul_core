@@ -138,7 +138,7 @@ public class JaxbAnnotatedCollection<T extends Collection> extends AbstractJaxbA
 
         if (that instanceof JaxbAnnotatedCollection) {
 
-            if(value instanceof Comparable) {
+            if (value instanceof Comparable) {
                 result = ((Comparable) value).compareTo(((JaxbAnnotatedCollection) that).getValue());
             } else {
                 result = this.hashCode() < that.hashCode() ? -1 : (this.hashCode() == that.hashCode() ? 0 : 1);
@@ -148,7 +148,7 @@ public class JaxbAnnotatedCollection<T extends Collection> extends AbstractJaxbA
         }
 
         if (that instanceof Collection) {
-            if(value instanceof Comparable) {
+            if (value instanceof Comparable) {
                 result = ((Comparable) value).compareTo(that);
             } else {
                 result = this.hashCode() < that.hashCode() ? -1 : (this.hashCode() == that.hashCode() ? 0 : 1);

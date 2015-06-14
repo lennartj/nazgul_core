@@ -49,7 +49,7 @@ public abstract class MavenVersionExtractor {
      * the local thread's context ClassLoader.
      *
      * @return a Reader connected to the {@code DEPENDENCY_FILE_PATH} as loaded by
-     *         the local thread's context ClassLoader.
+     * the local thread's context ClassLoader.
      */
     public static Reader getDependenciesReader() {
 
@@ -84,7 +84,7 @@ public abstract class MavenVersionExtractor {
      * @param artifactId          The artifactId for which the version should be acquired.
      * @param configurationReader The Reader connected to the depends-maven-plugin file/stream.
      * @return The version of the given groupId and artifactId, or {@code null} if the version was
-     *         not found within the supplied configurationReader.
+     * not found within the supplied configurationReader.
      * @throws IllegalArgumentException if an exception was thrown while searching for the version
      *                                  for the given groupId and artifactId.
      * @throws IllegalStateException    if the format of a version line was incorrect.

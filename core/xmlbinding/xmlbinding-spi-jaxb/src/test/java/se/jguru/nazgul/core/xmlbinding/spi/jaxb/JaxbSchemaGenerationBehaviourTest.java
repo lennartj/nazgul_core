@@ -352,15 +352,15 @@ public class JaxbSchemaGenerationBehaviourTest {
         final Diff diff = XmlTestUtils.compareXmlIgnoringWhitespace(expected, out.toString());
         Assert.assertTrue(diff.identical());
 
-        for(String current : namespaceToPrefixTupleMap.keySet()) {
+        for (String current : namespaceToPrefixTupleMap.keySet()) {
 
-            if(current.equals("http://www.w3.org/2001/XMLSchema-instance")) {
+            if (current.equals("http://www.w3.org/2001/XMLSchema-instance")) {
                 Assert.assertEquals("xsi", namespaceToPrefixTupleMap.get(current).getKey());
                 Assert.assertEquals(true, namespaceToPrefixTupleMap.get(current).getValue());
             } else {
 
                 // Only the http://www.jguru.se/foobar namespace has a defined prefix via the QName.
-                final String suppliedPrefix = "http://www.jguru.se/foobar".equals(current)  ? "xmlPrefix" : null;
+                final String suppliedPrefix = "http://www.jguru.se/foobar".equals(current) ? "xmlPrefix" : null;
 
                 Assert.assertEquals(suppliedPrefix, namespaceToPrefixTupleMap.get(current).getKey());
                 Assert.assertEquals(false, namespaceToPrefixTupleMap.get(current).getValue());

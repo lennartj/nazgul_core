@@ -26,7 +26,6 @@ import org.dbunit.dataset.IDataSet;
 import org.junit.Assert;
 import org.junit.Test;
 import se.jguru.nazgul.core.algorithms.tree.model.helpers.CityIdentifier;
-import se.jguru.nazgul.core.algorithms.tree.model.path.EnumMapPath;
 import se.jguru.nazgul.test.persistence.StandardPersistenceTest;
 
 import javax.persistence.Query;

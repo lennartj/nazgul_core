@@ -34,7 +34,6 @@ import se.jguru.nazgul.core.cache.impl.hazelcast.AbstractHazelcastInstanceWrappe
 
 import java.io.InputStream;
 import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

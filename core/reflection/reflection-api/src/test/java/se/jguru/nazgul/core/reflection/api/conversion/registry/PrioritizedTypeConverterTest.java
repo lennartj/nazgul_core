@@ -22,22 +22,21 @@
 
 package se.jguru.nazgul.core.reflection.api.conversion.registry;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import se.jguru.nazgul.core.reflection.api.conversion.Converter;
 import se.jguru.nazgul.core.reflection.api.conversion.TypeConverter;
 import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.FakeConverter;
 import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.MultiConverter;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid, jGuru Europe AB</a>
@@ -98,7 +97,7 @@ public class PrioritizedTypeConverterTest {
     }
 
     @SuppressWarnings("unchecked")
-	@Test
+    @Test
     public void validateNullValuePermittedConverter() {
 
         // Assemble
@@ -119,7 +118,7 @@ public class PrioritizedTypeConverterTest {
     }
 
     @SuppressWarnings("unused")
-	@Test
+    @Test
     public void validateAddingConverters() {
 
         // Assemble
@@ -187,7 +186,7 @@ public class PrioritizedTypeConverterTest {
         Assert.assertEquals(methodTypeConverterClass,
                 lowerPriorityConverters.get(DateTime.class).getClass().getSimpleName());
 
-        for(TypeConverter<String, ?> current : defaultConverters.values()) {
+        for (TypeConverter<String, ?> current : defaultConverters.values()) {
             Assert.assertNotNull(current.toString());
         }
     }
@@ -205,7 +204,7 @@ public class PrioritizedTypeConverterTest {
 
         // Assert
         Assert.assertEquals(unitUnderTest.getSourceType().getName()
-                .compareTo(dateTimeConverter.getSourceType().getName()),
+                        .compareTo(dateTimeConverter.getSourceType().getName()),
                 result1);
         Assert.assertEquals(Integer.MAX_VALUE, result2);
     }
@@ -234,7 +233,7 @@ public class PrioritizedTypeConverterTest {
         // Assert
         Assert.assertNotNull(convert);
         Assert.assertEquals(stringArray.length, convert.size());
-        for(int i = 0; i < stringArray.length; i++) {
+        for (int i = 0; i < stringArray.length; i++) {
             Assert.assertEquals(stringArray[i], convert.get(i));
         }
     }

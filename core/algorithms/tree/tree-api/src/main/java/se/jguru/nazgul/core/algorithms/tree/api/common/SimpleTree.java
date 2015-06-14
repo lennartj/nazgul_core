@@ -23,8 +23,8 @@
 package se.jguru.nazgul.core.algorithms.tree.api.common;
 
 import org.apache.commons.lang3.Validate;
-import se.jguru.nazgul.core.algorithms.api.trees.node.MutableNode;
 import se.jguru.nazgul.core.algorithms.api.trees.MutableTree;
+import se.jguru.nazgul.core.algorithms.api.trees.node.MutableNode;
 import se.jguru.nazgul.core.algorithms.api.trees.node.Node;
 import se.jguru.nazgul.core.algorithms.api.trees.path.Path;
 

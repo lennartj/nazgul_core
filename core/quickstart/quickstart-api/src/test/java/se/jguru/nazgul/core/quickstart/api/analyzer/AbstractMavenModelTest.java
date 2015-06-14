@@ -51,7 +51,7 @@ public abstract class AbstractMavenModelTest {
             canonicalPath = aPomFile.getCanonicalPath();
             return pomReader.read(new FileReader(aPomFile));
         } catch (Exception e) {
-            throw new IllegalArgumentException("Could not read POM file [" + canonicalPath+ "]", e);
+            throw new IllegalArgumentException("Could not read POM file [" + canonicalPath + "]", e);
         }
     }
 

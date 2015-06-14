@@ -70,7 +70,7 @@ public class MockApplication extends AbstractApplicationLauncher {
     public void runApplication() {
         callTrace.add("runApplication");
 
-        if(exceptionMessageOnApplicationRun != null) {
+        if (exceptionMessageOnApplicationRun != null) {
             throw new IllegalArgumentException(exceptionMessageOnApplicationRun);
         }
     }

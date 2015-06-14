@@ -151,7 +151,7 @@ public class PatternPomAnalyzer extends AbstractPomAnalyzer {
     private boolean isMatch(final Pattern aPattern, final boolean nullImpliesValid, final String toMatch) {
 
         // Should we compare nulls?
-        if(aPattern == null || toMatch == null) {
+        if (aPattern == null || toMatch == null) {
             return nullImpliesValid;
         }
 

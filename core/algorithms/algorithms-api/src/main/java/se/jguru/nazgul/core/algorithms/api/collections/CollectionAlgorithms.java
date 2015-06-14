@@ -121,8 +121,8 @@ public abstract class CollectionAlgorithms {
      * @param <T>      The type to filter.
      * @param <C>      The Collection type which should be retrieved.
      * @return A new Collection holding the unique instances from the
-     *         source list accepted by the GenericFilter (shallow
-     *         copy, not deep-clone'd elements).
+     * source list accepted by the GenericFilter (shallow
+     * copy, not deep-clone'd elements).
      */
     public static <T, C extends Collection<T>> C filter(final C source, final Filter<T> selector) {
 
@@ -150,8 +150,8 @@ public abstract class CollectionAlgorithms {
      * @param <K>      The key type of the Map.
      * @param <V>      The value type of the Map.
      * @return A new Map holding the instances from the
-     *         source map accepted by the GeneriFilter (shallow
-     *         copy, not deep-clone'd elements).
+     * source map accepted by the GeneriFilter (shallow
+     * copy, not deep-clone'd elements).
      */
     public static <K, V> Map<K, V> filter(final Map<K, V> source, final Filter<Tuple<K, V>> selector) {
 
@@ -193,7 +193,7 @@ public abstract class CollectionAlgorithms {
         Validate.notNull(transformer, CANNOT_HANDLE_NULL_TRANSFORMER_ARGUMENT);
 
         // Create a return instance
-		Collection<R> toReturn = cloneEmptyFromType(source.getClass());
+        Collection<R> toReturn = cloneEmptyFromType(source.getClass());
 
         for (T current : source) {
             toReturn.add(transformer.transform(current));
@@ -327,7 +327,7 @@ public abstract class CollectionAlgorithms {
     //
 
     @SuppressWarnings("unchecked")
-	private static <T, C extends Collection<T>> C cloneEmptyFromType(final Class<C> type) {
+    private static <T, C extends Collection<T>> C cloneEmptyFromType(final Class<C> type) {
 
         Validate.notNull(type, "Cannot handle null type argument.");
         C toReturn = null;
@@ -359,7 +359,7 @@ public abstract class CollectionAlgorithms {
     }
 
     @SuppressWarnings("unchecked")
-	private static <T, C extends Collection<T>> C cloneEmpty(final C source) {
+    private static <T, C extends Collection<T>> C cloneEmpty(final C source) {
         return (C) cloneEmptyFromType(source.getClass());
     }
 }

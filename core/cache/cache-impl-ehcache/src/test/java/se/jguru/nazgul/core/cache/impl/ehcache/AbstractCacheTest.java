@@ -65,7 +65,8 @@ public abstract class AbstractCacheTest {
         performCustomSetup();
     }
 
-    protected void performCustomSetup() {}
+    protected void performCustomSetup() {
+    }
 
     @After
     public void shutdownLocalEhCache() {

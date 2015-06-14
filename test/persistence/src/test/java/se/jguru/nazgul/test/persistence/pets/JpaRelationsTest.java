@@ -26,8 +26,6 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
 import org.junit.Assert;
 import org.junit.Test;
-import se.jguru.nazgul.core.persistence.api.PersistenceOperationException;
-import se.jguru.nazgul.core.persistence.model.NazgulEntity;
 import se.jguru.nazgul.test.persistence.StandardPersistenceTest;
 
 import java.util.ArrayList;
@@ -41,7 +39,7 @@ import java.util.TreeMap;
  */
 public class JpaRelationsTest extends StandardPersistenceTest {
 
-    private static final String[] birdTableName = new String[] {"BIRD"};
+    private static final String[] birdTableName = new String[]{"BIRD"};
 
     @Test
     public void validateCreateJpaRelationEntities() throws Exception {
@@ -83,7 +81,7 @@ public class JpaRelationsTest extends StandardPersistenceTest {
         // Assert
         Assert.assertEquals(2, seeds.size());
         final Map<String, Seed> namedSeedsMap = new TreeMap<String, Seed>();
-        for(Seed current : seeds) {
+        for (Seed current : seeds) {
             namedSeedsMap.put(current.getName(), current);
         }
 
@@ -96,7 +94,7 @@ public class JpaRelationsTest extends StandardPersistenceTest {
         final List<Bird> oatsEatenByList = oatsSeed.getEatenBy();
         Assert.assertEquals(2, oatsEatenByList.size());
         final List<String> birdNames = Arrays.asList("Eagle", "Hawk");
-        for(Bird current : oatsEatenByList) {
+        for (Bird current : oatsEatenByList) {
             Assert.assertTrue(birdNames.contains(current.getName()));
         }
     }

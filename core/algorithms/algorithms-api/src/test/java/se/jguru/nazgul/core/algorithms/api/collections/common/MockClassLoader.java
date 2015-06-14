@@ -79,8 +79,8 @@ public class MockClassLoader extends ClassLoader {
      *
      * @param name The resource name
      * @return A <tt>URL</tt> object for reading the resource, or
-     *         <tt>null</tt> if the resource could not be found or the invoker
-     *         doesn't have adequate  privileges to get the resource.
+     * <tt>null</tt> if the resource could not be found or the invoker
+     * doesn't have adequate  privileges to get the resource.
      * @since 1.1
      */
     @Override

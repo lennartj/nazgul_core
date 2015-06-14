@@ -43,7 +43,7 @@ public interface TypeConverter<From, To> {
      *
      * @param instance The instance which should be validated for conversion.
      * @return {@code true} if this JaxbTransportTypeConverter can
-     *         package the provided instance for transport and {@code false} otherwise.
+     * package the provided instance for transport and {@code false} otherwise.
      */
     boolean canConvert(From instance);
 

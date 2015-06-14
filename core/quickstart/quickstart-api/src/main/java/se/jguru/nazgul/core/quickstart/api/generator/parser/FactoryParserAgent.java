@@ -23,7 +23,6 @@ package se.jguru.nazgul.core.quickstart.api.generator.parser;
 
 import org.apache.commons.lang3.Validate;
 import se.jguru.nazgul.core.parser.api.agent.AbstractParserAgent;
-import se.jguru.nazgul.core.quickstart.api.PomType;
 import se.jguru.nazgul.core.quickstart.model.Project;
 import se.jguru.nazgul.core.quickstart.model.SimpleArtifact;
 

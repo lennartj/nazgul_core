@@ -155,14 +155,14 @@ public class T_AbstractApplicationLauncherTest {
         final LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
         for (ch.qos.logback.classic.Logger current : context.getLoggerList()) {
 
-            if(current.getName().equalsIgnoreCase(name)) {
+            if (current.getName().equalsIgnoreCase(name)) {
                 current.addAppender(appender);
                 appender.start();
                 added = true;
             }
         }
 
-        if(!added) {
+        if (!added) {
             throw new IllegalStateException("Appender not added to Logger [" + name + "].");
         }
     }

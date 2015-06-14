@@ -52,7 +52,7 @@ public class CompoundParser extends DefaultTokenParser {
         if (staticReplacementTokens != null) {
 
             StaticReplacementParserAgent staticReplacementParserAgent = new StaticReplacementParserAgent();
-            for(Map.Entry<String, String> current : staticReplacementTokens.entrySet()) {
+            for (Map.Entry<String, String> current : staticReplacementTokens.entrySet()) {
                 staticReplacementParserAgent.addStaticReplacement(current.getKey(), current.getValue());
             }
 

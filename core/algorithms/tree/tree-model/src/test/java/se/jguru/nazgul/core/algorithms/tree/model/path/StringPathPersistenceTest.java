@@ -117,7 +117,7 @@ public class StringPathPersistenceTest extends StandardPersistenceTest {
 
     private void logIDataSets(final IDataSet expected, final IDataSet actual) {
         System.out.println(" ===== expected: \n" + extractFlatXmlDataSet(expected)
-                        + "\n ===== actual: \n" + extractFlatXmlDataSet(actual)
-                          + "\n =====");
+                + "\n ===== actual: \n" + extractFlatXmlDataSet(actual)
+                + "\n =====");
     }
 }

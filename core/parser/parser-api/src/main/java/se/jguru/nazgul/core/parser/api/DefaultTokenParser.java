@@ -49,7 +49,7 @@ public class DefaultTokenParser implements TokenParser {
 
         // Check sanity
         Validate.notNull(tokenDefinitions, "Cannot handle null tokenDefinitions argument.");
-        if(!canBeInitialized) {
+        if (!canBeInitialized) {
             throw new IllegalStateException("Cannot (re-)initialize a DefaultTokenParser after it has been used.");
         }
 
@@ -88,7 +88,7 @@ public class DefaultTokenParser implements TokenParser {
         StringBuilder toReturn = new StringBuilder();
 
         // Flip the switch.
-        if(canBeInitialized) {
+        if (canBeInitialized) {
             synchronized (parseAgents) {
                 canBeInitialized = false;
             }

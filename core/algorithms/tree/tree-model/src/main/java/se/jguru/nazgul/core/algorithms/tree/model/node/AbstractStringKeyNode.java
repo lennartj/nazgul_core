@@ -91,7 +91,7 @@ public abstract class AbstractStringKeyNode<V extends Serializable>
         this.parent = parent;
 
         // Ensure that this node is added as a child to the supplied parent.
-        if(parent != null) {
+        if (parent != null) {
             parent.addChild(this);
         }
     }
@@ -309,9 +309,9 @@ public abstract class AbstractStringKeyNode<V extends Serializable>
     public boolean equals(final Object obj) {
 
         // Check sanity
-        if(!(obj instanceof AbstractStringKeyNode)) {
+        if (!(obj instanceof AbstractStringKeyNode)) {
             return false;
-        } else if(obj == this) {
+        } else if (obj == this) {
             return true;
         }
 

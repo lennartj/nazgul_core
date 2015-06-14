@@ -253,7 +253,7 @@ public abstract class AbstractPomAnalyzer implements PomAnalyzer {
         final boolean versionMatches = toVerify.getVersion() == null
                 || requiredParent.getVersion().equals(parentToValidate.getVersion());
         if (!versionMatches) {
-            errors.add("Required version mismatch (Required: " +  requiredParent.getVersion() + ", Actual: "
+            errors.add("Required version mismatch (Required: " + requiredParent.getVersion() + ", Actual: "
                     + parentToValidate.getVersion() + ")");
         }
         if (!requiredParent.getGroupId().equals(parentToValidate.getGroupId())) {

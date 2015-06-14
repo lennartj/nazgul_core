@@ -38,7 +38,7 @@ public interface ConditionalTransportTypeConverter {
      *
      * @param instance The instance for which to check packaging capability.
      * @return <code>true</code> if this ConditionalTransportTypeConverter can
-     *         package the provided instance for transport and <code>false</code> otherwise.
+     * package the provided instance for transport and <code>false</code> otherwise.
      */
     boolean canPackageForTransport(Object instance);
 
@@ -49,7 +49,7 @@ public interface ConditionalTransportTypeConverter {
      *
      * @param instance The instance to revive.
      * @return <code>true</code> if this ConditionalTransportTypeConverter can revive the provided
-     *         instance from a transport form and <code>false</code> otherwise.
+     * instance from a transport form and <code>false</code> otherwise.
      */
     boolean canReviveAfterTransport(Object instance);
 }

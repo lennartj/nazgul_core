@@ -56,7 +56,7 @@ public class BlueprintServiceFilter implements Filter<ServiceReference> {
      *
      * @param serviceReference A non-null OSGi ServiceReference.
      * @return The BlueprintContainer name, should the provided serviceReference be a BlueprintContainer,
-     *         or {@code null} should the given ServiceReference not be a BlueprintContainer.
+     * or {@code null} should the given ServiceReference not be a BlueprintContainer.
      */
     public static String getBlueprintName(final ServiceReference serviceReference) {
 

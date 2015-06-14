@@ -109,7 +109,7 @@ public class SingleBracketPomTokenParserFactoryTest {
     }
 
     @Test
-     public void validateStandardBuilderStepsForComponentSpiProject() {
+    public void validateStandardBuilderStepsForComponentSpiProject() {
 
         // Assemble
 
@@ -313,8 +313,8 @@ public class SingleBracketPomTokenParserFactoryTest {
             parseAgents.setAccessible(true);
             final List<ParserAgent> parserAgentList = (List<ParserAgent>) parseAgents.get(parser);
 
-            for(ParserAgent current : parserAgentList) {
-                if(current instanceof FactoryParserAgent) {
+            for (ParserAgent current : parserAgentList) {
+                if (current instanceof FactoryParserAgent) {
                     return (FactoryParserAgent) current;
                 }
             }

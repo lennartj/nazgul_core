@@ -55,7 +55,7 @@ public interface MavenModelPatterns {
      * (i.e. the groupId of the Parent of the actual Maven Model).
      *
      * @return the Java RegExp Pattern which must be matched to imply a valid parent groupId
-     *         (i.e. the groupId of the Parent of the actual Maven Model).
+     * (i.e. the groupId of the Parent of the actual Maven Model).
      */
     Pattern getParentGroupIdPattern();
 
@@ -64,7 +64,7 @@ public interface MavenModelPatterns {
      * (i.e. the artifactId of the Parent of the actual Maven Model).
      *
      * @return the Java RegExp Pattern which must be matched to imply a valid parent artifactId
-     *         (i.e. the artifactId of the Parent of the actual Maven Model).
+     * (i.e. the artifactId of the Parent of the actual Maven Model).
      */
     Pattern getParentArtifactIdPattern();
 }

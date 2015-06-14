@@ -21,7 +21,6 @@
  */
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.rawtypes;
 
-import org.apache.xerces.dom.ElementNSImpl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

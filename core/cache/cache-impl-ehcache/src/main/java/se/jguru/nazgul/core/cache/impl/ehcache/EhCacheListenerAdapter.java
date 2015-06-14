@@ -36,7 +36,7 @@ import java.io.Serializable;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-@SuppressWarnings({ "unchecked", "rawtypes", "serial" })
+@SuppressWarnings({"unchecked", "rawtypes", "serial"})
 public class EhCacheListenerAdapter implements CacheEventListener, Serializable {
 
     // Internal state
@@ -118,7 +118,7 @@ public class EhCacheListenerAdapter implements CacheEventListener, Serializable 
      * manner as its wrapped listener.
      *
      * @return a hash code value for this object, being identical to the hashCode
-     *         value of the wrapped listener.
+     * value of the wrapped listener.
      * @see Object#equals(Object)
      * @see java.util.Hashtable
      */

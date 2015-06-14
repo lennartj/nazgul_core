@@ -24,7 +24,6 @@ package se.jguru.nazgul.core.reflection.api.conversion.registry;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
@@ -48,7 +47,7 @@ import java.util.TreeMap;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class DefaultConverterRegistry implements ConverterRegistry {
 
     // Our Log
@@ -97,7 +96,7 @@ public class DefaultConverterRegistry implements ConverterRegistry {
 
         // Map the respective converters to the sourceTypes of their @Converters.
         final Map<Class<?>, Set<Object>> sourceTypeToConverterInstanceMap = new HashMap<Class<?>, Set<Object>>();
-        for(Map.Entry<Object, Tuple<List<Method>, List<Constructor<?>>>> currentEntry : validConverters.entrySet()) {
+        for (Map.Entry<Object, Tuple<List<Method>, List<Constructor<?>>>> currentEntry : validConverters.entrySet()) {
 
             final Tuple<List<Method>, List<Constructor<?>>> methodsAndConstructors = currentEntry.getValue();
 
@@ -139,7 +138,7 @@ public class DefaultConverterRegistry implements ConverterRegistry {
     /**
      * {@inheritDoc}
      */
-	@Override
+    @Override
     public <From, To> To convert(final From source, final Class<To> desiredType)
             throws IllegalArgumentException {
 
@@ -169,7 +168,7 @@ public class DefaultConverterRegistry implements ConverterRegistry {
         final Class<To> optimalToType = getOptimalToType(typeConverter, desiredType);
 
         To toReturn = null;
-        if(optimalToType != null) {
+        if (optimalToType != null) {
 
             log.debug("Found TypeConverter [" + desiredType.getSimpleName()
                     + (optimalToType == desiredType ? "" : " (fuzzy: " + optimalToType.getSimpleName() + ")")
@@ -201,7 +200,7 @@ public class DefaultConverterRegistry implements ConverterRegistry {
 
         // Delegate and return.
         final Set<Class<?>> toReturn = new HashSet<Class<?>>();
-        for(Map.Entry<Integer, PrioritizedTypeConverter> currentEntry : converterMap.entrySet()) {
+        for (Map.Entry<Integer, PrioritizedTypeConverter> currentEntry : converterMap.entrySet()) {
 
             // Acquire the available target types for the current PrioritizedTypeConverter
             final Set<Class<?>> availableTargetTypes = currentEntry.getValue().getAvailableTargetTypes();
@@ -234,7 +233,7 @@ public class DefaultConverterRegistry implements ConverterRegistry {
         }
 
         // Delegate detail printout to the PrioritizedTypeConverter.
-        for(Map.Entry<String, Class<?>> current : sortedClassNames.entrySet()) {
+        for (Map.Entry<String, Class<?>> current : sortedClassNames.entrySet()) {
             builder.append(sourceTypeToTypeConvertersMap.get(sortedClassNames.get(current.getKey()))).append("\n");
         }
 
@@ -267,7 +266,7 @@ public class DefaultConverterRegistry implements ConverterRegistry {
                 requestedToType, availableTargetTypes);
 
         // Unrelated?
-        if(prioritizedTypes.size() == 0) {
+        if (prioritizedTypes.size() == 0) {
             return null;
         }
 
@@ -291,8 +290,8 @@ public class DefaultConverterRegistry implements ConverterRegistry {
      * @param sourceType The type to convert from.
      * @param <From>     The type to convert from.
      * @return a SortedMap holding all available PrioritizedTypeConverter instances
-     *         which can convert from the supplied sourceType, mapped to their priority
-     *         as defined by the algorithm found in the TypeClosenessTransformer class.
+     * which can convert from the supplied sourceType, mapped to their priority
+     * as defined by the algorithm found in the TypeClosenessTransformer class.
      */
     private <From> SortedMap<Integer, PrioritizedTypeConverter> getPrioritizedConverters(
             final Class<From> sourceType) {
@@ -323,7 +322,7 @@ public class DefaultConverterRegistry implements ConverterRegistry {
 
                             // The sourceType can be null, which generates an exception in the isAssignableFrom method.
                             // Perform normal sanity checking to handle null sourceType values.
-                            if(sourceType != null) {
+                            if (sourceType != null) {
 
                                 // Only accept candidates able to convert from the supplied sourceType/fromType.
                                 return candidate.getKey().isAssignableFrom(sourceType);
@@ -343,7 +342,7 @@ public class DefaultConverterRegistry implements ConverterRegistry {
                     sourceType, candidates.keySet());
 
             // Populate the return map
-            for(Map.Entry<Integer, List<Class<?>>> current : prioritizedClassMap.entrySet()) {
+            for (Map.Entry<Integer, List<Class<?>>> current : prioritizedClassMap.entrySet()) {
 
                 // For each priority, simply pick the first type returned.
                 toReturn.put(current.getKey(), candidates.get(current.getValue().get(0)));

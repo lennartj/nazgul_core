@@ -91,7 +91,7 @@ public interface FrameworkLauncher {
      * Acquires the OSGi framework from the underlying container.
      *
      * @return The Framework of the running Container, or <code>null</code> if the
-     *         Framework was not created (i.e. the FrameworkFactory was not run yet).
+     * Framework was not created (i.e. the FrameworkFactory was not run yet).
      */
     Framework getFramework();
 

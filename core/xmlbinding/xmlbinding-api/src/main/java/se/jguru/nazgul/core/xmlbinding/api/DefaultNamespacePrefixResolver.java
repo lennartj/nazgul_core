@@ -95,7 +95,7 @@ public class DefaultNamespacePrefixResolver implements NamespacePrefixResolver {
         synchronized (lock) {
 
             // Validate the provided xmlUri2PrefixMap
-            for(Map.Entry<String, String> current : xmlUri2PrefixMap.entrySet()) {
+            for (Map.Entry<String, String> current : xmlUri2PrefixMap.entrySet()) {
 
                 // Check sanity
                 Validate.notEmpty(current.getKey(), "Cannot handle null or empty xmlNamespaceUri.");
@@ -105,7 +105,7 @@ public class DefaultNamespacePrefixResolver implements NamespacePrefixResolver {
             }
 
             // Add all key <-> value entries
-            for(Map.Entry<String, String> current : xmlUri2PrefixMap.entrySet()) {
+            for (Map.Entry<String, String> current : xmlUri2PrefixMap.entrySet()) {
                 put(current.getKey(), current.getValue());
             }
         }

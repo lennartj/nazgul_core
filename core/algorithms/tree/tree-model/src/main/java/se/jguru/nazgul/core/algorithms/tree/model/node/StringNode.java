@@ -77,7 +77,7 @@ public class StringNode extends AbstractStringKeyNode<String> {
      * data and sporting an empty List of children.
      *
      * @param key    The nonempty key of this StringNode.
-     * @param data  The value of this StringNode. May be null.
+     * @param data   The value of this StringNode. May be null.
      * @param parent The parent StringNode of this one. May be null only if this is a Root node.
      */
     public StringNode(final String key,
@@ -90,7 +90,7 @@ public class StringNode extends AbstractStringKeyNode<String> {
      * Compound constructor creating a StringNode wrapping the supplied data.
      *
      * @param key      The nonempty key of this StringNode.
-     * @param data    The value of this StringNode. May be null.
+     * @param data     The value of this StringNode. May be null.
      * @param parent   The parent StringNode of this one. May be null only if this is a Root node.
      * @param children The children of this StringNode. May be empty but not null.
      */
@@ -129,15 +129,15 @@ public class StringNode extends AbstractStringKeyNode<String> {
     public int compareTo(final Node<String, String> that) {
 
         int toReturn = super.compareTo(that);
-        if(toReturn == 0) {
-            if(getData() != null) {
+        if (toReturn == 0) {
+            if (getData() != null) {
                 toReturn = getData().compareTo(that.getData());
-            } else if(that.getData() != null) {
+            } else if (that.getData() != null) {
                 toReturn = 1;
             }
         }
 
-        if(toReturn == 0) {
+        if (toReturn == 0) {
             // Simply check the number of children;
             // Don't perform a recursive analysis.
             toReturn = getChildren().size() - that.getChildren().size();

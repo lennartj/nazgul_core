@@ -56,7 +56,7 @@ public class PatternMatchFilter implements Filter<String> {
      *
      * @param candidate The candidate to be tested.
      * @return <code>true</code> if the <code>candidate</code>
-     *         should be included.
+     * should be included.
      */
     @Override
     public boolean accept(final String candidate) {

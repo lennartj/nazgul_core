@@ -51,7 +51,7 @@ public interface EventConsumerWrapper<T> {
      *
      * @param consumerID The unique identifier of the EventConsumer to remove.
      * @return {@code true} if the EventConsumer with the given ID was properly removed,
-     *         and {@code false} otherwise.
+     * and {@code false} otherwise.
      */
     boolean removeConsumer(String consumerID);
 

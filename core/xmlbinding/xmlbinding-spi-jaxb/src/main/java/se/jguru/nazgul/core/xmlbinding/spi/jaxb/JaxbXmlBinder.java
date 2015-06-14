@@ -92,8 +92,8 @@ public class JaxbXmlBinder implements XmlBinder<Object> {
      * Retrieves the NamespacePrefixResolver instance in use by this XmlBinder.
      *
      * @return the NamespacePrefixResolver instance in use by this XmlBinder,
-     *         or {@code null} should no NamespacePrefixResolver be used by this
-     *         XmlBinder.
+     * or {@code null} should no NamespacePrefixResolver be used by this
+     * XmlBinder.
      */
     @Override
     public final NamespacePrefixResolver getNamespacePrefixResolver() {
@@ -106,10 +106,9 @@ public class JaxbXmlBinder implements XmlBinder<Object> {
      *
      * @param toConvert The java objects to convert to an XML formatted String.
      * @return An XML representation of the provided javaObjects.
-     * @throws IllegalArgumentException If the conversion could not be completed successfully.
-     * @throws InternalStateValidationException
-     *                                  if the Java Object Graph contained Validatable objects
-     *                                  that did not pass validation.
+     * @throws IllegalArgumentException         If the conversion could not be completed successfully.
+     * @throws InternalStateValidationException if the Java Object Graph contained Validatable objects
+     *                                          that did not pass validation.
      */
     @Override
     public String marshal(final Object... toConvert)
@@ -144,9 +143,8 @@ public class JaxbXmlBinder implements XmlBinder<Object> {
      * @param transportReader The Reader holding a single XML-formatted String being converted by the marshal method
      *                        in an XmlBinder of the same internal implementation as this one.
      * @return A fully unmarshalled List holding clones of the original objects written to the stream.
-     * @throws IllegalArgumentException If the object graph could not be properly resurrected.
-     * @throws se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException
-     *                                  if any object resurrected was a Validatable which did not pass validation.
+     * @throws IllegalArgumentException                                                        If the object graph could not be properly resurrected.
+     * @throws se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException if any object resurrected was a Validatable which did not pass validation.
      */
     @SuppressWarnings("rawtypes")
     @Override
@@ -198,9 +196,8 @@ public class JaxbXmlBinder implements XmlBinder<Object> {
      *                        marshal method in an XmlBinder of the same internal implementation type as this one.
      * @param <S>             The instance type to return.
      * @return A fully unmarshalled instance clone of the original object written to the stream.
-     * @throws IllegalArgumentException If the object graph could not be properly resurrected.
-     * @throws se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException
-     *                                  if any object resurrected was a Validatable which did not pass validation.
+     * @throws IllegalArgumentException                                                        If the object graph could not be properly resurrected.
+     * @throws se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException if any object resurrected was a Validatable which did not pass validation.
      */
     @Override
     public <S> S unmarshalInstance(final Reader transportReader)
@@ -254,8 +251,7 @@ public class JaxbXmlBinder implements XmlBinder<Object> {
      * Validates the supplied argument if appropriate (i.e. if the toValidate instance implements Validatable).
      *
      * @param toValidate The transporter container to validate.
-     * @throws InternalStateValidationException
-     *          if the internal state Validation failed.
+     * @throws InternalStateValidationException if the internal state Validation failed.
      */
     @SuppressWarnings("PMD")
     private void validate(final EntityTransporter toValidate) throws InternalStateValidationException {

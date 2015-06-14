@@ -62,9 +62,9 @@ public class JaxbAnnotatedTrivialCharSequence implements Serializable, Comparabl
 
     @Override
     public int compareTo(final Object o) {
-        if(o instanceof JaxbAnnotatedTrivialCharSequence) {
+        if (o instanceof JaxbAnnotatedTrivialCharSequence) {
             return getValue().toString().compareTo(((JaxbAnnotatedTrivialCharSequence) o).getValue().toString());
-        } else if(o instanceof TrivialCharSequence) {
+        } else if (o instanceof TrivialCharSequence) {
             return getValue().toString().compareTo(((TrivialCharSequence) o).toString());
         }
         return -1;

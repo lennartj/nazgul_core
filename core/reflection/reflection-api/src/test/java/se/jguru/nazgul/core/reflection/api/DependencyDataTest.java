@@ -162,10 +162,10 @@ public class DependencyDataTest {
         final SortedMap<String, DependencyData> map1 = new TreeMap<>();
         final SortedMap<String, DependencyData> map2 = new TreeMap<>();
 
-        for(DependencyData current : result1) {
+        for (DependencyData current : result1) {
             map1.put(current.toString(), current);
         }
-        for(DependencyData current : result2) {
+        for (DependencyData current : result2) {
             map2.put(current.toString(), current);
         }
 
