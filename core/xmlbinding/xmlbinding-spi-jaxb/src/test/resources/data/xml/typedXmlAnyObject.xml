@@ -3,7 +3,7 @@
   #%L
   Nazgul Project: nazgul-core-xmlbinding-spi-jaxb
   %%
-  Copyright (C) 2010 - 2014 jGuru Europe AB
+  Copyright (C) 2010 - 2015 jGuru Europe AB
   %%
   Licensed under the jGuru Europe AB license (the "License"), based
   on Apache License, Version 2.0; you may not use this file except
@@ -21,6 +21,10 @@
   #L%
   -->
 
-<foobar:fooRoot xmlns:foobar="http://some.com/foo/bar" xmlns:beverage="http://some/good/beverage" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="http://www.jguru.se/nazgul/core" xmlns:foo="http://www.jguru.se/foo" xmlns:multiple="http://jguru.se/examples/jaxb/multiple" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <name>someName</name>
-</foobar:fooRoot>
+
+<legend xmlns:foobar="http://some.com/foo/bar" xmlns:legends="http://www.jguru.se/legends" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="http://www.jguru.se/nazgul/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <name>Voluspa</name>
+    <legends:age approximate="true">
+        <century>8</century>
+    </legends:age>
+</legend>

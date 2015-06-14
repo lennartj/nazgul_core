@@ -21,8 +21,12 @@
  */
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.rawtypes;
 
+import org.custommonkey.xmlunit.Diff;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbNamespacePrefixResolver;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Beverage;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Foo;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Person;
@@ -42,14 +46,15 @@ import java.util.List;
  */
 public class NoDocumentRootTest {
 
+    private static final String EXTERNAL_JAXB_NAMESPACEPREFIXMAPPER_KEY = "com.sun.xml.bind.namespacePrefixMapper";
+
     // Shared state
-    private JAXBContext ctx;
     private Marshaller marshaller;
 
     @Before
     public void setupSharedState() throws Exception {
 
-        ctx = JAXBContext.newInstance(Foo.class,
+        final JAXBContext ctx = JAXBContext.newInstance(Foo.class,
                 Person.class,
                 Beverage.class,
                 JaxbAnnotatedCollection.class,
@@ -57,6 +62,13 @@ public class NoDocumentRootTest {
         marshaller = ctx.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+        final JaxbNamespacePrefixResolver resolver = new JaxbNamespacePrefixResolver();
+        resolver.put("http://some/good/beverage", "beverage");
+        resolver.put("http://www.jguru.se/foo", "foo");
+        resolver.put("http://some.com/foo/bar", "foobar");
+        resolver.put("http://jguru.se/examples/jaxb/multiple", "multiple");
+        marshaller.setProperty(EXTERNAL_JAXB_NAMESPACEPREFIXMAPPER_KEY, resolver);
     }
 
     @Test
@@ -66,21 +78,26 @@ public class NoDocumentRootTest {
         final String resourcePath = "data/xml/jaxbElementFoo.xml";
         final Foo aFoo = new Foo("someName");
         final QName qName = new QName("http://some.com/foo/bar", "fooRoot", "fooPrefix");
-        final JAXBElement<Foo> fooElement = new JAXBElement<Foo>(qName, Foo.class, aFoo);
+        final JAXBElement<Foo> fooElement = new JAXBElement<>(qName, Foo.class, aFoo);
 
         // Act
         final StringWriter resultWriter = new StringWriter();
         marshaller.marshal(fooElement, resultWriter);
 
         // Assert
-        // System.out.println("Got: " + out.toString());
-        XmlTestUtils.compareXmlIgnoringWhitespace(resultWriter.toString(), XmlTestUtils.readFully(resourcePath));
+        // System.out.println("Got:\n" + resultWriter.toString());
+        final String expected = XmlTestUtils.readFully(resourcePath);
+        final Diff diff = XmlTestUtils.compareXmlIgnoringWhitespace(resultWriter.toString(), expected);
+        Assert.assertTrue("Got non-trivial diff: "
+                + XmlTestUtils.getXPathLocationToDifferenceMap(diff), diff.identical());
     }
 
+    @Ignore("Not yet operational.")
     @Test
     public void validateMarshallingArbitrarySequenceUsingJaxbElements() throws Exception {
 
         // Assemble
+        final String resourcePath = "data/xml/jaxbArbitrarySequence.xml";
         final QName rootElementQName = new QName(
                 "http://jguru.se/examples/jaxb/multiple",
                 "sampleSequence",
@@ -106,5 +123,9 @@ public class NoDocumentRootTest {
 
         // Assert
         System.out.println("Got: \n\n\n" + resultWriter.toString());
+        Assert.assertTrue(
+                XmlTestUtils.compareXmlIgnoringWhitespace(
+                        resultWriter.toString(),
+                        XmlTestUtils.readFully(resourcePath)).identical());
     }
 }
