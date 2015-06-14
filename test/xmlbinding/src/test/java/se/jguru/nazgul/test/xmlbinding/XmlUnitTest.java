@@ -58,7 +58,7 @@ public class XmlUnitTest {
         final String xPathLocation = pathDiffMap.firstKey();
         final List<Difference> differences = pathDiffMap.get(xPathLocation);
 
-        Assert.assertEquals(1, pathDiffMap.size());
+        Assert.assertEquals(2, pathDiffMap.size());
         Assert.assertEquals(2, differences.size());
     }
 
@@ -85,8 +85,7 @@ public class XmlUnitTest {
         Assert.assertEquals("null", diff1.getControlNodeDetail().getValue());
         Assert.assertEquals("foo", diff1.getTestNodeDetail().getValue());
         Assert.assertEquals("/a[1]/b[1]", diff1.getControlNodeDetail().getXpathLocation());
-        Assert.assertEquals(diff1.getControlNodeDetail().getXpathLocation(),
-                diff1.getTestNodeDetail().getXpathLocation());
+        Assert.assertEquals("/a[1]/b[1]/@foo", diff1.getTestNodeDetail().getXpathLocation());
 
         // Act & Assert #2
         diff = XmlTestUtils.compareXmlIgnoringWhitespace(EXPECTED, ACTUAL_EXTRA_WHITESPACE);
@@ -104,18 +103,6 @@ public class XmlUnitTest {
         Assert.assertFalse(diff.identical());
         Assert.assertTrue(diff.similar());
         Assert.assertEquals(2, new DetailedDiff(diff).getAllDifferences().size());
-
-        /*
-        differences = new DetailedDiff(diff).getAllDifferences();
-        diff0 = differences.get(0);
-        diff1 = differences.get(1);
-        System.out.println("Got \"" + diff0.getDescription() + "\" difference ["
-                + diff0.getControlNodeDetail().getValue() + " <-> " + diff0.getTestNodeDetail().getValue()
-                + "] for element at XPath [" + diff0.getControlNodeDetail().getXpathLocation() + "] ==> " + diff0);
-        System.out.println("Got \"" + diff1.getDescription() + "\" difference ["
-                + diff1.getControlNodeDetail().getValue() + " <-> " + diff1.getTestNodeDetail().getValue()
-                + "] for element at XPath [" + diff1.getControlNodeDetail().getXpathLocation() + "] ==> " + diff1);
-        */
     }
 
     @Test
@@ -128,8 +115,8 @@ public class XmlUnitTest {
         Assert.assertTrue(XmlTestUtils.readFully(path).trim().endsWith(EXPECTED));
     }
 
-    @Test
-    public void validateExceptionExcludedOnTrivialPatternMatch() {
+    @Test(expected = AssertionError.class)
+    public void validateExceptionOnNonTrivialPatternMatch() {
 
         // Assemble
         final Pattern bDiffsAreTrivialPattern = Pattern.compile("/a\\[\\d+\\]/b\\[\\d+\\]");

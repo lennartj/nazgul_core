@@ -26,6 +26,7 @@ import org.apache.commons.lang3.Validate;
 import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.Difference;
+import org.custommonkey.xmlunit.NodeDetail;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -52,6 +53,8 @@ public abstract class XmlTestUtils {
 
     // Our Log
     private static final Logger log = LoggerFactory.getLogger(XmlTestUtils.class);
+    private static final int CONTROL_NODE = 0;
+    private static final int TEST_NODE = 1;
 
     /**
      * Standard pattern for ignoring differences within the synthesized
@@ -157,22 +160,27 @@ public abstract class XmlTestUtils {
      *             expected and actual {@code NodeDetail}s, the Difference is mapped to both XPaths.
      * @return An XPathLocation to Difference Map for the given Diff.
      */
+    @SuppressWarnings("unchecked")
     public static SortedMap<String, List<Difference>> getXPathLocationToDifferenceMap(final Diff diff) {
 
         // Check sanity
         Validate.notNull(diff, "Cannot handle null diff argument.");
 
         final SortedMap<String, List<Difference>> toReturn = new TreeMap<String, List<Difference>>();
-        @SuppressWarnings("unchecked")
         final List<Difference> allDifferences = (List<Difference>) new DetailedDiff(diff).getAllDifferences();
 
         for (Difference current : allDifferences) {
 
             // Map the difference to its XPathLocation.
-            final String expectedPartXPath = current.getControlNodeDetail().getXpathLocation();
-            final String actualPartXPath = current.getTestNodeDetail().getXpathLocation();
+            final NodeDetail[] nodeDetails = getNodeDetails(current);
+            final String expectedPartXPath = nodeDetails[CONTROL_NODE] == null
+                    ? null
+                    : nodeDetails[CONTROL_NODE].getXpathLocation();
+            final String actualPartXPath = nodeDetails[TEST_NODE] == null
+                    ? null
+                    : nodeDetails[TEST_NODE].getXpathLocation();
 
-            if (expectedPartXPath.equals(actualPartXPath)) {
+            if (expectedPartXPath != null && expectedPartXPath.equals(actualPartXPath)) {
                 addDifference(toReturn, expectedPartXPath, current);
             } else {
 
@@ -231,5 +239,14 @@ public abstract class XmlTestUtils {
 
         // Add the difference
         diffList.add(toAdd);
+    }
+
+    private static NodeDetail[] getNodeDetails(final Difference difference) {
+
+        NodeDetail[] toReturn = new NodeDetail[2];
+        toReturn[CONTROL_NODE] = difference.getControlNodeDetail();
+        toReturn[TEST_NODE] = difference.getTestNodeDetail();
+
+        return toReturn;
     }
 }
