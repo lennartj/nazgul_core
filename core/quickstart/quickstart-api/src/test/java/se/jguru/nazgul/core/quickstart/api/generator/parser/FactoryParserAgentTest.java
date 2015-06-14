@@ -26,7 +26,6 @@ import org.junit.Before;
 import org.junit.Test;
 import se.jguru.nazgul.core.parser.api.DefaultTokenParser;
 import se.jguru.nazgul.core.parser.api.SingleBracketTokenDefinitions;
-import se.jguru.nazgul.core.quickstart.api.PomType;
 import se.jguru.nazgul.core.quickstart.model.Project;
 import se.jguru.nazgul.core.quickstart.model.SimpleArtifact;
 

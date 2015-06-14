@@ -21,8 +21,8 @@
  */
 package se.jguru.nazgul.core.quickstart.api.analyzer.helpers;
 
-import se.jguru.nazgul.core.quickstart.api.analyzer.AbstractNamingStrategy;
 import se.jguru.nazgul.core.quickstart.api.PomType;
+import se.jguru.nazgul.core.quickstart.api.analyzer.AbstractNamingStrategy;
 import se.jguru.nazgul.core.quickstart.model.Name;
 
 /**
@@ -44,7 +44,7 @@ public class TestNamingStrategy extends AbstractNamingStrategy {
     @Override
     public void validate(final Name aName, final PomType pomType) throws IllegalArgumentException {
 
-        if(throwException) {
+        if (throwException) {
             throw new IllegalArgumentException("Instructed to throw an Exception.");
         }
     }

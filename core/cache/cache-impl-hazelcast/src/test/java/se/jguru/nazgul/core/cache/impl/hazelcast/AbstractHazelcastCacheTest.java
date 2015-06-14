@@ -120,7 +120,7 @@ public abstract class AbstractHazelcastCacheTest {
         try {
             final HazelcastInstance current = getInternalInstance(cache);
 
-            if(current != null) {
+            if (current != null) {
                 for (final DistributedObject currentDistributedObject : current.getDistributedObjects()) {
 
                     final String instanceName = currentDistributedObject.getName();
@@ -172,7 +172,7 @@ public abstract class AbstractHazelcastCacheTest {
             instanceField.setAccessible(true);
 
             final HazelcastInstance toReturn = (HazelcastInstance) instanceField.get(cache);
-            if(toReturn == null) {
+            if (toReturn == null) {
                 log.warn("Found null HazelcastInstance in field '" + fieldName + "'.");
             }
 

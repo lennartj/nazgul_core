@@ -152,7 +152,7 @@ public abstract class AbstractApplicationLauncher implements StandardLifecycle {
 
     /**
      * @return The File of the executable JAR file where this class executes,
-     *         or {@code null} if this class executes outside of a JAR file.
+     * or {@code null} if this class executes outside of a JAR file.
      */
     protected final File getJarFile() {
         return new File(jarfileLocation.getPath());
@@ -249,7 +249,7 @@ public abstract class AbstractApplicationLauncher implements StandardLifecycle {
      * @param fallbackValue a value returned if the given argument had no value or was not supplied
      *                      on the command line launching this application.
      * @return the value of a command-line argument, or {@code fallbackValue} should
-     *         the argument not have been supplied.
+     * the argument not have been supplied.
      */
     protected final String getValue(final String argument, final String fallbackValue) {
         return isArgumentSupplied(argument) ? commandLine.getOptionValue(argument) : fallbackValue;

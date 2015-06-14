@@ -37,7 +37,7 @@ public interface SemanticPath<E extends Enum<E>, SegmentType extends Serializabl
 
     /**
      * @return The maximum number of segments in this Path, typically identical to the
-     *         number of values in the semantic definition Enum.
+     * number of values in the semantic definition Enum.
      */
     int getMaxSize();
 
@@ -47,7 +47,7 @@ public interface SemanticPath<E extends Enum<E>, SegmentType extends Serializabl
      *
      * @param semanticDefinition The semantic definition within this SemanticPath whose value should be retrieved.
      * @return The segment corresponding to the provided semantic definition, or {@code null} if no segment SegmentType
-     *         is defined for the provided semanticDefinition level within this SemanticPath.
+     * is defined for the provided semanticDefinition level within this SemanticPath.
      */
     SegmentType get(E semanticDefinition);
 }

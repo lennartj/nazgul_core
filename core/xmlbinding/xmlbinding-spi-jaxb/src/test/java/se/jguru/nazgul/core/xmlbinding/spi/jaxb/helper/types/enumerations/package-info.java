@@ -20,12 +20,11 @@
  * #L%
  */
 @XmlSchema(
-        namespace="http://some.other.namespace",
-        xmlns={
-                @XmlNs(prefix="someOther", namespaceURI="http://some.other.namespace")
+        namespace = "http://some.other.namespace",
+        xmlns = {
+                @XmlNs(prefix = "someOther", namespaceURI = "http://some.other.namespace")
         },
-        elementFormDefault= XmlNsForm.UNQUALIFIED)
-package se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.enumerations;
+        elementFormDefault = XmlNsForm.UNQUALIFIED) package se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.enumerations;
 
 import javax.xml.bind.annotation.XmlNs;
 import javax.xml.bind.annotation.XmlNsForm;

@@ -27,7 +27,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
-import se.jguru.nazgul.core.algorithms.api.collections.predicate.Transformer;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
 import se.jguru.nazgul.core.reflection.api.conversion.Converter;
 import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.FakeConverter;
@@ -244,7 +243,7 @@ public class ReflectiveConverterFilterTest {
         Assert.assertEquals(1, constructors.size());
 
         Assert.assertEquals(String.class, constructors.get(0).getParameterTypes()[0]);
-        for(Method current : methods) {
+        for (Method current : methods) {
             Assert.assertTrue(expectedMethodNames.contains(current.getName()));
         }
     }
@@ -260,7 +259,7 @@ public class ReflectiveConverterFilterTest {
                 ReflectiveConverterFilter.SHORT_CLASSNAME_TRANSFORMER);
 
         // Assert
-        for(Class<?> current : classes) {
+        for (Class<?> current : classes) {
             Assert.assertTrue(result.contains(current.getSimpleName()));
         }
     }
@@ -276,7 +275,7 @@ public class ReflectiveConverterFilterTest {
                 ReflectiveConverterFilter.FULL_CLASSNAME_TRANSFORMER);
 
         // Assert
-        for(Class<?> current : classes) {
+        for (Class<?> current : classes) {
             Assert.assertTrue(result.contains(current.getName()));
         }
     }

@@ -49,9 +49,8 @@ public class IncorrectAnnotationlessEntity extends NazgulEntity {
      * <strong>Note!</strong> The first call within the validateEntityState method should be
      * {@code super.validateEntityState()}.
      *
-     * @throws se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException
-     *          if the state of this Validatable was in an incorrect
-     *          state (i.e. invalid).
+     * @throws se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException if the state of this Validatable was in an incorrect
+     *                                                                                         state (i.e. invalid).
      */
     @Override
     protected void validateEntityState() throws InternalStateValidationException {

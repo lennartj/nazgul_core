@@ -26,9 +26,7 @@ import com.hazelcast.core.ICountDownLatch;
 import com.hazelcast.core.IQueue;
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +67,6 @@ public class HazelcastCacheListenerTest extends AbstractHazelcastCacheTest {
         hzCache1 = getCache(configFile);
         hzCache2 = getCache(configFile);
     }
-
 
 
     @After

@@ -52,7 +52,7 @@ public class MockProperty extends AbstractProperty<String, String> {
     /**
      * MockProperty constructor.
      *
-     * @param valueClassName the class name of the value type.
+     * @param valueClassName     the class name of the value type.
      * @param loadValueTypeClass if {@code true}, load the valueTypeClass.
      */
     public MockProperty(final String valueClassName,
@@ -64,7 +64,7 @@ public class MockProperty extends AbstractProperty<String, String> {
         // Load the internal state.
         this.valueClassName = valueClassName;
 
-        if(loadValueTypeClass) {
+        if (loadValueTypeClass) {
             loadValueTypeClass(valueClassName);
         }
     }

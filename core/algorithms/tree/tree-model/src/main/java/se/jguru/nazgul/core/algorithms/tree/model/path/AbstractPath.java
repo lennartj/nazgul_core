@@ -118,8 +118,8 @@ public abstract class AbstractPath<SegmentType extends Serializable & Comparable
 
     /**
      * @return A compound string representation of this AbstractPath used for JPA storage and searches.
-     *         The compoundPath is represented as the segments, separated by the {@code segmentSeparator} string,
-     *         or the {@code DEFAULT_SEGMENT_SEPARATOR} if no explicit segmentSeparator is given.
+     * The compoundPath is represented as the segments, separated by the {@code segmentSeparator} string,
+     * or the {@code DEFAULT_SEGMENT_SEPARATOR} if no explicit segmentSeparator is given.
      */
     public String getCompoundPath() {
         return compoundPath;
@@ -127,7 +127,7 @@ public abstract class AbstractPath<SegmentType extends Serializable & Comparable
 
     /**
      * @return The segment separator string, or the {@code DEFAULT_SEGMENT_SEPARATOR} if no
-     *         explicit segmentSeparator string is given.
+     * explicit segmentSeparator string is given.
      */
     public String getSegmentSeparator() {
         return segmentSeparator == null ? DEFAULT_SEGMENT_SEPARATOR : segmentSeparator;
@@ -193,7 +193,7 @@ public abstract class AbstractPath<SegmentType extends Serializable & Comparable
 
         // Check sizes and types
         final AbstractPath that = (AbstractPath) obj;
-        if(this.size() != that.size()) {
+        if (this.size() != that.size()) {
             return false;
         }
 

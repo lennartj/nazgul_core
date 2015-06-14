@@ -25,7 +25,6 @@ package se.jguru.nazgul.core.cache.impl.hazelcast.grid;
 import com.hazelcast.core.DistributedObject;
 import com.hazelcast.core.IMap;
 
-import java.io.Serializable;
 import java.util.TreeSet;
 
 /**

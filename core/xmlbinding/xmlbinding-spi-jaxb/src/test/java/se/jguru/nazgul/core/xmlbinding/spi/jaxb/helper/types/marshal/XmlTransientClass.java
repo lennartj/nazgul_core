@@ -22,7 +22,6 @@
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.marshal;
 
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
-import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.inheritance.Platter;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

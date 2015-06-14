@@ -86,9 +86,9 @@ public final class PersistenceRedirectionClassLoader extends ClassLoader {
      *
      * @param name The resource name
      * @return An enumeration of {@link java.net.URL <tt>URL</tt>} objects for
-     *         the resource.  If no resources could  be found, the enumeration
-     *         will be empty.  Resources that the class loader doesn't have
-     *         access to will not be in the enumeration.
+     * the resource.  If no resources could  be found, the enumeration
+     * will be empty.  Resources that the class loader doesn't have
+     * access to will not be in the enumeration.
      * @throws java.io.IOException If I/O errors occur
      * @see #findResources(String)
      * @since 1.2

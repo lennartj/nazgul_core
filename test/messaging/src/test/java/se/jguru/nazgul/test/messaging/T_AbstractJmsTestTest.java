@@ -22,9 +22,9 @@
 
 package se.jguru.nazgul.test.messaging;
 
-import org.junit.Assert;
 import org.apache.activemq.broker.BrokerService;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import se.jguru.nazgul.test.messaging.activemq.ActiveMQBroker;

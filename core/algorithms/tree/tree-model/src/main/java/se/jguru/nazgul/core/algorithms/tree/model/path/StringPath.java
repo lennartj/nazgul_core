@@ -119,7 +119,7 @@ public class StringPath extends AbstractPath<String> {
     protected List<String> getSegments() {
 
         // Check sanity
-        if(segments == null && getCompoundPath() != null) {
+        if (segments == null && getCompoundPath() != null) {
             segments = parseCompoundPath(getCompoundPath(), getSegmentSeparator());
         }
 

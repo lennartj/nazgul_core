@@ -52,8 +52,8 @@ public interface XmlBinder<T> {
      * Retrieves the NamespacePrefixResolver instance in use by this XmlBinder.
      *
      * @return the NamespacePrefixResolver instance in use by this XmlBinder,
-     *         or {@code null} should no NamespacePrefixResolver be used by this
-     *         XmlBinder.
+     * or {@code null} should no NamespacePrefixResolver be used by this
+     * XmlBinder.
      */
     NamespacePrefixResolver getNamespacePrefixResolver();
 
@@ -63,10 +63,9 @@ public interface XmlBinder<T> {
      *
      * @param toConvert The java objects to convert to an XML formatted String.
      * @return An XML representation of the provided javaObjects.
-     * @throws IllegalArgumentException If the conversion could not be completed successfully.
-     * @throws InternalStateValidationException
-     *                                  if the Java Object Graph contained Validatable objects
-     *                                  that did not pass validation.
+     * @throws IllegalArgumentException         If the conversion could not be completed successfully.
+     * @throws InternalStateValidationException if the Java Object Graph contained Validatable objects
+     *                                          that did not pass validation.
      */
     String marshal(T... toConvert) throws IllegalArgumentException, InternalStateValidationException;
 
@@ -77,9 +76,8 @@ public interface XmlBinder<T> {
      * @param transportReader The Reader holding a single XML-formatted String being converted by the marshal
      *                        method in an XmlBinder of the same internal implementation as this one.
      * @return A fully unmarshalled List holding clones of the original objects written to the stream.
-     * @throws IllegalArgumentException If the object graph could not be properly resurrected.
-     * @throws InternalStateValidationException
-     *                                  if any object resurrected was a Validatable which did not pass validation.
+     * @throws IllegalArgumentException         If the object graph could not be properly resurrected.
+     * @throws InternalStateValidationException if any object resurrected was a Validatable which did not pass validation.
      */
     List<T> unmarshal(Reader transportReader) throws IllegalArgumentException, InternalStateValidationException;
 
@@ -91,9 +89,8 @@ public interface XmlBinder<T> {
      * @param transportReader The Reader holding a single XML-formatted String being converted by the
      *                        marshal method in an XmlBinder of the same internal implementation type as this one.
      * @return A fully unmarshalled instance clone of the original object written to the stream.
-     * @throws IllegalArgumentException If the object graph could not be properly resurrected.
-     * @throws InternalStateValidationException
-     *                                  if any object resurrected was a Validatable which did not pass validation.
+     * @throws IllegalArgumentException         If the object graph could not be properly resurrected.
+     * @throws InternalStateValidationException if any object resurrected was a Validatable which did not pass validation.
      */
     <S> S unmarshalInstance(Reader transportReader) throws IllegalArgumentException,
             InternalStateValidationException;

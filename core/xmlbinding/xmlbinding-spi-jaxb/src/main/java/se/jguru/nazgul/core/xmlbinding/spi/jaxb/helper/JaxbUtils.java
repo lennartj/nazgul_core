@@ -204,7 +204,7 @@ public abstract class JaxbUtils {
      *
      * @param ctx The context for which am XSD should be constructed.
      * @return A tuple holding the constructed XSD from the provided JAXBContext, and
-     *         the LSResourceResolver synthesized during the way.
+     * the LSResourceResolver synthesized during the way.
      * @throws NullPointerException     if ctx was {@code null}.
      * @throws IllegalArgumentException if a JAXB-related exception occurred while extracting the schema.
      */
@@ -494,8 +494,8 @@ public abstract class JaxbUtils {
      *
      * @param classInformation The classes from an EntityTransporter for which a JAXBContext should be acquired.
      * @return A Tuple holding the best-match cache key for the EntityTransporter, and the corresponding
-     *         cached JAXBContext. The JAXBContext value might be {@code null}, indicating that a
-     *         cached JAXBContext was not found.
+     * cached JAXBContext. The JAXBContext value might be {@code null}, indicating that a
+     * cached JAXBContext was not found.
      */
     private static Tuple<SortedClassNameSetKey, JAXBContext> getCachedJaxbContext(
             final SortedSet<String> classInformation) {

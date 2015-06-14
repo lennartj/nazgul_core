@@ -109,10 +109,10 @@ public abstract class NazgulEntity implements Serializable, Cloneable, Validatab
     public boolean equals(final Object obj) {
 
         // Check sanity; fail fast.
-        if(obj == null) {
+        if (obj == null) {
             return false;
         }
-        if(obj == this) {
+        if (obj == this) {
             return true;
         }
 
@@ -163,9 +163,8 @@ public abstract class NazgulEntity implements Serializable, Cloneable, Validatab
      * <strong>Note!</strong> This method should <strong>not</strong> be overridden in subclasses.
      * Instead, override the {@code validateEntityState} method, and supply your local implementations there.
      *
-     * @throws InternalStateValidationException
-     *          if the state of this Validatable was in an incorrect
-     *          state (i.e. invalid).
+     * @throws InternalStateValidationException if the state of this Validatable was in an incorrect
+     *                                          state (i.e. invalid).
      */
     @PostConstruct
     @PrePersist
@@ -181,9 +180,8 @@ public abstract class NazgulEntity implements Serializable, Cloneable, Validatab
      * <strong>Note!</strong> The first call within the validateEntityState method should be
      * {@code super.validateEntityState()}.
      *
-     * @throws InternalStateValidationException
-     *          if the state of this Validatable was in an incorrect
-     *          state (i.e. invalid).
+     * @throws InternalStateValidationException if the state of this Validatable was in an incorrect
+     *                                          state (i.e. invalid).
      */
     protected abstract void validateEntityState() throws InternalStateValidationException;
 }

@@ -32,7 +32,7 @@ public final class UUIDGenerator implements IdGenerator {
 
     /**
      * @return {@code UUID.randomUUID().toString()}, implying a new/unique UUID for each call
-     *         to this method.
+     * to this method.
      */
     @Override
     public final String getIdentifier() {

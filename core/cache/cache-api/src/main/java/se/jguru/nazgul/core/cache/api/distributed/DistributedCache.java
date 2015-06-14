@@ -66,8 +66,8 @@ public interface DistributedCache<K, V> extends Cache<K, V> {
 
     /**
      * @return An identifier unique to the active cache cluster, but different
-     *         for each time this method is called. (I.e. a cluster-wide sequence
-     *         of some kind).
+     * for each time this method is called. (I.e. a cluster-wide sequence
+     * of some kind).
      */
     String getClusterUniqueID();
 
@@ -86,12 +86,11 @@ public interface DistributedCache<K, V> extends Cache<K, V> {
      *             such as <code>Collection, Set or Queue</code> etc.
      * @param key  The key where the distributed collection resides or will be created to.
      * @return The created (empty) or acquired (potentially not empty) distributed
-     *         collection cached at the given key.
-     * @throws ClassCastException if the cache key [key] maps to an object not of the given type.
-     * @throws UnsupportedDistributionException
-     *                            if the underlying cache implementation could
-     *                            not support creating a distributed collection
-     *                            of the given type.
+     * collection cached at the given key.
+     * @throws ClassCastException               if the cache key [key] maps to an object not of the given type.
+     * @throws UnsupportedDistributionException if the underlying cache implementation could
+     *                                          not support creating a distributed collection
+     *                                          of the given type.
      */
     Collection<? extends V> getDistributedCollection(DistributedCollectionType type, String key)
             throws ClassCastException, UnsupportedDistributionException;
@@ -101,14 +100,13 @@ public interface DistributedCache<K, V> extends Cache<K, V> {
      * Note that the distributed Map will be created on the provided key
      * if it does not already exist.
      *
-     * @param <MapKeyType> The key type used within the distributed Map.
+     * @param <MapKeyType>   The key type used within the distributed Map.
      * @param <MapValueType> The value type used within the distributed Map.
-     * @param key The key where the distributed Map resides or will be created to.
+     * @param key            The key where the distributed Map resides or will be created to.
      * @return The created (empty) or acquired (potentially not empty)
-     *         distributed Map cached at the given key.
-     * @throws UnsupportedDistributionException
-     *          if the underlying cache implementation could
-     *          not support creating a distributed Map.
+     * distributed Map cached at the given key.
+     * @throws UnsupportedDistributionException if the underlying cache implementation could
+     *                                          not support creating a distributed Map.
      */
     <MapKeyType, MapValueType> Map<MapKeyType, MapValueType> getDistributedMap(String key)
             throws UnsupportedDistributionException;
@@ -124,7 +122,7 @@ public interface DistributedCache<K, V> extends Cache<K, V> {
      * @param distributedObject The distributed object from which we should listen to changes.
      * @param listener          The CacheListener to register to the given distributed object.
      * @return <code>true</code> if the CacheListener was successfully registered,
-     *         and <code>false</code> otherwise.
+     * and <code>false</code> otherwise.
      * @throws IllegalArgumentException If the distributedObject was not appropriate for
      *                                  registering a CacheListener (i.e. incorrect type
      *                                  for the underlying cache implementation).

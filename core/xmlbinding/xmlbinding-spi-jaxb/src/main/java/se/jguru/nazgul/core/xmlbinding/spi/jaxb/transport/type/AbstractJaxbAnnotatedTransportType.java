@@ -188,14 +188,14 @@ public abstract class AbstractJaxbAnnotatedTransportType<T>
 
         // Extract the generic declaration information from the TypeVariable
         GenericDeclaration genericDeclaration = typeVariable.getGenericDeclaration();
-        if(genericDeclaration instanceof Class) {
+        if (genericDeclaration instanceof Class) {
 
             // Add the transportType class name, if applicable.
             final Class<?> genericDeclarationType = (Class<?>) genericDeclaration;
             final Class<Object> transportType = EntityTransporter.getRegistry()
                     .getTransportType(genericDeclarationType);
 
-            if(transportType != null) {
+            if (transportType != null) {
                 typeNames.add(transportType.getName());
             } else {
                 log.warn("No TransportType found for [" + genericDeclarationType.getSimpleName() + "].");
@@ -210,13 +210,13 @@ public abstract class AbstractJaxbAnnotatedTransportType<T>
                 final Class<?> typeVariableType = (Class<?>) current;
                 final Class<Object> transportType = EntityTransporter.getRegistry().getTransportType(typeVariableType);
 
-                if(transportType != null) {
+                if (transportType != null) {
                     typeNames.add(transportType.getName());
                 } else {
                     log.warn("No TransportType found for [" + typeVariableType.getSimpleName() + "].");
                 }
 
-            } else if(current instanceof TypeVariable) {
+            } else if (current instanceof TypeVariable) {
 
                 // Descend
                 populate(typeNames, (TypeVariable) current);

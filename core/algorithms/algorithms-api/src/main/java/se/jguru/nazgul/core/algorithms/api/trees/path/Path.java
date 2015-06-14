@@ -56,8 +56,8 @@ public interface Path<S extends Comparable<S>> extends Iterable<S>, Comparable<P
      * @param aKey The KeyType to append to this Path.
      * @param <X>  The explicit Path subtype.
      * @return The Path result from appending the provided KeyType instance to this Path.
-     *         Note that the returned value could/should be a new Path subtype, given that
-     *         the implementation's internal state is immutable.
+     * Note that the returned value could/should be a new Path subtype, given that
+     * the implementation's internal state is immutable.
      */
     <X extends Path<S>> X append(S aKey);
 }

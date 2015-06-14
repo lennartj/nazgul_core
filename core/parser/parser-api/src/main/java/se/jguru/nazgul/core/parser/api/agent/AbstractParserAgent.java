@@ -58,7 +58,7 @@ public abstract class AbstractParserAgent implements ParserAgent {
      *
      * @param token The token to investigate.
      * @return true if this AbstractParserAgent can handle the provided
-     *         token, and false if not.
+     * token, and false if not.
      */
     @Override
     public final boolean canHandle(final String token) {

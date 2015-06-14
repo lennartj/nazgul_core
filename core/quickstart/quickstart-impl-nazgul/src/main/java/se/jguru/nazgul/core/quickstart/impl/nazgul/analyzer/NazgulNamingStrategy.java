@@ -22,8 +22,8 @@
 package se.jguru.nazgul.core.quickstart.impl.nazgul.analyzer;
 
 import org.apache.commons.lang3.Validate;
-import se.jguru.nazgul.core.quickstart.api.analyzer.AbstractNamingStrategy;
 import se.jguru.nazgul.core.quickstart.api.PomType;
+import se.jguru.nazgul.core.quickstart.api.analyzer.AbstractNamingStrategy;
 import se.jguru.nazgul.core.quickstart.model.Name;
 
 import java.util.Arrays;
@@ -93,7 +93,7 @@ public class NazgulNamingStrategy extends AbstractNamingStrategy {
         validPatternMap.put(PomType.REACTOR, Pattern.compile(
                 WORDS_PATTERN + "-" + AbstractNamingStrategy.REACTOR_SUFFIX));
 
-        for(PomType current : Arrays.asList(PomType.PARENT, PomType.API_PARENT,
+        for (PomType current : Arrays.asList(PomType.PARENT, PomType.API_PARENT,
                 PomType.MODEL_PARENT, PomType.WAR_PARENT)) {
             validPatternMap.put(current, Pattern.compile(current.name().toLowerCase().replace('_', '-')));
         }
@@ -113,7 +113,7 @@ public class NazgulNamingStrategy extends AbstractNamingStrategy {
 
         // Do we have a required prefix and separator?
         if (requiredPrefix != null) {
-            if(toValidate.getPrefix() == null) {
+            if (toValidate.getPrefix() == null) {
                 throw new IllegalArgumentException("The [" + getClass().getName() + "] NamingStrategy requires the "
                         + "prefix [" + requiredPrefix + "]");
             }
@@ -123,7 +123,7 @@ public class NazgulNamingStrategy extends AbstractNamingStrategy {
 
         // Check the type for compliance.
         final Pattern pattern = validPatternMap.get(pomType);
-        if(!pattern.matcher(toValidate.getType()).matches()) {
+        if (!pattern.matcher(toValidate.getType()).matches()) {
             throw new IllegalArgumentException("Invalid Name [" + toValidate + "] for PomType [" + pomType + "].");
         }
     }

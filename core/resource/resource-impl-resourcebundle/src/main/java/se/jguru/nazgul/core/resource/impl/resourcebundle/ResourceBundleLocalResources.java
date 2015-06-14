@@ -117,8 +117,8 @@ public class ResourceBundleLocalResources implements LocalResources {
      * @param defaultValue The fallback/default value to return if no value was present within the underlying
      *                     ResourceBundle structure.
      * @return The localized T instance acquired from the underlying ResourceBundle structure at key
-     *         <code>key</code>, or the defaultValue should no value exist for the given key within the underlying
-     *         ResourceBundle structure.
+     * <code>key</code>, or the defaultValue should no value exist for the given key within the underlying
+     * ResourceBundle structure.
      */
     @Override
     public final String getLocalized(final String key, final String defaultValue) {
@@ -133,8 +133,8 @@ public class ResourceBundleLocalResources implements LocalResources {
      *                     ResourceBundle structure.
      * @param locale       The locale for which the resource should be retrieved.
      * @return The localized T instance acquired from the underlying ResourceBundle structure at key
-     *         <code>key</code>, or the defaultValue should no value exist for the given key within the underlying
-     *         ResourceBundle structure.
+     * <code>key</code>, or the defaultValue should no value exist for the given key within the underlying
+     * ResourceBundle structure.
      */
     @Override
     public final String getLocalized(final String key, final String defaultValue, final Locale locale) {
@@ -152,8 +152,8 @@ public class ResourceBundleLocalResources implements LocalResources {
      *                       both key and value must be non-empty. The keyValueTokens will be substituted before
      *                       the result is returned.
      * @return The localized T instance acquired from the underlying ResourceBundle structure at key
-     *         <code>key</code>, or the defaultValue should no value exist for the given key within the underlying
-     *         ResourceBundle structure.
+     * <code>key</code>, or the defaultValue should no value exist for the given key within the underlying
+     * ResourceBundle structure.
      */
     @Override
     public final String getLocalized(final String key, final String defaultValue, final String... keyValueTokens) {
@@ -171,8 +171,8 @@ public class ResourceBundleLocalResources implements LocalResources {
      * @param keyValueTokens Either <code>null</code>, or a list holding strings on the form key=value where
      *                       both key and value must be non-empty.
      * @return The localized T instance acquired from the underlying ResourceBundle structure at key
-     *         <code>key</code>, or the defaultValue should no value exist for the given key within the underlying
-     *         ResourceBundle structure.
+     * <code>key</code>, or the defaultValue should no value exist for the given key within the underlying
+     * ResourceBundle structure.
      */
     @Override
     public String getLocalized(final String key,

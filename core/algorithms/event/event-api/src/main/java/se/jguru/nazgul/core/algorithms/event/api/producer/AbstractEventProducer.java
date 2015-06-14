@@ -251,7 +251,7 @@ public abstract class AbstractEventProducer<T extends EventConsumer>
      * @param senderID        The ID of this AbstractEventProducer.
      * @param eventConsumerID The ID of the EventConsumer to remove.
      * @return {@code true} if the EventConsumer with the given ID was removed, and
-     *         {@code false} otherwise.
+     * {@code false} otherwise.
      */
     protected boolean onRemoveNonRegisteredConsumer(final String senderID, final String eventConsumerID) {
         // Do nothing

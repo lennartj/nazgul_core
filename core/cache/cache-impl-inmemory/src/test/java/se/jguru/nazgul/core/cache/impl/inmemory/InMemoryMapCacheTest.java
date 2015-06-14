@@ -115,12 +115,12 @@ public class InMemoryMapCacheTest {
         data.put("fooo", "bar");
         data.put("gnat", "baz");
 
-        for(String current : data.keySet()) {
+        for (String current : data.keySet()) {
             unitUnderTest.put(current, data.get(current));
         }
 
         // Act & Assert
-        for(String current : unitUnderTest) {
+        for (String current : unitUnderTest) {
             Assert.assertEquals(unitUnderTest.get(current), data.get(current));
         }
     }

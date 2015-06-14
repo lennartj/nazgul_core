@@ -56,7 +56,7 @@ class SortedClassNameSetKey implements Comparable<SortedClassNameSetKey> {
      *
      * @param classNames The class names to check for inclusion.
      * @return {@code true} if all the provided classNames were contained within this SortedClassNameSetKey, and
-     *         {@code false} otherwise.
+     * {@code false} otherwise.
      */
     public boolean containsAll(final Set<String> classNames) {
         for (String current : classNames) {

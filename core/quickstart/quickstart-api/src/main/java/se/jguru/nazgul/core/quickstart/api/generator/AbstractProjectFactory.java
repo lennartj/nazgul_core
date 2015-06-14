@@ -220,11 +220,11 @@ public abstract class AbstractProjectFactory extends AbstractFactory implements 
                 .withoutProjectSuffix()
                 .withMavenVersions(reactorPomMavenVersion, parentPomMavenVersion);
 
-        if(pomType == PomType.REACTOR) {
+        if (pomType == PomType.REACTOR) {
 
             // Find all module names for the active reactor directory.
             final StringBuilder moduleBuilder = new StringBuilder();
-            for(String current : FileUtils.getModuleNames(pomDirectory)) {
+            for (String current : FileUtils.getModuleNames(pomDirectory)) {
                 moduleBuilder.append("<module>").append(current).append("</module>\n");
             }
             builder.addToken(PomToken.MODULES.getToken(), moduleBuilder.toString());

@@ -130,7 +130,7 @@ public class AutonomousActionTest extends AbstractHazelcastCacheTest {
                         + "] remaining elements after eviction. Got [" + result.size() + "].",
                 expectedRemainingAfterEviction, result.size());
 
-        for(int i = 0; i< expectedRemainingAfterEviction; i++) {
+        for (int i = 0; i < expectedRemainingAfterEviction; i++) {
             final String currentKey = key + "_" + i;
             final String currentValue = value + "_" + i;
 

@@ -38,12 +38,11 @@ import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.cache.api.distributed.DistributedCache;
 import se.jguru.nazgul.core.cache.api.distributed.async.LightweightTopic;
 import se.jguru.nazgul.core.cache.api.distributed.async.LightweightTopicListener;
-import se.jguru.nazgul.core.cache.impl.hazelcast.AbstractHazelcastCacheTest;
-import se.jguru.nazgul.core.cache.impl.hazelcast.DebugHazelcastLightweightTopicListener;
-import se.jguru.nazgul.core.cache.impl.hazelcast.helpers.DebugCacheListener;
 import se.jguru.nazgul.core.cache.impl.hazelcast.AbstractHazelcastCacheListenerAdapter;
+import se.jguru.nazgul.core.cache.impl.hazelcast.AbstractHazelcastCacheTest;
 import se.jguru.nazgul.core.cache.impl.hazelcast.grid.AdminMessage;
 import se.jguru.nazgul.core.cache.impl.hazelcast.grid.GridOperations;
+import se.jguru.nazgul.core.cache.impl.hazelcast.helpers.DebugCacheListener;
 import se.jguru.nazgul.core.cache.impl.hazelcast.helpers.EventInfo;
 
 import java.lang.reflect.Field;
@@ -53,7 +52,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
@@ -322,9 +320,9 @@ public class HazelcastClientCacheListenerTest extends AbstractHazelcastCacheTest
 
         // Assert #1
         final StringBuilder builder = new StringBuilder();
-        for(int i = 0; i < adminMessages.size(); i++) {
+        for (int i = 0; i < adminMessages.size(); i++) {
             final AdminMessage adminMessage = adminMessages.get(i);
-            builder.append("[" + i + "]: " + adminMessage.getCommand() + " :: " + adminMessage.getArguments()  + "\n");
+            builder.append("[" + i + "]: " + adminMessage.getCommand() + " :: " + adminMessage.getArguments() + "\n");
         }
         Assert.assertEquals(builder.toString(), 6, adminMessages.size());
 

@@ -98,10 +98,10 @@ public class DateTimeProperty extends AbstractStringKeyedMutableProperty<DateTim
     public boolean equals(final Object that) {
 
         // Check sanity
-        if(that == null || !that.getClass().equals(DateTimeProperty.class)) {
+        if (that == null || !that.getClass().equals(DateTimeProperty.class)) {
             return false;
         }
-        if(this == that) {
+        if (this == that) {
             return true;
         }
 

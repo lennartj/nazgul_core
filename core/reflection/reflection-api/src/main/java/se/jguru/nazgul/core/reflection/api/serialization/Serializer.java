@@ -77,7 +77,7 @@ public abstract class Serializer {
      *
      * @param toSerialize The object to serialize and wrap in an ASCII-armoured String.
      * @return The ASCII-armoured byte array from the provided {@code toSerialize} object,
-     *         or {@code null} if given a null argument.
+     * or {@code null} if given a null argument.
      */
     public static String serialize(final Serializable toSerialize) {
 

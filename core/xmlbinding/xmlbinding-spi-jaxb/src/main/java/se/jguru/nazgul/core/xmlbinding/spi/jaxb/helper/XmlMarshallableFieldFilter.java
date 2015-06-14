@@ -101,7 +101,7 @@ public final class XmlMarshallableFieldFilter implements Filter<Field> {
      *
      * @param object The object on whose class extraction of Fields should be done.
      * @return a List holding all Fields within the class of the supplied object which should
-     *         be included in XmlMarshalling.
+     * be included in XmlMarshalling.
      */
     public static List<Field> getMarshallableFields(final Object object) {
 

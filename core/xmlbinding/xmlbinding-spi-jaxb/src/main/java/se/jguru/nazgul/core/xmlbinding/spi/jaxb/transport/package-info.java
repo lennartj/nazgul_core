@@ -35,8 +35,7 @@
         namespace = "http://www.jguru.se/nazgul/core",
         xmlns = {
                 @XmlNs(prefix = "core", namespaceURI = "http://www.jguru.se/nazgul/core")
-        },
-        elementFormDefault = XmlNsForm.UNQUALIFIED)
+        }, elementFormDefault = XmlNsForm.UNQUALIFIED)
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport;
 
 import javax.xml.bind.annotation.XmlNs;

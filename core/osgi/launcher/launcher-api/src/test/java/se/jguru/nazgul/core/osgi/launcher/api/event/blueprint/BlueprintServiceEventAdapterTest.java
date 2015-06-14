@@ -22,8 +22,8 @@
 
 package se.jguru.nazgul.core.osgi.launcher.api.event.blueprint;
 
-import org.junit.Assert;
 import org.easymock.EasyMock;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.osgi.framework.ServiceEvent;

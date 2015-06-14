@@ -46,7 +46,7 @@ import java.util.List;
 @MappedSuperclass
 @XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"valueClassName"})
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class AbstractProperty<K extends Serializable & Comparable<K>, 
+public abstract class AbstractProperty<K extends Serializable & Comparable<K>,
         V extends Serializable> extends NazgulEntity implements Property<K, V> {
 
     // Internal state

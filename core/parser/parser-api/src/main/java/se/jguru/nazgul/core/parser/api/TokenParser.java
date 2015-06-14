@@ -24,8 +24,6 @@ package se.jguru.nazgul.core.parser.api;
 
 import se.jguru.nazgul.core.parser.api.agent.ParserAgent;
 
-import java.util.regex.Pattern;
-
 /**
  * Specification for a Parser that recognizes String tokens, and offers
  * substituting values for the token placeholders.

@@ -57,7 +57,7 @@ public class TestComponentFactory extends AbstractComponentFactory {
     protected URL getTemplateResourceURL(final String templateResourcePath) {
         final String enrichedPath = "testdata/templates/" + testdataSubDir + "/" + templateResourcePath;
 
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.debug("Got enrichedPath: " + enrichedPath);
         }
 

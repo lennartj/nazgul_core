@@ -77,9 +77,9 @@ public class DistributedEventInCacheExampleTest extends AbstractCacheExample {
     }
 
     private void validateThatOneMessageWasReceived(final ExampleConfigurationChangeListener listener,
-                                                  final String expectedPropertyName,
-                                                  final String expectedOldValue,
-                                                  final String expectedNewValue) {
+                                                   final String expectedPropertyName,
+                                                   final String expectedOldValue,
+                                                   final String expectedNewValue) {
 
         final List<ExampleConfigurationChangeEvent<String>> receivedEvents = listener.getReceivedEvents();
         Assert.assertEquals(1, receivedEvents.size());

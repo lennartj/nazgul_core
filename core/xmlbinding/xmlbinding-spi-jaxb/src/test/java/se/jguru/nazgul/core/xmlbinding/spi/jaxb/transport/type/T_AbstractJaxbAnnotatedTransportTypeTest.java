@@ -22,8 +22,8 @@
 
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type;
 
-import org.junit.Assert;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.JaxbXmlBinder;

@@ -69,7 +69,7 @@ public abstract class AbstractInMemoryJpaTest {
         // Find the JPA persistence provider class.
         jpaPersistenceProviderClass = System.getProperty(JPA_SPECIFICATION_PROPERTY);
         Assert.assertNotEquals("The persistence provider System property [" + JPA_SPECIFICATION_PROPERTY + "] should "
-                + "be set to contain the JPA persistence provider. This is normally done in a Maven profile.",
+                        + "be set to contain the JPA persistence provider. This is normally done in a Maven profile.",
                 jpaPersistenceProviderClass);
         persistenceXmlFile = "testdata/" + getPersistenceFileName() + ".xml";
 
@@ -109,7 +109,7 @@ public abstract class AbstractInMemoryJpaTest {
         // Restore the original ClassLoader
         try {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
-        } catch (Throwable thr){
+        } catch (Throwable thr) {
             System.err.println("Could not restore original ClassLoader [" + originalClassLoader + "]");
             thr.printStackTrace();
         }
@@ -206,7 +206,7 @@ public abstract class AbstractInMemoryJpaTest {
         // System.out.println("extraProperties [" + extraProperties + "]");
 
         final StringBuilder builder = new StringBuilder(" EntityManagerFactory properties\n");
-        for(Map.Entry<String, String> current : extraProperties.entrySet()) {
+        for (Map.Entry<String, String> current : extraProperties.entrySet()) {
             builder.append("  [").append(current.getKey()).append("]: ").append(current.getValue()).append("\n");
         }
         log.debug(builder.toString());
@@ -225,7 +225,7 @@ public abstract class AbstractInMemoryJpaTest {
      * given in the persistence.xml file.
      *
      * @return Properties supplied to the EntityManagerFactory, implying they do not
-     *         need to be declared within the persistence.xml file.
+     * need to be declared within the persistence.xml file.
      * @see javax.persistence.Persistence#createEntityManagerFactory(String, java.util.Map)
      */
     protected Map<String, String> getEntityManagerFactoryProperties() {
@@ -295,8 +295,8 @@ public abstract class AbstractInMemoryJpaTest {
         for (Map.Entry<Object, Object> current : System.getProperties().entrySet()) {
 
             final String currentPropertyName = "" + current.getKey();
-            for(String currentPrefix : overridablePrefixes) {
-                if(currentPropertyName.trim().toLowerCase().startsWith(currentPrefix)) {
+            for (String currentPrefix : overridablePrefixes) {
+                if (currentPropertyName.trim().toLowerCase().startsWith(currentPrefix)) {
                     toReturn.put(currentPropertyName, "" + current.getValue());
                 }
             }

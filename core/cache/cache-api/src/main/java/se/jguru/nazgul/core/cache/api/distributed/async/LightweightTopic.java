@@ -23,8 +23,6 @@ package se.jguru.nazgul.core.cache.api.distributed.async;
 
 import se.jguru.nazgul.core.clustering.api.Clusterable;
 
-import java.io.Serializable;
-
 /**
  * Lightweight Topic definition, implying a distributed cluster-wide Topic
  * which exists within the context of a distributed cache.

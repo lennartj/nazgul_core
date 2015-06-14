@@ -36,7 +36,6 @@ import se.jguru.nazgul.core.quickstart.model.SimpleArtifact;
 
 import java.io.File;
 import java.net.URL;
-import java.util.Collections;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;

@@ -104,10 +104,10 @@ public abstract class AbstractStringKeyedMutableProperty<V extends Serializable>
     public boolean equals(final Object that) {
 
         // Check sanity
-        if(this == that) {
+        if (this == that) {
             return true;
         }
-        if(null == that || that.getClass() != getClass()) {
+        if (null == that || that.getClass() != getClass()) {
             return false;
         }
 

@@ -68,7 +68,7 @@ public class InMemoryMapCache extends AbstractSwiftClusterable implements Cache<
      */
     public InMemoryMapCache() {
 
-        this(new UUIDGenerator(), 20*60*60L,
+        this(new UUIDGenerator(), 20 * 60 * 60L,
                 new ConcurrentHashMap<String, Serializable>(),
                 new ConcurrentHashMap<String, CacheListener<String, Serializable>>(),
                 15,

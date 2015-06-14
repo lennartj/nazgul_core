@@ -49,9 +49,9 @@ public class TestSuspendableMBean extends AbstractSuspendableMBean {
      * @param delegate       A non-null NotificationEmitter to which this AbstractMBean will delegate all
      *                       NotificationEmitter operations.
      * @throws IllegalArgumentException if the {@code mbeanInterface} does not follow JMX design patterns for
-     *                                            Management Interfaces, or if {@code this} does not implement the
-     *                                            specified
-     *                                            interface, or if {@code delegate} is null.
+     *                                  Management Interfaces, or if {@code this} does not implement the
+     *                                  specified
+     *                                  interface, or if {@code delegate} is null.
      * @see javax.management.StandardEmitterMBean#StandardEmitterMBean(Class, boolean,
      * javax.management.NotificationEmitter)
      */
@@ -83,9 +83,9 @@ public class TestSuspendableMBean extends AbstractSuspendableMBean {
      * @param delegate       A non-null NotificationEmitter to which this AbstractMBean will delegate all
      *                       NotificationEmitter operations.
      * @throws IllegalArgumentException if the {@code mbeanInterface}
-     *                                            does not follow JMX design patterns for Management Interfaces, or
-     *                                            if {@code this} does not implement the specified interface, or
-     *                                            if {@code delegate} is null.
+     *                                  does not follow JMX design patterns for Management Interfaces, or
+     *                                  if {@code this} does not implement the specified interface, or
+     *                                  if {@code delegate} is null.
      */
     public TestSuspendableMBean(final Class<?> mbeanInterface,
                                 final boolean isMXBean,

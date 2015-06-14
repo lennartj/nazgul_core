@@ -22,8 +22,8 @@
 
 package se.jguru.nazgul.core.osgi.launcher.api;
 
-import org.junit.Assert;
 import org.easymock.EasyMock;
+import org.junit.Assert;
 import org.junit.Test;
 import org.osgi.framework.BundleException;
 

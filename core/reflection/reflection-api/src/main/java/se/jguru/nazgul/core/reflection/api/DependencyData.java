@@ -32,9 +32,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.SortedMap;
 import java.util.StringTokenizer;
-import java.util.TreeMap;
 
 /**
  * Maven dependency information wrapper, as read from a dependency.properties file
@@ -268,7 +266,7 @@ public class DependencyData implements Serializable, Comparable<DependencyData> 
                                 throw new IllegalStateException("The type information for [" + current
                                         + "] is assumed to be found immediately after the version information.");
                             }
-                        } else if(aLine.contains(SCOPE_LINE_TOKEN)) {
+                        } else if (aLine.contains(SCOPE_LINE_TOKEN)) {
 
                             // some.group.name/artifactId/scope = [scope]
                             final List<String> data = parseLine(aLine);

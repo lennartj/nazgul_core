@@ -74,9 +74,9 @@ public class DateTimePropertyTest extends AbstractStandardizedTimezoneTest {
     public void validateEquality() {
 
         // Assemble
-        final DateTimeProperty fooBar = new DateTimeProperty ("foo", dateTime1);
-        final DateTimeProperty fooBaz = new DateTimeProperty ("foo", dateTime2);
-        final DateTimeProperty anotherFooBar = new DateTimeProperty ("foo", dateTime1);
+        final DateTimeProperty fooBar = new DateTimeProperty("foo", dateTime1);
+        final DateTimeProperty fooBaz = new DateTimeProperty("foo", dateTime2);
+        final DateTimeProperty anotherFooBar = new DateTimeProperty("foo", dateTime1);
         final DateTimeProperty nullValueProperty = new DateTimeProperty("foo", null);
 
         // Act & Assert
@@ -96,7 +96,7 @@ public class DateTimePropertyTest extends AbstractStandardizedTimezoneTest {
     public void validateMarshalling() throws Exception {
 
         // Assemble
-        final DateTimeProperty unitUnderTest = new DateTimeProperty ("aDateTimePropertyKey", dateTime1);
+        final DateTimeProperty unitUnderTest = new DateTimeProperty("aDateTimePropertyKey", dateTime1);
         final String expected = XmlTestUtils.readFully("testdata/aDateTimeProperty.xml");
 
         final JaxbXmlBinder binder = new JaxbXmlBinder();
@@ -113,7 +113,7 @@ public class DateTimePropertyTest extends AbstractStandardizedTimezoneTest {
     public void validateUnmarshalling() throws Exception {
 
         // Assemble
-        final DateTimeProperty unitUnderTest = new DateTimeProperty ("aDateTimePropertyKey", dateTime1);
+        final DateTimeProperty unitUnderTest = new DateTimeProperty("aDateTimePropertyKey", dateTime1);
         final String data = XmlTestUtils.readFully("testdata/aDateTimeProperty.xml");
 
         final JaxbXmlBinder binder = new JaxbXmlBinder();

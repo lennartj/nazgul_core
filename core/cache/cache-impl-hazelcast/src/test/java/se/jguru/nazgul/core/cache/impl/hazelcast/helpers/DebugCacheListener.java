@@ -324,7 +324,7 @@ public class DebugCacheListener<T> extends AbstractCacheListener<String, T> {
                     index.getAndIncrement(),
                     new EventInfo(event, key, Thread.currentThread().getName(), value));
 
-            if(optionalLatch != null) {
+            if (optionalLatch != null) {
                 optionalLatch.countDown();
             }
         }

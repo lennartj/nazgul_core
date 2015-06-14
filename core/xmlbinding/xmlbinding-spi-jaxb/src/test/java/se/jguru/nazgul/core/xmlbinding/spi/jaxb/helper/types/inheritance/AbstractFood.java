@@ -73,10 +73,10 @@ public abstract class AbstractFood implements Comparable<AbstractFood> {
         // c) Category
         //
         int result = this.name.compareTo(that.name);
-        if(result == 0) {
+        if (result == 0) {
             result = this.origin.compareTo(that.origin);
 
-            if(result == 0) {
+            if (result == 0) {
                 result = this.getCategory().compareTo(that.getCategory());
             }
         }

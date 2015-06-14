@@ -20,12 +20,11 @@
  * #L%
  */
 @XmlSchema(
-        namespace="http://silly.food.structure",
-        xmlns={
-                @XmlNs(prefix="someOther", namespaceURI="http://silly.food.structure")
+        namespace = "http://silly.food.structure",
+        xmlns = {
+                @XmlNs(prefix = "someOther", namespaceURI = "http://silly.food.structure")
         },
-        elementFormDefault= XmlNsForm.UNQUALIFIED)
-package se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.inheritance;
+        elementFormDefault = XmlNsForm.UNQUALIFIED) package se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.inheritance;
 
 import javax.xml.bind.annotation.XmlNs;
 import javax.xml.bind.annotation.XmlNsForm;

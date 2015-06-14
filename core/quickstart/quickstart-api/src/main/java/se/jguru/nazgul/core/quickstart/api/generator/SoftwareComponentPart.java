@@ -21,9 +21,7 @@
  */
 package se.jguru.nazgul.core.quickstart.api.generator;
 
-import org.apache.commons.lang3.Validate;
 import se.jguru.nazgul.core.quickstart.api.PomType;
-import se.jguru.nazgul.core.quickstart.model.Name;
 
 /**
  * Definition of all known SoftwareComponent parts, implying the different
@@ -76,7 +74,9 @@ public enum SoftwareComponentPart {
     /**
      * @return The standard component PomType for this SoftwareComponentPart.
      */
-    public PomType getComponentPomType() { return componentPomType; }
+    public PomType getComponentPomType() {
+        return componentPomType;
+    }
 
     /**
      * @return {@code true} if this SoftwareComponentPart requires a suffix, and {@code false} otherwise.

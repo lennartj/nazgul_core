@@ -40,7 +40,7 @@ public class CollectionsConverter {
     public <T> List<T> convertToList(final Collection<T> collection) {
 
         // Are we already a List?
-        if(collection instanceof List) {
+        if (collection instanceof List) {
             return (List<T>) collection;
         }
 
@@ -51,7 +51,7 @@ public class CollectionsConverter {
     }
 
     @Converter
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public List convertSetToList(final Set set) {
 
         final List toReturn = new ArrayList();
@@ -64,7 +64,7 @@ public class CollectionsConverter {
     public <K, V> List<Tuple<K, V>> convertToList(final Map<K, V> map) {
 
         List<Tuple<K, V>> toReturn = new ArrayList<Tuple<K, V>>();
-        for(Map.Entry<K, V> current : map.entrySet()) {
+        for (Map.Entry<K, V> current : map.entrySet()) {
             toReturn.add(new Tuple<K, V>(current.getKey(), current.getValue()));
         }
 

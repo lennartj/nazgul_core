@@ -22,8 +22,8 @@
 
 package se.jguru.nazgul.test.blueprint;
 
-import org.junit.Assert;
 import org.apache.commons.lang3.ClassUtils;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.osgi.framework.Bundle;

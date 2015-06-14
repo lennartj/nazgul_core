@@ -128,7 +128,7 @@ public class JaxbUtilsTest {
 
             private void addException(final SAXParseException exception, final String key) {
                 List<SAXParseException> exceptionList = schemaValidationErrors.get(key);
-                if(exceptionList == null) {
+                if (exceptionList == null) {
                     exceptionList = new ArrayList<SAXParseException>();
                     schemaValidationErrors.put(key, exceptionList);
                 }

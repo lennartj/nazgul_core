@@ -40,8 +40,8 @@ public interface LocalResources {
      * @param defaultValue The fallback/default value to return if no value was present within the underlying
      *                     ResourceBundle structure.
      * @return The localized String acquired from the underlying ResourceBundle structure at key
-     *         <code>key</code>, or the defaultValue should no value exist for the given key within the underlying
-     *         ResourceBundle structure.
+     * <code>key</code>, or the defaultValue should no value exist for the given key within the underlying
+     * ResourceBundle structure.
      */
     String getLocalized(String key, String defaultValue);
 
@@ -56,8 +56,8 @@ public interface LocalResources {
      *                       both key and value must be non-empty. The keyValueTokens will be substituted before
      *                       the result is returned.
      * @return The String acquired from the underlying ResourceBundle structure at key
-     *         <code>key</code>, or the defaultValue should no value exist for the given key within the underlying
-     *         ResourceBundle structure.
+     * <code>key</code>, or the defaultValue should no value exist for the given key within the underlying
+     * ResourceBundle structure.
      */
     String getLocalized(String key, String defaultValue, String... keyValueTokens);
 
@@ -70,8 +70,8 @@ public interface LocalResources {
      *                     ResourceBundle structure.
      * @param locale       The locale for which the resource should be retrieved.
      * @return The localized String acquired from the underlying ResourceBundle structure at key
-     *         <code>key</code>, or the defaultValue should no value exist for the given key within the underlying
-     *         ResourceBundle structure.
+     * <code>key</code>, or the defaultValue should no value exist for the given key within the underlying
+     * ResourceBundle structure.
      */
     String getLocalized(String key, String defaultValue, Locale locale);
 
@@ -86,8 +86,8 @@ public interface LocalResources {
      * @param keyValueTokens Either <code>null</code>, or a list holding strings on the form key=value where
      *                       both key and value must be non-empty.
      * @return The localized String acquired from the underlying ResourceBundle structure at key
-     *         <code>key</code>, or the defaultValue should no value exist for the given key within the underlying
-     *         ResourceBundle structure.
+     * <code>key</code>, or the defaultValue should no value exist for the given key within the underlying
+     * ResourceBundle structure.
      */
     String getLocalized(String key, String defaultValue, Locale locale, String... keyValueTokens);
 

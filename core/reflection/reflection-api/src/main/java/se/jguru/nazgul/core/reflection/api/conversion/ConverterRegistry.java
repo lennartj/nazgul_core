@@ -69,8 +69,8 @@ public interface ConverterRegistry {
      * @param sourceType The source type.
      * @param <From>     The source type.
      * @return the available targetTypes for the supplied sourceType, implying the closure of Classes
-     *         to which the supplied sourceType can be converted by this ConverterRegistry, or
-     *         {@code null} in case this TypeConverterRegistry could not convert the supplied sourceType.
+     * to which the supplied sourceType can be converted by this ConverterRegistry, or
+     * {@code null} in case this TypeConverterRegistry could not convert the supplied sourceType.
      * @throws IllegalArgumentException if the calculation could not be performed.
      */
     <From> Set<Class<?>> getPossibleConversions(Class<From> sourceType) throws IllegalArgumentException;

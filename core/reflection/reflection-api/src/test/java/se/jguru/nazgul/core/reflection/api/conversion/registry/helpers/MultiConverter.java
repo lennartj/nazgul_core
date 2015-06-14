@@ -58,7 +58,7 @@ public class MultiConverter {
     @Converter(acceptsNullValues = true)
     public Date convertToDate(final DateTime dateTime) {
 
-        if(dateTime == null) {
+        if (dateTime == null) {
             return DateTime.parse("2012-03-04T05:06", ISODateTimeFormat.dateHourMinute()).toDate();
         }
 
@@ -111,7 +111,7 @@ public class MultiConverter {
 
         // Copy all objects in the array to the collection
         final List<Object> toReturn = new ArrayList<Object>();
-        for(int i = 0; i < Array.getLength(anArray); i++) {
+        for (int i = 0; i < Array.getLength(anArray); i++) {
             toReturn.add(Array.get(anArray, i));
         }
         return toReturn;

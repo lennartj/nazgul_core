@@ -51,7 +51,7 @@ public abstract class AbstractCacheExample {
      */
     protected DestinationProvider<String> getCache() {
 
-        if(cache == null) {
+        if (cache == null) {
             cache = getCache("config/hazelcast/StandaloneConfig.xml");
         }
 
