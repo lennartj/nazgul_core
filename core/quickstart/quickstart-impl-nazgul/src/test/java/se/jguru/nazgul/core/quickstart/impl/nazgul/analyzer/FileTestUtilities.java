@@ -1,6 +1,6 @@
 /*
  * #%L
- * Nazgul Project: nazgul-core-quickstart-api
+ * Nazgul Project: nazgul-core-quickstart-impl-nazgul
  * %%
  * Copyright (C) 2010 - 2015 jGuru Europe AB
  * %%
@@ -19,7 +19,7 @@
  * limitations under the License.
  * #L%
  */
-package se.jguru.nazgul.core.quickstart.api;
+package se.jguru.nazgul.core.quickstart.impl.nazgul.analyzer;
 
 import org.apache.commons.lang3.Validate;
 import org.joda.time.DateTimeZone;

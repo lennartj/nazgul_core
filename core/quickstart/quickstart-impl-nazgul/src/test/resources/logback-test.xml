@@ -36,6 +36,7 @@
 
     <!-- Lower the logging level for relevant classes -->
     <logger name="se.jguru.nazgul" level="WARN"/>
+    <logger name="se.jguru.nazgul.core.quickstart.api.generator.AbstractComponentFactory" level="INFO"/>
     <logger name="se.jguru.nazgul.core.quickstart.impl.nazgul" level="DEBUG"/>
 
     <!-- Make the frameworks shut up. -->

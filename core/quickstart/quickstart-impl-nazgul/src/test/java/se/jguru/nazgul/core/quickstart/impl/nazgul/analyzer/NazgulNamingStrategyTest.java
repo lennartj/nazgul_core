@@ -21,10 +21,13 @@
  */
 package se.jguru.nazgul.core.quickstart.impl.nazgul.analyzer;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import se.jguru.nazgul.core.quickstart.api.PomType;
 import se.jguru.nazgul.core.quickstart.model.Name;
+
+import java.io.File;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -32,11 +35,22 @@ import se.jguru.nazgul.core.quickstart.model.Name;
 public class NazgulNamingStrategyTest {
 
     // Shared state
+    @SuppressWarnings("all")
+    private File tmpTmpIoFileDir;
     private NazgulNamingStrategy unitUnderTest;
 
     @Before
     public void setupSharedState() {
+
+        // Redirect the java.io.tmpdir
+        tmpTmpIoFileDir = FileTestUtilities.createTmpDirectory(true);
+
         unitUnderTest = new NazgulNamingStrategy();
+    }
+
+    @After
+    public void restoreSharedState() {
+        FileTestUtilities.restoreOriginalTmpDirectory();
     }
 
     @Test

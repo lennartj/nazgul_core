@@ -56,9 +56,15 @@ public final class FileUtils {
     private static final Logger log = LoggerFactory.getLogger(FileUtils.class.getName());
 
     /**
-     * The line ending string,
+     * The line ending string:
+     * {@value}
      */
     public static final String LINE_ENDING = System.getProperty("line.separator");
+
+    /**
+     * The file separator ("/" on unix, "\" on windows): {@value}
+     */
+    public static final String FILE_SEPARATOR = System.getProperty("file.separator");
 
     /**
      * A FileFilter which accepts directories only.
@@ -66,6 +72,8 @@ public final class FileUtils {
     public static final FileFilter DIRECTORY_FILTER = new FileFilter() {
         @Override
         public boolean accept(final File pathname) {
+
+            System.getProperties();
             return pathname.exists() && pathname.isDirectory();
         }
     };
@@ -323,6 +331,13 @@ public final class FileUtils {
         Validate.notNull(aFile, "Cannot handle null aFile argument.");
         Validate.notNull(data, "Cannot handle null data argument.");
 
+        final File dirForFile = aFile.getParentFile();
+        if (dirForFile == null || !(dirForFile.exists() && dirForFile.isDirectory())) {
+            throw new IllegalArgumentException("Cannot write file [" + FileUtils.getCanonicalPath(aFile)
+                    + "], since its parent is not an existing directory.");
+        }
+
+        // All seems sane. Write the file.
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(aFile))) {
             writer.write(data);
             writer.flush();
