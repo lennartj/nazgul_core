@@ -22,7 +22,6 @@
 package se.jguru.nazgul.core.clustering.api;
 
 import org.apache.commons.lang3.Validate;
-import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 
 import javax.persistence.MappedSuperclass;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -35,7 +34,7 @@ import java.util.UUID;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-@XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"id"})
+@XmlType(namespace = "http://www.jguru.se/nazgul/core", propOrder = {"id"})
 @XmlAccessorType(XmlAccessType.FIELD)
 @MappedSuperclass
 public abstract class AbstractClusterable implements Clusterable {

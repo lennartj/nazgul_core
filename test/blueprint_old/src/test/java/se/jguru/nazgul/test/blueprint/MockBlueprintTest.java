@@ -2,7 +2,7 @@
  * #%L
  *   se.jguru.nazgul.core.poms.core-parent.nazgul-core-parent
  *   %%
- *   Copyright (C) 2010 - 2013 jGuru Europe AB
+ *   Copyright (C) 2010 - 2015 jGuru Europe AB
  *   %%
  *   Licensed under the jGuru Europe AB license (the "License"), based
  *   on Apache License, Version 2.0; you may not use this file except

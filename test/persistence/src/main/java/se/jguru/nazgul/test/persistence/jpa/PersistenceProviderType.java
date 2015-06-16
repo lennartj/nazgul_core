@@ -35,6 +35,11 @@ public enum PersistenceProviderType {
     OPENJPA_2("org.apache.openjpa.persistence.PersistenceProviderImpl"),
 
     /**
+     * The Hibernate 4 PersistenceProvider.
+     */
+    HIBERNATE_4("org"),
+
+    /**
      * The EclipseLink PersistenceProvider.
      */
     ECLIPSELINK_2("org.eclipse.persistence.jpa.PersistenceProvider");
@@ -42,7 +47,7 @@ public enum PersistenceProviderType {
     // Internal state
     private String persistenceProviderClass;
 
-    private PersistenceProviderType(final String persistenceProviderClass) {
+    PersistenceProviderType(final String persistenceProviderClass) {
         this.persistenceProviderClass = persistenceProviderClass;
     }
 

@@ -193,6 +193,9 @@ public abstract class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
                 {"eclipselink.ddl-generation", "drop-and-create-tables"},
                 {"eclipselink.ddl-generation.output-mode", "database"},
                 {"eclipselink.persistencexml", getPersistenceXmlFile()}
+
+                // Hibernate properties
+
         };
 
         // First, add the default values - and then overwrite them with
