@@ -27,6 +27,10 @@ The core components are:
 3. **nazgul-core-clustering**. The nazgul-core-clustering reactor contains an API for defining classes
     whose objects should be clusterable, implying that they can be distributed in clustered environments
     or distributed caches.
+    
+3. **nazgul-core-jmx**. The nazgul-core-jmx reactor contains an API and test project for defining classes
+    which should work smoothly with JMX. This is useable for service development and management during 
+    operations in most Java EE-compliant application servers. 
 
 4. **nazgul-core-osgi**. Holds a launcher API and a corresponding implementation project to embed an OSGi
     container within a Java SE (or Java EE) application, as well as a means to subscribe and listen to
