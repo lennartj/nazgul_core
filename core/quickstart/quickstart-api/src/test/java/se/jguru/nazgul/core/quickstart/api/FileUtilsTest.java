@@ -220,6 +220,16 @@ public class FileUtilsTest {
         Assert.assertTrue(FileUtils.NONEXISTENT_OR_EMPTY_DIRECTORY_FILTER.accept(anEmptyDirectory));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void validateExceptionOnWritingFileWithoutExistingParent() {
+
+        // Assemble
+        final File nonExistingFile = new File(System.getProperty("java.io.tmpdir"), "a/non/existing/file");
+
+        // Act & Assert
+        FileUtils.writeFile(nonExistingFile, "foobar!");
+    }
+
     //
     // Helpers
     //

@@ -129,7 +129,7 @@
                             </regex>
                             <regex>
                                 <pattern>se.jguru.nazgul.core.quickstart.api.generator.AbstractComponentFactory</pattern>
-                                <branchRate>58</branchRate>
+                                <branchRate>55</branchRate>
                                 <lineRate>80</lineRate>
                             </regex>
                             <regex>

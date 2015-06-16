@@ -60,11 +60,11 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
     private static final Logger log = LoggerFactory.getLogger(AbstractComponentFactory.class.getName());
 
     /**
-     * Standard directory containing templates.
+     * Standard directory containing templates: {@value}
      */
-    public static final String STANDARD_TEMPLATE_DIR = "template/"
+    public static final String STANDARD_TEMPLATE_DIR = "template" + FileUtils.FILE_SEPARATOR
             + (System.getProperty("user.name") == null ? "unknown" : System.getProperty("user.name"))
-            + "/";
+            + FileUtils.FILE_SEPARATOR;
 
     // Internal state
     private static final String TMP_DIR = System.getProperty("java.io.tmpdir");
@@ -468,7 +468,13 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
 
                 final File parentDir = toWrite.getParentFile();
                 if (!parentDir.exists()) {
-                    parentDir.mkdirs();
+                    if(parentDir.mkdirs()) {
+                        log.debug("Successfully created parent directory [" + FileUtils.getCanonicalPath(parentDir)
+                                + "]");
+                    } else {
+                        log.warn("Could not create parent directory ["
+                                + FileUtils.getCanonicalPath(parentDir) + "]");
+                    }
                 }
 
                 // Copy the template file.

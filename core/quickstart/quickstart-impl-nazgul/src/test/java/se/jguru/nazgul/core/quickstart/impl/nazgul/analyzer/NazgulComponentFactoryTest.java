@@ -22,6 +22,7 @@
 package se.jguru.nazgul.core.quickstart.impl.nazgul.analyzer;
 
 import org.apache.maven.model.Model;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -49,6 +50,8 @@ public class NazgulComponentFactoryTest {
     public TestName testName = new TestName();
 
     // Shared state
+    @SuppressWarnings("all")
+    private File tmpTmpIoFileDir;
     private File testDataDirectory;
     private ProjectFactory projectFactory;
 
@@ -64,10 +67,18 @@ public class NazgulComponentFactoryTest {
     @Before
     public void setupSharedState() {
 
+        // Redirect the java.io.tmpdir
+        tmpTmpIoFileDir = FileTestUtilities.createTmpDirectory(true);
+
         final String methodName = testName.getMethodName();
         testDataDirectory = createUniqueDirectoryUnderTestData(methodName);
 
         projectFactory = new NazgulProjectFactory();
+    }
+
+    @After
+    public void restoreSharedState() {
+        FileTestUtilities.restoreOriginalTmpDirectory();
     }
 
     @Test
