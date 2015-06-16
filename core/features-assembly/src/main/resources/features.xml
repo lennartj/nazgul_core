@@ -24,6 +24,16 @@
 
 <features name="nazgul-core" xmlns="http://karaf.apache.org/xmlns/features/v1.2.0">
 
+    <feature name="nazgul-core-jmx-api"
+             resolver="(obr)"
+             version="${parent.version}"
+             description="Nazgul Framework: JMX API"
+             start-level="50">
+
+        <!-- Include the bundles. -->
+        <bundle>mvn:se.jguru.nazgul.core.jmx.api/nazgul-core-jmx-api/${parent.version}</bundle>
+    </feature>
+
     <feature name="nazgul-core-algorithms"
              resolver="(obr)"
              version="${parent.version}"
@@ -114,7 +124,7 @@
 
         <!-- Include the bundles. -->
         <bundle>mvn:se.jguru.nazgul.core.clustering.api/nazgul-core-clustering-api/${parent.version}</bundle>
-        <bundle dependency="false">mvn:org.apache.geronimo.specs/geronimo-jpa_2.0_spec/${parent.version}</bundle>
+        <bundle dependency="false">mvn:org.apache.geronimo.specs/geronimo-jpa_2.0_spec/${org.apache.geronimo.specs/geronimo-jpa_2.0_spec/version}</bundle>
 
         <!-- Include the dependency features. -->
         <feature version="${parent.version}">nazgul-core-xmlbinding-api</feature>
