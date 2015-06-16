@@ -3,7 +3,7 @@
   ~ #%L
   ~   se.jguru.nazgul.core.poms.core-parent.nazgul-core-parent
   ~   %%
-  ~   Copyright (C) 2010 - 2013 jGuru Europe AB
+  ~   Copyright (C) 2010 - 2015 jGuru Europe AB
   ~   %%
   ~   Licensed under the jGuru Europe AB license (the "License"), based
   ~   on Apache License, Version 2.0; you may not use this file except
@@ -60,16 +60,6 @@
         <!--
             External dependencies.
         -->
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jpa_2.0_spec</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.openjpa</groupId>
-            <artifactId>openjpa</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>

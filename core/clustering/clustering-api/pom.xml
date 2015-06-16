@@ -3,7 +3,7 @@
   ~ #%L
   ~   se.jguru.nazgul.core.poms.core-parent.nazgul-core-parent
   ~   %%
-  ~   Copyright (C) 2010 - 2013 jGuru Europe AB
+  ~   Copyright (C) 2010 - 2015 jGuru Europe AB
   ~   %%
   ~   Licensed under the jGuru Europe AB license (the "License"), based
   ~   on Apache License, Version 2.0; you may not use this file except
@@ -48,19 +48,10 @@
     <!-- | Section 2:  Dependency (management) settings   -->
     <!-- +=============================================== -->
     <dependencies>
-        <!-- Internal dependencies -->
-        <dependency>
-            <groupId>se.jguru.nazgul.core.xmlbinding.api</groupId>
-            <artifactId>nazgul-core-xmlbinding-api</artifactId>
-            <version>1.7.2-SNAPSHOT</version>
-        </dependency>
 
-        <!-- External dependencies -->
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jpa_2.0_spec</artifactId>
-            <scope>provided</scope>
-        </dependency>
+        <!--
+            External dependencies
+         -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

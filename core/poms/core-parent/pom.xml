@@ -29,7 +29,7 @@
     <parent>
         <groupId>se.jguru.nazgul.tools.poms.external</groupId>
         <artifactId>nazgul-tools-external-parent</artifactId>
-        <version>4.0.3-SNAPSHOT</version>
+        <version>4.1.1</version>
         <relativePath />
     </parent>
 
@@ -71,12 +71,11 @@
         <!--
             Supply the version of the Nazgul Tools framework as a Property.
         -->
-        <nazgul.tools.version>4.0.3-SNAPSHOT</nazgul.tools.version>
+        <nazgul.tools.version>4.1.1</nazgul.tools.version>
 
         <!--
             Other, external version properties.
         -->
-        <org.eclipse.persistence.version>2.6.0</org.eclipse.persistence.version>
         <osgi.version>5.0.0</osgi.version>
         <felix.version>5.0.0</felix.version>
         <felix.fileinstall.version>3.2.6</felix.fileinstall.version>
@@ -119,18 +118,6 @@
                 geronimo-jpa_2.0_spec-1.1.jar
                 geronimo-jta_1.1_spec-1.1.1.jar
             -->
-            <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-jms_1.1_spec</artifactId>
-                <version>1.1.1</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-jpa_2.0_spec</artifactId>
-                <version>1.1</version>
-                <scope>provided</scope>
-            </dependency>
             <dependency>
                 <groupId>org.apache.geronimo.specs</groupId>
                 <artifactId>geronimo-jta_1.1_spec</artifactId>
@@ -206,11 +193,6 @@
                 <groupId>com.sun.xml.bind</groupId>
                 <artifactId>jaxb-osgi</artifactId>
                 <version>${jaxb.impl.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.persistence</groupId>
-                <artifactId>eclipselink</artifactId>
-                <version>${org.eclipse.persistence.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.hsqldb</groupId>
@@ -305,13 +287,6 @@
                         <disableXmlReport>true</disableXmlReport>
                         <systemPropertyVariables>
                             <nazgul_tools_version>${nazgul.tools.version}</nazgul_tools_version>
-                            <!--
-                                This is used to work around a cobertura maven plugin bug.
-                            -->
-                            <!-- com.sun.xml.bind.disableXmlSecurity>true</com.sun.xml.bind.disableXmlSecurity>
-                            <jaxp.debug>1</jaxp.debug -->
-                            <!-- javax.xml.bind.context.factory>org.eclipse.persistence.jaxb
-                            .JAXBContextFactory</javax.xml.bind.context.factory -->
                         </systemPropertyVariables>
                         <argLine>${surefire.argLine}</argLine>
                         <!-- forkCount>2C</forkCount -->
@@ -358,12 +333,18 @@
             <id>eclipselink2</id>
             <activation>
                 <property>
-                    <name>!jpaSpec</name>
+                    <name>!jpaProvider</name>
                 </property>
             </activation>
 
             <properties>
+
+                <!-- JPA-related properties -->
                 <jpa.provider.class>org.eclipse.persistence.jpa.PersistenceProvider</jpa.provider.class>
+
+                <!-- Eclipselink versions -->
+                <org.eclipse.persistence.version>2.6.0</org.eclipse.persistence.version>
+                <org.eclipse.persistence.osgi.version>2.1.0</org.eclipse.persistence.osgi.version>
             </properties>
 
             <dependencyManagement>
@@ -371,7 +352,7 @@
                     <dependency>
                         <groupId>org.eclipse.persistence</groupId>
                         <artifactId>javax.persistence</artifactId>
-                        <version>2.1.0</version>
+                        <version>${org.eclipse.persistence.osgi.version}</version>
                         <scope>provided</scope>
                     </dependency>
                     <dependency>
@@ -413,93 +394,11 @@
         </profile>
 
         <profile>
-            <id>openjpa1</id>
-            <activation>
-                <property>
-                    <name>jpaSpec</name>
-                    <value>openjpa1</value>
-                </property>
-            </activation>
-
-            <properties>
-                <!--
-                    Ensure that the required properties for using OpenJPA as the persistence provider exists.
-                -->
-                <openjpa.version>2.2.2</openjpa.version>
-                <openjpa.includes>se/jguru/nazgul/**/*.class</openjpa.includes>
-                <openjpa.excludes>se/jguru/nazgul/core/xmlbinding/spi/jaxb/transport/EntityWrapper.class</openjpa.excludes>
-                <openjpa.persistenceXmlPath>weaving/openjpa/v1/${project.artifactId}-persistence.xml</openjpa.persistenceXmlPath>
-                <openjpa.persistenceXmlFile>${project.basedir}/src/main/${openjpa.persistenceXmlPath}</openjpa.persistenceXmlFile>
-                <openjpa.persistenceXmlTestFile>${project.basedir}/src/test/${openjpa.persistenceXmlPath}</openjpa.persistenceXmlTestFile>
-                <jpa.provider.class>org.apache.openjpa.persistence.PersistenceProviderImpl</jpa.provider.class>
-            </properties>
-
-            <dependencies>
-                <dependency>
-                    <groupId>javax.persistence</groupId>
-                    <artifactId>persistence-api</artifactId>
-                    <version>1.0</version>
-                    <scope>provided</scope>
-                </dependency>
-            </dependencies>
-
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <!--
-                            OpenJPA static enhancement.
-                        -->
-                        <plugin>
-                            <groupId>org.apache.openjpa</groupId>
-                            <artifactId>openjpa-maven-plugin</artifactId>
-                            <version>${openjpa.version}</version>
-                            <configuration>
-                                <includes>${openjpa.includes}</includes>
-                                <excludes>${openjpa.excludes}</excludes>
-                                <addDefaultConstructor>true</addDefaultConstructor>
-                                <enforcePropertyRestrictions>true</enforcePropertyRestrictions>
-                            </configuration>
-                            <executions>
-                                <!-- execution>
-                                    <id>weave-openjpa-classes</id>
-                                    <phase>process-classes</phase>
-                                    <goals>
-                                        <goal>enhance</goal>
-                                    </goals>
-                                    <configuration>
-                                        <persistenceXmlFile>${openjpa.persistenceXmlFile}</persistenceXmlFile>
-                                    </configuration>
-                                </execution -->
-                                <execution>
-                                    <id>weave-openjpa-test-classes</id>
-                                    <phase>process-test-classes</phase>
-                                    <goals>
-                                        <goal>test-enhance</goal>
-                                    </goals>
-                                    <configuration>
-                                        <persistenceXmlFile>${openjpa.persistenceXmlTestFile}</persistenceXmlFile>
-                                    </configuration>
-                                </execution>
-                            </executions>
-                            <dependencies>
-                                <dependency>
-                                    <groupId>org.apache.openjpa</groupId>
-                                    <artifactId>openjpa</artifactId>
-                                    <version>${openjpa.version}</version>
-                                </dependency>
-                            </dependencies>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
-        </profile>
-
-        <profile>
             <id>openjpa2</id>
 
             <activation>
                 <property>
-                    <name>jpaSpec</name>
+                    <name>jpaProvider</name>
                     <value>openjpa2</value>
                 </property>
             </activation>
@@ -567,6 +466,41 @@
                     </plugins>
                 </pluginManagement>
             </build>
+        </profile>
+
+        <profile>
+            <id>hibernate</id>
+            <activation>
+                <property>
+                    <name>jpaProvider</name>
+                    <value>hibernate</value>
+                </property>
+            </activation>
+
+            <properties>
+                <!-- JPA-related properties -->
+                <jpa.provider.class>org.hibernate.jpa.HibernatePersistenceProvider</jpa.provider.class>
+
+                <!-- Hibernate versions -->
+                <hibernate.version>4.3.10.Final</hibernate.version>
+            </properties>
+
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.hibernate</groupId>
+                        <artifactId>hibernate-core</artifactId>
+                        <version>${hibernate.version}</version>
+                        <scope>provided</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.hibernate</groupId>
+                        <artifactId>hibernate-entitymanager</artifactId>
+                        <version>${hibernate.version}</version>
+                        <scope>provided</scope>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
         </profile>
     </profiles>
 </project>
