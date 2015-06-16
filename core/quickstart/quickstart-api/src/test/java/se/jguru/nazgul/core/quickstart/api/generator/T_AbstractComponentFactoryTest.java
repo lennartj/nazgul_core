@@ -22,9 +22,11 @@
 package se.jguru.nazgul.core.quickstart.api.generator;
 
 import org.apache.maven.model.Model;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import se.jguru.nazgul.core.quickstart.api.FileTestUtilities;
 import se.jguru.nazgul.core.quickstart.api.FileUtils;
 import se.jguru.nazgul.core.quickstart.api.FileUtilsTest;
 import se.jguru.nazgul.core.quickstart.api.InvalidStructureException;
@@ -50,6 +52,7 @@ public class T_AbstractComponentFactoryTest {
     private ComponentFactory unitUnderTest;
     private NamingStrategy namingStrategy;
     private File factoryRootDir;
+    private File tmpTmpIoFileDir;
 
     private SimpleArtifact reactorParent = new SimpleArtifact(
             "se.jguru.nazgul.tools.poms.external",
@@ -63,6 +66,9 @@ public class T_AbstractComponentFactoryTest {
 
     @Before
     public void setupSharedState() {
+
+        // Redirect the java.io.tmpdir
+        tmpTmpIoFileDir = FileTestUtilities.createTmpDirectory(true);
 
         // Create a ProjectFactory to generate the skeleton project.
         namingStrategy = new TestNamingStrategy(false);
@@ -101,6 +107,11 @@ public class T_AbstractComponentFactoryTest {
 
         final String groupId = pomsReactorModel.getGroupId();
         Assert.assertTrue("Got incorrect groupId for poms reactor POM [" + groupId + "]", groupId.endsWith("poms"));
+    }
+
+    @After
+    public void restoreSharedState() {
+        FileTestUtilities.restoreOriginalTmpDirectory();
     }
 
     @Test(expected = NullPointerException.class)

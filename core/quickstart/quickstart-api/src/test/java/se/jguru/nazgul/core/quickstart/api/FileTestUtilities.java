@@ -23,6 +23,8 @@ package se.jguru.nazgul.core.quickstart.api;
 
 import org.apache.commons.lang3.Validate;
 import org.joda.time.DateTimeZone;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
@@ -43,6 +45,19 @@ public final class FileTestUtilities {
      */
     public static final DateTimeZone SWEDISH_DATETIME_ZONE = DateTimeZone.forTimeZone(SWEDISH_TIMEZONE);
 
+    // Our log
+    private static final Logger log = LoggerFactory.getLogger(FileTestUtilities.class.getName());
+
+    // Internal state
+    private static final String JAVA_IO_TMPDIR = "java.io.tmpdir";
+    private static final Object[] lock = new Object[0];
+    private static String originalTmpDirectory;
+
+    /**
+     * Creates an empty
+     * @param redirectSystemTmpDirectory
+     * @return
+     */
     public static File createTmpDirectory(boolean redirectSystemTmpDirectory) {
 
         // Find the testdata directory
@@ -57,12 +72,54 @@ public final class FileTestUtilities {
             File toReturn = new File(testDataDir, "tmpdir_" + i);
 
             if (!toReturn.exists()) {
-                if (redirectSystemTmpDirectory) {
-                    System.setProperty("java.io.tmpdir", toReturn.getAbsolutePath());
+
+                synchronized (lock) {
+
+                    // Ensure that the directory exists
+                    final boolean success = toReturn.mkdirs();
+                    if(!success) {
+                        log.warn("Could not create directory [" + toReturn.getAbsolutePath() + "] using mkdirs.");
+                    } else {
+                        log.info("Created directory [" + toReturn.getAbsolutePath() + "] for temporary io tmp dir.");
+                    }
+
+                    if (redirectSystemTmpDirectory) {
+
+                        if (originalTmpDirectory != null) {
+                            throw new IllegalStateException("Cannot redirect property '" + JAVA_IO_TMPDIR
+                                    + "' twice. Please ");
+                        }
+
+                        // Stash the original tmpdir
+                        originalTmpDirectory = toReturn.getAbsolutePath();
+                    }
+
+                    // Redirect
+                    System.setProperty(JAVA_IO_TMPDIR, toReturn.getAbsolutePath());
                 }
 
+                // All done.
                 return toReturn;
             }
+        }
+    }
+
+    /**
+     * Restores the java.io.tmpdir to its original value, assuming
+     * that it was first redirected.
+     */
+    public static void restoreOriginalTmpDirectory() {
+
+        // Check sanity
+        if (originalTmpDirectory == null) {
+            throw new IllegalStateException("Cannot restore original '" + JAVA_IO_TMPDIR
+                    + "' directory before redirecting it.");
+        }
+
+        // Restore the original java.io.tmpdir
+        synchronized (lock) {
+            System.setProperty(JAVA_IO_TMPDIR, originalTmpDirectory);
+            originalTmpDirectory = null;
         }
     }
 }
