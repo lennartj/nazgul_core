@@ -87,7 +87,6 @@
         <aries.blueprint.version>1.1.0</aries.blueprint.version>
         <jaxb.impl.version>2.2.11</jaxb.impl.version>
         <test.bundles.version>3.0.2</test.bundles.version>
-        <!-- aspectj.runtime.version>1.8.4</aspectj.runtime.version -->
 
         <!--
             Define the URL prefixes for Site Deployment and DistributionManagement.
@@ -100,6 +99,9 @@
 
         <!-- Mojo java specification used by some plugins. -->
         <mojo.java.target>${jdk.version}</mojo.java.target>
+
+        <!-- Variable to control if logging in tests end up in the Surefire report file. -->
+        <surefire.logToReportFile>true</surefire.logToReportFile>
     </properties>
 
     <!-- +=============================================== -->
@@ -238,6 +240,12 @@
                 <artifactId>plexus-utils</artifactId>
                 <version>3.0.22</version>
             </dependency>
+            <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+                <version>1.1.0.Final</version>
+                <scope>provided</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -292,6 +300,7 @@
                         <!-- forkCount>2C</forkCount -->
                         <!-- runOrder>failedfirst</runOrder -->
                         <trimStackTrace>false</trimStackTrace>
+                        <redirectTestOutputToFile>${surefire.logToReportFile}</redirectTestOutputToFile>
                     </configuration>
                 </plugin>
             </plugins>
