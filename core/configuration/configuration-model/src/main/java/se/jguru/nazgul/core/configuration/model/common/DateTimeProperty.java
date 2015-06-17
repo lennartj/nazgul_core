@@ -91,7 +91,6 @@ public class DateTimeProperty extends AbstractStringKeyedMutableProperty<DateTim
 
     /**
      * Equality comparison definition that compares key and value.
-     * <p/>
      * {@inheritDoc}
      */
     @Override

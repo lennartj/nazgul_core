@@ -246,10 +246,7 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
     /**
      * Gets a distributed collection with the given type and provided key from the cache. Note that the distributed
      * Collection will be created on the provided key if it does not already exist.
-     * <p/>
      * A typical usage example would be
-     * <p/>
-     * <p/>
      * <pre>
      *  List cachedList = getDistributedCollection(List.class, "someListKey");
      * </pre>
@@ -528,8 +525,6 @@ public abstract class AbstractHazelcastInstanceWrapper extends AbstractHazelcast
 
     /**
      * Retrieves a ReadOnlyIterator for the shared cache map of this AbstractHazelcastInstanceWrapper instance.
-     * <p/>
-     * {@inheritDoc}
      */
     @Override
     public Iterator<String> iterator() {

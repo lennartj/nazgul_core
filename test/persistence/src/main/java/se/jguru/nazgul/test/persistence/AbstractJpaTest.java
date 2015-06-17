@@ -144,7 +144,6 @@ public abstract class AbstractJpaTest {
      * Retrieves/unwraps the SQL Connection used by the EntityManager. Note that for some JPA implementations -
      * notably EclipseLink - unwrapping a Connection from the EntityManager will retrieve {@code null} unless the
      * EntityManager is in a transaction.
-     * <p/>
      * To avoid any followup problems caused by this, an IllegalStateException will be thrown unless a non-null
      * Connection can properly be retrieved.
      *
@@ -183,7 +182,6 @@ public abstract class AbstractJpaTest {
      * Override to supply any additional EntityManagerFactory properties.
      * The properties are supplied as the latter argument to the
      * {@code Persistence.createEntityManagerFactory} method.
-     * <p/>
      * The properties supplied within this Map override property definitions
      * given in the persistence.xml file.
      *

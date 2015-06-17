@@ -64,8 +64,6 @@ public class MappedSchemaResourceResolver implements LSResourceResolver {
     /**
      * Retrieves an LSInput which will respond with the xmlSchemaSnippet for the given namespaceURI
      * [if it is mapped within the namespace2SchemaSnippetMap] or {@code null} otherwise.
-     * <p/>
-     * {@inheritDoc}
      */
     @Override
     public LSInput resolveResource(final String type,

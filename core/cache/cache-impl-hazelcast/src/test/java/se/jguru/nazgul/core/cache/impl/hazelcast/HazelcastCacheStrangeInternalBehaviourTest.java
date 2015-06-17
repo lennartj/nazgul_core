@@ -130,13 +130,11 @@ public class HazelcastCacheStrangeInternalBehaviourTest extends AbstractHazelcas
     }
 
     /**
-     * The Hazelcast [version 1.9.1, 1.9.2] IList does not implement List.get(). Moreover, its implementation does not
-     * honour the contract of java.util.List in terms of ordering.
-     * <p/>
+     * <p>The Hazelcast [version 1.9.1, 1.9.2] IList does not implement List.get(). Moreover, its implementation does
+     * not honour the contract of java.util.List in terms of ordering.
      * This test is devised to notify us if that fact changes - in which case we need to validate that our
-     * implementation is still valid.
-     * <p/>
-     * Corrected in 1.9.3
+     * implementation is still valid.</p>
+     * <strong>Corrected in 1.9.3</strong>
      */
     @Test
     public void validateDistributedListIncompleteOperations_CorrectedSince_1_9_3() throws InterruptedException {
@@ -158,13 +156,12 @@ public class HazelcastCacheStrangeInternalBehaviourTest extends AbstractHazelcas
     }
 
     /**
-     * The Hazelcast [version 1.9.1, 1.9.2] IList does not implement List.get(). Moreover, its implementation does not
+     * <p>The Hazelcast [version 1.9.1, 1.9.2] IList does not implement List.get(). Moreover, its implementation does
+     * not
      * honour the contract of java.util.List in terms of ordering.
-     * <p/>
      * This test is devised to notify us if that fact changes - in which case we need to ensure that our implementation
-     * is still valid.
-     * <p/>
-     * Corrected in Hazelcast 1.9.3.
+     * is still valid.</p>
+     * <p>Corrected in Hazelcast 1.9.3.</p>
      */
     @Test
     public void validateDistributedListCorrectOrdering_Since1_9_3() {
@@ -199,7 +196,6 @@ public class HazelcastCacheStrangeInternalBehaviourTest extends AbstractHazelcas
     /**
      * The Hazelcast [version 1.9.1+] distributed collections does not distribute changes to values, such as
      * collections used as keys, unless such collections are retrieved from Hazelcast.
-     * <p/>
      * This test is devised to notify us if that fact changes - in which case we need to ensure that our implementation
      * is still valid.
      */
@@ -241,12 +237,9 @@ public class HazelcastCacheStrangeInternalBehaviourTest extends AbstractHazelcas
      * The Hazelcast [version 1.9.1+] distributed collections (ISet and IList) do not correctly implement
      * java.util.Collection.clear. This implies that severe memory leaks are generated within hazelcast whenever the
      * *internal structure of a cached object* contains a non-sorted Collection (i.e. HashSet or HashMap).
-     * <p/>
      * This implies: a) Entity classes developed in-house cannot use Set relations, but must use SortedSet. b) 3rd party
      * products, whose implementations cannot be controlled cannot be cached within Hazelcast. c) Hazelcast cannot be
      * used for enterprise development caching until this bug is patched.
-     * <p/>
-     * <p/>
      * This test is devised to notify us if new versions of Hazelcast are bugfixed enough to use within our development.
      */
     @Ignore("Seems bugfixed in Hazelcast 2.3.1+")

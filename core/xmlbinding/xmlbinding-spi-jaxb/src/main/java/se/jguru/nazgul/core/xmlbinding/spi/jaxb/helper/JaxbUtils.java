@@ -97,15 +97,14 @@ public abstract class JaxbUtils {
 
     /**
      * Acquires a properly configured JAXB marshaller from the provided JAXBContext.
-     * <p/>
      * <pre><code>
      *  // Acquire the JAXBContext for the types found within an EntityTransporter.
      *  final NamespacePrefixMapper mapper = ...
      *  final JAXBContext ctx = JaxbUtils.getJaxbContext(anEntityTransporter);
-     * <p/>
+     *
      *  // Now acquire the marshaller
      *  final Marshaller marshaller = JaxbUtils.getHumanReadableStandardMarshaller(ctx, resolver);
-     * <p/>
+     *
      *  // ... and use it ...
      *  marshaller.marshal(someInstance, someOutputTarget);
      * </code></pre>

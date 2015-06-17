@@ -101,8 +101,6 @@ public abstract class NazgulEntity implements Serializable, Cloneable, Validatab
      * Equality comparison definition which, by choice, ignores the
      * id and version fields in performing the comparison - only the
      * business fields should be included in performing the equality check.
-     * <p/>
-     * {@inheritDoc}
      */
     @Override
     @SuppressWarnings("all")
@@ -159,7 +157,6 @@ public abstract class NazgulEntity implements Serializable, Cloneable, Validatab
 
     /**
      * Performs validation of the internal state of this Validatable.
-     * <p/>
      * <strong>Note!</strong> This method should <strong>not</strong> be overridden in subclasses.
      * Instead, override the {@code validateEntityState} method, and supply your local implementations there.
      *

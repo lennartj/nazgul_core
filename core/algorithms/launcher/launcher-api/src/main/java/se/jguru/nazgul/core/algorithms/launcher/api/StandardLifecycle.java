@@ -49,7 +49,6 @@ public interface StandardLifecycle extends ApplicationLauncher {
     /**
      * Main entrypoint to the application, which should execute the standard lifecycle
      * methods in the following order:
-     * <p/>
      * <pre>
      *   try {
      *      // First, validate the given CLI arguments.

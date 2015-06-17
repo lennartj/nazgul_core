@@ -26,7 +26,6 @@ import java.util.regex.Pattern;
 /**
  * Default MavenModelPatterns implementation for a top-level reactor POM,
  * typically on the following form:
- * <p/>
  * <pre>
  *     &lt;parent>
  *          &lt;groupId>se.jguru.nazgul.tools.poms.external&lt;/groupId>

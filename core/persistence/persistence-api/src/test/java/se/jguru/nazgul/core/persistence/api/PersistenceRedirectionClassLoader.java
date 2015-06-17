@@ -31,7 +31,6 @@ import java.util.Enumeration;
 /**
  * Helper utility to manage the pesky-ness related to persistence.xml
  * files which act as a singleton in the JPA specification.
- * <p/>
  * In particular, this ClassLoader provides the option to use another
  * file to define the persistence units instead of <code>META-INF/persistence.xml</code>.
  *
@@ -74,15 +73,12 @@ public final class PersistenceRedirectionClassLoader extends ClassLoader {
     }
 
     /**
-     * Finds all the resources with the given name. A resource is some data
+     * <p>Finds all the resources with the given name. A resource is some data
      * (images, audio, text, etc) that can be accessed by class code in a way
-     * that is independent of the location of the code.
-     * <p/>
+     * that is independent of the location of the code.</p>
      * <p>The name of a resource is a <tt>/</tt>-separated path name that
-     * identifies the resource.
-     * <p/>
-     * <p> The search order is described in the documentation for {@link
-     * #getResource(String)}.  </p>
+     * identifies the resource. The search order is described in the documentation for {@link
+     * #getResource(String)}.</p>
      *
      * @param name The resource name
      * @return An enumeration of {@link java.net.URL <tt>URL</tt>} objects for

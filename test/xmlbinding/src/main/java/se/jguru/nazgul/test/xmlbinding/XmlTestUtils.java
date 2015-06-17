@@ -89,15 +89,14 @@ public abstract class XmlTestUtils {
 
 
     /**
-     * Validates that the expected and actual XML-formatted strings are identical,
+     * <p>Validates that the expected and actual XML-formatted strings are identical,
      * ignoring any differences considered "trivial". Differences are considered trivial if their XPath locations
      * (in the document) match the supplied Pattern. A pattern such as
      * {@code Pattern.compile("/a\\[\\d+\\]/b\\[\\d+\\]")} would identify all differences occurring
-     * within the XPath {@code "/a/b"} as trivial.
-     * <p/>
-     * This is a convenience method; a jUnit assertion error is thrown if the two XML documents
+     * within the XPath {@code "/a/b"} as trivial.</p>
+     * <p>This is a convenience method; a jUnit assertion error is thrown if the two XML documents
      * had non-trivial differences implying that this method can be used directly within a unit test method.
-     * No additional/surrounding {@code Assert.isTrue(...) } is required.
+     * No additional/surrounding {@code Assert.isTrue(...) } is required.</p>
      *
      * @param expected                      The expected XML.
      * @param actual                        The actual, received XML.

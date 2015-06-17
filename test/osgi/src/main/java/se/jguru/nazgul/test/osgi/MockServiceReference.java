@@ -124,11 +124,7 @@ public class MockServiceReference implements ServiceReference {
      * Returns the property value to which the specified property key is mapped
      * in the properties {@code Dictionary} object of the service
      * referenced by this {@code ServiceReference} object.
-     * <p/>
-     * <p/>
      * Property keys are case-insensitive.
-     * <p/>
-     * <p/>
      * This method must continue to return property values after the service has
      * been unregistered. This is so references to unregistered services (for
      * example, {@code ServiceReference} objects stored in the log) can
@@ -147,12 +143,10 @@ public class MockServiceReference implements ServiceReference {
      * Returns an array of the keys in the properties {@code Dictionary}
      * object of the service referenced by this {@code ServiceReference}
      * object.
-     * <p/>
      * This method will continue to return the keys after the service has been
      * unregistered. This is so references to unregistered services (for
      * example, {@code ServiceReference} objects stored in the log) can
      * still be interrogated.
-     * <p/>
      * This method is <i>case-preserving </i>; this means that every key in the
      * returned array must have the same case as the corresponding key in the
      * properties {@code Dictionary} that was passed to the
@@ -171,8 +165,6 @@ public class MockServiceReference implements ServiceReference {
     /**
      * Returns the bundle that registered the service referenced by this
      * {@code ServiceReference} object.
-     * <p/>
-     * <p/>
      * This method must return {@code null} when the service has been
      * unregistered. This can be used to determine if the service has been
      * unregistered.
@@ -207,7 +199,6 @@ public class MockServiceReference implements ServiceReference {
      * Tests if the bundle that registered the service referenced by this
      * {@code ServiceReference} and the specified bundle use the same
      * source for the package of the specified class name.
-     * <p/>
      * This method performs the following checks:
      * <ol>
      * <li>Get the package name from the specified class name.</li>
@@ -240,8 +231,6 @@ public class MockServiceReference implements ServiceReference {
     /**
      * Compares this {@code ServiceReference} with the specified
      * {@code ServiceReference} for order.
-     * <p/>
-     * <p/>
      * If this {@code ServiceReference} and the specified
      * {@code ServiceReference} have the same {@link org.osgi.framework.Constants#SERVICE_ID
      * service id} they are equal. This {@code ServiceReference} is less

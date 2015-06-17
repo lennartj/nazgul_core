@@ -74,7 +74,6 @@ public class DebugCacheListener<T> extends AbstractCacheListener<String, T> {
     /**
      * Callback method invoked when the object with the given key
      * is stored within the underlying cache implementation.
-     * <p/>
      * <strong>Note!</strong>. The key and value must not be modified
      * within this callback method.
      *
@@ -89,7 +88,6 @@ public class DebugCacheListener<T> extends AbstractCacheListener<String, T> {
     /**
      * Callback method invoked when the object with the given key
      * is updated within the underlying cache implementation.
-     * <p/>
      * <strong>Note!</strong>. The key and value must not be modified
      * within this callback method.
      *
@@ -106,7 +104,6 @@ public class DebugCacheListener<T> extends AbstractCacheListener<String, T> {
      * Callback method invoked when the object with the given
      * key is actively removed from the underlying cache
      * implementation (by a user call).
-     * <p/>
      * <strong>Note!</strong>. The key and value must not be modified
      * within this callback method.
      *
@@ -134,7 +131,6 @@ public class DebugCacheListener<T> extends AbstractCacheListener<String, T> {
      * This is assumed to be the result of an autonomous/internal
      * call within the underlying cache implementation, as opposed
      * to a call to <code>put(key, value)</code>.
-     * <p/>
      * <strong>Note!</strong>. The key and value must not be modified
      * within this callback method.
      *
@@ -153,7 +149,6 @@ public class DebugCacheListener<T> extends AbstractCacheListener<String, T> {
      * call within the underlying cache implementation, as opposed
      * to a call to <code>remove(key)</code> from a server
      * implementation.
-     * <p/>
      * <strong>Note!</strong>. The key and value must not be modified
      * within this callback method.
      *
@@ -170,7 +165,6 @@ public class DebugCacheListener<T> extends AbstractCacheListener<String, T> {
      * within writeExternal. You should write the internal state of
      * the Listener onto the ObjectOutput, adhering to the following
      * pattern:
-     * <p/>
      * <pre>
      * <code>
      * class SomeCacheListener extends CacheListenerAdapter
@@ -221,7 +215,6 @@ public class DebugCacheListener<T> extends AbstractCacheListener<String, T> {
      * within writeExternal. You should read the internal state of
      * the Listener from the ObjectInput, adhering to the following
      * pattern:
-     * <p/>
      * <pre>
      * <code>
      * class SomeCacheListener extends CacheListenerAdapter

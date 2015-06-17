@@ -30,7 +30,6 @@ import java.util.List;
 /**
  * Generic and typesafe Node definition, for Tree structures. A Node is similar to a Map.Entry,
  * in that it relates a Key (with a defined KeyType) to a Value (with a defined ValueType).
- * <p/>
  * To simplify Nodes and their corresponding features being read from and written to streams,
  * both the Node type itself and its KeyType/ValueType are {@code Serializable}. Moreover,
  * since some Tree algorithms require ordering of keys (and, thereby, nodes), the KeyType must also implement

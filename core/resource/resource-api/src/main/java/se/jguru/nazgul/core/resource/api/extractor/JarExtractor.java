@@ -114,7 +114,6 @@ public abstract class JarExtractor {
     /**
      * Retrieves the JarEntry name for the supplied packagedResourceURL. Typically,
      * this value can be used to acquire a JarEntry for the
-     * <p/>
      * <pre>
      *     <code>
      *         // Get the JarFile for a JAR-based URL

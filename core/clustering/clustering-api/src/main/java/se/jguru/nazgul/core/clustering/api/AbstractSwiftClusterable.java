@@ -77,8 +77,6 @@ public abstract class AbstractSwiftClusterable extends AbstractClusterable imple
     /**
      * Externalizable write template delegation method, invoked from within writeExternal. You should write the internal
      * state of the Listener onto the ObjectOutput, adhering to the following pattern:
-     * <p/>
-     * <p/>
      * <pre>
      * <code>
      * class SomeIdentifiable extends AbstractSwiftIdentifiable
@@ -116,8 +114,6 @@ public abstract class AbstractSwiftClusterable extends AbstractClusterable imple
     /**
      * Externalizable read template delegation method, invoked from within writeExternal. You should read the internal
      * state of the Listener from the ObjectInput, adhering to the following pattern:
-     * <p/>
-     * <p/>
      * <pre>
      * <code>
      * class SomeIdentifiable extends AbstractSwiftIdentifiable

@@ -54,11 +54,10 @@ public abstract class AbstractMBean extends StandardEmitterMBean implements Life
     private final Object lock = new Object();
 
     /**
-     * Convenience constructor, creating a new AbstractMBean wrapping the supplied data.
+     * <p>Convenience constructor, creating a new AbstractMBean wrapping the supplied data.
      * All NotificationEmitter operations executed in this AbstractMBean are delegated to
      * the provided NotificationEmitter object. Thus, all JMX notifications fired by this
-     * AbstractMBean are simply delegated to the supplied NotificationEmitter.
-     * <p/>
+     * AbstractMBean are simply delegated to the supplied NotificationEmitter.</p>
      * <p>This constructor must be called from a subclass that implements the provided {@code mbeanInterface}.</p>
      *
      * @param mbeanInterface a StandardMBean interface.
@@ -80,16 +79,13 @@ public abstract class AbstractMBean extends StandardEmitterMBean implements Life
      * handled by the given {@code NotificationEmitter}. This constructor can be used to make either Standard MBeans
      * or MXBeans. The resultant MBean implements the {@code NotificationEmitter} interface by forwarding its methods
      * to {@code delegate}.</p>
-     * <p/>
      * <p>If {@code delegate} is an instance of {@code NotificationBroadcasterSupport} then the MBean's {@link
      * #sendNotification sendNotification} method will delegate its invocation to {@code delegate.}{@link
      * NotificationBroadcasterSupport#sendNotification sendNotification}.</p>
-     * <p/>
      * <p>The array returned by {@link #getNotificationInfo()} on the new MBean is a copy of the array returned by
      * {@code emitter.}{@link NotificationBroadcaster#getNotificationInfo getNotificationInfo()} at the time of
      * construction. If the array returned by {@code emitter.getNotificationInfo()} later changes, that will have no
      * effect on this object's {@code getNotificationInfo()}.</p>
-     * <p/>
      * <p>This constructor must be called from a subclass that implements the given {@code mbeanInterface}.</p>
      *
      * @param mbeanInterface a StandardMBean interface.
@@ -123,7 +119,6 @@ public abstract class AbstractMBean extends StandardEmitterMBean implements Life
      * <li>{@code super.preRegister()}, performing the actual registration of this AbstractMBean
      * in the MBeanServer.</li>
      * </ol>
-     * <p/>
      * {@inheritDoc}
      *
      * @see #customPreregister(javax.management.MBeanServer, javax.management.ObjectName)
@@ -174,7 +169,6 @@ public abstract class AbstractMBean extends StandardEmitterMBean implements Life
     /**
      * Delegates to the {@code #customPostregister} method after invoking {@code #postRegister} method
      * in the superclass.
-     * <p/>
      * {@inheritDoc}
      *
      * @see #customPostregister()
@@ -211,7 +205,6 @@ public abstract class AbstractMBean extends StandardEmitterMBean implements Life
     /**
      * Delegates any custom execution to the {@code #customPreDeregister} method before calling the
      * {@code #preDeregister} method in the superclass.
-     * <p/>
      * {@inheritDoc}
      *
      * @see #customPreDeregister()
@@ -303,9 +296,7 @@ public abstract class AbstractMBean extends StandardEmitterMBean implements Life
      * Override this method to perform any customized actions after this AbstractMBean has been
      * successfully registered in the MBeanServer. This method will only be invoked if the registration
      * in the MBeanServer was successful (i.e. if the {@code registrationDone} parameter received by the
-     * postRegister method was {@code true}.
-     * <p/>
-     * This method should not throw Exceptions.
+     * postRegister method was {@code true}. This method should not throw Exceptions.
      *
      * @see #postRegister(Boolean)
      */
@@ -326,9 +317,7 @@ public abstract class AbstractMBean extends StandardEmitterMBean implements Life
     /**
      * Override this mthod to perform any customized actions before this AbstractMBean will be de-registered
      * in the MBeanServer. This method will be invoked immediately before the {@code super.preDeregister()} method
-     * is called.
-     * <p/>
-     * This method should not throw Exceptions.
+     * is called. This method should not throw Exceptions.
      */
     protected void customPostDeregister() {
         // By default, do nothing.

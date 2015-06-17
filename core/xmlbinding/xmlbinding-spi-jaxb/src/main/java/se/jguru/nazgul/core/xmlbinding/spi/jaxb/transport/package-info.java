@@ -20,14 +20,13 @@
  * #L%
  */
 /**
- * The transport package contains classes which assist in marshalling Java object
+ * <p>The transport package contains classes which assist in marshalling Java object
  * graphs into XML. Specifically, the EntityTransporter class is the generic holder
  * used to convert un-marshallable types into marshallable types as well as containing
  * the type metadata for all classes transported. This is required in order to properly
- * unmarshal/resurrect all objects on the receiving side.
- * <p/>
- * Moreover, this package-info file also holds schema name prefix definitions
- * for the well-known Nazgul namespaces.
+ * unmarshal/resurrect all objects on the receiving side.</p>
+ * <p>Moreover, this package-info file also holds schema name prefix definitions
+ * for the well-known Nazgul namespaces.</p>
  *
  * @see se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter
  */

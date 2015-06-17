@@ -28,7 +28,6 @@ import java.util.concurrent.ExecutorService;
 /**
  * Service interface definition for a distributed (clustered) cache which
  * can execute Tasks on Nodes within a distributed cache.
- * <p/>
  * If the underlying cache provides the ExecutorService capability, this is
  * the interface specifying how to interact with it.
  *

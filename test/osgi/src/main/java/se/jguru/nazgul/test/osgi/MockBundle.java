@@ -105,8 +105,6 @@ public class MockBundle implements Bundle, Serializable {
 
     /**
      * Returns this bundle's current state.
-     * <p/>
-     * <p/>
      * A bundle can be in only one state at any time.
      *
      * @return An element of {@code UNINSTALLED},{@code INSTALLED},
@@ -120,26 +118,20 @@ public class MockBundle implements Bundle, Serializable {
 
     /**
      * Starts this bundle.
-     * <p/>
-     * <p/>
      * If this bundle's state is {@code UNINSTALLED} then an
      * {@code IllegalStateException} is thrown.
-     * <p/>
      * If the current start level is less than this bundle's start level:
      * <ul>
      * <li>If the {@link #START_TRANSIENT} option is set, then a
      * {@code BundleException} is thrown indicating this bundle cannot be
      * started due to the Framework's current start level.
-     * <p/>
-     * <li>Otherwise, the Framework must set this bundle's persistent autostart
+     ´* <li>Otherise, the Framework must set this bundle's persistent autostart
      * setting to <em>Started with declared activation</em> if the
      * {@link #START_ACTIVATION_POLICY} option is set or
      * <em>Started with eager activation</em> if not set.
      * </ul>
-     * <p/>
      * When the Framework's current start level becomes equal to or more than
      * this bundle's start level, this bundle will be started.
-     * <p/>
      * Otherwise, the following steps are required to start this bundle:
      * <ol>
      * <li>If this bundle is in the process of being activated or deactivated
@@ -147,21 +139,17 @@ public class MockBundle implements Bundle, Serializable {
      * before continuing. If this does not occur in a reasonable time, a
      * {@code BundleException} is thrown to indicate this bundle was unable to
      * be started.
-     * <p/>
      * <li>If this bundle's state is {@code ACTIVE} then this method returns
      * immediately.
-     * <p/>
-     * <li>If the {@link #START_TRANSIENT} option is not set then set this
+     ´* <li>If the {@link #START_TRANSIENT} option is not set then set this
      * bundle's autostart setting to <em>Started with declared activation</em>
      * if the {@link #START_ACTIVATION_POLICY} option is set or
      * <em>Started with eager activation</em> if not set. When the Framework is
      * restarted and this bundle's autostart setting is not <em>Stopped</em>,
      * this bundle must be automatically started.
-     * <p/>
      * <li>If this bundle's state is not {@code RESOLVED}, an attempt is made to
      * resolve this bundle. If the Framework cannot resolve this bundle, a
      * {@code BundleException} is thrown.
-     * <p/>
      * <li>If the {@link #START_ACTIVATION_POLICY} option is set and this
      * bundle's declared activation policy is {@link org.osgi.framework.Constants#ACTIVATION_LAZY
      * lazy} then:
@@ -175,9 +163,7 @@ public class MockBundle implements Bundle, Serializable {
      * </ul>
      * <i></i>
      * <li>This bundle's state is set to {@code STARTING}.
-     * <p/>
      * <li>A bundle event of type {@link org.osgi.framework.BundleEvent#STARTING} is fired.
-     * <p/>
      * <li>The {@link org.osgi.framework.BundleActivator#start} method of this bundle's
      * {@code BundleActivator}, if one is specified, is called. If the
      * {@code BundleActivator} is invalid or throws an exception then:
@@ -195,12 +181,9 @@ public class MockBundle implements Bundle, Serializable {
      * <li>If this bundle's state is {@code UNINSTALLED}, because this bundle
      * was uninstalled while the {@code BundleActivator.start} method was
      * running, a {@code BundleException} is thrown.
-     * <p/>
      * <li>This bundle's state is set to {@code ACTIVE}.
-     * <p/>
      * <li>A bundle event of type {@link org.osgi.framework.BundleEvent#STARTED} is fired.
      * </ol>
-     * <p/>
      * <b>Preconditions </b>
      * <ul>
      * <li>{@code getState()} in &#x007B; {@code INSTALLED}, {@code RESOLVED}
@@ -249,8 +232,6 @@ public class MockBundle implements Bundle, Serializable {
 
     /**
      * Starts this bundle with no options.
-     * <p/>
-     * <p/>
      * This method performs the same function as calling {@code start(0)}.
      *
      * @throws org.osgi.framework.BundleException
@@ -283,13 +264,10 @@ public class MockBundle implements Bundle, Serializable {
 
     /**
      * Stops this bundle.
-     * <p/>
-     * <p/>
      * The following steps are required to stop a bundle:
      * <ol>
      * <li>If this bundle's state is {@code UNINSTALLED} then an
      * {@code IllegalStateException} is thrown.
-     * <p/>
      * <li>If this bundle is in the process of being activated or deactivated
      * then this method must wait for activation or deactivation to complete
      * before continuing. If this does not occur in a reasonable time, a
@@ -299,34 +277,25 @@ public class MockBundle implements Bundle, Serializable {
      * bundle's persistent autostart setting to to <em>Stopped</em>. When the
      * Framework is restarted and this bundle's autostart setting is
      * <em>Stopped</em>, this bundle must not be automatically started.
-     * <p/>
      * <li>If this bundle's state is not {@code STARTING} or {@code ACTIVE} then
      * this method returns immediately.
-     * <p/>
      * <li>This bundle's state is set to {@code STOPPING}.
-     * <p/>
      * <li>A bundle event of type {@link org.osgi.framework.BundleEvent#STOPPING} is fired.
-     * <p/>
      * <li>If this bundle's state was {@code ACTIVE} prior to setting the state
      * to {@code STOPPING}, the {@link org.osgi.framework.BundleActivator#stop} method of this
      * bundle's {@code BundleActivator}, if one is specified, is called. If that
      * method throws an exception, this method must continue to stop this bundle
      * and a {@code BundleException} must be thrown after completion of the
      * remaining steps.
-     * <p/>
      * <li>Any services registered by this bundle must be unregistered.
      * <li>Any services used by this bundle must be released.
      * <li>Any listeners registered by this bundle must be removed.
-     * <p/>
      * <li>If this bundle's state is {@code UNINSTALLED}, because this bundle
      * was uninstalled while the {@code BundleActivator.stop} method was
      * running, a {@code BundleException} must be thrown.
-     * <p/>
      * <li>This bundle's state is set to {@code RESOLVED}.
-     * <p/>
      * <li>A bundle event of type {@link org.osgi.framework.BundleEvent#STOPPED} is fired.
      * </ol>
-     * <p/>
      * <b>Preconditions </b>
      * <ul>
      * <li>{@code getState()} in &#x007B; {@code ACTIVE} &#x007D;.
@@ -367,8 +336,6 @@ public class MockBundle implements Bundle, Serializable {
 
     /**
      * Stops this bundle with no options.
-     * <p/>
-     * <p/>
      * This method performs the same function as calling {@code stop(0)}.
      *
      * @throws org.osgi.framework.BundleException
@@ -398,53 +365,39 @@ public class MockBundle implements Bundle, Serializable {
 
     /**
      * Updates this bundle from an {@code InputStream}.
-     * <p/>
-     * <p/>
      * If the specified {@code InputStream} is {@code null}, the Framework must
      * create the {@code InputStream} from which to read the updated bundle by
      * interpreting, in an implementation dependent manner, this bundle's
      * {@link org.osgi.framework.Constants#BUNDLE_UPDATELOCATION Bundle-UpdateLocation} Manifest
      * header, if present, or this bundle's original location.
-     * <p/>
-     * <p/>
      * If this bundle's state is {@code ACTIVE}, it must be stopped before the
      * update and started after the update successfully completes.
-     * <p/>
-     * <p/>
      * If this bundle has exported any packages that are imported by another
      * bundle, these packages must remain exported until the
      * {@link org.osgi.framework.wiring.FrameworkWiring#refreshBundles(java.util.Collection, org.osgi.framework.FrameworkListener...)
      * FrameworkWiring.refreshBundles} method has been has been called or the
      * Framework is relaunched.
-     * <p/>
-     * <p/>
      * The following steps are required to update a bundle:
      * <ol>
      * <li>If this bundle's state is {@code UNINSTALLED} then an
      * {@code IllegalStateException} is thrown.
-     * <p/>
      * <li>If this bundle's state is {@code ACTIVE}, {@code STARTING} or
      * {@code STOPPING}, this bundle is stopped as described in the
      * {@code Bundle.stop} method. If {@code Bundle.stop} throws an exception,
      * the exception is rethrown terminating the update.
-     * <p/>
      * <li>The updated version of this bundle is read from the input stream and
      * installed. If the Framework is unable to install the updated version of
      * this bundle, the original version of this bundle must be restored and a
      * {@code BundleException} must be thrown after completion of the remaining
      * steps.
-     * <p/>
      * <li>This bundle's state is set to {@code INSTALLED}.
-     * <p/>
      * <li>If the updated version of this bundle was successfully installed, a
      * bundle event of type {@link org.osgi.framework.BundleEvent#UPDATED} is fired.
-     * <p/>
      * <li>If this bundle's state was originally {@code ACTIVE}, the updated
      * bundle is started as described in the {@code Bundle.start} method. If
      * {@code Bundle.start} throws an exception, a Framework event of type
      * {@link org.osgi.framework.FrameworkEvent#ERROR} is fired containing the exception.
      * </ol>
-     * <p/>
      * <b>Preconditions </b>
      * <ul>
      * <li>{@code getState()} not in &#x007B; {@code UNINSTALLED} &#x007D;.
@@ -494,8 +447,6 @@ public class MockBundle implements Bundle, Serializable {
 
     /**
      * Updates this bundle.
-     * <p/>
-     * <p/>
      * This method performs the same function as calling
      * {@link #update(java.io.InputStream)} with a {@code null} InputStream.
      *
@@ -524,40 +475,29 @@ public class MockBundle implements Bundle, Serializable {
 
     /**
      * Uninstalls this bundle.
-     * <p/>
-     * <p/>
      * This method causes the Framework to notify other bundles that this bundle
      * is being uninstalled, and then puts this bundle into the
      * {@code UNINSTALLED} state. The Framework must remove any resources
      * related to this bundle that it is able to remove.
-     * <p/>
-     * <p/>
      * If this bundle has exported any packages, the Framework must continue to
      * make these packages available to their importing bundles until the
      * {@link org.osgi.framework.wiring.FrameworkWiring#refreshBundles(java.util.Collection, org.osgi.framework.FrameworkListener...)
      * FrameworkWiring.refreshBundles} method has been called or the Framework
      * is relaunched.
-     * <p/>
-     * <p/>
      * The following steps are required to uninstall a bundle:
      * <ol>
      * <li>If this bundle's state is {@code UNINSTALLED} then an
      * {@code IllegalStateException} is thrown.
-     * <p/>
      * <li>If this bundle's state is {@code ACTIVE}, {@code STARTING} or
      * {@code STOPPING}, this bundle is stopped as described in the
      * {@code Bundle.stop} method. If {@code Bundle.stop} throws an exception, a
      * Framework event of type {@link org.osgi.framework.FrameworkEvent#ERROR} is fired containing
      * the exception.
-     * <p/>
      * <li>This bundle's state is set to {@code UNINSTALLED}.
-     * <p/>
      * <li>A bundle event of type {@link org.osgi.framework.BundleEvent#UNINSTALLED} is fired.
-     * <p/>
      * <li>This bundle and any persistent storage area provided for this bundle
      * by the Framework are removed.
      * </ol>
-     * <p/>
      * <b>Preconditions </b>
      * <ul>
      * <li>{@code getState()} not in &#x007B; {@code UNINSTALLED} &#x007D;.
@@ -595,21 +535,15 @@ public class MockBundle implements Bundle, Serializable {
      * Returns this bundle's Manifest headers and values. This method returns
      * all the Manifest headers and values from the main section of this
      * bundle's Manifest file; that is, all lines prior to the first blank line.
-     * <p/>
-     * <p/>
      * Manifest header names are case-insensitive. The methods of the returned
      * {@code Dictionary} object must operate on header names in a
      * case-insensitive manner.
-     * <p/>
      * If a Manifest header value starts with &quot;%&quot;, it must be
      * localized according to the default locale. If no localization is found
      * for a header value, the header value without the leading &quot;%&quot; is
      * returned.
-     * <p/>
-     * <p/>
      * For example, the following Manifest headers and values are included if
      * they are present in the Manifest file:
-     * <p/>
      * <pre>
      *     Bundle-Name
      *     Bundle-Vendor
@@ -618,8 +552,6 @@ public class MockBundle implements Bundle, Serializable {
      *     Bundle-DocURL
      *     Bundle-ContactAddress
      * </pre>
-     * <p/>
-     * <p/>
      * This method must continue to return Manifest header information while
      * this bundle is in the {@code UNINSTALLED} state.
      *
@@ -647,8 +579,6 @@ public class MockBundle implements Bundle, Serializable {
      * Returns this bundle's unique identifier. This bundle is assigned a unique
      * identifier by the Framework when it was installed in the OSGi
      * environment.
-     * <p/>
-     * <p/>
      * A bundle's unique identifier has the following attributes:
      * <ul>
      * <li>Is unique and persistent.
@@ -658,8 +588,6 @@ public class MockBundle implements Bundle, Serializable {
      * <li>Does not change while a bundle remains installed.
      * <li>Does not change when a bundle is updated.
      * </ul>
-     * <p/>
-     * <p/>
      * This method must continue to return this bundle's unique identifier while
      * this bundle is in the {@code UNINSTALLED} state.
      *
@@ -672,14 +600,10 @@ public class MockBundle implements Bundle, Serializable {
 
     /**
      * Returns this bundle's location identifier.
-     * <p/>
-     * <p/>
      * The location identifier is the location passed to {@code
      * BundleContext.installBundle} when a bundle is installed. The location
      * identifier does not change while this bundle remains installed, even if
      * this bundle is updated.
-     * <p/>
-     * <p/>
      * This method must continue to return this bundle's location identifier
      * while this bundle is in the {@code UNINSTALLED} state.
      *
@@ -696,14 +620,10 @@ public class MockBundle implements Bundle, Serializable {
     /**
      * Returns this bundle's {@code ServiceReference} list for all services it
      * has registered or {@code null} if this bundle has no registered services.
-     * <p/>
-     * <p/>
      * If the Java runtime supports permissions, a {@code ServiceReference}
      * object to a service is included in the returned list only if the caller
      * has the {@code ServicePermission} to get the service using at least one
      * of the named classes the service was registered under.
-     * <p/>
-     * <p/>
      * The list is valid at the time of the call to this method, however, as the
      * Framework is a very dynamic environment, services can be modified or
      * unregistered at anytime.
@@ -724,13 +644,10 @@ public class MockBundle implements Bundle, Serializable {
      * is using or returns {@code null} if this bundle is not using any
      * services. A bundle is considered to be using a service if its use count
      * for that service is greater than zero.
-     * <p/>
-     * <p/>
      * If the Java Runtime Environment supports permissions, a {@code
      * ServiceReference} object to a service is included in the returned list
      * only if the caller has the {@code ServicePermission} to get the service
      * using at least one of the named classes the service was registered under.
-     * <p/>
      * The list is valid at the time of the call to this method, however, as the
      * Framework is a very dynamic environment, services can be modified or
      * unregistered at anytime.
@@ -747,17 +664,12 @@ public class MockBundle implements Bundle, Serializable {
 
     /**
      * Determines if this bundle has the specified permissions.
-     * <p/>
-     * <p/>
      * If the Java Runtime Environment does not support permissions, this method
      * always returns {@code true}.
-     * <p/>
      * {@code permission} is of type {@code Object} to avoid referencing the
      * {@code java.security.Permission} class directly. This is to allow the
      * Framework to be implemented in Java environments which do not support
      * permissions.
-     * <p/>
-     * <p/>
      * If the Java Runtime Environment does support permissions, this bundle and
      * all its resources including embedded JAR files, belong to the same
      * {@code java.security.ProtectionDomain}; that is, they must share the same
@@ -778,7 +690,6 @@ public class MockBundle implements Bundle, Serializable {
 
     /**
      * Find the specified resource from this bundle's class loader.
-     * <p/>
      * This bundle's class loader is called to search for the specified
      * resource. If this bundle's state is {@code INSTALLED}, this method must
      * attempt to resolve this bundle before attempting to get the specified
@@ -786,7 +697,6 @@ public class MockBundle implements Bundle, Serializable {
      * be searched for the specified resource. Imported packages cannot be
      * searched when this bundle has not been resolved. If this bundle is a
      * fragment bundle then {@code null} is returned.
-     * <p/>
      * Note: Jar and zip files are not required to include directory entries.
      * URLs to directory entries will not be returned if the bundle contents do
      * not contain directory entries.
@@ -811,17 +721,12 @@ public class MockBundle implements Bundle, Serializable {
     /**
      * Returns this bundle's Manifest headers and values localized to the
      * specified locale.
-     * <p/>
-     * <p/>
      * This method performs the same function as {@code Bundle.getHeaders()}
      * except the manifest header values are localized to the specified locale.
-     * <p/>
-     * <p/>
      * If a Manifest header value starts with &quot;%&quot;, it must be
      * localized according to the specified locale. If a locale is specified and
      * cannot be found, then the header values must be returned using the
      * default locale. Localizations are searched for in the following order:
-     * <p/>
      * <pre>
      *   bn + &quot;_&quot; + Ls + &quot;_&quot; + Cs + &quot;_&quot; + Vs
      *   bn + &quot;_&quot; + Ls + &quot;_&quot; + Cs
@@ -831,20 +736,16 @@ public class MockBundle implements Bundle, Serializable {
      *   bn + &quot;_&quot; + Ld
      *   bn
      * </pre>
-     * <p/>
      * Where {@code bn} is this bundle's localization basename, {@code Ls},
      * {@code Cs} and {@code Vs} are the specified locale (language, country,
      * variant) and {@code Ld}, {@code Cd} and {@code Vd} are the default locale
      * (language, country, variant).
-     * <p/>
      * If {@code null} is specified as the locale string, the header values must
      * be localized using the default locale. If the empty string (&quot;&quot;)
      * is specified as the locale string, the header values must not be
      * localized and the raw (unlocalized) header values, including any leading
      * &quot;%&quot;, must be returned. If no localization is found for a header
      * value, the header value without the leading &quot;%&quot; is returned.
-     * <p/>
-     * <p/>
      * This method must continue to return Manifest header information while
      * this bundle is in the {@code UNINSTALLED} state, however the header
      * values must only be available in the raw and default locale values.
@@ -874,8 +775,6 @@ public class MockBundle implements Bundle, Serializable {
      * Bundle-SymbolicName} manifest header. The bundle symbolic name should be
      * based on the reverse domain name naming convention like that used for
      * java packages.
-     * <p/>
-     * <p/>
      * This method must continue to return this bundle's symbolic name while
      * this bundle is in the {@code UNINSTALLED} state.
      *
@@ -909,22 +808,14 @@ public class MockBundle implements Bundle, Serializable {
 
     /**
      * Loads the specified class using this bundle's class loader.
-     * <p/>
-     * <p/>
      * If this bundle is a fragment bundle then this method must throw a {@code
      * ClassNotFoundException}.
-     * <p/>
-     * <p/>
      * If this bundle's state is {@code INSTALLED}, this method must attempt to
      * resolve this bundle before attempting to load the class.
-     * <p/>
-     * <p/>
      * If this bundle cannot be resolved, a Framework event of type
      * {@link org.osgi.framework.FrameworkEvent#ERROR} is fired containing a {@code
      * BundleException} with details of the reason this bundle could not be
      * resolved. This method must then throw a {@code ClassNotFoundException}.
-     * <p/>
-     * <p/>
      * If this bundle's state is {@code UNINSTALLED}, then an {@code
      * IllegalStateException} is thrown.
      *
@@ -944,7 +835,6 @@ public class MockBundle implements Bundle, Serializable {
 
     /**
      * Find the specified resources from this bundle's class loader.
-     * <p/>
      * This bundle's class loader is called to search for the specified
      * resources. If this bundle's state is {@code INSTALLED}, this method must
      * attempt to resolve this bundle before attempting to get the specified
@@ -952,7 +842,6 @@ public class MockBundle implements Bundle, Serializable {
      * be searched for the specified resources. Imported packages cannot be
      * searched when a bundle has not been resolved. If this bundle is a
      * fragment bundle then {@code null} is returned.
-     * <p/>
      * Note: Jar and zip files are not required to include directory entries.
      * URLs to directory entries will not be returned if the bundle contents do
      * not contain directory entries.
@@ -979,15 +868,12 @@ public class MockBundle implements Bundle, Serializable {
      * entries within this bundle whose longest sub-path matches the specified
      * path. This bundle's class loader is not used to search for entries. Only
      * the contents of this bundle are searched.
-     * <p/>
      * The specified path is always relative to the root of this bundle and may
      * begin with a &quot;/&quot;. A path value of &quot;/&quot; indicates the
      * root of this bundle.
-     * <p/>
      * Returned paths indicating subdirectory paths end with a &quot;/&quot;.
      * The returned paths are all relative to the root of this bundle and must
      * not begin with &quot;/&quot;.
-     * <p/>
      * Note: Jar and zip files are not required to include directory entries.
      * Paths to directory entries will not be returned if the bundle contents do
      * not contain directory entries.
@@ -1009,11 +895,9 @@ public class MockBundle implements Bundle, Serializable {
      * Returns a URL to the entry at the specified path in this bundle. This
      * bundle's class loader is not used to search for the entry. Only the
      * contents of this bundle are searched for the entry.
-     * <p/>
      * The specified path is always relative to the root of this bundle and may
      * begin with &quot;/&quot;. A path value of &quot;/&quot; indicates the
      * root of this bundle.
-     * <p/>
      * Note: Jar and zip files are not required to include directory entries.
      * URLs to directory entries will not be returned if the bundle contents do
      * not contain directory entries.
@@ -1034,8 +918,6 @@ public class MockBundle implements Bundle, Serializable {
     /**
      * Returns the time when this bundle was last modified. A bundle is
      * considered to be modified when it is installed, updated or uninstalled.
-     * <p/>
-     * <p/>
      * The time value is the number of milliseconds since January 1, 1970,
      * 00:00:00 GMT.
      *
@@ -1048,15 +930,12 @@ public class MockBundle implements Bundle, Serializable {
     }
 
     /**
-     * Returns entries in this bundle and its attached fragments. This bundle's
+     * <p>Returns entries in this bundle and its attached fragments. This bundle's
      * class loader is not used to search for entries. Only the contents of this
-     * bundle and its attached fragments are searched for the specified entries.
-     * <p/>
-     * If this bundle's state is {@code INSTALLED}, this method must attempt to
-     * resolve this bundle before attempting to find entries.
-     * <p/>
-     * <p/>
-     * This method is intended to be used to obtain configuration, setup,
+     * bundle and its attached fragments are searched for the specified entries.</p>
+     * <p>If this bundle's state is {@code INSTALLED}, this method must attempt to
+     * resolve this bundle before attempting to find entries.</p>
+     * <p>This method is intended to be used to obtain configuration, setup,
      * localization and other information from this bundle. This method takes
      * into account that the &quot;contents&quot; of this bundle can be extended
      * with fragments. This &quot;bundle space&quot; is not a name space with
@@ -1068,10 +947,8 @@ public class MockBundle implements Bundle, Serializable {
      * specified path. Fragments can be attached after this bundle is resolved,
      * possibly changing the set of URLs returned by this method. If this bundle
      * is not resolved, only the entries in the JAR file of this bundle are
-     * returned.
-     * <p/>
+     * returned.</p>
      * Examples:
-     * <p/>
      * <pre>
      * // List all XML files in the OSGI-INF directory and below
      * Enumeration e = b.findEntries(&quot;OSGI-INF&quot;, &quot;*.xml&quot;, true);
@@ -1082,11 +959,9 @@ public class MockBundle implements Bundle, Serializable {
      * if (e.hasMoreElements())
      * 	return (URL) e.nextElement();
      * </pre>
-     * <p/>
-     * <p/>
-     * Note: Jar and zip files are not required to include directory entries.
+     * <p><strong>Note</strong>: Jar and zip files are not required to include directory entries.
      * URLs to directory entries will not be returned if the bundle contents do
-     * not contain directory entries.
+     * not contain directory entries.</p>
      *
      * @param path        The path name in which to look. The path is always relative
      *                    to the root of this bundle and may begin with &quot;/&quot;. A
@@ -1121,8 +996,6 @@ public class MockBundle implements Bundle, Serializable {
     /**
      * Returns this bundle's {@link org.osgi.framework.BundleContext}. The returned {@code
      * BundleContext} can be used by the caller to act on behalf of this bundle.
-     * <p/>
-     * <p/>
      * If this bundle is not in the {@link #STARTING}, {@link #ACTIVE}, or
      * {@link #STOPPING} states or this bundle is a fragment bundle, then this
      * bundle has no valid {@code BundleContext}. This method will return
@@ -1171,8 +1044,6 @@ public class MockBundle implements Bundle, Serializable {
      * Returns the version of this bundle as specified by its {@code
      * Bundle-Version} manifest header. If this bundle does not have a specified
      * version then {@link org.osgi.framework.Version#emptyVersion} is returned.
-     * <p/>
-     * <p/>
      * This method must continue to return this bundle's version while this
      * bundle is in the {@code UNINSTALLED} state.
      *
@@ -1186,8 +1057,6 @@ public class MockBundle implements Bundle, Serializable {
 
     /**
      * Adapt this bundle to the specified type.
-     * <p/>
-     * <p/>
      * Adapting this bundle to the specified type may require certain checks,
      * including security checks, to succeed. If a check does not succeed, then
      * this bundle cannot be adapted and {@code null} is returned.
@@ -1217,13 +1086,9 @@ public class MockBundle implements Bundle, Serializable {
      * provided for this bundle by the Framework. This method will return
      * {@code null} if the platform does not have file system support or this
      * bundle is a fragment bundle.
-     * <p/>
-     * <p/>
      * A {@code File} object for the base directory of the persistent storage
      * area provided for this bundle by the Framework can be obtained by calling
      * this method with an empty string as {@code filename}.
-     * <p/>
-     * <p/>
      * If the Java Runtime Environment supports permissions, the Framework will
      * ensure that this bundle has the {@code java.io.FilePermission} with
      * actions {@code read},{@code write},{@code delete} for all files
@@ -1242,41 +1107,7 @@ public class MockBundle implements Bundle, Serializable {
     }
 
     /**
-     * Compares this object with the specified object for order.  Returns a
-     * negative integer, zero, or a positive integer as this object is less
-     * than, equal to, or greater than the specified object.
-     * <p/>
-     * <p>The implementor must ensure <tt>sgn(x.compareTo(y)) ==
-     * -sgn(y.compareTo(x))</tt> for all <tt>x</tt> and <tt>y</tt>.  (This
-     * implies that <tt>x.compareTo(y)</tt> must throw an exception iff
-     * <tt>y.compareTo(x)</tt> throws an exception.)
-     * <p/>
-     * <p>The implementor must also ensure that the relation is transitive:
-     * <tt>(x.compareTo(y)&gt;0 &amp;&amp; y.compareTo(z)&gt;0)</tt> implies
-     * <tt>x.compareTo(z)&gt;0</tt>.
-     * <p/>
-     * <p>Finally, the implementor must ensure that <tt>x.compareTo(y)==0</tt>
-     * implies that <tt>sgn(x.compareTo(z)) == sgn(y.compareTo(z))</tt>, for
-     * all <tt>z</tt>.
-     * <p/>
-     * <p>It is strongly recommended, but <i>not</i> strictly required that
-     * <tt>(x.compareTo(y)==0) == (x.equals(y))</tt>.  Generally speaking, any
-     * class that implements the <tt>Comparable</tt> interface and violates
-     * this condition should clearly indicate this fact.  The recommended
-     * language is "Note: this class has a natural ordering that is
-     * inconsistent with equals."
-     * <p/>
-     * <p>In the foregoing description, the notation
-     * <tt>sgn(</tt><i>expression</i><tt>)</tt> designates the mathematical
-     * <i>signum</i> function, which is defined to return one of <tt>-1</tt>,
-     * <tt>0</tt>, or <tt>1</tt> according to whether the value of
-     * <i>expression</i> is negative, zero or positive.
-     *
-     * @param o the object to be compared.
-     * @return a negative integer, zero, or a positive integer as this object
-     *         is less than, equal to, or greater than the specified object.
-     * @throws ClassCastException if the specified object's type prevents it
-     *                            from being compared to this object.
+     * {@inheritDoc}
      */
     @Override
     public int compareTo(final Bundle o) {

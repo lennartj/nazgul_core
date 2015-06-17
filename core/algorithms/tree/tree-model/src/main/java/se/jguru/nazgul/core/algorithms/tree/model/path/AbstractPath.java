@@ -44,8 +44,6 @@ import java.util.List;
  * Non-semantic Path implementation using List as internal storage of KeyType segments.
  * <strong>Note!</strong> This implementation is immutable, implying that the append method returns a new
  * instance, rather than modifying this one.
- * <p/>
- * {@inheritDoc}
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */

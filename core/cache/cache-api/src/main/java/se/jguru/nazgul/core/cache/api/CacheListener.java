@@ -37,7 +37,6 @@ public interface CacheListener<K, V> extends Clusterable, EventListener {
     /**
      * Callback method invoked when the object with the given key
      * is stored within the underlying cache implementation.
-     * <p/>
      * <strong>Note!</strong>. The key and value must not be modified
      * within this callback method.
      *
@@ -49,7 +48,6 @@ public interface CacheListener<K, V> extends Clusterable, EventListener {
     /**
      * Callback method invoked when the object with the given key
      * is updated within the underlying cache implementation.
-     * <p/>
      * <strong>Note!</strong>. The key and value must not be modified
      * within this callback method.
      *
@@ -65,7 +63,6 @@ public interface CacheListener<K, V> extends Clusterable, EventListener {
      * Callback method invoked when the object with the given
      * key is actively removed from the underlying cache
      * implementation (by a user call).
-     * <p/>
      * <strong>Note!</strong>. The key and value must not be modified
      * within this callback method.
      *
@@ -87,7 +84,6 @@ public interface CacheListener<K, V> extends Clusterable, EventListener {
      * This is assumed to be the result of an autonomous/internal
      * call within the underlying cache implementation, as opposed
      * to a call to <code>put(key, value)</code>.
-     * <p/>
      * <strong>Note!</strong>. The key and value must not be modified
      * within this callback method.
      *
@@ -97,19 +93,17 @@ public interface CacheListener<K, V> extends Clusterable, EventListener {
     void onAutonomousLoad(K key, V value);
 
     /**
-     * Callback method invoked when the object with the given
+     * <p>Callback method invoked when the object with the given
      * key is evicted from the underlying cache implementation.
      * This is assumed to be the result of an autonomous/internal
      * call within the underlying cache implementation, as opposed
      * to a call to <code>remove(key)</code> from a server
-     * implementation.
-     * <p/>
-     * <strong>Note!</strong>. The key and value must not be modified
-     * within this callback method.
-     * <p/>
-     * <strong>Note 2!</strong>. Depending on the underlying cache
+     * implementation.</p>
+     * <p><strong>Note!</strong> The key and value must not be modified
+     * within this callback method.</p>
+     * <p><strong>Note 2!</strong> Depending on the underlying cache
      * implementation, the value may not be known (implying that it
-     * is received as <code>null</code>).
+     * is received as <code>null</code>).</p>
      *
      * @param key   The key of the object which got evicted from the cache.
      * @param value The object that was evicted, or null if the underlying

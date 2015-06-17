@@ -78,7 +78,6 @@ public class TestAbstractSwiftClusterable extends AbstractSwiftClusterable {
      * within writeExternal. You should write the internal state of
      * the Listener onto the ObjectOutput, adhering to the following
      * pattern:
-     * <p/>
      * <pre>
      * <code>
      * class SomeCacheListener extends CacheListenerAdapter
@@ -125,7 +124,6 @@ public class TestAbstractSwiftClusterable extends AbstractSwiftClusterable {
      * within writeExternal. You should read the internal state of
      * the Listener from the ObjectInput, adhering to the following
      * pattern:
-     * <p/>
      * <pre>
      * <code>
      * class SomeCacheListener extends CacheListenerAdapter

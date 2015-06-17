@@ -75,9 +75,7 @@ public interface DistributedCache<K, V> extends Cache<K, V> {
      * Gets a distributed collection with the given type and provided
      * key from the cache. Note that the distributed Collection will be
      * created on the provided key if it does not already exist.
-     * <p/>
      * A typical usage example would be
-     * <p/>
      * <pre>
      *  Collection cachedList = getDistributedCollection(COLLECTION, "someKey");
      * </pre>
@@ -115,7 +113,6 @@ public interface DistributedCache<K, V> extends Cache<K, V> {
      * Adds a CacheListener to the distributed object. The cacheListener will
      * be invoked when the properties/items/key-value pairs of the distributed
      * object are altered.
-     * <p/>
      * <strong>This operation may be an asynchronous operation depending
      * on the underlying cache implementation.</strong>
      *
@@ -132,7 +129,6 @@ public interface DistributedCache<K, V> extends Cache<K, V> {
 
     /**
      * Removes the given CacheListener from the distributed object.
-     * <p/>
      * <strong>This operation may be an asynchronous operation depending
      * on the underlying cache implementation.</strong>
      *

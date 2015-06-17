@@ -56,7 +56,6 @@ public interface PomAnalyzer {
      * supplied POM was invalid. The "topmost parent POM" is the topmost POM within the local reactor,
      * used as Parent for other POMs. This differs from the root reactor pom in that parent poms are used
      * to define dependencies and plugins but not modules.
-     * <p/>
      * This method is a convenience specification, and should yield the equivalent of calling
      * {@code validate(topmostParentPom, PomAnalyzer.PomType.PARENT, null)}
      *

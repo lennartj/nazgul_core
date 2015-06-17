@@ -49,11 +49,10 @@ public abstract class AbstractSuspendableMBean extends AbstractMBean implements 
     public static final String RESUMED_ATTRIBUTENAME = "resumed";
 
     /**
-     * Convenience constructor, creating a new AbstractMBean wrapping the supplied data.
+     * <p>Convenience constructor, creating a new AbstractMBean wrapping the supplied data.
      * All NotificationEmitter operations executed in this AbstractMBean are delegated to
      * the provided NotificationEmitter object. Thus, all JMX notifications fired by this
-     * AbstractMBean are simply delegated to the supplied NotificationEmitter.
-     * <p/>
+     * AbstractMBean are simply delegated to the supplied NotificationEmitter.</p>
      * <p>This constructor must be called from a subclass that implements the provided {@code mbeanInterface}.</p>
      *
      * @param mbeanInterface a StandardMBean interface.
@@ -75,16 +74,13 @@ public abstract class AbstractSuspendableMBean extends AbstractMBean implements 
      * handled by the given {@code NotificationEmitter}. This constructor can be used to make either Standard MBeans
      * or MXBeans. The resultant MBean implements the {@code NotificationEmitter} interface by forwarding its methods
      * to {@code delegate}.</p>
-     * <p/>
      * <p>If {@code delegate} is an instance of {@code NotificationBroadcasterSupport} then the MBean's {@link
      * #sendNotification sendNotification} method will delegate its invocation to {@code delegate.}{@link
      * NotificationBroadcasterSupport#sendNotification sendNotification}.</p>
-     * <p/>
      * <p>The array returned by {@link #getNotificationInfo()} on the new MBean is a copy of the array returned by
      * {@code emitter.}{@link NotificationBroadcaster#getNotificationInfo getNotificationInfo()} at the time of
      * construction. If the array returned by {@code emitter.getNotificationInfo()} later changes, that will have no
      * effect on this object's {@code getNotificationInfo()}.</p>
-     * <p/>
      * <p>This constructor must be called from a subclass that implements the given {@code mbeanInterface}.</p>
      *
      * @param mbeanInterface a StandardMBean interface.

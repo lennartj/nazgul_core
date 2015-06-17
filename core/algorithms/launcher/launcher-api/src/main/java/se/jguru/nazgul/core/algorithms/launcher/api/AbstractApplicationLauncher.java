@@ -181,7 +181,6 @@ public abstract class AbstractApplicationLauncher implements StandardLifecycle {
     /**
      * Main entrypoint to the application, which executes its lifecycle by
      * invoking the following methods (in order):
-     * <p/>
      * <pre>
      *   try {
      *      // First, validate the given CLI arguments.

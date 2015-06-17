@@ -74,7 +74,6 @@ public abstract class AbstractCacheListener<K extends Serializable, V>
     /**
      * Callback method invoked when the object with the given key
      * is stored within the underlying cache implementation.
-     * <p/>
      * <strong>Note!</strong>. The key and value must not be modified
      * within this callback method.
      *
@@ -92,7 +91,6 @@ public abstract class AbstractCacheListener<K extends Serializable, V>
     /**
      * Callback method invoked when the object with the given key
      * is stored within the underlying cache implementation.
-     * <p/>
      * <strong>Note!</strong>. The key and value must not be modified
      * within this callback method.
      *
@@ -106,7 +104,6 @@ public abstract class AbstractCacheListener<K extends Serializable, V>
     /**
      * Callback method invoked when the object with the given key
      * is updated within the underlying cache implementation.
-     * <p/>
      * <strong>Note!</strong>. The key and value must not be modified
      * within this callback method.
      *
@@ -125,7 +122,6 @@ public abstract class AbstractCacheListener<K extends Serializable, V>
     /**
      * Callback method invoked when the object with the given key
      * is updated within the underlying cache implementation.
-     * <p/>
      * <strong>Note!</strong>. The key and value must not be modified
      * within this callback method.
      *
@@ -141,7 +137,6 @@ public abstract class AbstractCacheListener<K extends Serializable, V>
      * Callback method invoked when the object with the given
      * key is actively removed from the underlying cache
      * implementation (by a user call).
-     * <p/>
      * <strong>Note!</strong>. The key and value must not be modified
      * within this callback method.
      *
@@ -160,7 +155,6 @@ public abstract class AbstractCacheListener<K extends Serializable, V>
      * Callback method invoked when the object with the given
      * key is actively removed from the underlying cache
      * implementation (by a user call).
-     * <p/>
      * <strong>Note!</strong>. The key and value must not be modified
      * within this callback method.
      *
@@ -187,7 +181,6 @@ public abstract class AbstractCacheListener<K extends Serializable, V>
      * This is assumed to be the result of an autonomous/internal
      * call within the underlying cache implementation, as opposed
      * to a call to <code>put(key, value)</code>.
-     * <p/>
      * <strong>Note!</strong>. The key and value must not be modified
      * within this callback method.
      *
@@ -207,7 +200,6 @@ public abstract class AbstractCacheListener<K extends Serializable, V>
      * This is assumed to be the result of an autonomous/internal
      * call within the underlying cache implementation, as opposed
      * to a call to <code>put(key, value)</code>.
-     * <p/>
      * <strong>Note!</strong>. The key and value must not be modified
      * within this callback method.
      *
@@ -225,7 +217,6 @@ public abstract class AbstractCacheListener<K extends Serializable, V>
      * call within the underlying cache implementation, as opposed
      * to a call to <code>remove(key)</code> from a server
      * implementation.
-     * <p/>
      * <strong>Note!</strong>. The key and value must not be modified
      * within this callback method.
      *
@@ -246,7 +237,6 @@ public abstract class AbstractCacheListener<K extends Serializable, V>
      * call within the underlying cache implementation, as opposed
      * to a call to <code>remove(key)</code> from a server
      * implementation.
-     * <p/>
      * <strong>Note!</strong>. The key and value must not be modified
      * within this callback method.
      *

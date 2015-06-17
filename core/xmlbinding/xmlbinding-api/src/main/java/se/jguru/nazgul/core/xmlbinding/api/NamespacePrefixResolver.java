@@ -25,20 +25,17 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Specification for how to map XML Namespace URIs to XML Namespace Prefixes.
+ * <p>Specification for how to map XML Namespace URIs to XML Namespace Prefixes.
  * XML namespaces are provided in the form of an URI-formatted String, such as
  * {@code http://www.jguru.se/nazgul/core}, and XML prefixes are simply identifiers
- * for these URIs (such as {@code core}).
- * <p/>
- * The intention for this NamespacePrefixResolver is to inform the XML binder instance
+ * for these URIs (such as {@code core}).</p>
+ * <p>The intention for this NamespacePrefixResolver is to inform the XML binder instance
  * of the relation between the namespace URI and prefix - illustrated below by the mapping
  * of the {@code http://foo/bar} namespace to the elements ParentElement and ChildElement.
  * Some XmlBinder implementations [notably JAXB] have rather sketchy implementations of
  * these mechanics, so we provide this NamespacePrefixResolver specification to provide
- * a unified specification for relating XML namespace URLs to Prefixes.
- * <p/>
- * Example (desired output):
- * <p/>
+ * a unified specification for relating XML namespace URLs to Prefixes.</p>
+ * <p>Example (desired output):</p>
  * <pre>
  *     &lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;
  *     &lt;foobar:ParentElement xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -50,10 +47,8 @@ import java.util.Set;
  *         ...
  *     &lt;/foobar:ParentElement&gt;
  * </pre>
- * <p/>
- * The corresponding code to relate the {@code http://foo/bar} URI to the {@code foobar}
- * prefix is shown below:
- * <p/>
+ * <p>The corresponding code to relate the {@code http://foo/bar} URI to the {@code foobar}
+ * prefix is shown below:</p>
  * <pre>
  *     // Acquire the NamespacePrefixResolver in use by the XmlBinder
  *     XmlBinder binder = ...

@@ -73,7 +73,6 @@ public class DefaultNotificationEmitter extends NotificationBroadcasterSupport i
     /**
      * <p>Constructs a NotificationBroadcasterSupport with information about the notifications that may be sent,
      * and where each listener is invoked using the given {@link java.util.concurrent.Executor}.</p>
-     * <p/>
      * <p>When {@link #sendNotification sendNotification} is called, a
      * listener is selected if it was added with a null {@link NotificationFilter}, or if
      * {@link NotificationFilter#isNotificationEnabled isNotificationEnabled} returns true for the notification being
