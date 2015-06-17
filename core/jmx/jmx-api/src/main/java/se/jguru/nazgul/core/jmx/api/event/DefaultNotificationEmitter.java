@@ -49,13 +49,12 @@ public class DefaultNotificationEmitter extends NotificationBroadcasterSupport i
     /**
      * <p>Constructs a NotificationBroadcasterSupport with information about the notifications that may be sent. Each
      * listener is invoked by the thread sending the notification. This constructor is equivalent to
-     * {@link javax.management.NotificationBroadcasterSupport#NotificationBroadcasterSupport(java.util.concurrent
-     * .Executor, javax.management.MBeanNotificationInfo[] info) NotificationBroadcasterSupport(null, info)}.</p>
+     * {@link javax.management.NotificationBroadcasterSupport#NotificationBroadcasterSupport(java.util.concurrent.Executor, javax.management.MBeanNotificationInfo[] info)}.</p>
      * <p>If the <code>info</code> array is not empty, then it is
      * cloned by the constructor as if by {@code info.clone()}, and
-     * each call to {@link #getNotificationInfo()} returns a new
-     * clone.</p>
+     * each call to {@link #getNotificationInfo()} returns a new clone.</p>
      *
+     * @param id  a (unique) id of this DefaultNotificationEmitter.
      * @param info an array indicating, for each notification this MBean may send, the name of the Java class of the
      *             notification and the notification type. Can be null, which is equivalent to an empty array.
      */
@@ -64,7 +63,7 @@ public class DefaultNotificationEmitter extends NotificationBroadcasterSupport i
         super(info);
 
         // Check sanity
-        Validate.notEmpty(id, "Cannot handle null or empty id argument.");
+        Validate.notEmpty(id, "Cannot handle null or empty 'id' argument.");
 
         // Assign internal state
         this.id = id;
@@ -74,15 +73,16 @@ public class DefaultNotificationEmitter extends NotificationBroadcasterSupport i
      * <p>Constructs a NotificationBroadcasterSupport with information about the notifications that may be sent,
      * and where each listener is invoked using the given {@link java.util.concurrent.Executor}.</p>
      * <p>When {@link #sendNotification sendNotification} is called, a
-     * listener is selected if it was added with a null {@link NotificationFilter}, or if
-     * {@link NotificationFilter#isNotificationEnabled isNotificationEnabled} returns true for the notification being
-     * sent. The call to <code>NotificationFilter.isNotificationEnabled</code> takes place in the thread that called
-     * <code>sendNotification</code>. Then, for each selected listener,
+     * listener is selected if it was added with a null {@link javax.management.NotificationFilter}, or if
+     * {@link javax.management.NotificationFilter#isNotificationEnabled(Notification)} returns true for the
+     * notification being sent. The call to <code>NotificationFilter.isNotificationEnabled</code> takes place in the
+     * thread that called <code>sendNotification</code>. Then, for each selected listener,
      * {@link java.util.concurrent.Executor#execute executor.execute} is called with a command that calls the
      * <code>handleNotification</code> method.</p>
-     * <p>If the <code>info</code> array is not empty, then it is cloned by the constructor as if by {@code info
-     * .clone()}, and each call to {@link #getNotificationInfo()} returns a new clone.</p>
+     * <p>If the <code>info</code> array is not empty, then it is cloned by the constructor as if by
+     * {@code info.clone()}, and each call to {@link #getNotificationInfo()} returns a new clone.</p>
      *
+     * @param id  a (unique) id of this DefaultNotificationEmitter.
      * @param executor an executor used by the method <code>sendNotification</code> to send each notification. If it
      *                 is null, the thread calling <code>sendNotification</code> will invoke the
      *                 <code>handleNotification</code> method itself.
@@ -96,7 +96,7 @@ public class DefaultNotificationEmitter extends NotificationBroadcasterSupport i
         super(executor, info);
 
         // Check sanity
-        Validate.notEmpty(id, "Cannot handle null or empty id argument.");
+        Validate.notEmpty(id, "Cannot handle null or empty 'id' argument.");
 
         // Assign internal state
         this.id = id;

@@ -25,6 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.management.AttributeChangeNotificationFilter;
+import javax.management.Notification;
+import javax.management.NotificationBroadcaster;
 import javax.management.NotificationEmitter;
 
 /**
@@ -74,11 +76,11 @@ public abstract class AbstractSuspendableMBean extends AbstractMBean implements 
      * handled by the given {@code NotificationEmitter}. This constructor can be used to make either Standard MBeans
      * or MXBeans. The resultant MBean implements the {@code NotificationEmitter} interface by forwarding its methods
      * to {@code delegate}.</p>
-     * <p>If {@code delegate} is an instance of {@code NotificationBroadcasterSupport} then the MBean's {@link
-     * #sendNotification sendNotification} method will delegate its invocation to {@code delegate.}{@link
-     * NotificationBroadcasterSupport#sendNotification sendNotification}.</p>
+     * <p>If {@code delegate} is an instance of {@code NotificationBroadcasterSupport} then the MBean's
+     * {@link javax.management.NotificationBroadcasterSupport#sendNotification(Notification)} method will delegate
+     * its invocation to {@code delegate.}{@link javax.management.NotificationBroadcasterSupport#sendNotification(Notification)}.</p>
      * <p>The array returned by {@link #getNotificationInfo()} on the new MBean is a copy of the array returned by
-     * {@code emitter.}{@link NotificationBroadcaster#getNotificationInfo getNotificationInfo()} at the time of
+     * {@code emitter.}{@link NotificationBroadcaster#getNotificationInfo()} at the time of
      * construction. If the array returned by {@code emitter.getNotificationInfo()} later changes, that will have no
      * effect on this object's {@code getNotificationInfo()}.</p>
      * <p>This constructor must be called from a subclass that implements the given {@code mbeanInterface}.</p>
