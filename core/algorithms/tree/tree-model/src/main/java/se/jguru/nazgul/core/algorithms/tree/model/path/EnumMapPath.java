@@ -44,12 +44,11 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Refined StringPath which maps all segments to keys within an Enumeration.
+ * <p>Refined StringPath which maps all segments to keys within an Enumeration.
  * This implies that all segments have a natural semantic meaning, as given
- * by the current-value Enumeration element.
- * <p/>
- * <strong>Note!</strong> This implementation is immutable, implying that the append method returns a new
- * instance, rather than modifying this one.
+ * by the current-value Enumeration element.</p>
+ * <p><strong>Note!</strong> This implementation is immutable, implying that the append method returns a new
+ * instance, rather than modifying this one.</p>
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */

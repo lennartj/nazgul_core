@@ -71,10 +71,8 @@ public abstract class AbstractTransactionalMessageListener implements MessageLis
 
     /**
      * Template onMessage method, delegating all real processing to {@code generateResponse}.
-     * <p/>
+     *
      * @see #generateResponse(javax.jms.Session, javax.jms.Message)
-     * <p/>
-     * {@inheritDoc}
      */
     @Override
     public final void onMessage(final Message message) {

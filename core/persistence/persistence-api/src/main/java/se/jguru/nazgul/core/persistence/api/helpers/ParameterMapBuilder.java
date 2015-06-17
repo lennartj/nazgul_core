@@ -89,7 +89,6 @@ public final class ParameterMapBuilder {
 
     /**
      * Adds the supplied name/key to value parameter to this ParameterMapBuilder.
-     * <p/>
      * Usage:<br/>
      * <pre>
      *     <code>
@@ -118,7 +117,6 @@ public final class ParameterMapBuilder {
 
     /**
      * Retrieves the Map holding name/key to value parameters from this ParameterMapBuilder.
-     * <p/>
      * Usage:<br/>
      * <pre>
      *     <code>

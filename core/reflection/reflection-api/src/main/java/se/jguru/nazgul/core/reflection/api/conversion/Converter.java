@@ -32,7 +32,6 @@ import java.lang.annotation.Target;
  * Annotation defining a method or constructor accepting a single argument with a given
  * (source) type, and returning a non-void object (called target type). The two typical
  * examples of conversion are illustrated below:
- * <p/>
  * <pre>
  *     class FooConverter {
  *
@@ -57,7 +56,6 @@ import java.lang.annotation.Target;
  *         }
  *     }
  * </pre>
- * <p/>
  * Examples for arguments to the Converter annotation are found within their respective JavaDoc.
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -81,7 +79,6 @@ public @interface Converter {
     /**
      * Parameter to indicate that this converter method or constructor accepts {@code null} values.
      * Defaults to {@code false}.
-     * <p/>
      * If this parameter is set to {@code true}, your converter [method or constructor] indicates that it
      * should be able to provide a default value in the case of null input values. A typical example is
      * provided below:
@@ -97,13 +94,11 @@ public @interface Converter {
     boolean acceptsNullValues() default false;
 
     /**
-     * Parameter to indicate which priority this converter method or constructor should have.
+     * <p>Parameter to indicate which priority this converter method or constructor should have.
      * A lower (but positive, until minimum 0) priority implies that this converter will be
      * attempted <strong>before</strong> a converter with higher priority value.
-     * <p/>
-     * In that sense, the priority should be regarded as the execution index of several converters.
-     * <p/>
-     * A typical example for defining a would be:
+     * In that sense, the priority should be regarded as the execution index of several converters.</p>
+     * <p>A typical example for defining a would be:</p>
      * <pre>
      *     class AnotherFooConverter {
      *
@@ -121,15 +116,12 @@ public @interface Converter {
     int priority() default DEFAULT_PRIORITY;
 
     /**
-     * Name of a method with a single parameter of the same source type as the {@code @Converter}-annotated
+     * <p>Name of a method with a single parameter of the same source type as the {@code @Converter}-annotated
      * method, and returning a {@code boolean}.
      * If present, this conditionalConversionMethod value supplies the name of a method [within the
      * same class as this Converter] which should be invoked to find out if the supplied source object
-     * can be converted by this method.
-     * <p/>
-     * This attribute is ignored for Constructor Converters.
-     * <p/>
-     * A typical example would be:
+     * can be converted by this method.</p>
+     * <p>This attribute is ignored for Constructor Converters. A typical example would be:</p>
      * <pre>
      *     class FooConverter {
      *

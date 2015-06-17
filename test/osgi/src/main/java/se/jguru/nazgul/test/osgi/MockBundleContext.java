@@ -111,8 +111,6 @@ public class MockBundleContext implements BundleContext {
 
     /**
      * Searches only properties defined within the MockBundleContext.
-     * <p/>
-     * {@inheritDoc}
      */
     @Override
     public String getProperty(final String key) {
@@ -121,8 +119,6 @@ public class MockBundleContext implements BundleContext {
 
     /**
      * Retrieves the internal Bundle.
-     * <p/>
-     * {@inheritDoc}
      */
     @Override
     public Bundle getBundle() {
@@ -131,40 +127,28 @@ public class MockBundleContext implements BundleContext {
 
     /**
      * Installs a bundle from the specified {@code InputStream} object.
-     * <p/>
-     * <p/>
      * If the specified {@code InputStream} is {@code null}, the Framework must
      * create the {@code InputStream} from which to read the bundle by
      * interpreting, in an implementation dependent manner, the specified
      * {@code location}.
-     * <p/>
-     * <p/>
      * The specified {@code location} identifier will be used as the identity of
      * the bundle. Every installed bundle is uniquely identified by its location
      * identifier which is typically in the form of a URL.
-     * <p/>
-     * <p/>
      * The following steps are required to install a bundle:
      * <ol>
      * <li>If a bundle containing the same location identifier is already
      * installed, the {@code Bundle} object for that bundle is returned.
-     * <p/>
      * <li>The bundle's content is read from the input stream. If this fails, a
      * {@link org.osgi.framework.BundleException} is thrown.
-     * <p/>
      * <li>The bundle's associated resources are allocated. The associated
      * resources minimally consist of a unique identifier and a persistent
      * storage area if the platform has file system support. If this step fails,
      * a {@code BundleException} is thrown.
-     * <p/>
      * <li>The bundle's state is set to {@code INSTALLED}.
-     * <p/>
      * <li>A bundle event of type {@link org.osgi.framework.BundleEvent#INSTALLED} is fired.
-     * <p/>
      * <li>The {@code Bundle} object for the newly or previously installed
      * bundle is returned.
      * </ol>
-     * <p/>
      * <b>Postconditions, no exceptions thrown </b>
      * <ul>
      * <li>{@code getState()} in &#x007B; {@code INSTALLED}, {@code RESOLVED}
@@ -203,8 +187,6 @@ public class MockBundleContext implements BundleContext {
 
     /**
      * Installs a bundle from the specified {@code location} identifier.
-     * <p/>
-     * <p/>
      * This method performs the same function as calling
      * {@link #installBundle(String, java.io.InputStream)} with the specified
      * {@code location} identifier and a {@code null} InputStream.
@@ -230,7 +212,6 @@ public class MockBundleContext implements BundleContext {
 
     /**
      * Mock implementation of installing a provided bundle
-     * <p/>
      * A bundle event of type {@link org.osgi.framework.BundleEvent#INSTALLED} is fired.
      *
      * @param bundle the bundle to install
@@ -269,7 +250,6 @@ public class MockBundleContext implements BundleContext {
 
     /**
      * Returns a list of all installed bundles.
-     * <p/>
      * This method returns a list of all bundles installed in the OSGi
      * environment at the time of the call to this method. However, since the
      * Framework is a very dynamic environment, bundles can be installed or
@@ -289,20 +269,14 @@ public class MockBundleContext implements BundleContext {
      * {@link org.osgi.framework.Filter} for a description of the filter syntax.
      * {@code ServiceListener} objects are notified when a service has a
      * lifecycle state change.
-     * <p/>
-     * <p/>
      * If the context bundle's list of listeners already contains a listener
      * {@code l} such that {@code (l==listener)}, then this method replaces that
      * listener's filter (which may be {@code null}) with the specified one
      * (which may be {@code null}).
-     * <p/>
-     * <p/>
      * The listener is called if the filter criteria is met. To filter based
      * upon the class of the service, the filter should reference the
      * {@link org.osgi.framework.Constants#OBJECTCLASS} property. If {@code filter} is {@code null}
      * , all services are considered to match the filter.
-     * <p/>
-     * <p/>
      * When using a {@code filter}, it is possible that the {@code ServiceEvent}
      * s for the complete lifecycle of a service will not be delivered to the
      * listener. For example, if the {@code filter} only matches when the
@@ -313,8 +287,6 @@ public class MockBundleContext implements BundleContext {
      * and the listener will be called with a {@code ServiceEvent} of type
      * {@code MODIFIED}. Thus, the listener will not be called with a
      * {@code ServiceEvent} of type {@code REGISTERED}.
-     * <p/>
-     * <p/>
      * If the Java Runtime Environment supports permissions, the
      * {@code ServiceListener} object will be notified of a service event only
      * if the bundle that is registering it has the {@code ServicePermission} to
@@ -339,8 +311,6 @@ public class MockBundleContext implements BundleContext {
     /**
      * Adds the specified {@code ServiceListener} object to the context bundle's
      * list of listeners.
-     * <p/>
-     * <p/>
      * This method is the same as calling
      * {@code BundleContext.addServiceListener(ServiceListener listener,
      *String filter)} with {@code filter} set to {@code null}.
@@ -365,8 +335,6 @@ public class MockBundleContext implements BundleContext {
     /**
      * Removes the specified {@code ServiceListener} object from the context
      * bundle's list of listeners.
-     * <p/>
-     * <p/>
      * If {@code listener} is not contained in this context bundle's list of
      * listeners, this method does nothing.
      *
@@ -390,8 +358,6 @@ public class MockBundleContext implements BundleContext {
      * Adds the specified {@code BundleListener} object to the context bundle's
      * list of listeners if not already present. BundleListener objects are
      * notified when a bundle has a lifecycle state change.
-     * <p/>
-     * <p/>
      * If the context bundle's list of listeners already contains a listener
      * {@code l} such that {@code (l==listener)}, this method does nothing.
      *
@@ -418,8 +384,6 @@ public class MockBundleContext implements BundleContext {
     /**
      * Removes the specified {@code BundleListener} object from the context
      * bundle's list of listeners.
-     * <p/>
-     * <p/>
      * If {@code listener} is not contained in the context bundle's list of
      * listeners, this method does nothing.
      *
@@ -445,8 +409,6 @@ public class MockBundleContext implements BundleContext {
      * Adds the specified {@code FrameworkListener} object to the context
      * bundle's list of listeners if not already present. FrameworkListeners are
      * notified of general Framework events.
-     * <p/>
-     * <p/>
      * If the context bundle's list of listeners already contains a listener
      * {@code l} such that {@code (l==listener)}, this method does nothing.
      *
@@ -463,8 +425,6 @@ public class MockBundleContext implements BundleContext {
     /**
      * Removes the specified {@code FrameworkListener} object from the context
      * bundle's list of listeners.
-     * <p/>
-     * <p/>
      * If {@code listener} is not contained in the context bundle's list of
      * listeners, this method does nothing.
      *
@@ -485,13 +445,9 @@ public class MockBundleContext implements BundleContext {
      * registering bundle is defined to be the context bundle. Other bundles can
      * locate the service by using either the {@link #getServiceReferences} or
      * {@link #getServiceReference} method.
-     * <p/>
-     * <p/>
      * A bundle can register a service object that implements the
      * {@link org.osgi.framework.ServiceFactory} interface to have more flexibility in providing
      * service objects to other bundles.
-     * <p/>
-     * <p/>
      * The following steps are required to register a service:
      * <ol>
      * <li>If {@code service} is not a {@code ServiceFactory}, an
@@ -613,8 +569,6 @@ public class MockBundleContext implements BundleContext {
     /**
      * Registers the specified service object with the specified properties
      * under the specified class name with the Framework.
-     * <p/>
-     * <p/>
      * This method is otherwise identical to
      * {@link #registerService(String[], Object, java.util.Dictionary)} and is provided as
      * a convenience when {@code service} will only be registered under a single
@@ -641,8 +595,6 @@ public class MockBundleContext implements BundleContext {
     /**
      * Registers the specified service object with the specified properties
      * under the specified class name with the Framework.
-     * <p/>
-     * <p/>
      * This method is otherwise identical to
      * {@link #registerService(String[], Object, java.util.Dictionary)} and is provided as
      * a convenience when {@code service} will only be registered under a single
@@ -675,13 +627,9 @@ public class MockBundleContext implements BundleContext {
      * expression, and the packages for the class names under which the services
      * were registered match the context bundle's packages as defined in
      * {@link org.osgi.framework.ServiceReference#isAssignableTo(org.osgi.framework.Bundle, String)}.
-     * <p/>
-     * <p/>
      * The list is valid at the time of the call to this method. However since
      * the Framework is a very dynamic environment, services can be modified or
      * unregistered at any time.
-     * <p/>
-     * <p/>
      * The specified {@code filter} expression is used to select the registered
      * services whose service properties contain keys and values which satisfy
      * the filter expression. See {@link org.osgi.framework.Filter} for a description of the filter
@@ -690,8 +638,6 @@ public class MockBundleContext implements BundleContext {
      * {@code filter} expression cannot be parsed, an
      * {@link org.osgi.framework.InvalidSyntaxException} will be thrown with a human readable
      * message where the filter became unparsable.
-     * <p/>
-     * <p/>
      * The result is an array of {@code ServiceReference} objects for all
      * services that meet all of the following conditions:
      * <ul>
@@ -755,13 +701,9 @@ public class MockBundleContext implements BundleContext {
      * of {@code ServiceReference} objects contains services that were
      * registered under the specified class and match the specified filter
      * expression.
-     * <p/>
-     * <p/>
      * The list is valid at the time of the call to this method. However since
      * the Framework is a very dynamic environment, services can be modified or
      * unregistered at any time.
-     * <p/>
-     * <p/>
      * The specified {@code filter} expression is used to select the registered
      * services whose service properties contain keys and values which satisfy
      * the filter expression. See {@link org.osgi.framework.Filter} for a description of the filter
@@ -770,8 +712,6 @@ public class MockBundleContext implements BundleContext {
      * {@code filter} expression cannot be parsed, an
      * {@link org.osgi.framework.InvalidSyntaxException} will be thrown with a human readable
      * message where the filter became unparsable.
-     * <p/>
-     * <p/>
      * The result is an array of {@code ServiceReference} objects for all
      * services that meet all of the following conditions:
      * <ul>
@@ -808,24 +748,18 @@ public class MockBundleContext implements BundleContext {
     /**
      * Returns a {@code ServiceReference} object for a service that implements
      * and was registered under the specified class.
-     * <p/>
-     * <p/>
      * The returned {@code ServiceReference} object is valid at the time of the
      * call to this method. However as the Framework is a very dynamic
      * environment, services can be modified or unregistered at any time.
-     * <p/>
-     * <p/>
      * This method is the same as calling
      * {@link #getServiceReferences(String, String)} with a {@code null} filter
      * expression and then finding the reference with the highest priority. It
      * is provided as a convenience for when the caller is interested in any
      * service that implements the specified class.
-     * <p/>
      * If multiple such services exist, the service with the highest priority is
      * selected. This priority is defined as the service reference with the
      * highest ranking (as specified in its {@link org.osgi.framework.Constants#SERVICE_RANKING}
      * property) is returned.
-     * <p/>
      * If there is a tie in ranking, the service with the lowest service ID (as
      * specified in its {@link org.osgi.framework.Constants#SERVICE_ID} property); that is, the
      * service that was registered first is returned.
@@ -844,21 +778,15 @@ public class MockBundleContext implements BundleContext {
     /**
      * Returns a {@code ServiceReference} object for a service that implements
      * and was registered under the specified class.
-     * <p/>
-     * <p/>
      * The returned {@code ServiceReference} object is valid at the time of the
      * call to this method. However as the Framework is a very dynamic
      * environment, services can be modified or unregistered at any time.
-     * <p/>
-     * <p/>
      * This method is the same as calling
      * {@link #getServiceReferences(Class, String)} with a {@code null} filter
      * expression. It is provided as a convenience for when the caller is
      * interested in any service that implements the specified class.
-     * <p/>
      * If multiple such services exist, the service with the highest ranking (as
      * specified in its {@link org.osgi.framework.Constants#SERVICE_RANKING} property) is returned.
-     * <p/>
      * If there is a tie in ranking, the service with the lowest service ID (as
      * specified in its {@link org.osgi.framework.Constants#SERVICE_ID} property); that is, the
      * service that was registered first is returned.
@@ -883,13 +811,9 @@ public class MockBundleContext implements BundleContext {
      * expression, and the packages for the class names under which the services
      * were registered match the context bundle's packages as defined in
      * {@link org.osgi.framework.ServiceReference#isAssignableTo(org.osgi.framework.Bundle, String)}.
-     * <p/>
-     * <p/>
      * The collection is valid at the time of the call to this method. However
      * since the Framework is a very dynamic environment, services can be
      * modified or unregistered at any time.
-     * <p/>
-     * <p/>
      * The specified {@code filter} expression is used to select the registered
      * services whose service properties contain keys and values which satisfy
      * the filter expression. See {@link org.osgi.framework.Filter} for a description of the filter
@@ -898,8 +822,6 @@ public class MockBundleContext implements BundleContext {
      * {@code filter} expression cannot be parsed, an
      * {@link org.osgi.framework.InvalidSyntaxException} will be thrown with a human readable
      * message where the filter became unparsable.
-     * <p/>
-     * <p/>
      * The result is a collection of {@code ServiceReference} objects for all
      * services that meet all of the following conditions:
      * <ul>
@@ -940,22 +862,16 @@ public class MockBundleContext implements BundleContext {
     /**
      * Returns the service object referenced by the specified
      * {@code ServiceReference} object.
-     * <p/>
      * A bundle's use of a service is tracked by the bundle's use count of that
      * service. Each time a service's service object is returned by
      * {@link #getService(org.osgi.framework.ServiceReference)} the context bundle's use count for
      * that service is incremented by one. Each time the service is released by
      * {@link #ungetService(org.osgi.framework.ServiceReference)} the context bundle's use count
      * for that service is decremented by one.
-     * <p/>
      * When a bundle's use count for a service drops to zero, the bundle should
      * no longer use that service.
-     * <p/>
-     * <p/>
      * This method will always return {@code null} when the service associated
      * with this {@code reference} has been unregistered.
-     * <p/>
-     * <p/>
      * The following steps are required to get the service object:
      * <ol>
      * <li>If the service has been unregistered, {@code null} is returned.
@@ -1008,13 +924,9 @@ public class MockBundleContext implements BundleContext {
      * {@code ServiceReference} object. If the context bundle's use count for
      * the service is zero, this method returns {@code false}. Otherwise, the
      * context bundle's use count for the service is decremented by one.
-     * <p/>
-     * <p/>
      * The service's service object should no longer be used and all references
      * to it should be destroyed when a bundle's use count for the service drops
      * to zero.
-     * <p/>
-     * <p/>
      * The following steps are required to unget the service object:
      * <ol>
      * <li>If the context bundle's use count for the service is zero or the
@@ -1048,13 +960,9 @@ public class MockBundleContext implements BundleContext {
      * Creates a {@code File} object for a file in the persistent storage area
      * provided for the bundle by the Framework. This method will return
      * {@code null} if the platform does not have file system support.
-     * <p/>
-     * <p/>
      * A {@code File} object for the base directory of the persistent storage
      * area provided for the context bundle by the Framework can be obtained by
      * calling this method with an empty string as {@code filename}.
-     * <p/>
-     * <p/>
      * If the Java Runtime Environment supports permissions, the Framework will
      * ensure that the bundle has the {@code java.io.FilePermission} with
      * actions {@code read},{@code write},{@code delete} for all files
@@ -1075,8 +983,6 @@ public class MockBundleContext implements BundleContext {
      * Creates a {@code Filter} object. This {@code Filter} object may be used
      * to match a {@code ServiceReference} object or a {@code Dictionary}
      * object.
-     * <p/>
-     * <p/>
      * If the filter cannot be parsed, an {@link org.osgi.framework.InvalidSyntaxException} will be
      * thrown with a human readable message where the filter became unparsable.
      *

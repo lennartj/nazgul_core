@@ -291,7 +291,6 @@ public abstract class AbstractStringKeyNode<V extends Serializable>
     /**
      * The hashCode implementation of AbstractStringKeyNode uses the key, data and children as
      * basis for the calculation of resulting hashCode value.
-     * <p/>
      * {@inheritDoc}
      */
     @Override

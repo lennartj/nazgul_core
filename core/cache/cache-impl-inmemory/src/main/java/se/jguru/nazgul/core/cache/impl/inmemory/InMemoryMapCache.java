@@ -196,7 +196,6 @@ public class InMemoryMapCache extends AbstractSwiftClusterable implements Cache<
 
     /**
      * Retrieves an unmodifiable list of all listener IDs.
-     * <p/>
      * {@inheritDoc}
      */
     @Override

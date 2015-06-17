@@ -31,12 +31,10 @@ package se.jguru.nazgul.core.persistence.api;
 public class PersistenceOperationException extends RuntimeException {
 
     /**
-     * Constructs a new PersistenceOperationException with the specified
-     * (mandatory) detail message and cause.
-     * <p/>
-     * <p>Note that the detail message associated with
+     * <p>Constructs a new PersistenceOperationException with the specified
+     * (mandatory) detail message and cause. Note that the detail message associated with
      * <code>cause</code> is <i>not</i> automatically incorporated in
-     * this runtime exception's detail message.
+     * this runtime exception's detail message.</p>
      *
      * @param message the detail message (which is saved for later retrieval
      *                by the {@link #getMessage()} method).

@@ -265,7 +265,6 @@ public final class SingleBracketPomTokenParserFactory {
     /**
      * Class which adds the relative path to a SoftwareComponent, as well as temporary pomTokens
      * {@code SOFTWARE_COMPONENT_RELATIVE_PATH} and {@code SOFTWARE_COMPONENT_NAME}.
-     * <p/>
      * Adds the relative path to the reactor of the SoftwareComponent in which the active Maven project
      * which should be tokenized by the resulting TokenParser resides. The reactor for a SoftwareComponentPart project
      * is its parent directory. (I.e. for the {@code finance-api} project residing within the SoftwareComponent
@@ -339,10 +338,8 @@ public final class SingleBracketPomTokenParserFactory {
          * is its parent directory. (I.e. for the {@code finance-api} project residing within the SoftwareComponent
          * {@code finance}, the relative path should be {@code services/finance} assuming that we would like the
          * finance SoftwareComponent to reside in the {@code services} VCS path).
-         * <p/>
          * This implies that the directory name of the project itself (such as {@code finance-api}) should not be
          * provided in the componentRelativePath.
-         * <p/>
          * Example:<br/>
          * <pre>
          *     <code>
@@ -492,7 +489,6 @@ public final class SingleBracketPomTokenParserFactory {
      * A "groupIdPrefix" is normally identical to a reverse DNS of the project's organisation,
      * similar to {@code se.jguru} or {@code org.acme}. Note that the groupIdPrefix should <strong>not</strong>
      * include the project name (i.e. {@code project.getName()}), as it will be automatically appended by this builder.
-     * <p/>
      * Given a SoftwareComponent with the relative path {@code services/finance}, the groupIdPrefix
      * {@code se.jguru} and the project name {@code foo}, the full groupId of the finance service
      * SoftwareComponent can be constructed as {@code se.jguru.foo.services.finance}.
@@ -504,7 +500,6 @@ public final class SingleBracketPomTokenParserFactory {
         /**
          * The property containing the {@code groupIdPrefix}, a.k.a. reverse organisation DNS,
          * which should be prepended to the groupId and package properties.
-         * <p/>
          * Given a SoftwareComponent with the relative path {@code services/finance}, the groupIdPrefix
          * {@code se.jguru} and the project name {@code foo}, the full groupId of the finance service
          * SoftwareComponent can be constructed as {@code se.jguru.foo.services.finance}.
@@ -1069,7 +1064,6 @@ public final class SingleBracketPomTokenParserFactory {
          * Assigns the two Maven versions used to create POM Tokens within this Builder. For {@code PomType.REACTOR}
          * and {@code PomType.ROOT_REACTOR} projects, the {@code reactorPomMavenVersion} is used, and for other
          * projects the {@code topParentMavenVersion} version is used.
-         * <p/>
          * This BuilderStep provides the possibility to use different Maven versions for the parent POM and the
          * current POM, which is required in root/top reactor and root/top parent poms. For example, a typical
          * tokenization for a root reactor template POM uses the following structure:

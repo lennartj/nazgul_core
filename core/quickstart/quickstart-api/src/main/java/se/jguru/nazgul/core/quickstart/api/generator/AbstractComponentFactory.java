@@ -500,7 +500,6 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
      * Retrieves the prefix to be prepended to groupIds within the project. Normally, the project's groupIdPrefix is
      * identical to the reverse DNS of the organisation hosting the project, plus the name of the project itself.
      * Override this method if you choose to derive the project's groupId prefix in another way.
-     * <p/>
      * The default implementation strips the type suffix from rootReactorArtifactId and converts the remainder to a
      * path snippet, used as a delimiter to strip of the previous part from the rootReactorGroupId. This is
      * illustrated by an example.
@@ -512,7 +511,6 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
      * <li>The return value is found as a substring of the rootReactorGroupId up until the prefix snippet is
      * found, stripping off the trailing ".": {@code se.jguru}</li>
      * </ol>
-     * <p/>
      * Override this method if your concrete ComponentFactory uses another algorithm to acquire the
      * projectGroupIdPrefix.
      *

@@ -135,7 +135,6 @@ public abstract class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
      * Override to supply any additional EntityManagerFactory properties.
      * The properties are supplied as the latter argument to the
      * {@code Persistence.createEntityManagerFactory} method.
-     * <p/>
      * The properties supplied within this Map override property definitions
      * given in the persistence.xml file.
      *

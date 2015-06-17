@@ -151,8 +151,6 @@ public class DependencyData implements Serializable, Comparable<DependencyData> 
 
     /**
      * Simply uses the string-wise hashCode method.
-     * <p/>
-     * {@inheritDoc}
      */
     @Override
     public boolean equals(final Object obj) {
@@ -170,8 +168,6 @@ public class DependencyData implements Serializable, Comparable<DependencyData> 
 
     /**
      * Simply hashes the string representation of this DependencyData.
-     * <p/>
-     * {@inheritDoc}
      */
     @Override
     public int hashCode() {

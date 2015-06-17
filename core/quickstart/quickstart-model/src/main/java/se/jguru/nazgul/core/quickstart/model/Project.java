@@ -41,7 +41,6 @@ import javax.xml.bind.annotation.XmlType;
  * The Project class holds data used when creating a new project, as opposed to creating
  * a new software component (i.e. a set of collaborating Maven projects) within
  * an existing project.
- * <p/>
  * In keeping with an orderly tradition, it is important to separate Maven build reactor
  * consistency and design from dependency management and plugin management. Build reactor
  * definition is done by maven POMs called "reactor parent" (whose role is simply to define

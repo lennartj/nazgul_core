@@ -97,7 +97,6 @@ public abstract class AbstractStringKeyedMutableProperty<V extends Serializable>
 
     /**
      * Equality comparison definition that compares key and value.
-     * <p/>
      * {@inheritDoc}
      */
     @Override

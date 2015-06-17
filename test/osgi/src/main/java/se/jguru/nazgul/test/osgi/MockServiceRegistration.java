@@ -83,7 +83,6 @@ public class MockServiceRegistration<S> implements ServiceRegistration<S> {
     /**
      * Returns a {@code ServiceReference} object for a service being
      * registered.
-     * <p/>
      * The {@code ServiceReference} object may be shared with other
      * bundles.
      *
@@ -99,13 +98,9 @@ public class MockServiceRegistration<S> implements ServiceRegistration<S> {
 
     /**
      * Updates the properties associated with a service.
-     * <p/>
-     * <p/>
      * The {@link org.osgi.framework.Constants#OBJECTCLASS} and {@link org.osgi.framework.Constants#SERVICE_ID} keys
      * cannot be modified by this method. These values are set by the Framework
      * when the service is registered in the OSGi environment.
-     * <p/>
-     * <p/>
      * The following steps are required to modify service properties:
      * <ol>
      * <li>The service's properties are replaced with the provided properties.
@@ -143,8 +138,6 @@ public class MockServiceRegistration<S> implements ServiceRegistration<S> {
      * objects associated with this {@code ServiceRegistration} object
      * can no longer be used to interact with the service once unregistration is
      * complete.
-     * <p/>
-     * <p/>
      * The following steps are required to unregister a service:
      * <ol>
      * <li>The service is removed from the Framework service registry so that

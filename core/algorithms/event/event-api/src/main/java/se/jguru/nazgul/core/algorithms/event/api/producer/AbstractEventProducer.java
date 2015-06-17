@@ -222,10 +222,9 @@ public abstract class AbstractEventProducer<T extends EventConsumer>
     }
 
     /**
-     * Override this method to provide implementation notifying other AbstractEventProducers
+     * <p>Override this method to provide implementation notifying other AbstractEventProducers
      * working in clustered mode with this one about a remove request for the consumer with
-     * the provided consumerID. The intended usage caters for the following situation:
-     * <p/>
+     * the provided consumerID. The intended usage caters for the following situation:</p>
      * <code>
      * <pre>
      * // Create 2 clustered EventProducers
@@ -240,12 +239,9 @@ public abstract class AbstractEventProducer<T extends EventConsumer>
      * clusteredEventProducer2.removeConsumer(anEventConsumer.getClusterId());
      * </pre>
      * </code>
-     * <p/>
-     * Here, clusteredEventProducer2 must notify clusteredEventProducer1 about the removeConsumer
+     * <p>Here, clusteredEventProducer2 must notify clusteredEventProducer1 about the removeConsumer
      * call and its corresponding ID. ClusteredEventProducer1 removes anEventConsumer from its internal
-     * storage.
-     * <p/>
-     * The default implementation of this method does nothing.
+     * storage. The default implementation of this method does nothing.</p>
      *
      * @param senderID        The ID of this AbstractEventProducer.
      * @param eventConsumerID The ID of the EventConsumer to remove.

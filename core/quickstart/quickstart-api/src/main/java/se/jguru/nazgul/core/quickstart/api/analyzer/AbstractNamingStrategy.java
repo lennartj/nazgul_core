@@ -63,10 +63,7 @@ public abstract class AbstractNamingStrategy implements NamingStrategy {
     /**
      * The default implementation in AbstractNamingStrategy simply creates a Name
      * by parsing the artifactId of the supplied model. (I.e. {@code return Name.parse(model.getArtifactId());}).
-     * <p/>
      * Override this method if you need other ways to synthesize a Name from the supplied Model.
-     * <p/>
-     * {@inheritDoc}
      */
     @Override
     public Name createName(final Model model) {
@@ -135,7 +132,6 @@ public abstract class AbstractNamingStrategy implements NamingStrategy {
      * supplied parent can be used to determine if the Model is crafted from a ROOT_REACTOR POM,
      * according to the following algorithm:
      * {@code model.getGroupId().startsWith(parent.getGroupId())}
-     * <p/>
      * Override this method to provide custom logic if your ROOT_REACTOR and REACTOR POMs
      * are crafted in another way.
      *
@@ -157,18 +153,15 @@ public abstract class AbstractNamingStrategy implements NamingStrategy {
 
     /**
      * Determines if the supplied model is a parent POM (but of an explicitly undefined type) or not.
-     * <p/>
      * The AbstractNamingStrategy implementation assumes that all parent POMs use a naming strategy that
      * implies that the last segment of the groupId for each parent POM is the end part of its corresponding
      * artifactId. For example:
-     * <p/>
      * <pre>
      *     <code>
      *         &lt;groupId>se.jguru.nazgul.foo.poms.<strong>foo-api-parent</strong>&lt;/groupId>
      *         &lt;artifactId>nazgul-<strong>foo-api-parent</strong>&lt;/artifactId>
      *     </code>
      * </pre>
-     * <p/>
      * Override this method to provide custom logic if your parent POMs are crafted in another way.
      *
      * @param model The Maven Model of a parent POM.

@@ -85,7 +85,6 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
 
     /**
      * Removes and returns the CacheListener with the given key.
-     * <p/>
      * <strong>This operation is asynchronous.</strong>
      *
      * @param key The unique identifier for the given CacheListener to remove from operating on this Cache.
@@ -124,7 +123,6 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
      * Adds a CacheListener to the distributed object. The cacheListener will
      * be invoked when the properties/items/key-value pairs of the distributed
      * object are altered.
-     * <p/>
      * <strong>This operation may be an asynchronous operation depending
      * on the underlying cache implementation.</strong>
      *
@@ -264,7 +262,6 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
 
     /**
      * Removes the given CacheListener from the distributed object.
-     * <p/>
      * <strong>This operation may be an asynchronous operation depending
      * on the underlying cache implementation.</strong>
      *

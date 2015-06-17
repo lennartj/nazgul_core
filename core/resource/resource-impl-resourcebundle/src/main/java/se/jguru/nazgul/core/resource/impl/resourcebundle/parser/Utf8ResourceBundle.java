@@ -42,13 +42,12 @@ public abstract class Utf8ResourceBundle {
     private static final String UTF_ENCODING = "UTF-8";
 
     /**
-     * Factory method that creates a ResourceBundle for the provided baseName, and
+     * <p>Factory method that creates a ResourceBundle for the provided baseName, and
      * wraps it within an ISO88591 --> UTF-8 transcoding shell in case the acquired
-     * ResourceBundle is a PropertyResourceBundle.
-     * <p/>
-     * Due to the insanely poor coding of the ResourceBundle class, where the static
+     * ResourceBundle is a PropertyResourceBundle.</p>
+     * <p>Due to the insanely poor coding of the ResourceBundle class, where the static
      * getBundle(String) method is final, we have to delegate the wrapping to a
-     * private, inner class.
+     * private, inner class.</p>
      *
      * @param baseName the base name of the resource bundle, a fully qualified class name.
      * @param locale   the locale for which a resource bundle is desired.

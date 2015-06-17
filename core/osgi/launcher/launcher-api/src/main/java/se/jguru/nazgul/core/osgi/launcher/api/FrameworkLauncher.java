@@ -28,10 +28,8 @@ import org.osgi.framework.launch.Framework;
 import java.util.Map;
 
 /**
- * Specification for launching an OSGi Framework from within the currently running
- * application. The lifecycle of a FrameworkLauncher is as follows:
- * <p/>
- * <p/>
+ * <p>Specification for launching an OSGi Framework from within the currently running
+ * application. The lifecycle of a FrameworkLauncher is as follows:</p>
  * <h2>Startup sequence</h2>
  * <pre>
  *      // Inject or acquire the FrameworkLauncher instance,
@@ -46,7 +44,6 @@ import java.util.Map;
  *      launcher.start();
  *      final Framework framework = launcher.getFramework();
  * </pre>
- * <p/>
  * <h2>Shutdown sequence</h2>
  * <pre>
  *      // Acquire the FrameworkLauncher instance,

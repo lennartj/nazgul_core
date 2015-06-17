@@ -71,13 +71,11 @@ public abstract class MavenVersionExtractor {
      * Acquires the version for the dependency with the supplied groupId
      * and artifactId from the supplied configuration [Reader]. The configuration
      * is assumed to be on the standard depends-maven-plugin form, i.e:
-     * <p/>
      * <pre>
      *     ch.qos.logback/logback-classic/version = 1.0.6
      *     ch.qos.logback/logback-classic/type = jar
      *     ch.qos.logback/logback-classic/scope = compile
      * </pre>
-     * <p/>
      * etc.
      *
      * @param groupId             The groupId for which the version should be acquired.
