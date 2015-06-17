@@ -44,10 +44,10 @@
             <artifactId>junit</artifactId>
             <scope>compile</scope>
         </dependency>
-        <dependency>
+        <!-- dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
-        </dependency>
+        </dependency -->
         <dependency>
             <groupId>org.dbunit</groupId>
             <artifactId>dbunit</artifactId>
@@ -145,4 +145,9 @@
         <url>${reactor.url.remote.prefix}/${reactor.name}</url>
         <tag>HEAD</tag>
     </scm>
+
+    <!-- +=============================================== -->
+    <!-- | Section 5:  Profiles                           -->
+    <!-- +=============================================== -->
+
 </project>

@@ -24,6 +24,8 @@ package se.jguru.nazgul.core.persistence.api;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TestName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,9 +34,13 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
+import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
@@ -44,13 +50,19 @@ public abstract class AbstractInMemoryJpaTest {
 
     // Our log
     private static final Logger log = LoggerFactory.getLogger(AbstractInMemoryJpaTest.class);
-    private static final String JPA_SPECIFICATION_PROPERTY = "jpa_provider_class";
-    private static final String ECLIPSE_JPA_PROVIDER = "org.eclipse.persistence.jpa.PersistenceProvider";
+
+    /**
+     * System property defining the JPA provider class name.
+     */
+    public static final String JPA_SPECIFICATION_PROPERTY = "jpa_provider_class";
 
     /**
      * The name of the PersistenceUnit, used in all unit tests derived from this AbstractInMemoryJpaTest.
      */
     protected static final String UNITTEST_PERSISTENCE_UNIT = "InmemoryPU";
+
+    @Rule
+    public TestName testName = new TestName();
 
     // Internal state
     protected ClassLoader originalClassLoader;
@@ -61,25 +73,26 @@ public abstract class AbstractInMemoryJpaTest {
     protected String jpaPersistenceProviderClass;
 
     @Before
-    public final void setupSharedState() throws Exception {
+    public void setupSharedState() throws Exception {
 
-        // Stash the original ClassLoader
-        originalClassLoader = getClass().getClassLoader();
-
-        // Find the JPA persistence provider class.
-        jpaPersistenceProviderClass = System.getProperty(JPA_SPECIFICATION_PROPERTY);
-        Assert.assertNotEquals("The persistence provider System property [" + JPA_SPECIFICATION_PROPERTY + "] should "
-                        + "be set to contain the JPA persistence provider. This is normally done in a Maven profile.",
-                jpaPersistenceProviderClass);
-        persistenceXmlFile = "testdata/" + getPersistenceFileName() + ".xml";
+        log.info("Launching setup for [" + testName.getMethodName() + "]");
 
         // Debug somewhat
+        printSystemProperties();
+
+        // Find the Persistence XML file.
+        persistenceXmlFile = "testdata/" + getPersistenceFileName() + ".xml";
         log.debug("Using PersistenceXmlFile: " + persistenceXmlFile);
 
-        // Assign the PersistenceRedirectionClassLoader as the Context ClassLoader.
+        // Stash the original ClassLoader; create the PersistenceRedirectionClassLoader
+        originalClassLoader = getClass().getClassLoader();
         final PersistenceRedirectionClassLoader redirectionClassLoader =
                 new PersistenceRedirectionClassLoader(getClass().getClassLoader(), persistenceXmlFile);
 
+        // Find the JPA persistence provider class.
+        jpaPersistenceProviderClass = getJpaPersistenceProviderClass(originalClassLoader, redirectionClassLoader);
+
+        // Assign the PersistenceRedirectionClassLoader as the Context ClassLoader.
         try {
             Thread.currentThread().setContextClassLoader(redirectionClassLoader);
         } catch (Throwable e) {
@@ -193,6 +206,28 @@ public abstract class AbstractInMemoryJpaTest {
         }
     }
 
+    /**
+     * Acquires the className of the JPA persistence provider. Normally retrieves it from the value of the System
+     * property defined within the {@code JPA_SPECIFICATION_PROPERTY}.
+     *
+     * @param originalClassLoader    The original ClassLoader used.
+     * @param redirectionClassLoader The redirectionClassLoader not yet set when invoking this method.
+     * @return A class name of the JPA Persistence Provider.
+     * @see #JPA_SPECIFICATION_PROPERTY
+     */
+    protected String getJpaPersistenceProviderClass(final ClassLoader originalClassLoader,
+                                                    final ClassLoader redirectionClassLoader) {
+
+        // Find the JPA specification
+        String candidate = System.getProperty(JPA_SPECIFICATION_PROPERTY);
+        Assert.assertNotNull("The persistence provider System property [" + JPA_SPECIFICATION_PROPERTY + "] should "
+                        + "be set to contain the JPA persistence provider. This is normally done in a Maven profile.",
+                candidate);
+
+        // All done.
+        return candidate;
+    }
+
     //
     // Private helpers
     //
@@ -202,8 +237,6 @@ public abstract class AbstractInMemoryJpaTest {
         // Add
         final Map<String, String> extraProperties = getEntityManagerFactoryProperties();
         extraProperties.put("eclipselink.persistencexml", persistenceXmlFile);
-        // extraProperties.put("javax.", jpaPersistenceProviderClass);
-        // System.out.println("extraProperties [" + extraProperties + "]");
 
         final StringBuilder builder = new StringBuilder(" EntityManagerFactory properties\n");
         for (Map.Entry<String, String> current : extraProperties.entrySet()) {
@@ -214,6 +247,35 @@ public abstract class AbstractInMemoryJpaTest {
         // Create an EntityManager factory.
         final EntityManagerFactory emf = Persistence.createEntityManagerFactory(persistenceUnitName, extraProperties);
         return emf.createEntityManager();
+    }
+
+    private void printSystemProperties() {
+
+        // Debug somewhat
+        final SortedMap<String, String> sysProps = new TreeMap<>();
+        final Properties props = System.getProperties();
+        for (String current : props.stringPropertyNames()) {
+            sysProps.put(current, System.getProperty(current));
+        }
+
+        try {
+            final List<URL> cpList = Collections.list(Thread.currentThread().getContextClassLoader().getResources(""));
+            for (int i = 0; i < cpList.size(); i++) {
+                log.info("[" + i + "]: " + cpList.get(i).toString());
+            }
+        } catch (Exception e) {
+            log.error("Could not harvest classpath: " + e);
+        }
+
+        StringBuilder builder = new StringBuilder(" ===== [System Properties] ===== \n");
+        for (Map.Entry<String, String> current : sysProps.entrySet()) {
+            String value = "[" + current.getKey() + "]: " + current.getValue();
+            builder.append(value).append("\n");
+        }
+        builder.append(" ===== [End System Properties] ===== \n");
+        final String result = builder.toString();
+
+        log.info(result);
     }
 
     /**
