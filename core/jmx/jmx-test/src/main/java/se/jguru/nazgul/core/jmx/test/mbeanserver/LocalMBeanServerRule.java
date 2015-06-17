@@ -79,13 +79,13 @@ public class LocalMBeanServerRule extends TestWatcher {
     /**
      * <p>Starts a local/in-process MBeanServer, and validates that the JMX test domain is empty (i.e. not
      * registered as a domain in the JMX server when the test starts). The test domain is identical to the
-     * class name of the test class:
+     * class name of the test class:</p>
      * <pre>
      * <code>
      *     // Stash the name of the test JMX domain.
      *     setJmxBeanTestDomain(description.getClassName());
      * </code>
-     * </pre></p>
+     * </pre>
      *
      * @see #getJmxBeanTestDomain()
      * @see #setJmxBeanTestDomain(String)
@@ -112,7 +112,8 @@ public class LocalMBeanServerRule extends TestWatcher {
 
     /**
      * Calls {@code mBeanServer.unregisterMBean(objectName);} for each MBean whose objectName starts with the
-     * jmxBeanTestDomain string - which normally is the same as the
+     * jmxBeanTestDomain string - which normally is the same as the fully qualified class name of the test
+     * class being executed.
      *
      * @throws MBeanServerUnregisterException if the LocalMBeanServerRule was instructed to unregister all beans in
      *                                        the test domain and was unable to do so.
