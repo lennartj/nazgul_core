@@ -34,29 +34,23 @@ source and on a SNAPSHOT version.
 The Nazgul Core features are now available for installation. However, all Nazgul Framework projects use 
 [Simple Logging Facade for Java (SLF4J)](http://www.slf4j.org) for logging. The Nazgul Framework does not define an 
 explicit feature dependency to slf4j, since the standard package of Karaf normally exports pax-logging - which, in turn,
-exports org.slf4j. Simply install the nazgul-tools bundle with the command
+exports org.slf4j. Simply install one of the nazgul-core bundles with the command
 
-    karaf@root()> feature:install nazgul-tools
+    karaf@root()> feature:install nazgul-core-algorithms
     
 The feature will now be installed:
     
-    karaf@root()> feature:list
-    Name                          | Version          | Installed | Repository               | Description
-    --------------------------------------------------------------------------------------------------------------------------------------------
-    logback-classic               | 4.0.3-SNAPSHOT   |           | nazgul-tools             | Nazgul Framework: Tools
-    nazgul-tools                  | 4.0.3-SNAPSHOT   | x         | nazgul-tools             | Nazgul Framework: Tools
-    spring-dm                     | 1.2.1            |           | spring-3.0.3             | Spring DM support
+    karaf@root()> feature:list -i | grep nazgul
+    nazgul-tools           | 4.1.1          | x         | nazgul-tools   | Nazgul Framework: Tools
+    nazgul-core-algorithms | 1.7.2-SNAPSHOT | x         | nazgul-core    | Nazgul Framework: Algorithms
     ...
     
-## Making Karaf auto-launch the `nazgul-tools` feature
+## Making Karaf auto-launch a `nazgul-core-something` feature
 
 At boot time, Karaf reads the file `etc/org.apache.karaf.features.cfg` to find the feature repositories and features
-which should be installed at boot time. If you want the nazgul-tools feature to be automatically installed into Karaf
-at boot time, add the Nazgul Tools feature repository to the list of featureRepositories used by Karaf and the 
-nazgul-tools feature identifier to the end of the featuresBoot option:  
-
-simply add `nazgul-tools` to the `featuresBoot` option as shown below. The featureRepositories option is given on a 
-single line in the configuration file but has been wrapped for readability in this documentation:
+which should be installed at boot time. If you want a particular feature to be automatically installed into Karaf
+at boot time, add the Nazgul Core feature repository to the list of featureRepositories used by Karaf and the 
+exact nazgul-core feature identifier to the end of the featuresBoot option:  
  
     #
     # Comma separated list of features repositories to register by default
@@ -65,39 +59,43 @@ single line in the configuration file but has been wrapped for readability in th
         mvn:org.apache.karaf.features/enterprise/3.0.3/xml/features,
         mvn:org.ops4j.pax.web/pax-web-features/3.1.4/xml/features,
         mvn:org.apache.karaf.features/spring/3.0.3/xml/features,
-        mvn:se.jguru.nazgul.tools.features/nazgul-tools-features-assembly/LATEST/xml/features
+        mvn:se.jguru.nazgul.tools.features/nazgul-tools-features-assembly/LATEST/xml/features,
+        mvn:se.jguru.nazgul.core.features/nazgul-core-features-assembly/LATEST/xml/features
     
     #
     # Comma separated list of features to install at startup
     #
-    featuresBoot=config,standard,region,package,kar,ssh,management,nazgul-tools
+    featuresBoot=config,standard,region,package,kar,ssh,management,nazgul-tools,nazgul-core-resource-impl-resourcebundle
     
 When launching Karaf, the nazgul-tools feature is now automatically installed:
     
-    karaf@root()> feature:list
-    Name                          | Version          | Installed | Repository               | Description
-    --------------------------------------------------------------------------------------------------------------------------------------------
-    logback-classic               | 4.0.3-SNAPSHOT   |           | nazgul-tools             | Nazgul Framework: Tools
-    nazgul-tools                  | 4.0.3-SNAPSHOT   | x         | nazgul-tools             | Nazgul Framework: Tools
-    spring-dm                     | 1.2.1            |           | spring-3.0.3             | Spring DM support
+    karaf@root()> feature:list -i | grep nazgul
+    nazgul-tools                             | 4.1.1          | x         | nazgul-tools   | Nazgul Framework: Tools
+    nazgul-core-algorithms                   | 1.7.2-SNAPSHOT | x         | nazgul-core    | Nazgul Framework: Algorithms
+    nazgul-core-resource-api                 | 1.7.2-SNAPSHOT | x         | nazgul-core    | Nazgul Framework: Resource API
+    nazgul-core-parser-api                   | 1.7.2-SNAPSHOT | x         | nazgul-core    | Nazgul Framework: Parser API
+    nazgul-core-resource-impl-resourcebundle | 1.7.2-SNAPSHOT | x         | nazgul-core    | Nazgul Framework: ResourceBundle Resource Implementation
     ...
 
 While the documentation was performed on a development (i.e. SNAPSHOT) version, your version of the
-nazgul-tools-validation-aspect and its api should be a fixed version.
+nazgul-core- features should be a fixed version.
 
 ## Bundles activated by the nazgul-tools feature
 
-The following bundles are made active by the nazgul-tools feature. Again, please note that the versions of the 
-nazgul-tools-validation-api and nazgul-tools-validation-aspect bundles will be fix, release versions unless you
-build a snapshot version yourself:
+Several bundles are made active by the nazgul-core-resource-impl-resourcebundle feature. Again, please note that the 
+versions of the nazgul-core- bundles will be fix, release versions unless you build a snapshot version yourself:
 
     karaf@root()> bundle:list
     START LEVEL 100 , List Threshold: 50
     ID | State  | Lvl | Version        | Name
-    -------------------------------------------------------------------
-    64 | Active |  50 | 4.0.3.SNAPSHOT | nazgul-tools-validation-api
-    65 | Active |  50 | 4.0.3.SNAPSHOT | nazgul-tools-validation-aspect
-    66 | Active |  50 | 3.4.0          | Apache Commons Lang
-    67 | Active |  50 | 1.8.6          | AspectJ_Runtime
+    -----------------------------------------------------------------------------
+    39 | Active |  60 | 1.7.2.SNAPSHOT | nazgul-core-algorithms-api
+    63 | Active |  50 | 4.1.1          | nazgul-tools-validation-api
+    64 | Active |  50 | 4.1.1          | nazgul-tools-validation-aspect
+    65 | Active |  50 | 3.4.0          | Apache Commons Lang
+    66 | Active |  50 | 1.8.6          | AspectJ_Runtime
+    69 | Active |  60 | 1.7.2.SNAPSHOT | nazgul-core-resource-api
+    70 | Active |  60 | 1.7.2.SNAPSHOT | nazgul-core-parser-api
+    71 | Active |  60 | 1.7.2.SNAPSHOT | nazgul-core-resource-impl-resourcebundle
     
     

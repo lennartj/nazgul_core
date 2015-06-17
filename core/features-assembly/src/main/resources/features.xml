@@ -28,7 +28,7 @@
              resolver="(obr)"
              version="${parent.version}"
              description="Nazgul Framework: JMX API"
-             start-level="50">
+             start-level="60">
 
         <!-- Include the bundles. -->
         <bundle>mvn:se.jguru.nazgul.core.jmx.api/nazgul-core-jmx-api/${parent.version}</bundle>
@@ -38,7 +38,7 @@
              resolver="(obr)"
              version="${parent.version}"
              description="Nazgul Framework: Algorithms"
-             start-level="50">
+             start-level="60">
 
         <!-- Include the bundles. -->
         <bundle>mvn:se.jguru.nazgul.core.algorithms.api/nazgul-core-algorithms-api/${parent.version}</bundle>
@@ -48,7 +48,7 @@
              resolver="(obr)"
              version="${parent.version}"
              description="Nazgul Framework: Reflection API"
-             start-level="50">
+             start-level="60">
 
         <!-- Include the bundles. -->
         <bundle>mvn:se.jguru.nazgul.core.reflection.api/nazgul-core-reflection-api/${parent.version}</bundle>
@@ -61,20 +61,31 @@
              resolver="(obr)"
              version="${parent.version}"
              description="Nazgul Framework: Resource API"
-             start-level="50">
+             start-level="60">
 
         <!-- Include the bundles. -->
         <bundle>mvn:se.jguru.nazgul.core.resource.api/nazgul-core-resource-api/${parent.version}</bundle>
         <bundle>mvn:org.apache.commons/commons-lang3/${org.apache.commons/commons-lang3/version}</bundle>
         <bundle>wrap:mvn:org.aspectj/aspectjrt/${org.aspectj/aspectjrt/version}$Bundle-SymbolicName=AspectJ_Runtime&amp;Bundle-Version=${org.aspectj/aspectjrt/version}</bundle>
-        <bundle>mvn:org.slf4j/slf4j-api/${org.slf4j/slf4j-api/version}</bundle>
+    </feature>
+
+    <feature name="nazgul-core-parser-api"
+             resolver="(obr)"
+             version="${parent.version}"
+             description="Nazgul Framework: Parser API"
+             start-level="60">
+
+        <!-- Include the bundles. -->
+        <bundle>mvn:se.jguru.nazgul.core.parser.api/nazgul-core-parser-api/${parent.version}</bundle>
+        <bundle>mvn:org.apache.commons/commons-lang3/${org.apache.commons/commons-lang3/version}</bundle>
+        <bundle>wrap:mvn:org.aspectj/aspectjrt/${org.aspectj/aspectjrt/version}$Bundle-SymbolicName=AspectJ_Runtime&amp;Bundle-Version=${org.aspectj/aspectjrt/version}</bundle>
     </feature>
 
     <feature name="nazgul-core-resource-impl-resourcebundle"
              resolver="(obr)"
              version="${parent.version}"
              description="Nazgul Framework: ResourceBundle Resource Implementation"
-             start-level="50">
+             start-level="60">
 
         <!-- Include the bundles. -->
         <bundle>mvn:se.jguru.nazgul.core.resource.impl.resourcebundle/nazgul-core-resource-impl-resourcebundle/${parent.version}</bundle>
@@ -88,12 +99,15 @@
              resolver="(obr)"
              version="${parent.version}"
              description="Nazgul Framework: XmlBinding API"
-             start-level="50">
+             start-level="60">
 
         <!-- Include the bundles. -->
         <bundle>mvn:org.apache.commons/commons-lang3/${org.apache.commons/commons-lang3/version}</bundle>
         <bundle>wrap:mvn:org.aspectj/aspectjrt/${org.aspectj/aspectjrt/version}$Bundle-SymbolicName=AspectJ_Runtime&amp;Bundle-Version=${org.aspectj/aspectjrt/version}</bundle>
-        <bundle>mvn:org.slf4j/slf4j-api/${org.slf4j/slf4j-api/version}</bundle>
+
+        <!-- Don't include slf4j as an explicit dependency.
+             It is exported by the Pax Logging API -->
+        <!-- bundle>mvn:org.slf4j/slf4j-api/${org.slf4j/slf4j-api/version}</bundle -->
 
         <!-- Include the dependency features. -->
         <feature version="${parent.version}">nazgul-core-reflection</feature>
@@ -103,7 +117,7 @@
              resolver="(obr)"
              version="${parent.version}"
              description="Nazgul Framework: XmlBinding JAXB SPI"
-             start-level="50">
+             start-level="60">
 
         <!-- Include the bundles. -->
         <bundle>mvn:se.jguru.nazgul.core.xmlbinding.api/nazgul-core-xmlbinding-api/${parent.version}</bundle>
@@ -120,11 +134,10 @@
              resolver="(obr)"
              version="${parent.version}"
              description="Nazgul Framework: Clustering API"
-             start-level="50">
+             start-level="60">
 
         <!-- Include the bundles. -->
         <bundle>mvn:se.jguru.nazgul.core.clustering.api/nazgul-core-clustering-api/${parent.version}</bundle>
-        <bundle dependency="false">mvn:org.apache.geronimo.specs/geronimo-jpa_2.0_spec/${org.apache.geronimo.specs/geronimo-jpa_2.0_spec/version}</bundle>
 
         <!-- Include the dependency features. -->
         <feature version="${parent.version}">nazgul-core-xmlbinding-api</feature>
@@ -134,7 +147,7 @@
              resolver="(obr)"
              version="${parent.version}"
              description="Nazgul Framework: Cache API"
-             start-level="50">
+             start-level="60">
 
         <!-- Include the bundles. -->
         <bundle>mvn:se.jguru.nazgul.core.cache.api/nazgul-core-cache-api/${parent.version}</bundle>
@@ -147,7 +160,7 @@
              resolver="(obr)"
              version="${parent.version}"
              description="Nazgul Framework: Cache Implementation - EhCache"
-             start-level="50">
+             start-level="60">
 
         <!-- Include the bundles. -->
         <bundle>mvn:se.jguru.nazgul.core.cache.impl.ehcache/nazgul-core-cache-impl-ehcache/${parent.version}</bundle>
@@ -160,7 +173,7 @@
              resolver="(obr)"
              version="${parent.version}"
              description="Nazgul Framework: Configuration Model"
-             start-level="50">
+             start-level="60">
 
         <!-- Include the bundles. -->
         <bundle>mvn:se.jguru.nazgul.core.configuration.model/nazgul-core-configuration-model/${parent.version}</bundle>
