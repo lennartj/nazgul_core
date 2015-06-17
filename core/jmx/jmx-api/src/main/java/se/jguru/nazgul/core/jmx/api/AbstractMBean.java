@@ -29,6 +29,7 @@ import javax.management.AttributeChangeNotification;
 import javax.management.AttributeChangeNotificationFilter;
 import javax.management.MBeanServer;
 import javax.management.Notification;
+import javax.management.NotificationBroadcaster;
 import javax.management.NotificationEmitter;
 import javax.management.ObjectName;
 import javax.management.StandardEmitterMBean;
@@ -80,10 +81,10 @@ public abstract class AbstractMBean extends StandardEmitterMBean implements Life
      * or MXBeans. The resultant MBean implements the {@code NotificationEmitter} interface by forwarding its methods
      * to {@code delegate}.</p>
      * <p>If {@code delegate} is an instance of {@code NotificationBroadcasterSupport} then the MBean's {@link
-     * #sendNotification sendNotification} method will delegate its invocation to {@code delegate.}{@link
-     * NotificationBroadcasterSupport#sendNotification sendNotification}.</p>
+     * #sendNotification sendNotification} method will delegate its invocation to {@code delegate.}
+     * {@link javax.management.NotificationBroadcasterSupport#sendNotification(Notification)}.</p>
      * <p>The array returned by {@link #getNotificationInfo()} on the new MBean is a copy of the array returned by
-     * {@code emitter.}{@link NotificationBroadcaster#getNotificationInfo getNotificationInfo()} at the time of
+     * {@code emitter.}{@link NotificationBroadcaster#getNotificationInfo()} at the time of
      * construction. If the array returned by {@code emitter.getNotificationInfo()} later changes, that will have no
      * effect on this object's {@code getNotificationInfo()}.</p>
      * <p>This constructor must be called from a subclass that implements the given {@code mbeanInterface}.</p>
