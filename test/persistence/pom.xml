@@ -9,7 +9,7 @@
     <parent>
         <groupId>se.jguru.nazgul.core.poms.core-model-parent</groupId>
         <artifactId>nazgul-core-model-parent</artifactId>
-        <version>1.7.2-SNAPSHOT</version>
+        <version>1.8.0</version>
         <relativePath>../../core/poms/core-model-parent</relativePath>
     </parent>
 
@@ -31,7 +31,7 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.persistence.api</groupId>
             <artifactId>nazgul-core-persistence-api</artifactId>
-            <version>1.7.2-SNAPSHOT</version>
+            <version>1.8.0</version>
         </dependency>
         <dependency>
             <groupId>org.liquibase</groupId>
@@ -143,7 +143,7 @@
         <connection>${scm.url.prefix}/${reactor.name}</connection>
         <developerConnection>${scm.url.prefix}/${reactor.name}</developerConnection>
         <url>${reactor.url.remote.prefix}/${reactor.name}</url>
-        <tag>HEAD</tag>
+        <tag>nazgul-core-1.8.0</tag>
     </scm>
 
     <!-- +=============================================== -->
