@@ -92,8 +92,7 @@ public class DependencyData implements Serializable, Comparable<DependencyData> 
      *
      * @param scope Should be one of the values {@code compile, provided, runtime, test, system or import}.
      * @throws java.lang.IllegalArgumentException if the scope value was not one of the permitted scopes.
-     * @see <a href="http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism
-     * .html#Dependency_Scope">The Maven Dependency Scopes</a>
+     * @see <a href="http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#Dependency_Scope">The Maven Dependency Scopes</a>
      */
     public void setScope(final String scope) throws IllegalArgumentException {
 
