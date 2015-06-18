@@ -86,7 +86,7 @@ public abstract class AbstractSwiftClusterable extends AbstractClusterable imple
      *      private String name = "Lennart";
      *      ...
      *
-     *      @Override
+     *      &#64;Override
      *      protected void performWriteExternal(ObjectOutput out) throws IOException
      *      {
      *          // Write your own state
@@ -94,7 +94,7 @@ public abstract class AbstractSwiftClusterable extends AbstractClusterable imple
      *          out.writeUTF(name);
      *      }
      *
-     *      @Override
+     *      &#64;Override
      *      protected void performReadExternal(ObjectInput in) throws IOException, ClassNotFoundException
      *      {
      *          // Then write your own state.
@@ -123,7 +123,7 @@ public abstract class AbstractSwiftClusterable extends AbstractClusterable imple
      *      private String name = "Lennart";
      *      ...
      *
-     *      @Override
+     *      &#64;Override
      *      protected void performWriteExternal(ObjectOutput out) throws IOException
      *      {
      *          // Write your own state
@@ -131,7 +131,7 @@ public abstract class AbstractSwiftClusterable extends AbstractClusterable imple
      *          out.writeUTF(name);
      *      }
      *
-     *      @Override
+     *      &#64;Override
      *      protected void performReadExternal(ObjectInput in) throws IOException, ClassNotFoundException
      *      {
      *          // Write your own state.

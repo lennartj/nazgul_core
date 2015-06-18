@@ -90,7 +90,7 @@ public final class QueryOperations {
      * Fires a JPA NamedQuery, returning the results as a List.
      *
      * @param query         The name of the JPA NamedQuery to fire.
-     * @param entityManager The active EntityManager.
+     * @param entityManager The active EntityManager. Cannot be {@code null}.
      * @param parameters    The parameters for the NamedQuery, assuming that the named query contains
      *                      named parameters matching the key values within the supplied parameters Map.
      * @param <T>           The type of Entity expected.
@@ -109,10 +109,11 @@ public final class QueryOperations {
     /**
      * Fires a JPA NamedQuery, returning the maximum given results as a List.
      *
-     * @param query      The name of the JPA NamedQuery to fire.
-     * @param parameters The parameters for the NamedQuery.
-     * @param maxResults The maximum number of results returned. Must not be a negative number.
-     * @param <T>        The type of Entity expected.
+     * @param query         The name of the JPA NamedQuery to fire.
+     * @param entityManager The active EntityManager. Cannot be {@code null}.
+     * @param parameters    The parameters for the NamedQuery.
+     * @param maxResults    The maximum number of results returned. Must not be a negative number.
+     * @param <T>           The type of Entity expected.
      * @return The List of resulting Entities.
      * @throws PersistenceOperationException if a JPA-related exception occurred while performing the operation.
      */
@@ -134,11 +135,12 @@ public final class QueryOperations {
     /**
      * Fires a JPA NamedQuery, returning the maximum given results as a List.
      *
-     * @param query      The name of the JPA NamedQuery to fire.
-     * @param parameters The parameters for the NamedQuery, assuming that the named query contains
-     *                   named parameters matching the key values within the supplied parameters Map.
-     * @param maxResults The maximum number of results returned. Must not be a negative number.
-     * @param <T>        The type of Entity expected.
+     * @param query         The name of the JPA NamedQuery to fire.
+     * @param entityManager The active EntityManager. Cannot be {@code null}.
+     * @param parameters    The parameters for the NamedQuery, assuming that the named query contains
+     *                      named parameters matching the key values within the supplied parameters Map.
+     * @param maxResults    The maximum number of results returned. Must not be a negative number.
+     * @param <T>           The type of Entity expected.
      * @return The List of resulting Entities.
      * @throws PersistenceOperationException if a JPA-related exception occurred while performing the operation.
      */
@@ -186,7 +188,7 @@ public final class QueryOperations {
      * Retrieves a JPA Query from the supplied EntityManager, sporting the supplied maxResults.
      *
      * @param query         The JPA NamedQuery to fire.
-     * @param entityManager The active EntityManager.
+     * @param entityManager The active EntityManager. Cannot be {@code null}.
      * @param maxResults    Either a positive integer, or {@code Integer.MIN_VALUE} to indicate that the max result
      *                      value should not be set.
      * @return The JPA NamedQuery with the supplied name.

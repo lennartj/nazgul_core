@@ -60,7 +60,7 @@ public abstract class AbstractComponentFactory extends AbstractFactory implement
     private static final Logger log = LoggerFactory.getLogger(AbstractComponentFactory.class.getName());
 
     /**
-     * Standard directory containing templates: {@value}
+     * Standard directory containing templates.
      */
     public static final String STANDARD_TEMPLATE_DIR = "template" + FileUtils.FILE_SEPARATOR
             + (System.getProperty("user.name") == null ? "unknown" : System.getProperty("user.name"))

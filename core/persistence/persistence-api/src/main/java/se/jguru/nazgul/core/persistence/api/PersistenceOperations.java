@@ -46,6 +46,7 @@ public interface PersistenceOperations extends JpaQueryOperations {
      *
      * @param entity The entity to update / merge.
      * @param <T>    The entity type.
+     * @return The updated entity, which should be used instead of the entity argument submitted.
      * @throws PersistenceOperationException if the entity could not be updated.
      */
     <T extends NazgulEntity> T update(T entity) throws PersistenceOperationException;

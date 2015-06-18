@@ -27,8 +27,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Utility builder class intended to simplify creation of a NamedQuery parameter Map.
- * Typical Usage:<br/>
+ * <p>Utility builder class intended to simplify creation of a NamedQuery parameter Map.
+ * Typical Usage:</p>
  * <pre>
  *     <code>
  *         // Create the ParameterMapBuilder
@@ -61,8 +61,8 @@ public final class ParameterMapBuilder {
     }
 
     /**
-     * Creates the ParameterMapBuilder with the first parameter having the
-     * supplied name/key and value. Usage:<br/>
+     * <p>Creates the ParameterMapBuilder with the first parameter having the
+     * supplied name/key and value. Usage:</p>
      * <pre>
      *     <code>
      *         // Create the ParameterMapBuilder
@@ -88,8 +88,8 @@ public final class ParameterMapBuilder {
     }
 
     /**
-     * Adds the supplied name/key to value parameter to this ParameterMapBuilder.
-     * Usage:<br/>
+     * <p>Adds the supplied name/key to value parameter to this ParameterMapBuilder.
+     * Usage:</p>
      * <pre>
      *     <code>
      *         // Create the ParameterMapBuilder
@@ -116,8 +116,8 @@ public final class ParameterMapBuilder {
     }
 
     /**
-     * Retrieves the Map holding name/key to value parameters from this ParameterMapBuilder.
-     * Usage:<br/>
+     * <p>Retrieves the Map holding name/key to value parameters from this ParameterMapBuilder.
+     * Usage:</p>
      * <pre>
      *     <code>
      *         // Create the ParameterMapBuilder

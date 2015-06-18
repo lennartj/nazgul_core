@@ -333,14 +333,14 @@ public final class SingleBracketPomTokenParserFactory {
         }
 
         /**
-         * Adds the relative path to the reactor of the SoftwareComponent in which the active Maven project which
+         * <p>Adds the relative path to the reactor of the SoftwareComponent in which the active Maven project which
          * should be tokenized by the resulting TokenParser resides. The reactor for a SoftwareComponentPart project
          * is its parent directory. (I.e. for the {@code finance-api} project residing within the SoftwareComponent
          * {@code finance}, the relative path should be {@code services/finance} assuming that we would like the
          * finance SoftwareComponent to reside in the {@code services} VCS path).
          * This implies that the directory name of the project itself (such as {@code finance-api}) should not be
-         * provided in the componentRelativePath.
-         * Example:<br/>
+         * provided in the componentRelativePath.</p>
+         * <p>Example:</p>
          * <pre>
          *     <code>
          *         // Assume that we want to create the TokenParser for the project

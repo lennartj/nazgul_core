@@ -161,7 +161,6 @@ public class MockBundle implements Bundle, Serializable {
      * <li>This method returns immediately and the remaining steps will be
      * followed when this bundle's activation is later triggered.
      * </ul>
-     * <i></i>
      * <li>This bundle's state is set to {@code STARTING}.
      * <li>A bundle event of type {@link org.osgi.framework.BundleEvent#STARTING} is fired.
      * <li>The {@link org.osgi.framework.BundleActivator#start} method of this bundle's
@@ -177,7 +176,6 @@ public class MockBundle implements Bundle, Serializable {
      * <li>A bundle event of type {@link org.osgi.framework.BundleEvent#STOPPED} is fired.
      * <li>A {@code BundleException} is then thrown.
      * </ul>
-     * <i></i>
      * <li>If this bundle's state is {@code UNINSTALLED}, because this bundle
      * was uninstalled while the {@code BundleActivator.start} method was
      * running, a {@code BundleException} is thrown.

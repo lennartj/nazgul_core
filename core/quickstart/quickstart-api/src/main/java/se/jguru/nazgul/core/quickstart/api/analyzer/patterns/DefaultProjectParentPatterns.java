@@ -27,13 +27,13 @@ import java.util.regex.Pattern;
  * Default MavenModelPatterns implementation for a project parent POM,
  * typically on the following form:
  * <pre>
- *     &lt;parent>
- *         &lt;groupId>se.jguru.nazgul.core.poms.core-parent&lt;/groupId>
- *         &lt;artifactId>nazgul-core-parent&lt;/artifactId>
- *     &lt;/parent>
+ *     &lt;parent&gt;
+ *         &lt;groupId&gt;se.jguru.nazgul.core.poms.core-parent&lt;/groupId&gt;
+ *         &lt;artifactId&gt;nazgul-core-parent&lt;/artifactId&gt;
+ *     &lt;/parent&gt;
  *
- *     &lt;groupId>com.acme.foobar.poms.foobar-parent&lt;/groupId>
- *     &lt;artifactId>foobar-parent&lt;/artifactId>
+ *     &lt;groupId&gt;com.acme.foobar.poms.foobar-parent&lt;/groupId&gt;
+ *     &lt;artifactId&gt;foobar-parent&lt;/artifactId&gt;
  * </pre>
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB

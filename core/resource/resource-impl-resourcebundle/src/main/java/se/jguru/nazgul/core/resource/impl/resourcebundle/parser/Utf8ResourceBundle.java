@@ -43,7 +43,7 @@ public abstract class Utf8ResourceBundle {
 
     /**
      * <p>Factory method that creates a ResourceBundle for the provided baseName, and
-     * wraps it within an ISO88591 --> UTF-8 transcoding shell in case the acquired
+     * wraps it within an ISO88591 --&gt; UTF-8 transcoding shell in case the acquired
      * ResourceBundle is a PropertyResourceBundle.</p>
      * <p>Due to the insanely poor coding of the ResourceBundle class, where the static
      * getBundle(String) method is final, we have to delegate the wrapping to a

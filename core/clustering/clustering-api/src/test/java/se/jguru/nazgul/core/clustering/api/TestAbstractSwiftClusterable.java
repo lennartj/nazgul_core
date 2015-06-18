@@ -87,7 +87,7 @@ public class TestAbstractSwiftClusterable extends AbstractSwiftClusterable {
      *      private String name = "Lennart";
      *      ...
      *
-     *      @Override
+     *      &#64;Override
      *      protected void performWriteExternal(ObjectOutput out) throws IOException
      *      {
      *          // Write your own state
@@ -95,7 +95,7 @@ public class TestAbstractSwiftClusterable extends AbstractSwiftClusterable {
      *          out.writeUTF(name);
      *      }
      *
-     *      @Override
+     *      &#64;Override
      *      protected void performReadExternal(ObjectInput in) throws IOException, ClassNotFoundException
      *      {
      *          // Then write your own state.
@@ -133,7 +133,7 @@ public class TestAbstractSwiftClusterable extends AbstractSwiftClusterable {
      *      private String name = "Lennart";
      *      ...
      *
-     *      @Override
+     *      &#64;Override
      *      protected void performWriteExternal(ObjectOutput out) throws IOException
      *      {
      *          // Write your own state
@@ -141,7 +141,7 @@ public class TestAbstractSwiftClusterable extends AbstractSwiftClusterable {
      *          out.writeUTF(name);
      *      }
      *
-     *      @Override
+     *      &#64;Override
      *      protected void performReadExternal(ObjectInput in) throws IOException, ClassNotFoundException
      *      {
      *          // Write your own state.

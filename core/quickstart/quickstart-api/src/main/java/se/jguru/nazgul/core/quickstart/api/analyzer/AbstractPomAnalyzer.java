@@ -172,7 +172,7 @@ public abstract class AbstractPomAnalyzer implements PomAnalyzer {
      * @param toValidate   The POM model to validate.
      * @param expectedType The expected type of POM to validate the supplied Model against.
      * @param parentOrNull A Model which holds the expected Maven GAV coordinates for the aPOM's Parent POM.
-     * @throws InvalidStructureException
+     * @throws InvalidStructureException if the Model does not conform to structure specifications.
      */
     protected void validateParentPom(final Model toValidate, final PomType expectedType, final Model parentOrNull)
             throws InvalidStructureException {
@@ -192,7 +192,8 @@ public abstract class AbstractPomAnalyzer implements PomAnalyzer {
      *
      * @param toValidate    The POM model to validate.
      * @param nonNullParent A Model which holds the expected Maven GAV coordinates for the aPOM's Parent POM.
-     * @throws InvalidStructureException
+     * @throws InvalidStructureException if the Model does not conform to structure specifications, i.e. if the
+     *                                   reactor POM was invalid.
      */
     protected void validateReactorPom(final Model toValidate, final Model nonNullParent)
             throws InvalidStructureException {

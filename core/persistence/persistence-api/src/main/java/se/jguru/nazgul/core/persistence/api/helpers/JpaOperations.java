@@ -108,8 +108,9 @@ public final class JpaOperations {
     /**
      * Replaces the state of the provided NazgulEntity with the database current state.
      *
-     * @param entity The entity to refresh.
-     * @param <T>    The entity type.
+     * @param entity        The entity to refresh.
+     * @param entityManager The active EntityManager. Cannot be {@code null}.
+     * @param <T>           The entity type.
      * @throws PersistenceOperationException if the entity could not be refreshed.
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -139,8 +140,9 @@ public final class JpaOperations {
     /**
      * Deletes the persistent state of the provided entity from a JPA-aware database.
      *
-     * @param entity The entity to delete.
-     * @param <T>    The entity type.
+     * @param entity        The entity to delete.
+     * @param entityManager The active EntityManager. Cannot be {@code null}.
+     * @param <T>           The entity type.
      * @throws PersistenceOperationException if the entity could not be deleted.
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)

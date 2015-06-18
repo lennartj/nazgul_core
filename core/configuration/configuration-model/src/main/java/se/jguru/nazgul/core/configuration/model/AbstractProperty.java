@@ -58,8 +58,8 @@ public abstract class AbstractProperty<K extends Serializable & Comparable<K>,
     private transient Class<V> valueTypeClass;
 
     /**
-     * JAXB / JPA-friendly constructor.<br/>
-     * <strong>Note!</strong> For framework use only.
+     * <p>JAXB / JPA-friendly constructor.</p>
+     * <p><strong>Note!</strong> For framework use only.</p>
      */
     public AbstractProperty() {
         super();
