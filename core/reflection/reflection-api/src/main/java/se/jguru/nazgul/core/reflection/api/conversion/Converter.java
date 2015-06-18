@@ -69,12 +69,12 @@ public @interface Converter {
     /**
      * The default priority value, used if no other priority has been supplied.
      */
-    public static final int DEFAULT_PRIORITY = 100;
+    int DEFAULT_PRIORITY = 100;
 
     /**
      * The default converterMethod value, used to indicate that no converter method name has been supplied.
      */
-    public static final String NO_CONVERTER_METHOD = "##NONE##";
+    String NO_CONVERTER_METHOD = "##NONE##";
 
     /**
      * Parameter to indicate that this converter method or constructor accepts {@code null} values.
@@ -90,6 +90,8 @@ public @interface Converter {
      *          return new StringBuffer(bufferValue);
      *     }
      * </pre>
+     *
+     * @return {@code true} if this Converter accepts {@code null}s as values for conversion.
      */
     boolean acceptsNullValues() default false;
 
@@ -112,6 +114,9 @@ public @interface Converter {
      *         }
      *     }
      * </pre>
+     *
+     * @return the priority of this Converter method or constructor. Members with lower priorities are
+     * attempted <strong>before</strong> higher priority ones.
      */
     int priority() default DEFAULT_PRIORITY;
 
@@ -135,6 +140,9 @@ public @interface Converter {
      *         }
      *     }
      * </pre>
+     *
+     * @return Name of a method with a single parameter of the same source type as the {@code @Converter}-annotated
+     * method, and returning a {@code boolean}.
      */
     String conditionalConversionMethod() default NO_CONVERTER_METHOD;
 }
