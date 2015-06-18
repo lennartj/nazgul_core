@@ -43,8 +43,8 @@ public abstract class AbstractMutableProperty<K extends Serializable & Comparabl
         extends AbstractProperty<K, V> implements MutableProperty<K, V> {
 
     /**
-     * JAXB / JPA-friendly constructor.<br/>
-     * <strong>Note!</strong> For framework use only.
+     * <p>JAXB / JPA-friendly constructor.</p>
+     * <p><strong>Note!</strong> For framework use only.</p>
      */
     public AbstractMutableProperty() {
     }

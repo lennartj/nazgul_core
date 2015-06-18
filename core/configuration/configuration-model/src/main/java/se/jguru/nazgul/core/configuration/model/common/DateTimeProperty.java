@@ -52,8 +52,8 @@ public class DateTimeProperty extends AbstractStringKeyedMutableProperty<DateTim
     private Calendar value;
 
     /**
-     * JAXB / JPA-friendly constructor.<br/>
-     * <strong>Note!</strong> For framework use only.
+     * <p>JAXB / JPA-friendly constructor.</p>
+     * <p><strong>Note!</strong> For framework use only.</p>
      */
     public DateTimeProperty() {
     }

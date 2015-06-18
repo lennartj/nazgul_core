@@ -81,10 +81,11 @@ public abstract class AbstractPath<SegmentType extends Serializable & Comparable
 
     /**
      * Convenience constructor, creating a new AbstractPath instance with the supplied compoundPath
-     * and using the {@inheritDoc DEFAULT_SEGMENT_SEPARATOR} for separator between segments.
+     * and using the {@code DEFAULT_SEGMENT_SEPARATOR} for separator between segments.
      *
      * @param compoundPath The compound path representation of this AbstractPath.
      *                     Each segment string must be convertible to a {@code SegmentType} instance.
+     * @see #DEFAULT_SEGMENT_SEPARATOR
      */
     public AbstractPath(final String compoundPath) {
         this(compoundPath, DEFAULT_SEGMENT_SEPARATOR);

@@ -45,6 +45,7 @@ public class BundleListenerAdapter<T extends EventConsumer<T>>
      * cluster-unique ID to this AbstractClusterable instance.
      *
      * @param clusterUniqueID   A cluster-unique Identifier.
+     * @param delegate          The BundleListener to which all event handling should be delegated.
      * @param eventConsumerType The type of EventConsumer handled by this AbstractEventProducer.
      */
     public BundleListenerAdapter(final String clusterUniqueID,

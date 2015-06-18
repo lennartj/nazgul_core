@@ -62,21 +62,24 @@ public abstract class AbstractFrameworkLauncher<T extends OsgiFrameworkListener>
     /**
      * Creates a new AbstractFrameworkLauncher with the provided IdGenerator.
      *
-     * @param idGenerator The ID generator used to acquire a cluster-unique identifier for
-     *                    this AbstractFrameworkLauncher instance.
+     * @param idGenerator        The ID generator used to acquire a cluster-unique identifier for
+     *                           this AbstractFrameworkLauncher instance.
+     * @param eventConsumerClass The type of eventConsumer which should be used by this AbstractFrameworkLauncher.
+     * @see AbstractEventProducer#AbstractEventProducer(IdGenerator, Class)
      */
-    protected AbstractFrameworkLauncher(final IdGenerator idGenerator, final Class<T> tClass) {
-        super(idGenerator, tClass);
+    protected AbstractFrameworkLauncher(final IdGenerator idGenerator, final Class<T> eventConsumerClass) {
+        super(idGenerator, eventConsumerClass);
     }
 
     /**
      * Creates a new AbstractFrameworkLauncher and assigns the provided
      * cluster-unique ID to this instance.
      *
-     * @param clusterUniqueID A cluster-unique Identifier.
+     * @param clusterUniqueID    A cluster-unique Identifier.
+     * @param eventConsumerClass The type of eventConsumer which should be used by this AbstractFrameworkLauncher.
      */
-    protected AbstractFrameworkLauncher(final String clusterUniqueID, final Class<T> tClass) {
-        this(new ConstantIdGenerator(clusterUniqueID), tClass);
+    protected AbstractFrameworkLauncher(final String clusterUniqueID, final Class<T> eventConsumerClass) {
+        this(new ConstantIdGenerator(clusterUniqueID), eventConsumerClass);
     }
 
     /**

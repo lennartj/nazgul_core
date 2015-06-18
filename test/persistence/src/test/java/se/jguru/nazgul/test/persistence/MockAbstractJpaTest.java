@@ -65,7 +65,7 @@ public class MockAbstractJpaTest extends AbstractJpaTest {
     }
 
     /*
-    @Override
+    @;Override
     public void setUp() throws Exception {
 
         // Delegate

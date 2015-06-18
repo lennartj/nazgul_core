@@ -56,13 +56,12 @@ public final class FileUtils {
     private static final Logger log = LoggerFactory.getLogger(FileUtils.class.getName());
 
     /**
-     * The line ending string:
-     * {@value}
+     * The line ending string.
      */
     public static final String LINE_ENDING = System.getProperty("line.separator");
 
     /**
-     * The file separator ("/" on unix, "\" on windows): {@value}
+     * The file separator ("/" on unix, "\" on windows).
      */
     public static final String FILE_SEPARATOR = System.getProperty("file.separator");
 

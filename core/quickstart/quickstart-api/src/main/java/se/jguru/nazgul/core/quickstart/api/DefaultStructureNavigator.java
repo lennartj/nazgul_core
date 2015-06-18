@@ -55,6 +55,7 @@ public class DefaultStructureNavigator implements StructureNavigator, Serializab
      * to identify pieces of the project.
      *
      * @param namingStrategy The non-null ProjectNamingStrategy used to identify parts of the project.
+     * @param pomAnalyzer    The non-null PomAnalyzer used to check POMs for validity.
      */
     public DefaultStructureNavigator(final NamingStrategy namingStrategy, final PomAnalyzer pomAnalyzer) {
 

@@ -454,13 +454,10 @@ public class MockBundleContext implements BundleContext {
      * {@code IllegalArgumentException} is thrown if {@code service} is not an
      * {@code instanceof} all the specified class names.
      * <li>The Framework adds the following service properties to the service
-     * properties from the specified {@code Dictionary} (which may be
-     * {@code null}): <br/>
+     * properties from the specified {@code Dictionary} (which may be {@code null}):
      * A property named {@link org.osgi.framework.Constants#SERVICE_ID} identifying the
-     * registration number of the service <br/>
-     * A property named {@link org.osgi.framework.Constants#OBJECTCLASS} containing all the
-     * specified classes. <br/>
-     * Properties with these names in the specified {@code Dictionary} will be
+     * registration number of the service. A property named {@link org.osgi.framework.Constants#OBJECTCLASS}
+     * containing all the specified classes.Properties with these names in the specified {@code Dictionary} will be
      * ignored.
      * <li>The service is added to the Framework service registry and may now be
      * used by other bundles.

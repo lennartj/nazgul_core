@@ -82,7 +82,7 @@ public class ResourceBundleLocalResourcesTest {
              * @return an array of an <code>Object</code> array representing a
              * key-value pair.
              * /
-            @Override
+            &#64;Override
             protected Object[][] getContents() {
                 return new Object[][]{
                         new Object[]{"aDate", then},

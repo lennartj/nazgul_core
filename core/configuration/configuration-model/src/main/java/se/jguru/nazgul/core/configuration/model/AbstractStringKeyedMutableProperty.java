@@ -51,8 +51,8 @@ public abstract class AbstractStringKeyedMutableProperty<V extends Serializable>
     private String key;
 
     /**
-     * JAXB / JPA-friendly constructor.<br/>
-     * <strong>Note!</strong> For framework use only.
+     * <p>JAXB / JPA-friendly constructor.</p>
+     * <p><strong>Note!</strong> For framework use only.</p>
      */
     public AbstractStringKeyedMutableProperty() {
     }

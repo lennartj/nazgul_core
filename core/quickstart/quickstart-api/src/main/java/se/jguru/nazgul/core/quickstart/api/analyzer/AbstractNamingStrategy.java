@@ -158,8 +158,8 @@ public abstract class AbstractNamingStrategy implements NamingStrategy {
      * artifactId. For example:
      * <pre>
      *     <code>
-     *         &lt;groupId>se.jguru.nazgul.foo.poms.<strong>foo-api-parent</strong>&lt;/groupId>
-     *         &lt;artifactId>nazgul-<strong>foo-api-parent</strong>&lt;/artifactId>
+     *         &lt;groupId&gt;se.jguru.nazgul.foo.poms.<strong>foo-api-parent</strong>&lt;/groupId&gt;
+     *         &lt;artifactId&gt;nazgul-<strong>foo-api-parent</strong>&lt;/artifactId&gt;
      *     </code>
      * </pre>
      * Override this method to provide custom logic if your parent POMs are crafted in another way.

@@ -26,15 +26,15 @@ import se.jguru.nazgul.core.quickstart.api.InvalidStructureException;
 import se.jguru.nazgul.core.quickstart.api.PomType;
 
 /**
- * Specification for how to validate the content of POMs. In the Nazgul Framework structure, POMs have
+ * <p>Specification for how to validate the content of POMs. In the Nazgul Framework structure, POMs have
  * distinct roles and - therefore - consists of separate patterns. This PomAnalyzer provides a top-level
  * specification for how a client can validate the content of a Maven POM. Such validation is required to
  * quickly detect incompatibilities in a desired multi-module Maven reactor structure - which, in turn, is
- * required to reduce entropy increase in big Maven projects.
+ * required to reduce entropy increase in big Maven projects.</p>
+ * <p>Refer to <a href="http://maven.apache.org/pom.html">the Maven POM specification</a> which hosts a reference to
+ * all parts of the POM.</p>
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
- * @see <a href="http://maven.apache.org/pom.html">The POM specification</a> hosts a reference to all parts
- * of the POM.
  */
 public interface PomAnalyzer {
 

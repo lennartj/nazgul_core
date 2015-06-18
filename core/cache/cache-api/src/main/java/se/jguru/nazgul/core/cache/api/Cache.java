@@ -72,8 +72,7 @@ public interface Cache<K, V> extends Clusterable, Iterable<K> {
      * implementation.</strong>
      *
      * @param listener The listener to add.
-     * @return <code>true</true> if the CacheListener was properly added
-     * or <code>false</code> if it could not be added.
+     * @return {@code true} if the CacheListener was properly added, and {@code false} otherwise.
      */
     boolean addListener(CacheListener<K, V> listener);
 
