@@ -96,8 +96,8 @@ public class ActiveMqBrokerRequestResponseExampleTest extends AbstractRequestRes
                 }
 
                 // Send the error message back to the client.
-                responseMessageProducer.send(toReturn);
-                serverSideResponseSession.commit();
+                // responseMessageProducer.send(toReturn);
+                // serverSideResponseSession.commit();
 
                 // All done.
                 return (T) toReturn;
@@ -203,10 +203,11 @@ public class ActiveMqBrokerRequestResponseExampleTest extends AbstractRequestRes
         clientRequestProducer.send(toSend);
         clientRequestSession.commit();
 
-        final boolean correctlyReceivedMessage = receivedMessagesLatch.await(2, TimeUnit.SECONDS);
+        final boolean correctlyReceivedMessages = receivedMessagesLatch.await(2, TimeUnit.SECONDS);
 
         // Assert
-        Assert.assertTrue(correctlyReceivedMessage);
+        Assert.assertTrue(correctlyReceivedMessages);
+
         Assert.assertEquals("Expected 1 received client response message, but got [" + receivedClientResponses.size()
                 + "]: " + receivedClientResponses, 1, receivedClientResponses.size());
         Assert.assertEquals("Expected 1 received server message, but got: " + serverSideReceivedMessages,
