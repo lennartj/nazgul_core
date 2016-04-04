@@ -61,8 +61,13 @@ public class XmlMarshallableFieldFilterTest {
         mapData.put("foo", "bar");
         mapData.put("baz", "gnat");
 
-        primitivesAndCollections = new ClassWithPrimitivesAndCollections("aString", 42,
-                new HashSet<String>(data), mapData, "gnus", data);
+        primitivesAndCollections = new ClassWithPrimitivesAndCollections(
+                "aString",
+                42,
+                new HashSet<String>(data),
+                mapData,
+                "gnus",
+                data);
     }
 
     @Test(expected = NullPointerException.class)

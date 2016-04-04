@@ -112,8 +112,13 @@ public final class XmlMarshallableFieldFilter implements Filter<Field> {
         INSTANCE.mapClass(type);
 
         final List<Field> toReturn = new ArrayList<Field>();
-        for (Class<?> current = type; current != Object.class; current = current.getSuperclass()) {
-            toReturn.addAll(INSTANCE.type2XmlMarshallableFieldMap.get(current));
+        for (Class<?> current = type; current != null && current != Object.class; current = current.getSuperclass()) {
+
+            // Ensure that we do not create a NPE here.
+            final List<Field> fieldList = INSTANCE.type2XmlMarshallableFieldMap.get(current);
+            if (fieldList != null) {
+                toReturn.addAll(fieldList);
+            }
         }
 
         // All done.
