@@ -8,7 +8,7 @@
     <parent>
         <groupId>se.jguru.nazgul.core.poms.core-api-parent</groupId>
         <artifactId>nazgul-core-api-parent</artifactId>
-        <version>1.8.1-SNAPSHOT</version>
+        <version>1.8.1</version>
         <relativePath>../../poms/core-api-parent</relativePath>
     </parent>
 
@@ -30,7 +30,7 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.jmx.test.mbeanserver</groupId>
             <artifactId>nazgul-core-jmx-test</artifactId>
-            <version>1.8.1-SNAPSHOT</version>
+            <version>1.8.1</version>
             <scope>test</scope>
         </dependency>
 
@@ -109,6 +109,6 @@
         <connection>${scm.url.prefix}/${reactor.name}</connection>
         <developerConnection>${scm.url.prefix}/${reactor.name}</developerConnection>
         <url>${reactor.url.remote.prefix}/${reactor.name}</url>
-        <tag>HEAD</tag>
+        <tag>nazgul-core-1.8.1</tag>
     </scm>
 </project>
