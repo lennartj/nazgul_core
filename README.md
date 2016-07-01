@@ -16,7 +16,7 @@ The Nazgul Framework consists of software components split between two reactors:
     state for any class in any project.
 
 2. **[Nazgul Framework: Core](https://github.com/lennartj/nazgul_core)**. The Nazgul Core project (this reactor)
-    provides a set of libraries ("JARs"), built using the Nazgul Tools codestyle. These JARs have small footprints
+    provides a set of libraries (i.e. "JARs"), built using the Nazgul Tools codestyle. These JARs have small footprints
     provide well-defined tasks and are ready for immediate use in any project.
 
 ## 1.1. Release Documentation
