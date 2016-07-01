@@ -39,12 +39,15 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
- * Abstract superclass of all Nazgul-style Entity classes, holding commonly used
- * mechanics for equality, cloning and validation.
+ * Abstract convenience superclass for Entity classes, sporting normally required implementations
+ * for Serializing, Cloning and Validation. Also defines a common way to handle standard JPA properties
+ * for primary key (by defining a synthetic Long as PK) and version (by defining a Long as version identifier).
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
+ * @see NazgulMutableIdEntity
  */
 @MappedSuperclass
 @XmlType(namespace = XmlBinder.CORE_NAMESPACE, propOrder = {"id", "version"})
@@ -55,13 +58,26 @@ public abstract class NazgulEntity implements Serializable, Cloneable, Validatab
     // Internal state
     private static final long serialVersionUID = 8829990002L;
 
+    /**
+     * The Java Persistence API (JPA) identifier (i.e. primary key) value of this {@link NazgulEntity}.
+     * Cannot be null when being written to (or read from) a relational database, but can be absent
+     * when marshalled to XML via JAXB if this NazgulEntity was not yet written to a database.
+     * Note that an entity class should only contain a single Id property (i.e. do not create more
+     * properties annotated with Id in subclasses).
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @XmlAttribute(required = false, name = "jpaId")
+    @XmlAttribute(name = "jpaId")
     private long id;
 
+    /**
+     * The version of this NazgulEntity, used internally by the Java Persistence API implementation to
+     * ensure consistency when writing back modified entities to the database.
+     * Note that an entity class should only contain a single version property (i.e. do not create more
+     * properties annotated with Version in subclasses).
+     */
     @Version
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private long version;
 
     /**
@@ -123,7 +139,7 @@ public abstract class NazgulEntity implements Serializable, Cloneable, Validatab
      */
     @Override
     public int hashCode() {
-        return Entities.hashCode(this, Object.class);
+        return Objects.hash(id, version);
     }
 
     /**
@@ -152,6 +168,7 @@ public abstract class NazgulEntity implements Serializable, Cloneable, Validatab
         final NazgulEntity clone = (NazgulEntity) super.clone();
         clone.version = this.version;
 
+        // All Done.
         return clone;
     }
 
@@ -173,12 +190,25 @@ public abstract class NazgulEntity implements Serializable, Cloneable, Validatab
     }
 
     /**
-     * Override this method to perform validation of the entity internal state of this Validatable.
-     * <strong>Note!</strong> The first call within the validateEntityState method should be
-     * {@code super.validateEntityState()}.
+     * <p>Override this method to perform validation of the entity internal state of this Validatable.
+     * It is recommended to call {@code super.validateEntityState()} in all subclasses, to ensure that
+     * all validation mechanics from superclasses is guaranteed to run. A typical implementation of the
+     * validateEntityState method is something like:</p>
+     * <pre>
+     *     <code>
+     *         // For this sample, we can assume that...
+     *         // 'aMember' is the variable name of a private member (variable) within this class.
+     *         // 'aStringMember' is a private member of type String within this class.
+     *         //
+     *         InternalStateValidationException.create()
+     *              .notNull(aMember, "aMember")
+     *              .notNullOrEmpty(aStringMember, "aStringMember")
+     *              .endExpressionAndValidate();
+     *     </code>
+     * </pre>
      *
-     * @throws InternalStateValidationException if the state of this Validatable was in an incorrect
-     *                                          state (i.e. invalid).
+     * @throws InternalStateValidationException if the internal state of this Validatable was in an
+     *                                          incorrect state (i.e. invalid).
      */
     protected abstract void validateEntityState() throws InternalStateValidationException;
 }
