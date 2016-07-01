@@ -62,19 +62,19 @@
     -->
     <distributionManagement>
         <site>
-            <id>jGuru_NazgulCoreSite</id>
-            <name>jGuru_NazgulCoreSite</name>
-            <url>${distro.url.prefix}/${path.in.reactor}</url>
+            <id>github_site</id>
+            <name>GitHub Site for Nazgul Core</name>
+            <url>${site.top.url}/${path.in.reactor}</url>
         </site>
     </distributionManagement>
 
     <!--
-       Define connections for Maven's VCS integration.
+        Define connections for Maven's VCS integration.
     -->
     <scm>
-        <connection>${scm.url.prefix}/${reactor.name}</connection>
-        <developerConnection>${scm.url.prefix}/${reactor.name}</developerConnection>
-        <url>${reactor.url.remote.prefix}/${reactor.name}</url>
+        <connection>${scm.connection.url}</connection>
+        <developerConnection>${scm.devConnection.url}</developerConnection>
+        <url>${scm.url}</url>
         <tag>HEAD</tag>
     </scm>
 </project>
