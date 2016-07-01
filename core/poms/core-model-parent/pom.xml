@@ -99,12 +99,6 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jaxb2-maven-plugin</artifactId>
-                <configuration>
-                    <includes>
-                        <include>**/*.java</include>
-                    </includes>
-                    <outputDirectory>${project.build.directory}/jaxb2/transformed/generated-schema</outputDirectory>
-                </configuration>
             </plugin>
         </plugins>
     </build>

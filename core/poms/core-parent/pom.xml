@@ -29,7 +29,7 @@
     <parent>
         <groupId>se.jguru.nazgul.tools.poms.external</groupId>
         <artifactId>nazgul-tools-external-parent</artifactId>
-        <version>4.1.1</version>
+        <version>5.0.0</version>
         <relativePath />
     </parent>
 
@@ -71,7 +71,7 @@
         <!--
             Supply the version of the Nazgul Tools framework as a Property.
         -->
-        <nazgul.tools.version>4.1.1</nazgul.tools.version>
+        <nazgul.tools.version>5.0.0</nazgul.tools.version>
 
         <!--
             Other, external version properties.
@@ -246,6 +246,11 @@
                 <version>1.1.0.Final</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>2.9.4</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -267,17 +272,17 @@
 
         <pluginManagement>
             <plugins>
+
+                <!--
+                    Configures the Jaxb2 Maven Plugin.
+
+                    Why:  Ensure we use a reasonably new JAXB plugin implementation.
+                    Used: Model lifecycle, generate sources.
+                -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>jaxb2-maven-plugin</artifactId>
-                    <version>1.6</version>
-                    <!--$NO-MVN-MAN-VER$-->
-                    <configuration>
-                        <includes>
-                            <include>**/*.java</include>
-                        </includes>
-                        <outputDirectory>${project.build.directory}/jaxb2/transformed/generated-schema</outputDirectory>
-                    </configuration>
+                    <version>2.2</version>
                 </plugin>
 
                 <!--
