@@ -128,6 +128,25 @@ public class EhCacheListenerAdapter implements CacheEventListener, Serializable 
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object o) {
+
+        // Fail fast
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof EhCacheListenerAdapter)) {
+            return false;
+        }
+
+        // Cast and move on.
+        final EhCacheListenerAdapter that = (EhCacheListenerAdapter) o;
+        return listener.equals(that.listener);
+    }
+
+    /**
      * @return The identifier of the contained CacheListener.
      */
     public final String getId() {

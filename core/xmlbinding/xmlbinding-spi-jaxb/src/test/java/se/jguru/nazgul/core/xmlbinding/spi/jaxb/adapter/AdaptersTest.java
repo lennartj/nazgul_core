@@ -50,8 +50,8 @@ import java.util.TimeZone;
 public class AdaptersTest {
 
     // Constants
-    private static final ZoneId SWEDISH_ZONE = ZoneId.of("ECT");
-    private static final TimeZone SWEDISH_TZ = TimeZone.getTimeZone("Europe/Stockholm");
+    private static final TimeZone SWEDISH_TIMEZONE = TimeZone.getTimeZone("Europe/Stockholm");
+    private static final ZoneId SWEDISH_ZONE = SWEDISH_TIMEZONE.toZoneId();
 
     // Shared state
     private LocalDate lastAdmissionDate = LocalDate.of(2016, Month.FEBRUARY, 5);
@@ -67,7 +67,7 @@ public class AdaptersTest {
             eventStartTime,
             eventEndTime,
             admissionTime,
-            SWEDISH_TZ);
+            SWEDISH_TIMEZONE);
 
     private Marshaller marshaller;
     private Unmarshaller unmarshaller;
@@ -95,10 +95,25 @@ public class AdaptersTest {
 
         // Act
         final String result = marshalToXML(unitUnderTest);
-        System.out.println("Got: " + result);
+        // System.out.println("Got: " + result);
 
         // Assert
-        // Assert.assertTrue(XmlTestUtils.compareXmlIgnoringWhitespace(expected, result).identical());
+        Assert.assertTrue(XmlTestUtils.compareXmlIgnoringWhitespace(expected, result).identical());
+    }
+
+    @Test
+    public void validateMarshallingWithNullData() throws Exception {
+
+        // Assemble
+        final String expected = XmlTestUtils.readFully("testdata/dateExampleWithNulls.xml");
+        unitUnderTest = new DateExampleVO(null, null, null, null, null);
+
+        // Act
+        final String result = marshalToXML(unitUnderTest);
+        // System.out.println("Got: " + result);
+
+        // Assert
+        Assert.assertTrue(XmlTestUtils.compareXmlIgnoringWhitespace(expected, result).identical());
     }
 
     @Test
@@ -116,7 +131,32 @@ public class AdaptersTest {
         Assert.assertEquals(admissionTime, resurrected.getAdmissionTime());
         Assert.assertEquals(eventStartTime, resurrected.getEventStartTime());
         Assert.assertEquals(eventEndTime, resurrected.getEventEndTime());
-        Assert.assertEquals(SWEDISH_TZ, resurrected.getEventTimeZone());
+        Assert.assertEquals(SWEDISH_TIMEZONE, resurrected.getEventTimeZone());
+    }
+
+    @Test
+    public void validateUnmarshallingWithNullData() throws Exception {
+
+        // Assemble
+        final String data = XmlTestUtils.readFully("testdata/dateExampleWithNulls.xml");
+
+        // Act
+        final DateExampleVO resurrected = unmarshalFromXML(DateExampleVO.class, data);
+
+        // Assert
+        Assert.assertNotNull(resurrected);
+        Assert.assertNull(resurrected.getLastAdmissionDate());
+        Assert.assertNull(resurrected.getAdmissionTime());
+        Assert.assertNull(resurrected.getEventStartTime());
+        Assert.assertNull(resurrected.getEventEndTime());
+        Assert.assertNull(resurrected.getEventTimeZone());
+    }
+
+    @Test
+    public void validateAdaptersHandlingExplicitNulls() {
+
+        // Assemble
+
     }
 
     //

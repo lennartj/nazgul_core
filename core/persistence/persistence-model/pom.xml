@@ -117,9 +117,9 @@
                         <haltOnFailure>true</haltOnFailure>
                         <regexes>
                             <regex>
-                                <pattern>se.jguru.nazgul.core.persistence.model.Entities</pattern>
+                                <pattern>se.jguru.nazgul.core.persistence.model.converter.*</pattern>
                                 <branchRate>65</branchRate>
-                                <lineRate>70</lineRate>
+                                <lineRate>74</lineRate>
                             </regex>
                         </regexes>
                     </check>
@@ -140,7 +140,6 @@
                             <transformSchemas>
                                 <transformSchema>
                                     <uri>http://www.jguru.se/nazgul/core</uri>
-                                    <toPrefix>core</toPrefix>
                                     <toFile>core_persistence_model.xsd</toFile>
                                 </transformSchema>
                             </transformSchemas>
