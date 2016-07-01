@@ -1,0 +1,251 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>AbstractProjectFactory xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../../../apidocs/se/jguru/nazgul/core/quickstart/api/generator/AbstractProjectFactory.html">View Javadoc</a></div><pre>
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   <em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   <em class="jxr_comment"> * #%L</em>
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <em class="jxr_comment"> * Nazgul Project: nazgul-core-quickstart-api</em>
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <em class="jxr_comment"> * %%</em>
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   <em class="jxr_comment"> * Copyright (C) 2010 - 2015 jGuru Europe AB</em>
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <em class="jxr_comment"> * %%</em>
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <em class="jxr_comment"> * Licensed under the jGuru Europe AB license (the "License"), based</em>
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <em class="jxr_comment"> * on Apache License, Version 2.0; you may not use this file except</em>
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   <em class="jxr_comment"> * in compliance with the License.</em>
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <em class="jxr_comment"> * </em>
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  <em class="jxr_comment"> * You may obtain a copy of the License at</em>
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  <em class="jxr_comment"> * </em>
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  <em class="jxr_comment"> *       <a href="http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.tx" target="alexandria_uri">http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.tx</a>t</em>
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>  <em class="jxr_comment"> * </em>
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>  <em class="jxr_comment"> * Unless required by applicable law or agreed to in writing, software</em>
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_comment"> * distributed under the License is distributed on an "AS IS" BASIS,</em>
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>  <em class="jxr_comment"> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</em>
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>  <em class="jxr_comment"> * See the License for the specific language governing permissions and</em>
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <em class="jxr_comment"> * limitations under the License.</em>
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <em class="jxr_comment"> * #L%</em>
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <em class="jxr_comment"> */</em>
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">package</strong> se.jguru.nazgul.core.quickstart.api.generator;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.lang3.Validate;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.slf4j.Logger;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.slf4j.LoggerFactory;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> se.jguru.nazgul.core.parser.api.TokenParser;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> se.jguru.nazgul.core.quickstart.api.FileUtils;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> se.jguru.nazgul.core.quickstart.api.InvalidStructureException;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> se.jguru.nazgul.core.quickstart.api.PomType;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> se.jguru.nazgul.core.quickstart.api.analyzer.AbstractNamingStrategy;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> se.jguru.nazgul.core.quickstart.api.analyzer.NamingStrategy;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> se.jguru.nazgul.core.quickstart.api.generator.parser.PomToken;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> se.jguru.nazgul.core.quickstart.api.generator.parser.SingleBracketPomTokenParserFactory;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> se.jguru.nazgul.core.quickstart.model.Name;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> se.jguru.nazgul.core.quickstart.model.Project;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> se.jguru.nazgul.core.quickstart.model.SimpleArtifact;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> java.io.File;
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <em class="jxr_javadoccomment"> * Abstract implementation of the ProjectFactory sporting</em>
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <em class="jxr_javadoccomment"> *</em>
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <em class="jxr_javadoccomment"> * @author &lt;a href="<a href="mailto:lj@jguru.se" target="alexandria_uri">mailto:lj@jguru.se</a>"&gt;Lennart J&amp;ouml;relid&lt;/a&gt;, jGuru Europe AB</em>
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../se/jguru/nazgul/core/quickstart/api/generator/AbstractProjectFactory.html">AbstractProjectFactory</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../../se/jguru/nazgul/core/quickstart/api/generator/AbstractFactory.html">AbstractFactory</a> <strong class="jxr_keyword">implements</strong> <a href="../../../../../../../se/jguru/nazgul/core/quickstart/api/generator/ProjectFactory.html">ProjectFactory</a> {
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>      <em class="jxr_comment">// Our log</em>
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> Logger log = LoggerFactory.getLogger(AbstractProjectFactory.<strong class="jxr_keyword">class</strong>.getName());
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>  
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  <em class="jxr_javadoccomment">     * Creates a new AbstractProjectFactory wrapping the supplied data.</em>
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>  <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>  <em class="jxr_javadoccomment">     * @param namingStrategy The active NamingStrategy, used to validate given Project data.</em>
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>      <strong class="jxr_keyword">protected</strong> <a href="../../../../../../../se/jguru/nazgul/core/quickstart/api/generator/AbstractProjectFactory.html">AbstractProjectFactory</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../../../../se/jguru/nazgul/core/quickstart/api/analyzer/NamingStrategy.html">NamingStrategy</a> namingStrategy) {
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>          <strong class="jxr_keyword">super</strong>(namingStrategy);
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>      }
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>      @Override
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> createProject(<strong class="jxr_keyword">final</strong> File projectParentDir,
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>                                   <strong class="jxr_keyword">final</strong> Project project,
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>                                   <strong class="jxr_keyword">final</strong> String packagePrefix,
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>                                   <strong class="jxr_keyword">final</strong> String reactorParentMavenVersion,
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>                                   <strong class="jxr_keyword">final</strong> String topmostParentMavenVersion)
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>              <strong class="jxr_keyword">throws</strong> IllegalArgumentException, IllegalStateException {
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>  
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>          <em class="jxr_comment">// Check sanity</em>
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>          Validate.notNull(project, <span class="jxr_string">"Cannot handle null projectDefinition argument."</span>);
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>          Validate.notNull(projectParentDir, <span class="jxr_string">"Cannot handle null projectParentDir argument."</span>);
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>          Validate.isTrue(projectParentDir.exists() &amp;&amp; projectParentDir.isDirectory(),
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>                  <span class="jxr_string">"Project parent directory ["</span> + FileUtils.getCanonicalPath(projectParentDir)
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>                          + <span class="jxr_string">"] must exist and be a directory."</span>);
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>          Validate.notEmpty(reactorParentMavenVersion, <span class="jxr_string">"Cannot handle null or empty reactorParentMavenVersion argument."</span>);
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>          Validate.notEmpty(topmostParentMavenVersion, <span class="jxr_string">"Cannot handle null or empty topmostParentMavenVersion argument."</span>);
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>  
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>          <strong class="jxr_keyword">final</strong> String reverseDNS = packagePrefix == <strong class="jxr_keyword">null</strong> ? <span class="jxr_string">""</span> : packagePrefix.replace(<span class="jxr_string">"/"</span>, <span class="jxr_string">"."</span>);
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>  
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>          <em class="jxr_comment">// Synthesize the Name from the supplied project, and validate it.</em>
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>          <strong class="jxr_keyword">final</strong> Name projectName = <strong class="jxr_keyword">new</strong> Name(
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>                  project.getPrefix(),
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>                  project.getName(),
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>                  AbstractNamingStrategy.REACTOR_SUFFIX);
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>          getNamingStrategy().validate(projectName, PomType.ROOT_REACTOR);
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>  
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>          <em class="jxr_comment">// Find the directory of the new project, which should be on the form [parent]/[name].</em>
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>          <strong class="jxr_keyword">final</strong> String projectRootDirName = getNamingStrategy().isPrefixRequiredOnAllFolders()
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>                  ? project.getPrefix() + Name.DEFAULT_SEPARATOR + project.getName()
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>                  : project.getName();
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>          <strong class="jxr_keyword">final</strong> File projectRootDir = <strong class="jxr_keyword">new</strong> File(projectParentDir, projectRootDirName);
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>          <strong class="jxr_keyword">if</strong> (log.isInfoEnabled()) {
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>              log.info(<span class="jxr_string">"Using project root directory ["</span> + projectRootDir.getAbsolutePath() + <span class="jxr_string">"]."</span>);
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>          }
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>          <strong class="jxr_keyword">if</strong> (!FileUtils.exists(projectRootDir, <strong class="jxr_keyword">true</strong>) &amp;&amp; !projectRootDir.mkdirs()) {
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>              <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"Project root directory ["</span> + FileUtils.getCanonicalPath(projectRootDir)
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>                      + <span class="jxr_string">"] was nonexistent and could not be created."</span>);
+<a class="jxr_linenumber" name="L100" href="#L100">100</a>         }
+<a class="jxr_linenumber" name="L101" href="#L101">101</a> 
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>         <em class="jxr_comment">// Create the project structure.</em>
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>         createParentPom(projectRootDir, <span class="jxr_string">""</span>, PomType.ROOT_REACTOR, project,
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>                 reactorParentMavenVersion, topmostParentMavenVersion, reverseDNS);
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>         createParentPom(projectRootDir, <span class="jxr_string">"poms"</span>, PomType.PARENT, project,
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>                 reactorParentMavenVersion, topmostParentMavenVersion, reverseDNS);
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>         createParentPom(projectRootDir, <span class="jxr_string">"poms"</span>, PomType.API_PARENT, project,
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>                 reactorParentMavenVersion, topmostParentMavenVersion, reverseDNS);
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>         createParentPom(projectRootDir, <span class="jxr_string">"poms"</span>, PomType.MODEL_PARENT, project,
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>                 reactorParentMavenVersion, topmostParentMavenVersion, reverseDNS);
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>         createParentPom(projectRootDir, <span class="jxr_string">"poms"</span>, PomType.WAR_PARENT, project,
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>                 reactorParentMavenVersion, topmostParentMavenVersion, reverseDNS);
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>         createParentPom(projectRootDir, <span class="jxr_string">"poms"</span>, PomType.REACTOR, project,
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>                 reactorParentMavenVersion, topmostParentMavenVersion, reverseDNS);
+<a class="jxr_linenumber" name="L115" href="#L115">115</a> 
+<a class="jxr_linenumber" name="L116" href="#L116">116</a>         <em class="jxr_comment">// All done.</em>
+<a class="jxr_linenumber" name="L117" href="#L117">117</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>     }
+<a class="jxr_linenumber" name="L119" href="#L119">119</a> 
+<a class="jxr_linenumber" name="L120" href="#L120">120</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L121" href="#L121">121</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="L122" href="#L122">122</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L123" href="#L123">123</a>     @Override
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>     <strong class="jxr_keyword">public</strong> Project createProjectDefinition(<strong class="jxr_keyword">final</strong> String prefix,
+<a class="jxr_linenumber" name="L125" href="#L125">125</a>                                            <strong class="jxr_keyword">final</strong> String name,
+<a class="jxr_linenumber" name="L126" href="#L126">126</a>                                            <strong class="jxr_keyword">final</strong> SimpleArtifact reactorParent,
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>                                            <strong class="jxr_keyword">final</strong> SimpleArtifact parentParent) {
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>         <em class="jxr_comment">// Check sanity</em>
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>         Validate.notEmpty(name, <span class="jxr_string">"Cannot handle null or empty name argument."</span>);
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>         Validate.notNull(reactorParent, <span class="jxr_string">"Cannot handle null reactorParent argument."</span>);
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>         Validate.notNull(parentParent, <span class="jxr_string">"Cannot handle null parentParent argument."</span>);
+<a class="jxr_linenumber" name="L132" href="#L132">132</a> 
+<a class="jxr_linenumber" name="L133" href="#L133">133</a>         <em class="jxr_comment">// All done.</em>
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> Project(prefix, name, reactorParent, parentParent);
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>     }
+<a class="jxr_linenumber" name="L136" href="#L136">136</a> 
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L138" href="#L138">138</a> <em class="jxr_javadoccomment">     * Synthesizes the directory name from the supplied Project and PomType.</em>
+<a class="jxr_linenumber" name="L139" href="#L139">139</a> <em class="jxr_javadoccomment">     * The resulting name should adhere to the NamingStrategy's</em>
+<a class="jxr_linenumber" name="L140" href="#L140">140</a> <em class="jxr_javadoccomment">     * {@code NamingStrategy.isPrefixRequiredOnAllFolders()} property.</em>
+<a class="jxr_linenumber" name="L141" href="#L141">141</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L142" href="#L142">142</a> <em class="jxr_javadoccomment">     * @param projectName   The name of the active project.</em>
+<a class="jxr_linenumber" name="L143" href="#L143">143</a> <em class="jxr_javadoccomment">     * @param projectPrefix The optional prefix of the active project. Must be supplied (and non-empty) if</em>
+<a class="jxr_linenumber" name="L144" href="#L144">144</a> <em class="jxr_javadoccomment">     *                      the NamingStrategy requires prefixes to be present on all folders' names.</em>
+<a class="jxr_linenumber" name="L145" href="#L145">145</a> <em class="jxr_javadoccomment">     * @param aPomType      The PomType for which a directory name should be synthesized.</em>
+<a class="jxr_linenumber" name="L146" href="#L146">146</a> <em class="jxr_javadoccomment">     * @return The name of the directory.</em>
+<a class="jxr_linenumber" name="L147" href="#L147">147</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>     <strong class="jxr_keyword">protected</strong> String getSkeletonPomDirectoryName(<strong class="jxr_keyword">final</strong> String projectName,
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>                                                  <strong class="jxr_keyword">final</strong> <a href="../../../../../../../se/jguru/nazgul/core/quickstart/api/PomType.html">PomType</a> aPomType,
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>                                                  <strong class="jxr_keyword">final</strong> String projectPrefix) {
+<a class="jxr_linenumber" name="L151" href="#L151">151</a> 
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>         <em class="jxr_comment">// Check sanity</em>
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>         Validate.notNull(aPomType, <span class="jxr_string">"Cannot handle null aPomType argument."</span>);
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>         Validate.notEmpty(projectName, <span class="jxr_string">"Cannot handle null or empty projectName argument."</span>);
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>         <strong class="jxr_keyword">if</strong> (getNamingStrategy().isPrefixRequiredOnAllFolders() &amp;&amp; (projectPrefix == <strong class="jxr_keyword">null</strong> || projectPrefix.isEmpty())) {
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException(<span class="jxr_string">"NamingStrategy ["</span> + getNamingStrategy().getClass().getSimpleName()
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>                     + <span class="jxr_string">"] requires that project prefix is required on all folders. Therefore, "</span>
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>                     + <span class="jxr_string">"a nonempty projectPrefix argument must be supplied."</span>);
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>         }
+<a class="jxr_linenumber" name="L160" href="#L160">160</a> 
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>         <em class="jxr_comment">// Reactor directories should only be called their respective component name.</em>
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>         <strong class="jxr_keyword">if</strong> (aPomType == PomType.ROOT_REACTOR || aPomType == PomType.REACTOR) {
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>             <strong class="jxr_keyword">return</strong> getNamingStrategy().isPrefixRequiredOnAllFolders()
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>                     ? projectPrefix : <span class="jxr_string">""</span>;
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>         }
+<a class="jxr_linenumber" name="L166" href="#L166">166</a> 
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>         <strong class="jxr_keyword">final</strong> String dirPrefix = (getNamingStrategy().isPrefixRequiredOnAllFolders()
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>                 ? projectPrefix + Name.DEFAULT_SEPARATOR + projectName
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>                 : projectName)
+<a class="jxr_linenumber" name="L170" href="#L170">170</a>                 + Name.DEFAULT_SEPARATOR;
+<a class="jxr_linenumber" name="L171" href="#L171">171</a> 
+<a class="jxr_linenumber" name="L172" href="#L172">172</a>         String dirSuffix = aPomType.name().toLowerCase().replace(<span class="jxr_string">"_"</span>, <span class="jxr_string">"-"</span>);
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>         <strong class="jxr_keyword">if</strong> (aPomType == PomType.OTHER_PARENT) {
+<a class="jxr_linenumber" name="L174" href="#L174">174</a>             dirSuffix = AbstractNamingStrategy.PARENT_SUFFIX;
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>         }
+<a class="jxr_linenumber" name="L176" href="#L176">176</a> 
+<a class="jxr_linenumber" name="L177" href="#L177">177</a>         <strong class="jxr_keyword">final</strong> String toReturn = dirPrefix + dirSuffix;
+<a class="jxr_linenumber" name="L178" href="#L178">178</a>         <strong class="jxr_keyword">if</strong> (log.isDebugEnabled()) {
+<a class="jxr_linenumber" name="L179" href="#L179">179</a>             log.debug(<span class="jxr_string">"PomType ["</span> + aPomType + <span class="jxr_string">"] yields directory name ["</span> + toReturn + <span class="jxr_string">"]"</span>);
+<a class="jxr_linenumber" name="L180" href="#L180">180</a>         }
+<a class="jxr_linenumber" name="L181" href="#L181">181</a> 
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>         <em class="jxr_comment">// All done.</em>
+<a class="jxr_linenumber" name="L183" href="#L183">183</a>         <strong class="jxr_keyword">return</strong> toReturn;
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>     }
+<a class="jxr_linenumber" name="L185" href="#L185">185</a> 
+<a class="jxr_linenumber" name="L186" href="#L186">186</a>     <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>     <em class="jxr_comment">// Helpers</em>
+<a class="jxr_linenumber" name="L188" href="#L188">188</a>     <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L189" href="#L189">189</a> 
+<a class="jxr_linenumber" name="L190" href="#L190">190</a>     @SuppressWarnings(<span class="jxr_string">"all"</span>)
+<a class="jxr_linenumber" name="L191" href="#L191">191</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> createParentPom(<strong class="jxr_keyword">final</strong> File rootDirectory,
+<a class="jxr_linenumber" name="L192" href="#L192">192</a>                                  <strong class="jxr_keyword">final</strong> String relativePomDirectory,
+<a class="jxr_linenumber" name="L193" href="#L193">193</a>                                  <strong class="jxr_keyword">final</strong> <a href="../../../../../../../se/jguru/nazgul/core/quickstart/api/PomType.html">PomType</a> pomType,
+<a class="jxr_linenumber" name="L194" href="#L194">194</a>                                  <strong class="jxr_keyword">final</strong> Project project,
+<a class="jxr_linenumber" name="L195" href="#L195">195</a>                                  <strong class="jxr_keyword">final</strong> String reactorPomMavenVersion,
+<a class="jxr_linenumber" name="L196" href="#L196">196</a>                                  <strong class="jxr_keyword">final</strong> String parentPomMavenVersion,
+<a class="jxr_linenumber" name="L197" href="#L197">197</a>                                  <strong class="jxr_keyword">final</strong> String packagePrefix) <strong class="jxr_keyword">throws</strong> InvalidStructureException {
+<a class="jxr_linenumber" name="L198" href="#L198">198</a> 
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>         <em class="jxr_comment">// Sane state?</em>
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>         <strong class="jxr_keyword">final</strong> String directoryName = getSkeletonPomDirectoryName(project.getName(), pomType, project.getPrefix());
+<a class="jxr_linenumber" name="L201" href="#L201">201</a>         <strong class="jxr_keyword">final</strong> String relativePath = relativePomDirectory.isEmpty() ? <span class="jxr_string">""</span> : relativePomDirectory + <span class="jxr_string">"/"</span>;
+<a class="jxr_linenumber" name="L202" href="#L202">202</a>         <strong class="jxr_keyword">final</strong> File pomDirectory = FileUtils.makeDirectory(rootDirectory, relativePath + directoryName);
+<a class="jxr_linenumber" name="L203" href="#L203">203</a>         <strong class="jxr_keyword">final</strong> File pomFile = <strong class="jxr_keyword">new</strong> File(pomDirectory, <span class="jxr_string">"pom.xml"</span>);
+<a class="jxr_linenumber" name="L204" href="#L204">204</a> 
+<a class="jxr_linenumber" name="L205" href="#L205">205</a>         <strong class="jxr_keyword">if</strong> (FileUtils.exists(pomFile, false)) {
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../../se/jguru/nazgul/core/quickstart/api/InvalidStructureException.html">InvalidStructureException</a>(<span class="jxr_string">"POM file ["</span> + FileUtils.getCanonicalPath(pomFile)
+<a class="jxr_linenumber" name="L207" href="#L207">207</a>                     + <span class="jxr_string">"] could not be created as it already exists."</span>);
+<a class="jxr_linenumber" name="L208" href="#L208">208</a>         }
+<a class="jxr_linenumber" name="L209" href="#L209">209</a> 
+<a class="jxr_linenumber" name="L210" href="#L210">210</a>         <strong class="jxr_keyword">if</strong> (log.isDebugEnabled()) {
+<a class="jxr_linenumber" name="L211" href="#L211">211</a>             log.debug(<span class="jxr_string">"Creating POM file ["</span> + FileUtils.getCanonicalPath(pomFile) + <span class="jxr_string">"]"</span>);
+<a class="jxr_linenumber" name="L212" href="#L212">212</a>         }
+<a class="jxr_linenumber" name="L213" href="#L213">213</a> 
+<a class="jxr_linenumber" name="L214" href="#L214">214</a>         <em class="jxr_comment">// Read the POM resource, and write the POM file.</em>
+<a class="jxr_linenumber" name="L215" href="#L215">215</a>         <strong class="jxr_keyword">final</strong> SingleBracketPomTokenParserFactory.Builder builder = <a href="../../../../../../../se/jguru/nazgul/core/quickstart/api/generator/parser/SingleBracketPomTokenParserFactory.html">SingleBracketPomTokenParserFactory</a>
+<a class="jxr_linenumber" name="L216" href="#L216">216</a>                 .create(pomType, project)
+<a class="jxr_linenumber" name="L217" href="#L217">217</a>                 .withoutProjectNameAsDirectoryPrefix()
+<a class="jxr_linenumber" name="L218" href="#L218">218</a>                 .inSoftwareComponentWithRelativePath(relativePath)
+<a class="jxr_linenumber" name="L219" href="#L219">219</a>                 .withProjectGroupIdPrefix(packagePrefix)
+<a class="jxr_linenumber" name="L220" href="#L220">220</a>                 .withoutProjectSuffix()
+<a class="jxr_linenumber" name="L221" href="#L221">221</a>                 .withMavenVersions(reactorPomMavenVersion, parentPomMavenVersion);
+<a class="jxr_linenumber" name="L222" href="#L222">222</a> 
+<a class="jxr_linenumber" name="L223" href="#L223">223</a>         <strong class="jxr_keyword">if</strong> (pomType == PomType.REACTOR) {
+<a class="jxr_linenumber" name="L224" href="#L224">224</a> 
+<a class="jxr_linenumber" name="L225" href="#L225">225</a>             <em class="jxr_comment">// Find all module names for the active reactor directory.</em>
+<a class="jxr_linenumber" name="L226" href="#L226">226</a>             <strong class="jxr_keyword">final</strong> StringBuilder moduleBuilder = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="L227" href="#L227">227</a>             <strong class="jxr_keyword">for</strong> (String current : FileUtils.getModuleNames(pomDirectory)) {
+<a class="jxr_linenumber" name="L228" href="#L228">228</a>                 moduleBuilder.append(<span class="jxr_string">"&lt;module&gt;"</span>).append(current).append(<span class="jxr_string">"&lt;/module&gt;\n"</span>);
+<a class="jxr_linenumber" name="L229" href="#L229">229</a>             }
+<a class="jxr_linenumber" name="L230" href="#L230">230</a>             builder.addToken(PomToken.MODULES.getToken(), moduleBuilder.toString());
+<a class="jxr_linenumber" name="L231" href="#L231">231</a>         }
+<a class="jxr_linenumber" name="L232" href="#L232">232</a> 
+<a class="jxr_linenumber" name="L233" href="#L233">233</a>         <strong class="jxr_keyword">final</strong> TokenParser tokenParser = builder.build();
+<a class="jxr_linenumber" name="L234" href="#L234">234</a> 
+<a class="jxr_linenumber" name="L235" href="#L235">235</a>         <strong class="jxr_keyword">final</strong> String pomData = tokenParser.substituteTokens(getTemplateResource(pomType + <span class="jxr_string">"/pom.xml"</span>));
+<a class="jxr_linenumber" name="L236" href="#L236">236</a>         FileUtils.writeFile(pomFile, pomData);
+<a class="jxr_linenumber" name="L237" href="#L237">237</a>     }
+<a class="jxr_linenumber" name="L238" href="#L238">238</a> }
+</pre>
+<hr/>
+<div id="footer">Copyright &#169; 2010&#x2013;2016 <a href="http://www.jguru.se/">jGuru Europe AB</a>. All rights reserved.</div>
+</body>
+</html>
