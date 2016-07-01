@@ -108,4 +108,31 @@ public abstract class AbstractClusterable implements Clusterable {
     public String toString() {
         return "[" + this.getClass().getSimpleName() + "::" + getClusterId() + "]";
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object o) {
+
+        // Fail fast
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof AbstractClusterable)) {
+            return false;
+        }
+
+        // Delegate to internal state
+        final AbstractClusterable that = (AbstractClusterable) o;
+        return id != null ? id.equals(that.id) : that.id == null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
 }

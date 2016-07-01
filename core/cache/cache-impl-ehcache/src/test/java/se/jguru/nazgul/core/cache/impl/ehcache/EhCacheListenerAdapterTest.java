@@ -194,4 +194,19 @@ public class EhCacheListenerAdapterTest extends AbstractCacheTest {
         Assert.assertEquals(expectedToString, actualToString);
     }
 
+    @Test
+    public void validateEquality() {
+
+        // Assemble
+        final MockCacheListener listener = new MockCacheListener("listener");
+        final EhCacheListenerAdapter adapter1 = new EhCacheListenerAdapter(listener);
+        final EhCacheListenerAdapter adapter2 = new EhCacheListenerAdapter(listener);
+
+        // Act & Assert
+        Assert.assertFalse(adapter1.equals("foo"));
+        Assert.assertFalse(adapter1.equals(null));
+        Assert.assertTrue(adapter1.equals(adapter1));
+        Assert.assertTrue(adapter1.equals(adapter2));
+    }
+
 }

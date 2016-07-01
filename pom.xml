@@ -54,6 +54,10 @@
         <url.prefix>${reactor.url.remote.prefix}/${reactor.name}/${project.version}</url.prefix>
         <distro.url.prefix>${site.url.prefix}/${reactor.name}/${project.version}</distro.url.prefix>
         <path.in.reactor />
+
+        <!-- Mojo java specification used by some plugins. -->
+        <jdk.version>1.8</jdk.version>
+        <mojo.java.target>${jdk.version}</mojo.java.target>
     </properties>
 
     <!-- +=============================================== -->

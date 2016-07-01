@@ -66,6 +66,15 @@ public class DateTimeTimestampConverter implements AttributeConverter<DateTime, 
     }
 
     /**
+     * Retrieves the currently set Chronology, used to convert to joda-time Instants.
+     *
+     * @return the currently set Chronology, used to convert to joda-time Instants.
+     */
+    public static Chronology getJodaCronology() {
+        return jodaCronology;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

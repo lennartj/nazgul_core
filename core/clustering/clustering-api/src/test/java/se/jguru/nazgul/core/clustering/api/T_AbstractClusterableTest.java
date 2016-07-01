@@ -92,4 +92,21 @@ public class T_AbstractClusterableTest {
         // Assert
         Assert.assertNull(result);
     }
+
+    @Test
+    public void validateEquality() {
+
+        // Assemble
+        final TestAbstractSwiftClusterable c1 = new TestAbstractSwiftClusterable("id1", "bar", 42);
+        final TestAbstractSwiftClusterable c2 = new TestAbstractSwiftClusterable("id2", "bar", 42);
+
+        // Act
+        final int c1HashCode = c1.hashCode();
+        final int c2HashCode = c2.hashCode();
+        final boolean equality = c1.equals(c2);
+
+        // Assert
+        Assert.assertNotEquals(c1HashCode, c2HashCode);
+        Assert.assertFalse(equality);
+    }
 }
