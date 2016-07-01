@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<rss version="0.91">
+  <channel>
+    <title>nazgul-core-xmlbinding-spi-jaxb - Checkstyle report</title>
+    <link>http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/xmlbinding/xmlbinding-spi-jaxb</link>
+    <description>nazgul-core-xmlbinding-spi-jaxb - Checkstyle report</description>
+    <language>en-us</language>
+    <copyright>&#169;2010 - 2016 jGuru Europe AB</copyright>
+    <item>
+      <title>File: 18,
+             Errors: 0,
+             Warnings: 12,
+             Infos: 0
+      </title>
+            <link>http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/xmlbinding/xmlbinding-spi-jaxb/checkstyle.html</link>
+      <description>
+        <p>Click <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/xmlbinding/xmlbinding-spi-jaxb/checkstyle.html">here</a> for the full Checkstyle report.</p>
+
+        <table summary="Files" boder="1">
+          <thead>
+            <tr>
+              <th>Files</th>
+              <th style="width:30px;"><abbr title="Info">I</abbr></th>
+              <th style="width:30px;"><abbr title="Warning">W</abbr></th>
+              <th style="width:30px;"><abbr title="Error">E</abbr></th>
+            </tr>
+          </thead>
+          <tbody>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/xmlbinding/xmlbinding-spi-jaxb/checkstyle.html#se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.XmlMarshallableFieldFilter.java">se/jguru/nazgul/core/xmlbinding/spi/jaxb/helper/XmlMarshallableFieldFilter.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/xmlbinding/xmlbinding-spi-jaxb/checkstyle.html#se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.JaxbConverterRegistry.java">se/jguru/nazgul/core/xmlbinding/spi/jaxb/transport/JaxbConverterRegistry.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/xmlbinding/xmlbinding-spi-jaxb/checkstyle.html#se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.AbstractJaxbAnnotatedTransportType.java">se/jguru/nazgul/core/xmlbinding/spi/jaxb/transport/type/AbstractJaxbAnnotatedTransportType.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/xmlbinding/xmlbinding-spi-jaxb/checkstyle.html#se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbNamespacePrefixResolver.java">se/jguru/nazgul/core/xmlbinding/spi/jaxb/helper/JaxbNamespacePrefixResolver.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/xmlbinding/xmlbinding-spi-jaxb/checkstyle.html#se.jguru.nazgul.core.xmlbinding.spi.jaxb.JaxbXmlBinder.java">se/jguru/nazgul/core/xmlbinding/spi/jaxb/JaxbXmlBinder.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  4
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/xmlbinding/xmlbinding-spi-jaxb/checkstyle.html#se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedCollection.java">se/jguru/nazgul/core/xmlbinding/spi/jaxb/transport/type/JaxbAnnotatedCollection.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/xmlbinding/xmlbinding-spi-jaxb/checkstyle.html#se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.DefaultJaxbConverterRegistry.java">se/jguru/nazgul/core/xmlbinding/spi/jaxb/transport/DefaultJaxbConverterRegistry.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/xmlbinding/xmlbinding-spi-jaxb/checkstyle.html#se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.MappedSchemaResourceResolver.java">se/jguru/nazgul/core/xmlbinding/spi/jaxb/helper/MappedSchemaResourceResolver.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  6
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/xmlbinding/xmlbinding-spi-jaxb/checkstyle.html#se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.converter.StandardConverters.java">se/jguru/nazgul/core/xmlbinding/spi/jaxb/transport/converter/StandardConverters.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/xmlbinding/xmlbinding-spi-jaxb/checkstyle.html#se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter.java">se/jguru/nazgul/core/xmlbinding/spi/jaxb/transport/EntityTransporter.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/xmlbinding/xmlbinding-spi-jaxb/checkstyle.html#se.jguru.nazgul.core.xmlbinding.spi.jaxb.ClassInformationHolder.java">se/jguru/nazgul/core/xmlbinding/spi/jaxb/ClassInformationHolder.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/xmlbinding/xmlbinding-spi-jaxb/checkstyle.html#se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbUtils.java">se/jguru/nazgul/core/xmlbinding/spi/jaxb/helper/JaxbUtils.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/xmlbinding/xmlbinding-spi-jaxb/checkstyle.html#se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedNull.java">se/jguru/nazgul/core/xmlbinding/spi/jaxb/transport/type/JaxbAnnotatedNull.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/xmlbinding/xmlbinding-spi-jaxb/checkstyle.html#se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedDateTime.java">se/jguru/nazgul/core/xmlbinding/spi/jaxb/transport/type/JaxbAnnotatedDateTime.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/xmlbinding/xmlbinding-spi-jaxb/checkstyle.html#se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.SortedClassNameSetKey.java">se/jguru/nazgul/core/xmlbinding/spi/jaxb/helper/SortedClassNameSetKey.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/xmlbinding/xmlbinding-spi-jaxb/checkstyle.html#se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.package-info.java">se/jguru/nazgul/core/xmlbinding/spi/jaxb/transport/package-info.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/xmlbinding/xmlbinding-spi-jaxb/checkstyle.html#se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.TransportMetaData.java">se/jguru/nazgul/core/xmlbinding/spi/jaxb/transport/TransportMetaData.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/xmlbinding/xmlbinding-spi-jaxb/checkstyle.html#se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.ConditionalTransportTypeConverter.java">se/jguru/nazgul/core/xmlbinding/spi/jaxb/transport/ConditionalTransportTypeConverter.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                      </tbody>
+        </table>
+        
+      </description>
+    </item>
+  </channel>
+</rss>
+

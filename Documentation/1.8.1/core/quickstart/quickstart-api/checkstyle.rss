@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<rss version="0.91">
+  <channel>
+    <title>nazgul-core-quickstart-api - Checkstyle report</title>
+    <link>http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/quickstart/quickstart-api</link>
+    <description>nazgul-core-quickstart-api - Checkstyle report</description>
+    <language>en-us</language>
+    <copyright>&#169;2010 - 2016 jGuru Europe AB</copyright>
+    <item>
+      <title>File: 23,
+             Errors: 0,
+             Warnings: 8,
+             Infos: 0
+      </title>
+            <link>http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/quickstart/quickstart-api/checkstyle.html</link>
+      <description>
+        <p>Click <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/quickstart/quickstart-api/checkstyle.html">here</a> for the full Checkstyle report.</p>
+
+        <table summary="Files" boder="1">
+          <thead>
+            <tr>
+              <th>Files</th>
+              <th style="width:30px;"><abbr title="Info">I</abbr></th>
+              <th style="width:30px;"><abbr title="Warning">W</abbr></th>
+              <th style="width:30px;"><abbr title="Error">E</abbr></th>
+            </tr>
+          </thead>
+          <tbody>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/quickstart/quickstart-api/checkstyle.html#se.jguru.nazgul.core.quickstart.api.generator.ProjectFactory.java">se/jguru/nazgul/core/quickstart/api/generator/ProjectFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/quickstart/quickstart-api/checkstyle.html#se.jguru.nazgul.core.quickstart.api.generator.AbstractFactory.java">se/jguru/nazgul/core/quickstart/api/generator/AbstractFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/quickstart/quickstart-api/checkstyle.html#se.jguru.nazgul.core.quickstart.api.generator.parser.FactoryParserAgent.java">se/jguru/nazgul/core/quickstart/api/generator/parser/FactoryParserAgent.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/quickstart/quickstart-api/checkstyle.html#se.jguru.nazgul.core.quickstart.api.analyzer.patterns.DefaultTopReactorPatterns.java">se/jguru/nazgul/core/quickstart/api/analyzer/patterns/DefaultTopReactorPatterns.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/quickstart/quickstart-api/checkstyle.html#se.jguru.nazgul.core.quickstart.api.analyzer.patterns.MavenModelPatterns.java">se/jguru/nazgul/core/quickstart/api/analyzer/patterns/MavenModelPatterns.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/quickstart/quickstart-api/checkstyle.html#se.jguru.nazgul.core.quickstart.api.analyzer.AbstractPomAnalyzer.java">se/jguru/nazgul/core/quickstart/api/analyzer/AbstractPomAnalyzer.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/quickstart/quickstart-api/checkstyle.html#se.jguru.nazgul.core.quickstart.api.analyzer.PatternPomAnalyzer.java">se/jguru/nazgul/core/quickstart/api/analyzer/PatternPomAnalyzer.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/quickstart/quickstart-api/checkstyle.html#se.jguru.nazgul.core.quickstart.api.generator.ComponentFactory.java">se/jguru/nazgul/core/quickstart/api/generator/ComponentFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/quickstart/quickstart-api/checkstyle.html#se.jguru.nazgul.core.quickstart.api.generator.SoftwareComponentPart.java">se/jguru/nazgul/core/quickstart/api/generator/SoftwareComponentPart.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/quickstart/quickstart-api/checkstyle.html#se.jguru.nazgul.core.quickstart.api.DefaultStructureNavigator.java">se/jguru/nazgul/core/quickstart/api/DefaultStructureNavigator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/quickstart/quickstart-api/checkstyle.html#se.jguru.nazgul.core.quickstart.api.InvalidStructureException.java">se/jguru/nazgul/core/quickstart/api/InvalidStructureException.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/quickstart/quickstart-api/checkstyle.html#se.jguru.nazgul.core.quickstart.api.analyzer.AbstractNamingStrategy.java">se/jguru/nazgul/core/quickstart/api/analyzer/AbstractNamingStrategy.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/quickstart/quickstart-api/checkstyle.html#se.jguru.nazgul.core.quickstart.api.PomType.java">se/jguru/nazgul/core/quickstart/api/PomType.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/quickstart/quickstart-api/checkstyle.html#se.jguru.nazgul.core.quickstart.api.analyzer.NamingStrategy.java">se/jguru/nazgul/core/quickstart/api/analyzer/NamingStrategy.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/quickstart/quickstart-api/checkstyle.html#se.jguru.nazgul.core.quickstart.api.generator.parser.PomToken.java">se/jguru/nazgul/core/quickstart/api/generator/parser/PomToken.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/quickstart/quickstart-api/checkstyle.html#se.jguru.nazgul.core.quickstart.api.generator.AbstractComponentFactory.java">se/jguru/nazgul/core/quickstart/api/generator/AbstractComponentFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/quickstart/quickstart-api/checkstyle.html#se.jguru.nazgul.core.quickstart.api.generator.parser.SingleBracketPomTokenParserFactory.java">se/jguru/nazgul/core/quickstart/api/generator/parser/SingleBracketPomTokenParserFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/quickstart/quickstart-api/checkstyle.html#se.jguru.nazgul.core.quickstart.api.analyzer.PomAnalyzer.java">se/jguru/nazgul/core/quickstart/api/analyzer/PomAnalyzer.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/quickstart/quickstart-api/checkstyle.html#se.jguru.nazgul.core.quickstart.api.FileUtils.java">se/jguru/nazgul/core/quickstart/api/FileUtils.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/quickstart/quickstart-api/checkstyle.html#se.jguru.nazgul.core.quickstart.api.generator.AbstractProjectFactory.java">se/jguru/nazgul/core/quickstart/api/generator/AbstractProjectFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/quickstart/quickstart-api/checkstyle.html#se.jguru.nazgul.core.quickstart.api.analyzer.patterns.AbstractMavenModelPatterns.java">se/jguru/nazgul/core/quickstart/api/analyzer/patterns/AbstractMavenModelPatterns.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/quickstart/quickstart-api/checkstyle.html#se.jguru.nazgul.core.quickstart.api.analyzer.patterns.DefaultProjectParentPatterns.java">se/jguru/nazgul/core/quickstart/api/analyzer/patterns/DefaultProjectParentPatterns.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://bitbucket.org/lennartj/nazgul_core/1.8.1/core/quickstart/quickstart-api/checkstyle.html#se.jguru.nazgul.core.quickstart.api.StructureNavigator.java">se/jguru/nazgul/core/quickstart/api/StructureNavigator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                      </tbody>
+        </table>
+        
+      </description>
+    </item>
+  </channel>
+</rss>
+

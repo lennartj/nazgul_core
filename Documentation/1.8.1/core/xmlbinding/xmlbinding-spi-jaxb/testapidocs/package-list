@@ -1,0 +1,13 @@
+se.jguru.nazgul.core.xmlbinding.spi.jaxb
+se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper
+se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types
+se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.enumerations
+se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.inheritance
+se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.marshal
+se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.objectfactory
+se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.rootelements
+se.jguru.nazgul.core.xmlbinding.spi.jaxb.rawtypes
+se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport
+se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.converter
+se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type
+se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.helper
