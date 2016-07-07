@@ -1,0 +1,6 @@
+se.jguru.nazgul.core.algorithms.api.collections
+se.jguru.nazgul.core.algorithms.api.collections.predicate
+se.jguru.nazgul.core.algorithms.api.collections.predicate.common
+se.jguru.nazgul.core.algorithms.api.trees
+se.jguru.nazgul.core.algorithms.api.trees.node
+se.jguru.nazgul.core.algorithms.api.trees.path

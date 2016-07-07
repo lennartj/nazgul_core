@@ -1,0 +1,38 @@
+-breakiterator
+-classpath
+'/Users/lj/.m2/repository/joda-time/joda-time/2.9.4/joda-time-2.9.4.jar:/Users/lj/.m2/repository/org/apache/poi/poi-ooxml/3.11/poi-ooxml-3.11.jar:/Users/lj/.m2/repository/org/liquibase/liquibase-core/3.3.5/liquibase-core-3.3.5.jar:/Users/lj/.m2/repository/org/apache/commons/commons-lang3/3.4/commons-lang3-3.4.jar:/Users/lj/.m2/repository/javax/ejb/javax.ejb-api/3.2/javax.ejb-api-3.2.jar:/Users/lj/.m2/repository/org/dbunit/dbunit/2.5.1/dbunit-2.5.1.jar:/Users/lj/.m2/repository/org/apache/poi/poi-ooxml-schemas/3.11/poi-ooxml-schemas-3.11.jar:/Users/lj/.m2/repository/javax/transaction/javax.transaction-api/1.2/javax.transaction-api-1.2.jar:/Users/lj/.m2/repository/org/eclipse/persistence/eclipselink/2.6.0/eclipselink-2.6.0.jar:/Users/lj/Development/Projects/Nazgul/nazgul_core/core/reflection/reflection-api/target/classes:/Users/lj/.m2/repository/commons-collections/commons-collections/3.2.1/commons-collections-3.2.1.jar:/Users/lj/.m2/repository/org/eclipse/persistence/commonj.sdo/2.1.1/commonj.sdo-2.1.1.jar:/Users/lj/.m2/repository/org/apache/xmlbeans/xmlbeans/2.6.0/xmlbeans-2.6.0.jar:/Users/lj/.m2/repository/org/slf4j/slf4j-api/1.7.20/slf4j-api-1.7.20.jar:/Users/lj/.m2/repository/org/apache/poi/poi/3.11/poi-3.11.jar:/Users/lj/.m2/repository/org/eclipse/persistence/javax.persistence/2.1.0/javax.persistence-2.1.0.jar:/Users/lj/.m2/repository/javax/xml/bind/jaxb-api/2.2.12/jaxb-api-2.2.12.jar:/Users/lj/.m2/repository/se/jguru/nazgul/tools/validation/api/nazgul-tools-validation-api/5.0.1/nazgul-tools-validation-api-5.0.1.jar:/Users/lj/.m2/repository/org/glassfish/javax.json/1.0.4/javax.json-1.0.4.jar:/Users/lj/.m2/repository/se/jguru/nazgul/tools/validation/aspect/nazgul-tools-validation-aspect/5.0.1/nazgul-tools-validation-aspect-5.0.1.jar:/Users/lj/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/Users/lj/.m2/repository/commons-codec/commons-codec/1.9/commons-codec-1.9.jar:/Users/lj/.m2/repository/stax/stax-api/1.0.1/stax-api-1.0.1.jar:/Users/lj/.m2/repository/org/hibernate/hibernate-validator/5.1.0.Final/hibernate-validator-5.1.0.Final.jar:/Users/lj/Development/Projects/Nazgul/nazgul_core/core/persistence/persistence-api/target/classes:/Users/lj/Development/Projects/Nazgul/nazgul_core/core/persistence/persistence-model/target/classes:/Users/lj/.m2/repository/com/fasterxml/classmate/1.0.0/classmate-1.0.0.jar:/Users/lj/Development/Projects/Nazgul/nazgul_core/core/xmlbinding/xmlbinding-api/target/classes:/Users/lj/Development/Projects/Nazgul/nazgul_core/core/algorithms/algorithms-api/target/classes:/Users/lj/.m2/repository/javax/validation/validation-api/1.1.0.Final/validation-api-1.1.0.Final.jar:/Users/lj/.m2/repository/junit/junit/4.12/junit-4.12.jar:/Users/lj/.m2/repository/org/jboss/logging/jboss-logging/3.1.3.GA/jboss-logging-3.1.3.GA.jar'
+-doclet
+'org.jboss.apiviz.APIviz'
+-docletpath
+'/Users/lj/.m2/repository/com/grahamedgecombe/apiviz/apiviz/1.3.3/apiviz-1.3.3.jar:/Users/lj/.m2/repository/guru/nidi/jdepend/2.9.5/jdepend-2.9.5.jar:/Users/lj/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/../lib/tools.jar:/Users/lj/.m2/repository/junit/junit/4.12/junit-4.12.jar'
+-encoding
+'UTF-8'
+-protected
+-sourcepath
+'/Users/lj/Development/Projects/Nazgul/nazgul_core/test/persistence/src/main/java:/Users/lj/Development/Projects/Nazgul/nazgul_core/test/persistence/target/generated-sources/annotations'
+-sourceclasspath
+                        /Users/lj/Development/Projects/Nazgul/nazgul_core/test/persistence/target/classes:/Users/lj/Development/Projects/Nazgul/nazgul_core/test/persistence/target/test-classes
+-author
+-bottom
+'Copyright &#169; 2010&#x2013;2016 <a href="http://www.jguru.se/">jGuru Europe AB</a>. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'/Users/lj/Development/Projects/Nazgul/nazgul_core/test/persistence/target/site/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'nazgul-core-persistence-test 2.0.0 API'
+-group
+'Nazgul Framework: Tools Packages' 'se.jguru.nazgul.tools.*'
+-group
+'Nazgul Framework: Core Packages' 'se.jguru.nazgul.core.*'
+-group
+'Nazgul Framework: Test Artifact Packages' 'se.jguru.nazgul.test.*'
+-keywords
+-linkoffline
+'http://docs.oracle.com/javase/8/docs/api' '/Users/lj/Development/Projects/Nazgul/nazgul_core/test/persistence/target/javadoc-bundle-options'
+-use
+-version
+-windowtitle
+'nazgul-core-persistence-test 2.0.0 API'
