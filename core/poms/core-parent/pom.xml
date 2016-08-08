@@ -29,7 +29,7 @@
     <parent>
         <groupId>se.jguru.nazgul.tools.poms.external</groupId>
         <artifactId>nazgul-tools-external-parent</artifactId>
-        <version>6.0.1</version>
+        <version>6.0.2</version>
         <relativePath />
     </parent>
 
@@ -71,13 +71,13 @@
         <!--
             Supply the version of the Nazgul Tools framework as a Property.
         -->
-        <nazgul.tools.version>6.0.1</nazgul.tools.version>
+        <nazgul.tools.version>6.0.2</nazgul.tools.version>
 
         <!--
             Other, external version properties.
         -->
         <osgi.version>5.0.0</osgi.version>
-        <felix.version>5.0.0</felix.version>
+        <felix.version>5.4.0</felix.version>
         <felix.fileinstall.version>3.2.6</felix.fileinstall.version>
         <felix.gogoruntime.version>0.10.0</felix.gogoruntime.version>
         <felix.configadmin.version>1.4.0</felix.configadmin.version>
@@ -168,7 +168,7 @@
             <dependency>
                 <groupId>org.easymock</groupId>
                 <artifactId>easymock</artifactId>
-                <version>3.3.1</version>
+                <version>3.4</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -199,13 +199,13 @@
             <dependency>
                 <groupId>org.hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
-                <version>2.3.2</version>
+                <version>2.3.4</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.dbunit</groupId>
                 <artifactId>dbunit</artifactId>
-                <version>2.5.1</version>
+                <version>2.5.2</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -222,7 +222,7 @@
             <dependency>
                 <groupId>xerces</groupId>
                 <artifactId>xercesImpl</artifactId>
-                <version>2.11.0</version>
+                <version>2.11.0.SP4</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -385,8 +385,8 @@
                 <jpa.provider.class>org.eclipse.persistence.jpa.PersistenceProvider</jpa.provider.class>
 
                 <!-- Eclipselink versions -->
-                <org.eclipse.persistence.version>2.6.0</org.eclipse.persistence.version>
-                <org.eclipse.persistence.osgi.version>2.1.0</org.eclipse.persistence.osgi.version>
+                <org.eclipse.persistence.version>2.6.3</org.eclipse.persistence.version>
+                <org.eclipse.persistence.osgi.version>2.1.1</org.eclipse.persistence.osgi.version>
             </properties>
 
             <dependencyManagement>
