@@ -1,0 +1,6 @@
+se.jguru.nazgul.core.xmlbinding.spi.jaxb
+se.jguru.nazgul.core.xmlbinding.spi.jaxb.adapter
+se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper
+se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport
+se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.converter
+se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type
