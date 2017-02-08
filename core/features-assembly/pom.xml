@@ -10,7 +10,7 @@
     <parent>
         <groupId>se.jguru.nazgul.core.poms.core-parent</groupId>
         <artifactId>nazgul-core-parent</artifactId>
-        <version>2.2.0</version>
+        <version>2.2.1-SNAPSHOT</version>
         <relativePath>../poms/core-parent</relativePath>
     </parent>
 
@@ -51,56 +51,56 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.algorithms.api</groupId>
             <artifactId>nazgul-core-algorithms-api</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.algorithms.event.api</groupId>
             <artifactId>nazgul-core-algorithms-event-api</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.algorithms.event.spi.eventbus</groupId>
             <artifactId>nazgul-core-algorithms-event-spi-eventbus</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.algorithms.tree.model</groupId>
             <artifactId>nazgul-core-algorithms-tree-model</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.algorithms.tree.api</groupId>
             <artifactId>nazgul-core-algorithms-tree-api</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>se.jguru.nazgul.core.cache.api</groupId>
             <artifactId>nazgul-core-cache-api</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.cache.impl.ehcache</groupId>
             <artifactId>nazgul-core-cache-impl-ehcache</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.cache.impl.inmemory</groupId>
             <artifactId>nazgul-core-cache-impl-inmemory</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>se.jguru.nazgul.core.clustering.api</groupId>
             <artifactId>nazgul-core-clustering-api</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.1-SNAPSHOT</version>
         </dependency>
 
 
         <dependency>
             <groupId>se.jguru.nazgul.core.configuration.model</groupId>
             <artifactId>nazgul-core-configuration-model</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.1-SNAPSHOT</version>
         </dependency>
         <!-- dependency>
             <groupId>se.jguru.nazgul.core.configuration.api</groupId>
@@ -111,62 +111,62 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.parser.api</groupId>
             <artifactId>nazgul-core-parser-api</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>se.jguru.nazgul.core.persistence.model</groupId>
             <artifactId>nazgul-core-persistence-model</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.persistence.api</groupId>
             <artifactId>nazgul-core-persistence-api</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>se.jguru.nazgul.core.quickstart.model</groupId>
             <artifactId>nazgul-core-quickstart-model</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.quickstart.api</groupId>
             <artifactId>nazgul-core-quickstart-api</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.quickstart.impl.nazgul</groupId>
             <artifactId>nazgul-core-quickstart-impl-nazgul</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>se.jguru.nazgul.core.reflection.api</groupId>
             <artifactId>nazgul-core-reflection-api</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>se.jguru.nazgul.core.resource.api</groupId>
             <artifactId>nazgul-core-resource-api</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.resource.impl.resourcebundle</groupId>
             <artifactId>nazgul-core-resource-impl-resourcebundle</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>se.jguru.nazgul.core.xmlbinding.api</groupId>
             <artifactId>nazgul-core-xmlbinding-api</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.xmlbinding.spi.jaxb</groupId>
             <artifactId>nazgul-core-xmlbinding-spi-jaxb</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.1-SNAPSHOT</version>
         </dependency>
 
         <!-- External dependencies -->
@@ -297,6 +297,6 @@
         <connection>${scm.connection.url}</connection>
         <developerConnection>${scm.devConnection.url}</developerConnection>
         <url>${scm.url}</url>
-        <tag>nazgul-core-2.1.2</tag>
+        <tag>HEAD</tag>
     </scm>
 </project>
