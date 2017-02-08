@@ -207,7 +207,7 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.osgi</groupId>
-                                    <artifactId>org.osgi.compendium</artifactId>
+                                    <artifactId>osgi.cmpn</artifactId>
                                     <outputDirectory>target/downloadedBundles</outputDirectory>
                                     <version>${osgi.version}</version>
                                 </artifactItem>

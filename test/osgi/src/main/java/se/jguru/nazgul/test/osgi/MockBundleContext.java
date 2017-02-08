@@ -34,7 +34,9 @@ import org.osgi.framework.Filter;
 import org.osgi.framework.FrameworkListener;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceEvent;
+import org.osgi.framework.ServiceFactory;
 import org.osgi.framework.ServiceListener;
+import org.osgi.framework.ServiceObjects;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import se.jguru.nazgul.core.algorithms.event.api.producer.AbstractEventProducer;
@@ -1010,5 +1012,73 @@ public class MockBundleContext implements BundleContext {
     @Override
     public Bundle getBundle(final String location) {
         return bundle;
+    }
+
+    /**
+     * Registers the specified service factory object with the specified
+     * properties under the name of the specified class with the Framework.
+     *
+     * <p>
+     * This method is otherwise identical to
+     * {@link #registerService(Class, Object, Dictionary)} and is provided to
+     * return a type safe {@code ServiceRegistration} when registering a
+     * {@link ServiceFactory}.
+     *
+     * @param clazz      The class under whose name the service can be located.
+     * @param factory    The {@code ServiceFactory} object.
+     * @param properties The properties for this service.
+     * @return A {@code ServiceRegistration} object for use by the bundle
+     * registering the service to update the service's properties or to
+     * unregister the service.
+     * @throws IllegalStateException If this BundleContext is no longer valid.
+     * @see #registerService(Class, Object, Dictionary)
+     * @since 1.8
+     */
+    @Override
+    public <S> ServiceRegistration<S> registerService(final Class<S> clazz, final ServiceFactory<S> factory, final Dictionary<String, ?> properties) {
+        return null;
+    }
+
+    /**
+     * Returns the {@link ServiceObjects} object for the service referenced by
+     * the specified {@code ServiceReference} object.
+     *
+     * <p>
+     * The {@link ServiceObjects} object can be used to obtain multiple service
+     * objects for services with {@link Constants#SCOPE_PROTOTYPE prototype}
+     * scope.
+     *
+     * <p>
+     * For services with {@link Constants#SCOPE_SINGLETON singleton} or
+     * {@link Constants#SCOPE_BUNDLE bundle} scope, the
+     * {@link ServiceObjects#getService()} method behaves the same as the
+     * {@link #getService(ServiceReference)} method and the
+     * {@link ServiceObjects#ungetService(Object)} method behaves the same as
+     * the {@link #ungetService(ServiceReference)} method. That is, only one,
+     * use-counted service object is available from the {@link ServiceObjects}
+     * object.
+     *
+     * <p>
+     * This method will always return {@code null} when the service associated
+     * with the specified {@code reference} has been unregistered.
+     *
+     * @param reference A reference to the service.
+     * @return A {@link ServiceObjects} object for the service associated with
+     * the specified {@code reference} or {@code null} if the service is
+     * not registered.
+     * @throws SecurityException        If the caller does not have the
+     *                                  {@code ServicePermission} to get the service using at least one
+     *                                  of the named classes the service was registered under and the
+     *                                  Java Runtime Environment supports permissions.
+     * @throws IllegalStateException    If this BundleContext is no longer valid.
+     * @throws IllegalArgumentException If the specified
+     *                                  {@code ServiceReference} was not created by the same framework
+     *                                  instance as this {@code BundleContext}.
+     * @see PrototypeServiceFactory
+     * @since 1.8
+     */
+    @Override
+    public <S> ServiceObjects<S> getServiceObjects(final ServiceReference<S> reference) {
+        return null;
     }
 }

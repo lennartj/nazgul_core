@@ -29,7 +29,7 @@
     <parent>
         <groupId>se.jguru.nazgul.tools.poms.external</groupId>
         <artifactId>nazgul-tools-external-parent</artifactId>
-        <version>6.0.2</version>
+        <version>6.0.3</version>
         <relativePath />
     </parent>
 
@@ -71,12 +71,12 @@
         <!--
             Supply the version of the Nazgul Tools framework as a Property.
         -->
-        <nazgul.tools.version>6.0.2</nazgul.tools.version>
+        <nazgul.tools.version>6.0.3</nazgul.tools.version>
 
         <!--
             Other, external version properties.
         -->
-        <osgi.version>5.0.0</osgi.version>
+        <osgi.version>6.0.0</osgi.version>
         <felix.version>5.4.0</felix.version>
         <felix.fileinstall.version>3.2.6</felix.fileinstall.version>
         <felix.gogoruntime.version>0.10.0</felix.gogoruntime.version>
@@ -150,7 +150,7 @@
             </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>
-                <artifactId>org.osgi.compendium</artifactId>
+                <artifactId>osgi.cmpn</artifactId>
                 <version>${osgi.version}</version>
                 <scope>provided</scope>
             </dependency>
