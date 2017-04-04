@@ -107,6 +107,7 @@ public class ActiveMQBroker implements MessageBroker {
         // Start the broker.
         broker.setPersistent(false);
         broker.start();
+        broker.waitUntilStarted();
     }
 
     /**
@@ -119,6 +120,7 @@ public class ActiveMQBroker implements MessageBroker {
 
         // Stop the Brokerservice
         broker.stop();
+        broker.waitUntilStopped();
     }
 
     /**

@@ -42,7 +42,7 @@
 
     <properties>
         <path.in.reactor>test/messaging</path.in.reactor>
-        <activemq.version>5.13.0</activemq.version>
+        <activemq.version>5.14.4</activemq.version>
         <hornetq.version>2.4.7.Final</hornetq.version>
     </properties>
 
@@ -84,7 +84,12 @@
         </dependency>
         <dependency>
             <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-all</artifactId>
+            <artifactId>activemq-client</artifactId>
+            <version>${activemq.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-broker</artifactId>
             <version>${activemq.version}</version>
         </dependency>
         <dependency>
