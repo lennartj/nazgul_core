@@ -43,6 +43,7 @@
     <properties>
         <path.in.reactor>test/messaging</path.in.reactor>
         <activemq.version>5.14.4</activemq.version>
+        <artemis.version>2.0.0</artemis.version>
         <hornetq.version>2.4.7.Final</hornetq.version>
     </properties>
 
@@ -91,6 +92,11 @@
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-broker</artifactId>
             <version>${activemq.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>artemis-junit</artifactId>
+            <version>${artemis.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
