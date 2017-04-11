@@ -21,7 +21,7 @@
  */
 package se.jguru.nazgul.core.algorithms.api.collections.predicate.common;
 
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
 
 import java.util.regex.Pattern;
@@ -45,7 +45,7 @@ public class PatternMatchFilter implements Filter<String> {
     public PatternMatchFilter(final String pattern) {
 
         // Check sanity
-        Validate.notEmpty(pattern, "Cannot handle null or empty pattern argument.");
+        Validate.notEmpty(pattern, "pattern");
 
         regexpPattern = Pattern.compile(pattern);
     }

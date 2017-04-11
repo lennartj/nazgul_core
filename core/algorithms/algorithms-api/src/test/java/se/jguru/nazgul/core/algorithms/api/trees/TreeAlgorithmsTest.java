@@ -1,8 +1,8 @@
-/*
+/*-
  * #%L
  * Nazgul Project: nazgul-core-algorithms-api
  * %%
- * Copyright (C) 2010 - 2015 jGuru Europe AB
+ * Copyright (C) 2010 - 2017 jGuru Europe AB
  * %%
  * Licensed under the jGuru Europe AB license (the "License"), based
  * on Apache License, Version 2.0; you may not use this file except
@@ -19,7 +19,6 @@
  * limitations under the License.
  * #L%
  */
-
 package se.jguru.nazgul.core.algorithms.api.trees;
 
 import org.junit.Assert;

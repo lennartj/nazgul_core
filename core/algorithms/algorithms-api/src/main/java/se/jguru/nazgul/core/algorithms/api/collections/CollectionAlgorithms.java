@@ -22,10 +22,8 @@
 
 package se.jguru.nazgul.core.algorithms.api.collections;
 
-import org.apache.commons.lang3.Validate;
-import se.jguru.nazgul.core.algorithms.api.collections.predicate.Aggregator;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
-import se.jguru.nazgul.core.algorithms.api.collections.predicate.Operation;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Transformer;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
 
@@ -47,72 +45,6 @@ import java.util.TreeSet;
  */
 public abstract class CollectionAlgorithms {
 
-    // Constants
-    private static final String CANNOT_HANDLE_NULL_SOURCE_ARGUMENT = "Cannot handle null source argument.";
-    private static final String CANNOT_HANDLE_NULL_TRANSFORMER_ARGUMENT = "Cannot handle null transformer argument.";
-
-    /**
-     * Copies the elements from the provided Enumeration into a List.
-     *
-     * @param source The enumeration from which to copy all elements.
-     * @param <T>    The type of element found within the provided enumeration source.
-     * @return A List holding all elements of the provided source.
-     */
-    public static <T> List<T> create(final Enumeration<T> source) {
-
-        // Check sanity
-        Validate.notNull(source, CANNOT_HANDLE_NULL_SOURCE_ARGUMENT);
-
-        List<T> toReturn = new ArrayList<T>();
-        while (source.hasMoreElements()) {
-            toReturn.add(source.nextElement());
-        }
-
-        return toReturn;
-    }
-
-    /**
-     * Aggregates (reduces) the provided source to a single result, by applying
-     * the aggregator's aggregate method to all elements within the source Collection.
-     *
-     * @param source     The non-null source Collection holding T instances.
-     * @param aggregator The aggregator used to aggregate a source element with the current result.
-     * @param <T>        The type to operate on.
-     * @param <R>        The result type.
-     * @return An aggregate over the entire collection.
-     */
-    public static <T, R> R aggregate(final Collection<T> source, final Aggregator<T, R> aggregator) {
-
-        // Check sanity
-        Validate.notNull(source, CANNOT_HANDLE_NULL_SOURCE_ARGUMENT);
-        Validate.notNull(aggregator, "Cannot handle null aggregator argument.");
-
-        R toReturn = null;
-        for (T current : source) {
-            toReturn = aggregator.aggregate(toReturn, current);
-        }
-
-        return toReturn;
-    }
-
-    /**
-     * Performs a no-return operation for all elements within the source collection.
-     *
-     * @param source    The non-null source Collection holding T instances.
-     * @param operation The void-returning operation which should be performed for all elements within the collection.
-     * @param <T>       The type to operate on.
-     */
-    public static <T> void forAll(final Collection<T> source, final Operation<T> operation) {
-
-        // Check sanity
-        Validate.notNull(source, CANNOT_HANDLE_NULL_SOURCE_ARGUMENT);
-        Validate.notNull(operation, "Cannot handle null operation argument.");
-
-        for (T current : source) {
-            operation.operate(current);
-        }
-    }
-
     /**
      * Filters the provided collection using the given selector.
      *
@@ -127,8 +59,8 @@ public abstract class CollectionAlgorithms {
     public static <T, C extends Collection<T>> C filter(final C source, final Filter<T> selector) {
 
         // Check sanity
-        Validate.notNull(source, CANNOT_HANDLE_NULL_SOURCE_ARGUMENT);
-        Validate.notNull(selector, "Cannot handle null selector argument.");
+        Validate.notNull(source, "source");
+        Validate.notNull(selector, "selector");
 
         // Create a return instance
         C toReturn = cloneEmpty(source);
@@ -156,15 +88,15 @@ public abstract class CollectionAlgorithms {
     public static <K, V> Map<K, V> filter(final Map<K, V> source, final Filter<Tuple<K, V>> selector) {
 
         // Check sanity
-        Validate.notNull(source, CANNOT_HANDLE_NULL_SOURCE_ARGUMENT);
-        Validate.notNull(selector, "Cannot handle null selector argument.");
+        Validate.notNull(source, "source");
+        Validate.notNull(selector, "selector");
 
         // Create a return instance
-        final Map<K, V> toReturn = new HashMap<K, V>();
+        final Map<K, V> toReturn = new HashMap<>();
 
         for (Map.Entry<K, V> currentEntry : source.entrySet()) {
 
-            if (selector.accept(new Tuple<K, V>(currentEntry.getKey(), currentEntry.getValue()))) {
+            if (selector.accept(new Tuple<>(currentEntry.getKey(), currentEntry.getValue()))) {
                 toReturn.put(currentEntry.getKey(), currentEntry.getValue());
             }
         }
@@ -189,8 +121,8 @@ public abstract class CollectionAlgorithms {
                                                               final Transformer<T, R> transformer) {
 
         // Check sanity
-        Validate.notNull(source, CANNOT_HANDLE_NULL_SOURCE_ARGUMENT);
-        Validate.notNull(transformer, CANNOT_HANDLE_NULL_TRANSFORMER_ARGUMENT);
+        Validate.notNull(source, "source");
+        Validate.notNull(transformer, "transformer");
 
         // Create a return instance
         Collection<R> toReturn = cloneEmptyFromType(source.getClass());
@@ -218,14 +150,14 @@ public abstract class CollectionAlgorithms {
     public static <K, V, T> List<T> flatten(final Map<K, V> source, final Transformer<Tuple<K, V>, T> transformer) {
 
         // Check sanity
-        Validate.notNull(source, CANNOT_HANDLE_NULL_SOURCE_ARGUMENT);
-        Validate.notNull(transformer, CANNOT_HANDLE_NULL_TRANSFORMER_ARGUMENT);
+        Validate.notNull(source, "source");
+        Validate.notNull(transformer, "transformer");
 
         // Create a return instance
-        List<T> toReturn = new ArrayList<T>();
+        List<T> toReturn = new ArrayList<>();
 
         for (Map.Entry<K, V> currentEntry : source.entrySet()) {
-            toReturn.add(transformer.transform(new Tuple<K, V>(currentEntry.getKey(), currentEntry.getValue())));
+            toReturn.add(transformer.transform(new Tuple<>(currentEntry.getKey(), currentEntry.getValue())));
         }
 
         return toReturn;
@@ -246,15 +178,15 @@ public abstract class CollectionAlgorithms {
     public static <K1, V1, K2, V2> Map<K2, V2> transform(final Map<K1, V1> source,
                                                          final Transformer<Tuple<K1, V1>, Tuple<K2, V2>> transformer) {
         // Check sanity
-        Validate.notNull(source, CANNOT_HANDLE_NULL_SOURCE_ARGUMENT);
-        Validate.notNull(transformer, CANNOT_HANDLE_NULL_TRANSFORMER_ARGUMENT);
+        Validate.notNull(source, "source");
+        Validate.notNull(transformer, "transformer");
 
         // Create a return instance
-        Map<K2, V2> toReturn = new HashMap<K2, V2>();
+        Map<K2, V2> toReturn = new HashMap<>();
 
         for (Map.Entry<K1, V1> current : source.entrySet()) {
 
-            final Tuple<K1, V1> sourceTuple = new Tuple<K1, V1>(current.getKey(), source.get(current.getKey()));
+            final Tuple<K1, V1> sourceTuple = new Tuple<>(current.getKey(), source.get(current.getKey()));
             final Tuple<K2, V2> resultTuple = transformer.transform(sourceTuple);
 
             if (resultTuple != null) {
@@ -281,11 +213,11 @@ public abstract class CollectionAlgorithms {
     public static <K, V, T> Map<K, V> map(final Collection<T> source, final Transformer<T, Tuple<K, V>> transformer) {
 
         // Check sanity
-        Validate.notNull(source, CANNOT_HANDLE_NULL_SOURCE_ARGUMENT);
-        Validate.notNull(transformer, CANNOT_HANDLE_NULL_TRANSFORMER_ARGUMENT);
+        Validate.notNull(source, "source");
+        Validate.notNull(transformer, "transformer");
 
         // Create a return instance
-        Map<K, V> toReturn = new HashMap<K, V>();
+        Map<K, V> toReturn = new HashMap<>();
 
         for (T current : source) {
             final Tuple<K, V> keyValuePair = transformer.transform(current);
@@ -329,12 +261,12 @@ public abstract class CollectionAlgorithms {
     @SuppressWarnings("unchecked")
     private static <T, C extends Collection<T>> C cloneEmptyFromType(final Class<C> type) {
 
-        Validate.notNull(type, "Cannot handle null type argument.");
+        Validate.notNull(type, "type");
         C toReturn = null;
 
         try {
             // Do we have a default Constructor in type?
-            final Constructor<C> defaultConstructor = type.getConstructor(new Class<?>[]{});
+            final Constructor<C> defaultConstructor = type.getConstructor();
             if (defaultConstructor != null) {
                 toReturn = defaultConstructor.newInstance();
             }
