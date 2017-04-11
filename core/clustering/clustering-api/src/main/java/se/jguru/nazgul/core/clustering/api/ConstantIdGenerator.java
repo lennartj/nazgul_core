@@ -21,7 +21,9 @@
  */
 package se.jguru.nazgul.core.clustering.api;
 
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Trivial IdGenerator which always returns a constant string.
@@ -38,8 +40,12 @@ public final class ConstantIdGenerator implements IdGenerator {
      *
      * @param id The constant id.
      */
-    public ConstantIdGenerator(final String id) {
-        Validate.notEmpty(id, "Cannot handle null or empty id argument.");
+    public ConstantIdGenerator(@NotNull final String id) {
+
+        // Check sanity
+        Validate.notEmpty(id, "id");
+
+        // Assign internal state
         this.id = id;
     }
 

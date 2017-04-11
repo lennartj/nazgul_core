@@ -21,7 +21,7 @@
  */
 package se.jguru.nazgul.core.clustering.api;
 
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 
 import javax.persistence.MappedSuperclass;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -69,7 +69,7 @@ public abstract class AbstractClusterable implements Clusterable {
      */
     protected AbstractClusterable(final String clusterUniqueID) {
 
-        Validate.notEmpty(clusterUniqueID, "Cannot handle null or empty clusterUniqueID argument.");
+        Validate.notEmpty(clusterUniqueID, "clusterUniqueID");
         this.id = clusterUniqueID;
     }
 

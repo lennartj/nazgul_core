@@ -22,7 +22,8 @@
 
 package se.jguru.nazgul.core.clustering.api;
 
-import org.apache.commons.lang3.Validate;
+
+import se.jguru.nazgul.core.algorithms.api.Validate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +43,7 @@ public class MockIdGenerator implements IdGenerator {
     private int index;
 
     public MockIdGenerator(final String prefix) {
-        Validate.notEmpty(prefix, "Cannot handle null or empty prefix.");
+        Validate.notEmpty(prefix, "prefix");
         this.prefix = prefix;
         index = counter.incrementAndGet();
     }
