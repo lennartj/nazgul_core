@@ -21,9 +21,9 @@
  */
 package se.jguru.nazgul.core.algorithms.event.api.producer;
 
-import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.algorithms.event.api.consumer.EventConsumer;
 import se.jguru.nazgul.core.clustering.api.AbstractClusterable;
 import se.jguru.nazgul.core.clustering.api.ConstantIdGenerator;
@@ -69,7 +69,7 @@ public abstract class AbstractEventProducer<T extends EventConsumer>
         super(idGenerator);
 
         // Check sanity
-        Validate.notNull(eventConsumerClass, "Cannot handle null eventConsumerClass argument.");
+        Validate.notNull(eventConsumerClass, "eventConsumerClass");
 
         // Assign internal state
         this.tClass = eventConsumerClass;

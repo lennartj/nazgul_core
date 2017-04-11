@@ -22,12 +22,13 @@
 package se.jguru.nazgul.core.algorithms.event.spi.eventbus;
 
 import com.google.common.eventbus.EventBus;
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.algorithms.event.api.publisher.EventPublisher;
 import se.jguru.nazgul.core.clustering.api.Clusterable;
 import se.jguru.nazgul.core.clustering.api.IdGenerator;
 import se.jguru.nazgul.core.clustering.api.UUIDGenerator;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,7 +55,7 @@ public class EventBusPublisher implements EventPublisher<Object, Object> {
      *
      * @param eventBus The EventBus wrapped by this EventPublisher instance.
      */
-    public EventBusPublisher(final EventBus eventBus) {
+    public EventBusPublisher(@NotNull final EventBus eventBus) {
         this(new UUIDGenerator(), eventBus);
     }
 
@@ -64,27 +65,27 @@ public class EventBusPublisher implements EventPublisher<Object, Object> {
      * @param idGenerator The IdGenerator used to generate cluster-unique IDs for each added consumer.
      * @param eventBus    The EventBus wrapped by this EventPublisher instance.
      */
-    public EventBusPublisher(final IdGenerator idGenerator,
-                             final EventBus eventBus) {
+    public EventBusPublisher(@NotNull final IdGenerator idGenerator,
+                             @NotNull final EventBus eventBus) {
 
         // Check sanity
-        Validate.notNull(idGenerator, "Cannot handle null idGenerator argument.");
-        Validate.notNull(eventBus, "Cannot handle null eventBus argument.");
+        Validate.notNull(idGenerator, "idGenerator");
+        Validate.notNull(eventBus, "eventBus");
 
         // Assign internal state
         this.idGenerator = idGenerator;
         this.eventBus = eventBus;
-        this.registeredListeners = new HashMap<String, Object>();
+        this.registeredListeners = new HashMap<>();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void publish(final Object event) {
+    public void publish(@NotNull final Object event) {
 
         // Check sanity
-        Validate.notNull(event, "Cannot handle null event argument.");
+        Validate.notNull(event, "event");
 
         // Publish the event.
         eventBus.post(event);
@@ -94,10 +95,10 @@ public class EventBusPublisher implements EventPublisher<Object, Object> {
      * {@inheritDoc}
      */
     @Override
-    public String addConsumer(final Object consumer) {
+    public String addConsumer(@NotNull final Object consumer) {
 
         // Check sanity
-        Validate.notNull(consumer, "Cannot handle null consumer argument.");
+        Validate.notNull(consumer, "consumer");
 
         // Register the consumer, unless already registered.
         String consumerID = null;
@@ -138,17 +139,17 @@ public class EventBusPublisher implements EventPublisher<Object, Object> {
      */
     @Override
     public List<String> getConsumerIDs() throws UnsupportedOperationException {
-        return new ArrayList<String>(registeredListeners.keySet());
+        return new ArrayList<>(registeredListeners.keySet());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean removeConsumer(final String consumerID) {
+    public boolean removeConsumer(@NotNull final String consumerID) {
 
         // Check sanity
-        Validate.notNull(consumerID, "Cannot handle null consumerID argument.");
+        Validate.notNull(consumerID, "consumerID");
 
         // Remove the consumer.
         final Object justRemoved = registeredListeners.remove(consumerID);
@@ -165,10 +166,10 @@ public class EventBusPublisher implements EventPublisher<Object, Object> {
      * {@inheritDoc}
      */
     @Override
-    public Object getConsumer(final String consumerID) {
+    public Object getConsumer(@NotNull final String consumerID) {
 
         // Check sanity
-        Validate.notNull(consumerID, "Cannot handle null consumerID argument.");
+        Validate.notNull(consumerID, "consumerID");
 
         // All done.
         return registeredListeners.get(consumerID);
@@ -179,14 +180,14 @@ public class EventBusPublisher implements EventPublisher<Object, Object> {
      * The default implementation uses the clusterID if the consumer is {@code Clusterable},
      * and otherwise simply generates a new ID using the internal IdGenerator.
      *
-     * @param consumer The non-null consumer object from which the ID should be extracted.
+     * @param consumer The consumer object from which the ID should be extracted.
      * @return The extracted ConsumerID.
      * @see Clusterable
      */
-    protected String extractConsumerID(final Object consumer) {
+    protected String extractConsumerID(@NotNull final Object consumer) {
 
         // Check sanity
-        Validate.notNull(consumer, "Cannot handle null consumer argument.");
+        Validate.notNull(consumer, "consumer");
 
         // Extract the ID in any way possible.
         String toReturn = null;
