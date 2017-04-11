@@ -28,6 +28,7 @@ import se.jguru.nazgul.core.algorithms.api.trees.node.MutableNode;
 import se.jguru.nazgul.core.algorithms.api.trees.node.Node;
 import se.jguru.nazgul.core.algorithms.api.trees.path.Path;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -115,7 +116,7 @@ public class SimpleTree<KeyType extends Serializable & Comparable<KeyType>, Valu
      * @return The Node at the provided path, or {@code null} if no node was found.
      */
     @Override
-    public <X extends Node<KeyType, ValueType>> X get(final Path<KeyType> path) {
+    public <X extends Node<KeyType, ValueType>> X get(@NotNull final Path<KeyType> path) {
 
         // Check sanity
         Validate.notNull(path, "Cannot handle null path argument.");

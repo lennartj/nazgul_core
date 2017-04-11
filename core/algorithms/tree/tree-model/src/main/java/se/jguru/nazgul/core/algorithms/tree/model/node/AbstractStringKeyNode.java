@@ -21,9 +21,9 @@
  */
 package se.jguru.nazgul.core.algorithms.tree.model.node;
 
-import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
 import se.jguru.nazgul.core.algorithms.api.trees.node.MutableNode;
 import se.jguru.nazgul.core.algorithms.api.trees.node.Node;
@@ -36,6 +36,7 @@ import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationExc
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -62,14 +63,20 @@ public abstract class AbstractStringKeyNode<V extends Serializable>
     // Internal state
     private final transient Object lock = new Object();
 
+    /**
+     * The required key within this AbstractStringKeyNode.
+     */
     @Basic(optional = false)
     @Column(nullable = false)
-    @XmlElement(nillable = false, required = true)
+    @XmlElement(required = true)
     private String key;
 
-    @Basic(optional = true)
-    @Column(nullable = true)
-    @XmlElement(nillable = true, required = false)
+    /**
+     * The optional parent of this AbstractStringKeyNode.
+     */
+    @Basic
+    @Column
+    @XmlElement(nillable = true)
     private MutableNode<String, V> parent;
 
     /**
@@ -85,7 +92,7 @@ public abstract class AbstractStringKeyNode<V extends Serializable>
      * @param parent The parent of this AbstractStringKeyNode, which must be another AbstractStringKeyNode.
      * @param <T>    The concrete parent node subtype.
      */
-    public <T extends AbstractStringKeyNode<V>> AbstractStringKeyNode(final String key,
+    public <T extends AbstractStringKeyNode<V>> AbstractStringKeyNode(@NotNull final String key,
                                                                       final T parent) {
         this.key = key;
         this.parent = parent;
@@ -133,7 +140,7 @@ public abstract class AbstractStringKeyNode<V extends Serializable>
     public void setParent(final MutableNode<String, V> parent) {
 
         // Check sanity
-        Validate.notNull(parent, "Cannot handle null parent argument.");
+        Validate.notNull(parent, "parent");
         final MutableNode<String, V> oldParent = this.parent;
 
         // Add this MutableNode to the provided parent.
@@ -159,10 +166,10 @@ public abstract class AbstractStringKeyNode<V extends Serializable>
      * {@inheritDoc}
      */
     @Override
-    public void removeChild(final MutableNode<String, V> node) {
+    public void removeChild(@NotNull final MutableNode<String, V> node) {
 
         // Check sanity
-        Validate.notNull(node, "Cannot handle null node argument.");
+        Validate.notNull(node, "node");
 
         Node<String, V> toRemove = null;
         for (Node<String, V> current : getChildren()) {
@@ -192,17 +199,16 @@ public abstract class AbstractStringKeyNode<V extends Serializable>
      * {@inheritDoc}
      */
     @Override
-    public void removeChildren(final Filter<Node<String, V>> nodeFilter) {
+    public void removeChildren(@NotNull final Filter<Node<String, V>> nodeFilter) {
 
         // Check sanity
-        Validate.notNull(nodeFilter, "Cannot handle null nodeFilter argument.");
+        Validate.notNull(nodeFilter, "nodeFilter");
 
         // Find all nodes which should be removed.
         List<MutableNode<String, V>> toRemove = new ArrayList<>();
         for (Object current : ((AbstractStringKeyNode) this).getChildren()) {
 
-            @SuppressWarnings("unchecked")
-            final MutableNode<String, V> currentNode = (MutableNode<String, V>) current;
+            @SuppressWarnings("unchecked") final MutableNode<String, V> currentNode = (MutableNode<String, V>) current;
             if (nodeFilter.accept(currentNode)) {
                 toRemove.add(currentNode);
             }
@@ -222,10 +228,10 @@ public abstract class AbstractStringKeyNode<V extends Serializable>
      * {@inheritDoc}
      */
     @Override
-    public void addChild(final MutableNode<String, V> node) throws IllegalArgumentException {
+    public void addChild(@NotNull final MutableNode<String, V> node) throws IllegalArgumentException {
 
         // Check sanity
-        Validate.notNull(node, "Cannot handle null node argument.");
+        Validate.notNull(node, "node");
 
         // Add only if the given node is not already present.
         if (!getChildren().contains(node)) {

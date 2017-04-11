@@ -21,7 +21,7 @@
  */
 package se.jguru.nazgul.core.algorithms.tree.model.path;
 
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.algorithms.api.trees.path.Path;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 
@@ -138,8 +138,8 @@ public class StringPath extends AbstractPath<String> {
     public static List<String> parseCompoundPath(final String compoundPath, final String pathSeparator) {
 
         // Check sanity
-        Validate.notEmpty(pathSeparator, "Cannot handle null or empty pathSeparator argument.");
-        Validate.notNull(compoundPath, "Cannot handle null compoundPath argument.");
+        Validate.notEmpty(pathSeparator, "pathSeparator");
+        Validate.notNull(compoundPath, "compoundPath");
 
         // Parse and return
         final List<String> toReturn = new ArrayList<String>();

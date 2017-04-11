@@ -21,7 +21,7 @@
  */
 package se.jguru.nazgul.core.algorithms.tree.model.path;
 
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.algorithms.api.trees.path.Path;
 import se.jguru.nazgul.core.algorithms.api.trees.path.SemanticPath;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
@@ -117,7 +117,7 @@ public class EnumMapPath<E extends Enum<E>> extends StringPath implements Semant
         super(compoundPath, segmentSeparator);
 
         // Check sanity
-        Validate.notNull(enumType, "Cannot handle null enumType argument.");
+        Validate.notNull(enumType, "enumType");
         Validate.isTrue(enumType.getEnumConstants().length > 0,
                 "Cannot handle enumType without any defined enum constants.");
 

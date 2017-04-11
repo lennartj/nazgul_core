@@ -22,7 +22,7 @@
 
 package se.jguru.nazgul.core.algorithms.tree.model.path;
 
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.algorithms.api.trees.path.Path;
 import se.jguru.nazgul.core.persistence.model.NazgulEntity;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
@@ -31,6 +31,7 @@ import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationExc
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -64,12 +65,12 @@ public abstract class AbstractPath<SegmentType extends Serializable & Comparable
     // Internal state
     @Basic(optional = false)
     @Column(nullable = false)
-    @XmlElement(required = true, nillable = false)
+    @XmlElement(required = true)
     private String compoundPath;
 
-    @Basic(optional = true)
-    @Column(nullable = true)
-    @XmlElement(required = false, nillable = true)
+    @Basic
+    @Column
+    @XmlElement(nillable = true)
     private String segmentSeparator;
 
     /**
@@ -87,7 +88,7 @@ public abstract class AbstractPath<SegmentType extends Serializable & Comparable
      *                     Each segment string must be convertible to a {@code SegmentType} instance.
      * @see #DEFAULT_SEGMENT_SEPARATOR
      */
-    public AbstractPath(final String compoundPath) {
+    public AbstractPath(@NotNull final String compoundPath) {
         this(compoundPath, DEFAULT_SEGMENT_SEPARATOR);
     }
 
@@ -98,11 +99,12 @@ public abstract class AbstractPath<SegmentType extends Serializable & Comparable
      *                         Each segment string must be convertible to a {@code SegmentType} instance.
      * @param segmentSeparator The string separating SegmentType representations from each other.
      */
-    public AbstractPath(final String compoundPath, final String segmentSeparator) {
+    public AbstractPath(@NotNull final String compoundPath,
+                        @NotNull final String segmentSeparator) {
 
         // Check sanity
-        Validate.notNull(compoundPath, "Cannot handle null compoundPath argument.");
-        Validate.notEmpty(segmentSeparator, "Cannot handle nulll or empty segmentSeparator argument.");
+        Validate.notNull(compoundPath, "compoundPath");
+        Validate.notEmpty(segmentSeparator, "segmentSeparator");
 
         // Assign internal state
         this.compoundPath = compoundPath;
@@ -114,12 +116,12 @@ public abstract class AbstractPath<SegmentType extends Serializable & Comparable
      */
     protected abstract List<SegmentType> getSegments();
 
-
     /**
      * @return A compound string representation of this AbstractPath used for JPA storage and searches.
      * The compoundPath is represented as the segments, separated by the {@code segmentSeparator} string,
      * or the {@code DEFAULT_SEGMENT_SEPARATOR} if no explicit segmentSeparator is given.
      */
+    @NotNull
     public String getCompoundPath() {
         return compoundPath;
     }
@@ -128,6 +130,7 @@ public abstract class AbstractPath<SegmentType extends Serializable & Comparable
      * @return The segment separator string, or the {@code DEFAULT_SEGMENT_SEPARATOR} if no
      * explicit segmentSeparator string is given.
      */
+    @NotNull
     public String getSegmentSeparator() {
         return segmentSeparator == null ? DEFAULT_SEGMENT_SEPARATOR : segmentSeparator;
     }
