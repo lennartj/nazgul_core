@@ -24,21 +24,20 @@ package se.jguru.nazgul.test.messaging.artemis;
 import org.apache.activemq.artemis.api.core.TransportConfiguration;
 import org.apache.activemq.artemis.core.config.Configuration;
 import org.apache.activemq.artemis.core.config.impl.ConfigurationImpl;
+import org.apache.activemq.artemis.core.registry.MapBindingRegistry;
 import org.apache.activemq.artemis.core.remoting.impl.netty.NettyAcceptorFactory;
 import org.apache.activemq.artemis.core.remoting.impl.netty.NettyConnectorFactory;
-import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ;
 import org.apache.activemq.artemis.jms.server.config.JMSConfiguration;
 import org.apache.activemq.artemis.jms.server.config.JMSQueueConfiguration;
 import org.apache.activemq.artemis.jms.server.config.impl.ConnectionFactoryConfigurationImpl;
 import org.apache.activemq.artemis.jms.server.config.impl.JMSConfigurationImpl;
 import org.apache.activemq.artemis.jms.server.config.impl.JMSQueueConfigurationImpl;
 import org.apache.activemq.artemis.jms.server.embedded.EmbeddedJMS;
+import org.apache.activemq.artemis.spi.core.naming.BindingRegistry;
 import org.apache.commons.lang3.Validate;
 import se.jguru.nazgul.test.messaging.MessageBroker;
 
 import javax.jms.ConnectionFactory;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import java.io.File;
 import java.net.URL;
 import java.util.HashSet;
@@ -46,8 +45,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
-import static se.jguru.nazgul.test.messaging.hornetq.HornetQBroker.CONFIGURATION_FACTORY_ID;
 
 /**
  * MessageBroker implementation for Artemis.
@@ -67,6 +64,11 @@ public class ArtemisBroker implements MessageBroker {
     public static final String DEFAULT_CONFIGURATION_DIRECTORY = "artemis/plainconfig";
 
     /**
+     * Default registry name of the hornetq jms ConfigurationFactory.
+     */
+    public static final String CONFIGURATION_FACTORY_ID = "UnitTestConnectionFactory";
+
+    /**
      * A map relating all pre-defined queue names/ids to their bindings (i.e. JNDI key).
      */
     public static final Map<String, String> UNIT_TEST_QUEUES;
@@ -82,6 +84,7 @@ public class ArtemisBroker implements MessageBroker {
 
     // Internal state
     private EmbeddedJMS jmsServer;
+    private BindingRegistry registry;
     private String brokerName;
 
     /**
@@ -98,6 +101,7 @@ public class ArtemisBroker implements MessageBroker {
      * @param configurationDirectory The path to the directory where the default hornetq configuration
      *                               files (named as per above) reside.
      */
+    @SuppressWarnings("PMD")
     public ArtemisBroker(final String brokerName, final String configurationDirectory) {
 
         // Check sanity
@@ -105,6 +109,7 @@ public class ArtemisBroker implements MessageBroker {
         Validate.notEmpty(configurationDirectory, "Cannot handle null or empty configurationDirectory argument.");
 
         // a) Create the Artemis configuration
+        this.registry = new MapBindingRegistry();
         final Configuration configuration = new ConfigurationImpl();
         configuration.setPersistenceEnabled(false);
         configuration.setSecurityEnabled(false);
@@ -145,7 +150,9 @@ public class ArtemisBroker implements MessageBroker {
 
         // d) Create the server and assign the broker name
         jmsServer = new EmbeddedJMS();
+        jmsServer.setRegistry(this.registry);
         jmsServer.setConfiguration(configuration);
+        jmsServer.setJmsConfiguration(jmsConfig);
 
         this.brokerName = brokerName;
     }
@@ -155,20 +162,15 @@ public class ArtemisBroker implements MessageBroker {
      */
     @Override
     public void startBroker() throws Exception {
-
-        // Set the artemis initial context factory.
-        System.setProperty("java.naming.factory.initial",
-                "org.apache.activemq.artemis.jndi.ActiveMQInitialContextFactory");
-
-        final Context initialContext = new InitialContext();
-
-        // -Djava.util.logging.config.file=${imported.basedir}/config/logging.properties
+        
+        jmsServer.start();
+        jmsServer.getJMSServerManager().getActiveMQServer().setIdentity(brokerName);
     }
 
     /**
      * @return The embedded Artemis Jms server.
      */
-    public final EmbeddedActiveMQ getJmsServer() {
+    public final EmbeddedJMS getJmsServer() {
         return jmsServer;
     }
 
@@ -177,8 +179,7 @@ public class ArtemisBroker implements MessageBroker {
      */
     @Override
     public void stopBroker() throws Exception {
-        jmsServer.start();
-        jmsServer.getActiveMQServer().setIdentity(brokerName);
+        jmsServer.stop();
     }
 
     /**
@@ -186,7 +187,14 @@ public class ArtemisBroker implements MessageBroker {
      */
     @Override
     public String getMessageServerURI() {
-        return jmsServer.getActiveMQServer().getConfiguration().getConfigurationUrl().toString();
+        return "Irrelevant";
+    }
+
+    /**
+     * @return Retrieves the non-null BindingRegistry within the Artemis server.
+     */
+    public BindingRegistry getRegistry() {
+        return registry;
     }
 
     /**
@@ -194,17 +202,7 @@ public class ArtemisBroker implements MessageBroker {
      */
     @Override
     public ConnectionFactory getConnectionFactory(final String configuration) {
-
-        final ConnectionFactory cf = (ConnectionFactory)ic.lookup("ConnectionFactory");
-
-        jmsServer.getActiveMQServer().getConfiguration()
         return (ConnectionFactory) jmsServer.lookup("/connection/" + CONFIGURATION_FACTORY_ID);
-
-        jmsServer.getActiveMQServer().getConfiguration().getConfigurationUrl()
-
-        // return (ConnectionFactory) jmsServer.getActiveMQServer()
-
-                // .lookup("/connection/" + CONFIGURATION_FACTORY_ID);
     }
 
     /**

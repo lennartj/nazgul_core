@@ -1,8 +1,8 @@
-/*
+/*-
  * #%L
  * Nazgul Project: nazgul-core-messaging-test
  * %%
- * Copyright (C) 2010 - 2015 jGuru Europe AB
+ * Copyright (C) 2010 - 2017 jGuru Europe AB
  * %%
  * Licensed under the jGuru Europe AB license (the "License"), based
  * on Apache License, Version 2.0; you may not use this file except
@@ -19,8 +19,7 @@
  * limitations under the License.
  * #L%
  */
-
-package se.jguru.nazgul.test.messaging.hornetq;
+package se.jguru.nazgul.test.messaging.artemis;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -38,15 +37,15 @@ import java.util.List;
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class T_AbstractHornetQTestTest {
+public class T_AbstractArtemisTestTest {
 
     // Shared state
-    private MockHornetQTest unitUnderTest;
+    private MockArtemisTest unitUnderTest;
     private MessageBroker broker;
 
     @Before
     public void setupSharedState() {
-        unitUnderTest = new MockHornetQTest(false);
+        unitUnderTest = new MockArtemisTest(false);
         broker = unitUnderTest.getBroker();
     }
 
@@ -66,7 +65,7 @@ public class T_AbstractHornetQTestTest {
 
         // Assert
         Assert.assertNotNull(broker);
-        Assert.assertTrue(broker instanceof HornetQBroker);
+        Assert.assertTrue(broker instanceof ArtemisBroker);
 
         final List<String> callTrace = unitUnderTest.callTrace;
         Assert.assertEquals(2, callTrace.size());

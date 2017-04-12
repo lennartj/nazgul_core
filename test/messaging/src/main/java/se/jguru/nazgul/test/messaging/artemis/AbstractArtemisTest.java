@@ -22,8 +22,6 @@
 package se.jguru.nazgul.test.messaging.artemis;
 
 import se.jguru.nazgul.test.messaging.AbstractJmsTest;
-import se.jguru.nazgul.test.messaging.MessageBroker;
-import se.jguru.nazgul.test.messaging.hornetq.HornetQBroker;
 
 import javax.jms.JMSException;
 import javax.validation.constraints.NotNull;
