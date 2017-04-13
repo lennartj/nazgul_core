@@ -26,6 +26,7 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.Member;
 import org.junit.Assert;
 import org.junit.Test;
+import se.jguru.nazgul.core.algorithms.api.NetworkAlgorithms;
 import se.jguru.nazgul.core.cache.impl.hazelcast.clients.HazelcastCacheMember;
 
 import java.lang.reflect.Field;
@@ -40,7 +41,10 @@ import java.util.List;
 public class HazelcastCacheFactoryTest {
 
     // Shared config
-    String ownIp = LocalhostIpResolver.getLocalHostAddress();
+    String ownIp = NetworkAlgorithms.getAllLocalNetworkAddresses(
+            NetworkAlgorithms.NON_LOOPBACK_IPV4_FILTER, null)
+            .stream()
+            .findFirst().orElseThrow(() -> new RuntimeException("Cannot find a non-loopback IPv4 address."));
     int ownPort = 5701;
 
     @Test(expected = NullPointerException.class)
@@ -118,15 +122,12 @@ public class HazelcastCacheFactoryTest {
         HazelcastCacheMember.create("irrelevant", ownIp, ownPort, "dnsAddress:100200");
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void validateExceptionOnUnresolvableDnsName() {
 
         // Act & Assert
-        try {
-            HazelcastCacheMember.create("irrelevant", ownIp, ownPort, "non.existing.dns:4242");
-        } catch (IllegalArgumentException e) {
-            Assert.assertTrue(e.getCause() instanceof UnknownHostException);
-        }
+        HazelcastCacheMember.create("irrelevant", ownIp, ownPort, "non.existing.dns:4242");
+        Assert.fail("Expected IllegalArgumentException on unresolvable host DNS name.");
     }
 
     @Test

@@ -21,10 +21,10 @@
  */
 package se.jguru.nazgul.core.jmx.test.mbeanserver;
 
-import org.apache.commons.lang3.Validate;
 import org.junit.Assert;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 
 import javax.management.JMX;
 import javax.management.MBeanServer;
@@ -161,7 +161,7 @@ public class LocalMBeanServerRule extends TestWatcher {
     public void setJmxBeanTestDomain(final String jmxBeanTestDomain) {
 
         // Check sanity
-        Validate.notNull(jmxBeanTestDomain, "Cannot handle null 'jmxBeanTestDomain' argument.");
+        Validate.notNull(jmxBeanTestDomain, "jmxBeanTestDomain");
 
         // Assign internal state
         this.jmxBeanTestDomain = jmxBeanTestDomain;
@@ -255,7 +255,7 @@ public class LocalMBeanServerRule extends TestWatcher {
     private ObjectName getSearchObjectNameFor(final String jmxDomain) {
 
         // Check sanity
-        Validate.notNull(jmxDomain, "Cannot handle null 'jmxDomain' argument.");
+        Validate.notNull(jmxDomain, "jmxDomain");
 
         try {
             return new ObjectName(jmxDomain + ":*");

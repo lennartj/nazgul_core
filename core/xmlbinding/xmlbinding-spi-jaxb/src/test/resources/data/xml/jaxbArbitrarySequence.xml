@@ -22,6 +22,8 @@
   -->
 
 
+
+
 <multiple:sampleSequence xmlns:beverage="http://some/good/beverage"
                          xmlns:foo="http://www.jguru.se/foo"
                          xmlns:multiple="http://jguru.se/examples/jaxb/multiple"

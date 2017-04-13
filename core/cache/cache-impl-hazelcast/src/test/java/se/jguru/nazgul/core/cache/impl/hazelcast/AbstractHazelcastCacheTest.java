@@ -31,8 +31,10 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.MultiMap;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.jguru.nazgul.core.algorithms.api.NetworkAlgorithms;
 import se.jguru.nazgul.core.cache.impl.hazelcast.clients.HazelcastCacheMember;
 import se.jguru.nazgul.core.cache.impl.hazelcast.grid.GridOperations;
 
@@ -55,6 +57,19 @@ public abstract class AbstractHazelcastCacheTest {
 
     public static final String DEFAULT_LOGBACK_CONFIGURATION_PATH = "config/logging/logback-test.xml";
 
+    // Shared state
+    private static String localHostNonLoopbackAddr;
+
+    @Before
+    public void setupSharedState() {
+
+        localHostNonLoopbackAddr = NetworkAlgorithms.getAllLocalNetworkAddresses(
+                NetworkAlgorithms.NON_LOOPBACK_IPV4_FILTER, null)
+                .stream()
+                .findFirst().orElseThrow(() -> new RuntimeException("Cannot build the HazelcastCacheImplementation "
+                        + "project without any active Inet4Address"));
+    }
+
     /**
      * Acquires a AbstractHazelcastInstanceWrapper instance, invigorated by the provided
      * configuration file.
@@ -68,7 +83,7 @@ public abstract class AbstractHazelcastCacheTest {
         final Config config = HazelcastCacheMember.readConfigFile(configFile);
 
         final TcpIpConfig tcpIpConfig = config.getNetworkConfig().getJoin().getTcpIpConfig();
-        tcpIpConfig.addMember(LocalhostIpResolver.getLocalHostAddress());
+        tcpIpConfig.addMember(localHostNonLoopbackAddr);
         log.info("Got Config: " + config);
 
         return new HazelcastCacheMember(config);

@@ -22,6 +22,8 @@
   -->
 
 
+
+
 <core:dateExampleVO lastAdmissionDate="2016-02-05" admissionTime="2015-02-02T19:43:00+01:00[Europe/Stockholm]" xmlns:core="http://www.jguru.se/nazgul/core" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <eventStartTime>2016-03-04T18:15:00</eventStartTime>
     <eventEndTime>23:26:00</eventEndTime>

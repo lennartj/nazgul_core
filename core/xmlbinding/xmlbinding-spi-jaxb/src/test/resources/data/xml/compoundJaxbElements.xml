@@ -22,6 +22,8 @@
   -->
 
 
+
+
 <first:sampleSequence xmlns:first="http://jguru.se/examples/jaxb/multiple">
     <originalCollectionType>java.util.ArrayList</originalCollectionType>
     <items>

@@ -2,7 +2,7 @@
  * #%L
  * Nazgul Project: nazgul-core-jmx-api
  * %%
- * Copyright (C) 2010 - 2015 jGuru Europe AB
+ * Copyright (C) 2010 - 2017 jGuru Europe AB
  * %%
  * Licensed under the jGuru Europe AB license (the "License"), based
  * on Apache License, Version 2.0; you may not use this file except
@@ -21,9 +21,9 @@
  */
 package se.jguru.nazgul.core.jmx.api;
 
-import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 
 import javax.management.AttributeChangeNotification;
 import javax.management.AttributeChangeNotificationFilter;
@@ -114,7 +114,7 @@ public abstract class AbstractMBean extends StandardEmitterMBean implements Life
     }
 
     /**
-     * Standard implementation of the MBeanRegistration lifecycle method, delegating execution to (in order):
+     * <p>MBeanRegistration lifecycle method that delegates execution to (in order):</p>
      * <ol>
      * <li>{@code customPreregister()}, where subclasses may manipulate the JMX ObjectName.</li>
      * <li>{@code super.preRegister()}, performing the actual registration of this AbstractMBean
@@ -344,9 +344,9 @@ public abstract class AbstractMBean extends StandardEmitterMBean implements Life
                                                       final T newValue) {
 
         // Check sanity
-        Validate.notEmpty(attributeName, "Cannot handle null or empty attributeName argument.");
-        Validate.notEmpty(eventMessage, "Cannot handle null or empty eventMessage argument.");
-        Validate.notNull(objectType, "Cannot handle null or empty objectType argument.");
+        Validate.notEmpty(attributeName, "attributeName");
+        Validate.notEmpty(eventMessage, "eventMessage");
+        Validate.notNull(objectType, "objectType");
 
         // Notify our listeners about the state change.
         final Notification notification = new AttributeChangeNotification(

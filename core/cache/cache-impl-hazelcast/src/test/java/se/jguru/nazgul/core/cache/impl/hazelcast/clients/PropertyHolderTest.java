@@ -22,16 +22,31 @@
 package se.jguru.nazgul.core.cache.impl.hazelcast.clients;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
-import se.jguru.nazgul.core.cache.impl.hazelcast.LocalhostIpResolver;
+import se.jguru.nazgul.core.algorithms.api.NetworkAlgorithms;
 
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 public class PropertyHolderTest {
+
+    // Shared state
+    private String localHostNonLoopbackAddr;
+
+    @Before
+    public void setupSharedState() {
+
+        this.localHostNonLoopbackAddr = NetworkAlgorithms.getAllLocalNetworkAddresses(
+                NetworkAlgorithms.NON_LOOPBACK_IPV4_FILTER, null)
+                .stream()
+                .findFirst().orElseThrow(() -> new RuntimeException("Cannot build the HazelcastCacheImplementation "
+                        + "project without any active Inet4Address"));
+    }
 
     @Test(expected = NullPointerException.class)
     public void validateExceptionOnNullProperties() {
@@ -135,7 +150,7 @@ public class PropertyHolderTest {
         // Assert
         Assert.assertEquals(5701, localListeningPort);
         Assert.assertEquals("nazgul_foo", cluster);
-        Assert.assertEquals(LocalhostIpResolver.getLocalHostAddress() + ":5710,10.0.0.1:5701", members);
+        Assert.assertEquals(localHostNonLoopbackAddr + ":5710,10.0.0.1:5701", members);
     }
 
     @Test(expected = NullPointerException.class)
@@ -151,11 +166,10 @@ public class PropertyHolderTest {
         // Assemble
         final String members = "daMembers";
         final String cluster = "daCluster";
-        final String listeningIp = LocalhostIpResolver.getLocalHostAddress();
         final Integer listeningPort = 5701;
         System.setProperty(PropertyHolder.CACHE_CLUSTER_KEY, cluster);
         System.setProperty(PropertyHolder.CACHE_MEMBERS_KEY, members);
-        System.setProperty(PropertyHolder.CACHE_IP_KEY, listeningIp);
+        System.setProperty(PropertyHolder.CACHE_IP_KEY, localHostNonLoopbackAddr);
         System.setProperty(PropertyHolder.CACHE_PORT_KEY, "" + listeningPort);
 
         // Act
@@ -164,7 +178,7 @@ public class PropertyHolderTest {
         // Assert
         Assert.assertEquals(members, unitUnderTest.getCacheMembers());
         Assert.assertEquals(cluster, unitUnderTest.getCacheClusterId());
-        Assert.assertEquals(listeningIp, unitUnderTest.getLocalListeningIp());
+        Assert.assertEquals(localHostNonLoopbackAddr, unitUnderTest.getLocalListeningIp());
         Assert.assertEquals(listeningPort, unitUnderTest.getLocalListeningPort());
 
         System.clearProperty(PropertyHolder.CACHE_CLUSTER_KEY);
@@ -177,15 +191,15 @@ public class PropertyHolderTest {
     // Private helpers
     //
 
-    private TreeMap<String, String> getPopulatedPropertyMap() {
+    private SortedMap<String, String> getPopulatedPropertyMap() {
 
-        TreeMap<String, String> toReturn = new TreeMap<String, String>();
+        final SortedMap<String, String> toReturn = new TreeMap<String, String>();
 
-        toReturn.put(PropertyHolder.CACHE_IP_KEY, LocalhostIpResolver.getLocalHostAddress());
+
+        toReturn.put(PropertyHolder.CACHE_IP_KEY, localHostNonLoopbackAddr);
         toReturn.put(PropertyHolder.CACHE_PORT_KEY, "5701");
         toReturn.put(PropertyHolder.CACHE_CLUSTER_KEY, "nazgul_foo");
-        toReturn.put(PropertyHolder.CACHE_MEMBERS_KEY, LocalhostIpResolver.getLocalHostAddress()
-                + ":5710,10.0.0.1:5701");
+        toReturn.put(PropertyHolder.CACHE_MEMBERS_KEY, localHostNonLoopbackAddr + ":5710,10.0.0.1:5701");
 
         return toReturn;
     }

@@ -31,6 +31,7 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.core.MapEvent;
+import com.hazelcast.map.listener.EntryAddedListener;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -82,6 +83,7 @@ public class AutonomousActionTest extends AbstractHazelcastCacheTest {
                 + "' must define max-size as " + expectedMaxSize + ".", expectedMaxSize, maxSize);
     }
 
+    @Ignore("As of version 3.7, eviction mechanism changed. It uses a probabilistic algorithm based on sampling.")
     @Test
     public void validateEvictionInLifecycle() throws InterruptedException {
 
@@ -139,7 +141,6 @@ public class AutonomousActionTest extends AbstractHazelcastCacheTest {
         }
     }
 
-    @Ignore("Will fail WRT ordering of the events before Hazelcast release 3.4")
     @Test
     public void validateEvictionInLifecycleInHazelcastAPI() throws InterruptedException {
 
@@ -151,12 +152,11 @@ public class AutonomousActionTest extends AbstractHazelcastCacheTest {
         final Config config = HazelcastCacheMember.readConfigFile(quickEvictConfigFile);
         config.setInstanceName("quickEvictionInstance");
         final MapConfig mapConfig = config.getMapConfig(quickEvictionMapId);
-        final double expectedRemainingAfterEviction = (mapConfig.getMaxSizeConfig().getSize()
-                * (100.0d - (double) mapConfig.getEvictionPercentage()) / 100.0d) - 1;
-
+        
         final HazelcastInstance cache = Hazelcast.getOrCreateHazelcastInstance(config);
         final SortedMap<Integer, String> indexedMessages = new TreeMap<>();
-        final EntryListener<String, String> el = new EntryAdapter<String, String>() {
+
+        final EntryAddedListener<String, String> el = new EntryAdapter<String, String>() {
 
             final Object lock = new Object();
 
@@ -195,12 +195,14 @@ public class AutonomousActionTest extends AbstractHazelcastCacheTest {
 ######################################
 [0]: onEntryEvent: ADDED - [key_1]: null --> value_1
 [1]: onEntryEvent: ADDED - [key_0]: null --> value_0
-[2]: onEntryEvent: EVICTED - [key_3]: value_3 --> null
-[3]: onEntryEvent: EVICTED - [key_2]: value_2 --> null
-[4]: onEntryEvent: ADDED - [key_3]: null --> value_3
-[5]: onEntryEvent: ADDED - [key_2]: null --> value_2
-[6]: onEntryEvent: EVICTED - [key_4]: value_4 --> null
-[7]: onEntryEvent: ADDED - [key_4]: null --> value_4
+[2]: onEntryEvent: EVICTED - [key_0]: value_0 --> null
+[3]: onEntryEvent: EVICTED - [key_1]: value_1 --> null
+[4]: onEntryEvent: ADDED - [key_2]: null --> value_2
+[5]: onEntryEvent: EVICTED - [key_2]: value_2 --> null
+[6]: onEntryEvent: ADDED - [key_3]: null --> value_3
+[7]: onEntryEvent: EVICTED - [key_3]: value_3 --> null
+[8]: onEntryEvent: ADDED - [key_4]: null --> value_4
+[9]: onEntryEvent: EVICTED - [key_4]: value_4 --> null
 ######################################
          */
         System.out.println("\n\n\n######################################\n");

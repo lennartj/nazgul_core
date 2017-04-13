@@ -47,7 +47,7 @@ public class AbstractHazelcastCacheListenerAdapterTest {
     }
 
     @Test
-    public void validateFoo() {
+    public void validateEvictionStateEventOrder() {
 
         // Assemble
         final DebugCacheListener<String> cacheListener = new DebugCacheListener<String>("testId1");

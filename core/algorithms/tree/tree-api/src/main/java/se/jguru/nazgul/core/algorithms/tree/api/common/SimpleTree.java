@@ -66,7 +66,7 @@ public class SimpleTree<KeyType extends Serializable & Comparable<KeyType>, Valu
      * {@inheritDoc}
      */
     @Override
-    public MutableNode<KeyType, ValueType> setRoot(final MutableNode<KeyType, ValueType> root)
+    public MutableNode<KeyType, ValueType> setRoot(@NotNull final MutableNode<KeyType, ValueType> root)
             throws IllegalArgumentException {
 
         // Check sanity
@@ -104,6 +104,7 @@ public class SimpleTree<KeyType extends Serializable & Comparable<KeyType>, Valu
      * @return The root node of this tree.
      */
     @Override
+    @NotNull
     public MutableNode<KeyType, ValueType> getRoot() {
         return root;
     }

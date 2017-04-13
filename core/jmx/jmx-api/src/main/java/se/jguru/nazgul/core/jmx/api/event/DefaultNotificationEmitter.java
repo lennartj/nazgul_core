@@ -21,9 +21,9 @@
  */
 package se.jguru.nazgul.core.jmx.api.event;
 
-import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 
 import javax.management.AttributeChangeNotification;
 import javax.management.MBeanNotificationInfo;
@@ -54,7 +54,7 @@ public class DefaultNotificationEmitter extends NotificationBroadcasterSupport i
      * cloned by the constructor as if by {@code info.clone()}, and
      * each call to {@link #getNotificationInfo()} returns a new clone.</p>
      *
-     * @param id  a (unique) id of this DefaultNotificationEmitter.
+     * @param id   a (unique) id of this DefaultNotificationEmitter.
      * @param info an array indicating, for each notification this MBean may send, the name of the Java class of the
      *             notification and the notification type. Can be null, which is equivalent to an empty array.
      */
@@ -63,7 +63,7 @@ public class DefaultNotificationEmitter extends NotificationBroadcasterSupport i
         super(info);
 
         // Check sanity
-        Validate.notEmpty(id, "Cannot handle null or empty 'id' argument.");
+        Validate.notEmpty(id, "id");
 
         // Assign internal state
         this.id = id;
@@ -82,7 +82,7 @@ public class DefaultNotificationEmitter extends NotificationBroadcasterSupport i
      * <p>If the <code>info</code> array is not empty, then it is cloned by the constructor as if by
      * {@code info.clone()}, and each call to {@link #getNotificationInfo()} returns a new clone.</p>
      *
-     * @param id  a (unique) id of this DefaultNotificationEmitter.
+     * @param id       a (unique) id of this DefaultNotificationEmitter.
      * @param executor an executor used by the method <code>sendNotification</code> to send each notification. If it
      *                 is null, the thread calling <code>sendNotification</code> will invoke the
      *                 <code>handleNotification</code> method itself.
@@ -96,7 +96,7 @@ public class DefaultNotificationEmitter extends NotificationBroadcasterSupport i
         super(executor, info);
 
         // Check sanity
-        Validate.notEmpty(id, "Cannot handle null or empty 'id' argument.");
+        Validate.notEmpty(id, "id");
 
         // Assign internal state
         this.id = id;
@@ -150,7 +150,7 @@ public class DefaultNotificationEmitter extends NotificationBroadcasterSupport i
     public static DefaultNotificationEmitter getDefaultStateChangeNotificationEmitter(final String id) {
 
         // Check sanity
-        Validate.notEmpty(id, "Cannot handle null or empty id argument.");
+        Validate.notEmpty(id, "id");
 
         // All done.
         return new DefaultNotificationEmitter(id,

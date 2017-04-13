@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import se.jguru.nazgul.core.cache.impl.hazelcast.LocalhostIpResolver;
+import se.jguru.nazgul.core.algorithms.api.NetworkAlgorithms;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -49,7 +49,12 @@ public class SpringInjectedPropertyHolderTest {
     @Inject
     private ApplicationContext context;
 
-    private static final String localListeningIp = LocalhostIpResolver.getLocalHostAddress();
+    private static final String localListeningIp = NetworkAlgorithms.getAllLocalNetworkAddresses(
+    NetworkAlgorithms.NON_LOOPBACK_IPV4_FILTER, null)
+            .stream()
+            .findFirst()
+            .orElseThrow(() -> new RuntimeException(
+                    "Cannot build the HazelcastCacheImplementation project without any active Inet4Addresses"));
     private static final Integer localListeningPort = 5701;
     private static final String cluster = "testCluster";
     private static final String members = "testMembers";
@@ -103,6 +108,5 @@ public class SpringInjectedPropertyHolderTest {
         Assert.assertEquals(localListeningIp, injectedIp);
         Assert.assertEquals(localListeningPort, injectedPort);
     }
-
 }
 

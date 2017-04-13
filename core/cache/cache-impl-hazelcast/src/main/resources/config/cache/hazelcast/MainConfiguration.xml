@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ #%L
+  #%L
   Nazgul Project: nazgul-core-cache-impl-hazelcast
   %%
-  Copyright (C) 2010 - 2015 jGuru Europe AB
-  ~
+  Copyright (C) 2010 - 2017 jGuru Europe AB
   %%
   Licensed under the jGuru Europe AB license (the "License"), based
   on Apache License, Version 2.0; you may not use this file except
@@ -21,6 +20,8 @@
   limitations under the License.
   #L%
   -->
+
+
 <hazelcast
         xsi:schemaLocation="http://www.hazelcast.com/schema/config http://www.hazelcast.com/schema/config/hazelcast-config-3.1.xsd"
         xmlns="http://www.hazelcast.com/schema/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">

@@ -58,6 +58,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.hazelcast.config.EvictionConfig.DEFAULT_EVICTION_POLICY;
+
 /**
  * This testcase is *very important* in that it tracks how the currently used release of
  * AbstractHazelcastInstanceWrapper behaves internally for certain actions.
@@ -389,7 +391,7 @@ public class HazelcastCacheStrangeInternalBehaviourTest extends AbstractHazelcas
 
         final Config config = new Config("orderingTestInstance");
         final MapConfig mapConfig = config.getMapConfig(quickEvictionMapId);
-        mapConfig.setEvictionPolicy(MapConfig.EvictionPolicy.LFU);
+        mapConfig.setEvictionPolicy(DEFAULT_EVICTION_POLICY.LFU);
         mapConfig.setEvictionPercentage(evictionPercentage);
         mapConfig.setMaxSizeConfig(new MaxSizeConfig().setSize(maxCacheSize));
         final NetworkConfig networkConfig = config.getNetworkConfig();

@@ -36,6 +36,7 @@ import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -102,7 +103,12 @@ public class HazelcastCacheMember extends AbstractHazelcastInstanceWrapper {
 
         Validate.notEmpty(localIp, "Local IP can not be null");
 
-        return create(clusterID, Arrays.asList(localIp), localPort, clusterMembers, configurationFile);
+        // Delegate
+        return create(clusterID,
+                Collections.singletonList(localIp),
+                localPort,
+                clusterMembers,
+                configurationFile);
     }
 
     /**

@@ -1,8 +1,8 @@
-/*
+/*-
  * #%L
  * Nazgul Project: nazgul-core-cache-impl-hazelcast
  * %%
- * Copyright (C) 2010 - 2015 jGuru Europe AB
+ * Copyright (C) 2010 - 2017 jGuru Europe AB
  * %%
  * Licensed under the jGuru Europe AB license (the "License"), based
  * on Apache License, Version 2.0; you may not use this file except
@@ -19,127 +19,66 @@
  * limitations under the License.
  * #L%
  */
-
 package se.jguru.nazgul.core.cache.impl.hazelcast;
 
-import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
-import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
-import se.jguru.nazgul.core.algorithms.api.collections.predicate.Transformer;
+import se.jguru.nazgul.core.algorithms.api.NetworkAlgorithms;
 
-import java.net.Inet4Address;
 import java.net.InetAddress;
-import java.net.InterfaceAddress;
-import java.net.NetworkInterface;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.function.Function;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 public class LocalhostIpResolver {
 
+    public static final Function<InetAddress, Set<String>> GET_DNS = iaddr -> {
+
+        final SortedSet<String> toReturn = new TreeSet<>();
+        toReturn.add(iaddr.getCanonicalHostName());
+        return toReturn;
+    };
+
+    public static final Function<InetAddress, Set<String>> GET_IP = iaddr -> {
+
+        final SortedSet<String> toReturn = new TreeSet<>();
+        toReturn.add(iaddr.getHostAddress());
+        return toReturn;
+    };
+    
     // Internal state
-    private static final Filter<InterfaceAddress> ipv4LoopbackAddressFilter = new Filter<InterfaceAddress>() {
-        @Override
-        public boolean accept(final InterfaceAddress candidate) {
-            return candidate != null
-                    && candidate.getAddress() instanceof Inet4Address
-                    && candidate.getAddress().isLoopbackAddress();
-        }
-    };
-    private static final Filter<InterfaceAddress> ipv4NonLoopbackAddressFilter = new Filter<InterfaceAddress>() {
-        @Override
-        public boolean accept(final InterfaceAddress candidate) {
-            return candidate != null
-                    && candidate.getAddress() instanceof Inet4Address
-                    && !candidate.getAddress().isLoopbackAddress();
-        }
-    };
-    private static final Transformer<InterfaceAddress, InetAddress> addressTransformer
-            = new Transformer<InterfaceAddress, InetAddress>() {
-        @Override
-        public InetAddress transform(InterfaceAddress input) {
-            return input.getAddress();
-        }
-    };
+    private String localhostDNS;
+    private String localhostIP;
 
-    public static InetAddress getLocalhostNonLoopbackAddress() {
+    public LocalhostIpResolver() {
 
-        try {
-            final List<InetAddress> ipv4NonLoopbackAddresses = new ArrayList<InetAddress>();
-            final List<InetAddress> ipv4LoopbackAddresses = new ArrayList<InetAddress>();
+        this.localhostDNS = NetworkAlgorithms.getAllLocalNetworkAddresses(null, GET_DNS)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Found no DNS name for localhost."));
 
-            for (NetworkInterface current : Collections.list(NetworkInterface.getNetworkInterfaces())) {
+        this.localhostIP = NetworkAlgorithms.getAllLocalNetworkAddresses(null, GET_IP)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Found no IP number for localhost."));
 
-                // Find all non-loopback addresses
-                final List<InterfaceAddress> nonLoopbackAddresses = CollectionAlgorithms.filter(
-                        current.getInterfaceAddresses(), ipv4NonLoopbackAddressFilter);
-                ipv4NonLoopbackAddresses.addAll(
-                        CollectionAlgorithms.transform(nonLoopbackAddresses, addressTransformer));
-
-                // Find all loopback addresses
-                final List<InterfaceAddress> loopbackAddresses = CollectionAlgorithms.filter(
-                        current.getInterfaceAddresses(), ipv4LoopbackAddressFilter);
-                ipv4LoopbackAddresses.addAll(
-                        CollectionAlgorithms.transform(loopbackAddresses, addressTransformer));
-            }
-
-            if (ipv4NonLoopbackAddresses.size() > 0) {
-                return ipv4NonLoopbackAddresses.get(0);
-            }
-
-            if (ipv4LoopbackAddresses.size() > 0) {
-                return ipv4LoopbackAddresses.get(0);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        throw new IllegalStateException("Currently, an IPv4 address is required "
-                + "to build the HazelcastCache implementation module.");
     }
 
-    public static String getLocalHostAddress() {
-        return getLocalhostNonLoopbackAddress().getHostAddress();
+    public String getLocalhostDNS() {
+        return localhostDNS;
     }
 
-    public static String getClusterIpAddresses(final List<String> ports) {
-
-        StringBuilder builder = new StringBuilder();
-        for (String current : ports) {
-            builder.append(getLocalHostAddress()).append(":").append(current).append(",");
-        }
-
-        builder.deleteCharAt(builder.length() - 1);
-
-        return builder.toString();
+    public String getLocalhostIP() {
+        return localhostIP;
     }
 
-
-    public static void main(String[] args) throws Exception {
-
-        for (NetworkInterface current : Collections.list(NetworkInterface.getNetworkInterfaces())) {
-            System.out.println("[" + current.getName() + "] .... ");
-
-            for (InterfaceAddress address : current.getInterfaceAddresses()) {
-                final InetAddress inetAddress = address.getAddress();
-                final String msg = inetAddress.isLoopbackAddress() ? "[LoopBack]" : "";
-                if (inetAddress instanceof Inet4Address) {
-
-                    System.out.println(" .... " + inetAddress.getHostAddress() + " " + msg);
-                }
-            }
-        }
-
-        /*
-        final InetAddress[] allByName = InetAddress.getAllByName(InetAddress.getLocalHost().getHostName());
-
-        for(InetAddress current : allByName) {
-            System.out.println("Got: " + current + ", v4: " + (current instanceof Inet4Address)
-                    + ", Loopback: " + current.isLoopbackAddress());
-        }
-        */
+    public String getClusterInetAddresses(final List<String> ports) {
+        return ports.stream()
+                .map(p -> getLocalhostDNS() + ":" + p)
+                .reduce((l, r) -> l + "," + r)
+                .orElse("");
     }
 }

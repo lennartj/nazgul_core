@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ #%L
+  #%L
   Nazgul Project: nazgul-core-cache-impl-hazelcast
   %%
-  Copyright (C) 2010 - 2015 jGuru Europe AB
-  ~
+  Copyright (C) 2010 - 2017 jGuru Europe AB
   %%
   Licensed under the jGuru Europe AB license (the "License"), based
   on Apache License, Version 2.0; you may not use this file except
@@ -22,19 +21,23 @@
   #L%
   -->
 
+
+
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-    <bean name="localHostId"
-          class="se.jguru.nazgul.core.cache.impl.hazelcast.LocalhostIpResolver"
-          factory-method="getLocalHostAddress"/>
+    <bean name="localhostIpResolverBean"
+          class="se.jguru.nazgul.core.cache.impl.hazelcast.LocalhostIpResolver" />
 
-    <bean name="clusterMemberDefinition"
-          class="se.jguru.nazgul.core.cache.impl.hazelcast.LocalhostIpResolver"
-          factory-method="getClusterIpAddresses">
+    <bean name="localHostDNS" factory-bean="localhostIpResolverBean" factory-method="getLocalhostDNS"/>
+
+    <!--
+        [ip/dns]:[port],[ip/dns]:[port]
+    -->
+    <bean name="clusterMemberDefinition" factory-bean="localhostIpResolverBean" factory-method="getClusterInetAddresses">
         <constructor-arg>
             <list>
                 <value>11111</value>
@@ -50,7 +53,7 @@
           class="se.jguru.nazgul.core.cache.impl.hazelcast.clients.HazelcastCacheMember"
           factory-method="create">
         <constructor-arg type="java.lang.String" value="root/system/environment/cluster"/>
-        <constructor-arg type="java.lang.String" ref="localHostId"/>
+        <constructor-arg type="java.lang.String" ref="localHostDNS"/>
         <constructor-arg type="int" value="11111"/>
         <constructor-arg type="java.lang.String" ref="clusterMemberDefinition"/>
     </bean>
@@ -59,9 +62,8 @@
           class="se.jguru.nazgul.core.cache.impl.hazelcast.clients.HazelcastCacheMember"
           factory-method="create">
         <constructor-arg type="java.lang.String" value="root/system/environment/cluster"/>
-        <constructor-arg type="java.lang.String" ref="localHostId"/>
+        <constructor-arg type="java.lang.String" ref="localHostDNS"/>
         <constructor-arg type="int" value="22222"/>
         <constructor-arg type="java.lang.String" ref="clusterMemberDefinition"/>
     </bean>
-
 </beans>

@@ -21,6 +21,8 @@
   #L%
   -->
 
+
+
 <core:entityTransporter xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:core="http://www.jguru.se/nazgul/core"
                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <entityClasses>

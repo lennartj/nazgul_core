@@ -22,6 +22,8 @@
   -->
 
 
+
+
 <core:entityTransporter xmlns:acmePeople="http://www.acme.org/person"
                         xmlns:core="http://www.jguru.se/nazgul/core"
                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
