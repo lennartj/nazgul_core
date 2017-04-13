@@ -2,7 +2,7 @@
  * #%L
  * Nazgul Project: nazgul-core-algorithms-api
  * %%
- * Copyright (C) 2010 - 2015 jGuru Europe AB
+ * Copyright (C) 2010 - 2017 jGuru Europe AB
  * %%
  * Licensed under the jGuru Europe AB license (the "License"), based
  * on Apache License, Version 2.0; you may not use this file except
@@ -26,6 +26,8 @@ import se.jguru.nazgul.core.algorithms.api.trees.node.MutableNode;
 import se.jguru.nazgul.core.algorithms.api.trees.node.Node;
 import se.jguru.nazgul.core.algorithms.api.trees.path.Path;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * A generic typed Tree structure holding nodes.
  *
@@ -36,6 +38,7 @@ public interface Tree<K extends Comparable<K>, V> {
     /**
      * @return The root node of this tree.
      */
+    @NotNull
     MutableNode<K, V> getRoot();
 
     /**
@@ -45,5 +48,5 @@ public interface Tree<K extends Comparable<K>, V> {
      * @param path The path to the node which should be acquired.
      * @return The Node at the provided path, or {@code null} if no node was found.
      */
-    <X extends Node<K, V>> X get(Path<K> path);
+    <X extends Node<K, V>> X get(@NotNull Path<K> path);
 }

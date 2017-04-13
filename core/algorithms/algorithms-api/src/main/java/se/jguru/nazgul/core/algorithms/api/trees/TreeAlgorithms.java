@@ -24,6 +24,7 @@ package se.jguru.nazgul.core.algorithms.api.trees;
 
 import se.jguru.nazgul.core.algorithms.api.Validate;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.EnumMap;
 
@@ -42,8 +43,8 @@ public abstract class TreeAlgorithms {
      * @param <V>     The value class.
      * @return a semi-populated EnumMap with all keys in ordinal order, and all values {@code null}.
      */
-    public static <K extends Enum<K>, V extends Serializable & Comparable<V>> EnumMap<K, V>
-    getEmptyEnumMap(final Class<K> keyType) {
+    public static <K extends Enum<K>, V extends Serializable & Comparable<V>>
+    EnumMap<K, V> getEmptyEnumMap(@NotNull final Class<K> keyType) {
 
         Validate.notNull(keyType, "keyType");
 

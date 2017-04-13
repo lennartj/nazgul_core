@@ -24,6 +24,11 @@ package se.jguru.nazgul.core.algorithms.api;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>
  */
@@ -74,6 +79,26 @@ public class ValidateTest {
         } catch (Exception e) {
             Assert.fail("Expected IllegalArgumentException, but got " + e);
         }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void validateCollectionEmptyness() {
+
+        // Assemble
+        final List<String> aCollection = new ArrayList<>();
+
+        // Act & Assert
+        Validate.notEmpty(aCollection, "aCollection");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void validateMapEmptyness() {
+
+        // Assemble
+        final SortedMap<String, Double> anEmptySortedMap = new TreeMap<>();
+
+        // Act & Assert
+        Validate.notEmpty(anEmptySortedMap, "anEmptySortedMap");
     }
 
     @Test

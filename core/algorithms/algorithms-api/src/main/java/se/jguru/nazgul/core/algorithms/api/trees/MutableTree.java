@@ -2,7 +2,7 @@
  * #%L
  * Nazgul Project: nazgul-core-algorithms-api
  * %%
- * Copyright (C) 2010 - 2015 jGuru Europe AB
+ * Copyright (C) 2010 - 2017 jGuru Europe AB
  * %%
  * Licensed under the jGuru Europe AB license (the "License"), based
  * on Apache License, Version 2.0; you may not use this file except
@@ -24,6 +24,8 @@ package se.jguru.nazgul.core.algorithms.api.trees;
 
 import se.jguru.nazgul.core.algorithms.api.trees.node.MutableNode;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Specification for a Tree whose internal state can be manipulated, in terms
  * of adding/removing Nodes and re-assigning the root Node.
@@ -44,5 +46,5 @@ public interface MutableTree<K extends Comparable<K>, V> extends Tree<K, V> {
      *                                  any existing children are not MutableNode instances.
      *                                  Also thrown if {@code root} has a parent node assigned.
      */
-    MutableNode<K, V> setRoot(MutableNode<K, V> root) throws IllegalArgumentException;
+    MutableNode<K, V> setRoot(@NotNull MutableNode<K, V> root) throws IllegalArgumentException;
 }

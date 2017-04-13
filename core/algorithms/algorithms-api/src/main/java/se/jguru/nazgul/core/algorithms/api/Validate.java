@@ -21,7 +21,10 @@
  */
 package se.jguru.nazgul.core.algorithms.api;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Simple argument validator, inspired by the commons-lang.
@@ -56,6 +59,59 @@ public final class Validate {
 
         // All done.
         return object;
+    }
+
+    /**
+     * Validates that the supplied object is not null, and throws an IllegalArgumentException otherwise.
+     *
+     * @param aMap         The Map to validate for emptyness.
+     * @param argumentName The argument name of the object to validate.
+     *                     If supplied (i.e. non-{@code null}), this value is used in composing
+     *                     a better exception message.
+     * @param <K>          the type of keys found within the Map.
+     * @param <V>          the type of values found within the Map.
+     * @param <M>          the exact type of Map submitted for emptyness check.
+     * @return The Collection submitted.
+     * @throws IllegalArgumentException if the submitted Map is empty.
+     * @throws NullPointerException     if the supplied Map is null.
+     */
+    public static <K, V, M extends Map<K, V>> M notEmpty(final M aMap, final String argumentName) {
+
+        // Check sanity
+        notNull(aMap, argumentName);
+
+        if (aMap.isEmpty()) {
+            throw new IllegalArgumentException(getMessage("empty", argumentName));
+        }
+
+        // All done
+        return aMap;
+    }
+
+    /**
+     * Validates that the supplied object is not null, and throws an IllegalArgumentException otherwise.
+     *
+     * @param aCollection  The Collection to validate for emptyness.
+     * @param argumentName The argument name of the object to validate.
+     *                     If supplied (i.e. non-{@code null}), this value is used in composing
+     *                     a better exception message.
+     * @param <C>          The type of Collection to validate for emptyness.
+     * @param <T>          The type elements within the Collection.
+     * @return The Collection submitted.
+     * @throws IllegalArgumentException if the submitted Collection is empty.
+     * @throws NullPointerException     if the supplied Collection is null.
+     */
+    public static <T, C extends Collection<T>> C notEmpty(final C aCollection, final String argumentName) {
+
+        // Check sanity
+        notNull(aCollection, argumentName);
+
+        if (aCollection.isEmpty()) {
+            throw new IllegalArgumentException(getMessage("empty", argumentName));
+        }
+
+        // All done
+        return aCollection;
     }
 
     /**
@@ -99,7 +155,9 @@ public final class Validate {
     // Private helpers
     //
 
-    private static String getMessage(final String exceptionDefinition, final String argumentName) {
+    @NotNull
+    private static String getMessage(@NotNull final String exceptionDefinition,
+                                     @NotNull final String argumentName) {
         return "Cannot handle "
                 + exceptionDefinition
                 + (argumentName == null ? "" : " '" + argumentName + "'")

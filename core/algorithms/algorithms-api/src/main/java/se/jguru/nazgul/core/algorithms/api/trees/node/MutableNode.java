@@ -24,6 +24,8 @@ package se.jguru.nazgul.core.algorithms.api.trees.node;
 
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Specification for a Node whose internal state can be manipulated, in terms
  * of moving it within trees, and adding/removing children.
@@ -40,14 +42,14 @@ public interface MutableNode<K extends Comparable<K>, V> extends Node<K, V> {
      * @param node The node to add.
      * @throws IllegalArgumentException if the given node could not be added properly.
      */
-    void addChild(MutableNode<K, V> node) throws IllegalArgumentException;
+    void addChild(@NotNull MutableNode<K, V> node) throws IllegalArgumentException;
 
     /**
      * Removes all immediate children of this MutableNode matching the provided Filter.
      *
      * @param nodeFilter a Filter defining which children should be removed.
      */
-    void removeChildren(Filter<Node<K, V>> nodeFilter);
+    void removeChildren(@NotNull Filter<Node<K, V>> nodeFilter);
 
     /**
      * Removes the provided child node from this MutableNode, if it exists.
@@ -56,14 +58,14 @@ public interface MutableNode<K extends Comparable<K>, V> extends Node<K, V> {
      *
      * @param node The node to remove.
      */
-    void removeChild(MutableNode<K, V> node);
+    void removeChild(@NotNull MutableNode<K, V> node);
 
     /**
      * Assigns the parent of this MutableNode.
      *
      * @param parent The parent of this node.
      */
-    void setParent(MutableNode<K, V> parent);
+    void setParent(@NotNull MutableNode<K, V> parent);
 
     /**
      * Removes this MutableNode from its parent, by removing both the
