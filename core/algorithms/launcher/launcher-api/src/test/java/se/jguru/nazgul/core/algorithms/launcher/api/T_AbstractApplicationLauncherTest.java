@@ -72,7 +72,7 @@ public class T_AbstractApplicationLauncherTest {
     public void validateExceptionOnEmptyPatternsList() {
 
         // Act & Assert
-        new MockApplication(description, args, version, new ArrayList<String>());
+        new MockApplication(description, args, version, new ArrayList<>());
     }
 
     @Test

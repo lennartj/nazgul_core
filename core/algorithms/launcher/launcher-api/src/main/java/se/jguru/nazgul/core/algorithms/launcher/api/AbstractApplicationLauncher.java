@@ -26,21 +26,22 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
-import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 
+import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -80,10 +81,14 @@ public abstract class AbstractApplicationLauncher implements StandardLifecycle {
      * @param commandLineArguments        The command-line arguments supplied to a main method call.
      * @param appVersion                  A version descriptor for this application.
      */
-    protected AbstractApplicationLauncher(final String briefApplicationDescription,
-                                          final String[] commandLineArguments,
-                                          final String appVersion) {
-        this(briefApplicationDescription, commandLineArguments, appVersion, Arrays.asList(NAZGUL_PACKAGES_REGEXP));
+    protected AbstractApplicationLauncher(@NotNull final String briefApplicationDescription,
+                                          @NotNull final String[] commandLineArguments,
+                                          @NotNull final String appVersion) {
+
+        this(briefApplicationDescription,
+                commandLineArguments,
+                appVersion,
+                Collections.singletonList(NAZGUL_PACKAGES_REGEXP));
     }
 
     /**
@@ -96,18 +101,16 @@ public abstract class AbstractApplicationLauncher implements StandardLifecycle {
      * @param appVersion                  A version descriptor for this application.
      * @param patternsForVerboseLogging   A List holding java regexp patterns, defining which
      */
-    protected AbstractApplicationLauncher(final String briefApplicationDescription,
-                                          final String[] commandLineArguments,
-                                          final String appVersion,
-                                          final List<String> patternsForVerboseLogging) {
+    protected AbstractApplicationLauncher(@NotNull final String briefApplicationDescription,
+                                          @NotNull final String[] commandLineArguments,
+                                          @NotNull final String appVersion,
+                                          @NotNull final List<String> patternsForVerboseLogging) {
 
         // Check sanity
-        Validate.notEmpty(briefApplicationDescription,
-                "Cannot handle null or empty briefApplicationDescription argument.");
-        Validate.notNull(commandLineArguments, "Cannot handle null commandLineArguments argument.");
-        Validate.notEmpty(appVersion, "Cannot handle null or empty appVersion argument.");
-        Validate.notEmpty(patternsForVerboseLogging,
-                "Cannot handle null or empty patternsForVerboseLogging argument.");
+        Validate.notEmpty(briefApplicationDescription, "briefApplicationDescription");
+        Validate.notNull(commandLineArguments, "commandLineArguments");
+        Validate.notEmpty(appVersion, "appVersion");
+        Validate.notEmpty(patternsForVerboseLogging, "patternsForVerboseLogging");
 
         // Create internal state
         this.appVersion = appVersion;
@@ -127,10 +130,12 @@ public abstract class AbstractApplicationLauncher implements StandardLifecycle {
             verboseLoggerPatternList.add(Pattern.compile(current));
         }
 
-        log.debug("Got jarfileLocation: " + getJarPath());
+        if (log.isDebugEnabled()) {
+            log.debug("Got jarfileLocation: " + getJarPath());
+        }
 
         // Create the command line
-        final CommandLineParser parser = new PosixParser();
+        final CommandLineParser parser = new DefaultParser();
 
         try {
             // Parse the command line.
