@@ -24,6 +24,8 @@ package se.jguru.nazgul.core.cache.api.distributed.async;
 
 import se.jguru.nazgul.core.clustering.api.Clusterable;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Lightweight Topic definition, implying a distributed cluster-wide Topic
  * which exists within the context of a distributed cache.
@@ -38,7 +40,7 @@ public interface LightweightTopic<M> extends Clusterable {
      *
      * @param message The message to publish in this Topic.
      */
-    void publish(M message);
+    void publish(@NotNull M message);
 
     /**
      * Adds a new LightweightTopicListener to this Topic.
@@ -47,12 +49,12 @@ public interface LightweightTopic<M> extends Clusterable {
      *
      * @param listener The LightweightTopicListener to register to this Topic.
      */
-    void addListener(LightweightTopicListener<M> listener);
+    void addListener(@NotNull LightweightTopicListener<M> listener);
 
     /**
      * Removes the provided LightweightTopicListener from this LightweightTopic.
      *
      * @param listener The listener to remove.
      */
-    void removeListener(LightweightTopicListener<M> listener);
+    void removeListener(@NotNull LightweightTopicListener<M> listener);
 }

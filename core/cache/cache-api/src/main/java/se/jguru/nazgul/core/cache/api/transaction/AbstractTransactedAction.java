@@ -23,6 +23,10 @@
 
 package se.jguru.nazgul.core.cache.api.transaction;
 
+import se.jguru.nazgul.core.algorithms.api.Validate;
+
+import javax.validation.constraints.NotNull;
+
 /**
  * Abstract implementation of the TransactedAction specification, providing
  * all implementation user details with the exception of
@@ -40,13 +44,14 @@ public abstract class AbstractTransactedAction implements TransactedAction {
      *
      * @param rollbackErrorMessage An exception message logged if the TransactedAction failed.
      */
-    protected AbstractTransactedAction(final String rollbackErrorMessage) {
-        this.rollbackErrorMessage = rollbackErrorMessage;
+    protected AbstractTransactedAction(@NotNull final String rollbackErrorMessage) {
+        this.rollbackErrorMessage = Validate.notEmpty(rollbackErrorMessage, "rollbackErrorMessage");
     }
 
     /**
      * @return An exception message logged if the TransactedAction failed.
      */
+    @NotNull
     public String getRollbackErrorDescription() {
         return rollbackErrorMessage;
     }

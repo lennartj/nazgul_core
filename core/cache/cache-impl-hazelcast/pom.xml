@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <!--
   ~ #%L
   ~ Nazgul Project: nazgul-core-cache-impl-hazelcast
@@ -45,6 +44,7 @@
 
     <properties>
         <path.in.reactor>core/cache/cache-impl-hazelcast</path.in.reactor>
+        <!-- hazelcast.version>3.8.1</hazelcast.version -->
         <hazelcast.version>3.8</hazelcast.version>
         <spring.version>4.3.7.RELEASE</spring.version>
     </properties>

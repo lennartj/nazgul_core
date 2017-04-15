@@ -25,6 +25,7 @@ package se.jguru.nazgul.core.cache.api.distributed;
 import se.jguru.nazgul.core.cache.api.Cache;
 import se.jguru.nazgul.core.cache.api.CacheListener;
 
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,7 @@ public interface DistributedCache<K, V> extends Cache<K, V> {
     /**
      * Type indication for the distributed collection.
      */
-    public enum DistributedCollectionType {
+    enum DistributedCollectionType {
 
         /**
          * Indicate a distributed Collection.
@@ -70,6 +71,7 @@ public interface DistributedCache<K, V> extends Cache<K, V> {
      * for each time this method is called. (I.e. a cluster-wide sequence
      * of some kind).
      */
+    @NotNull
     String getClusterUniqueID();
 
     /**
@@ -91,7 +93,8 @@ public interface DistributedCache<K, V> extends Cache<K, V> {
      *                                          not support creating a distributed collection
      *                                          of the given type.
      */
-    Collection<? extends V> getDistributedCollection(DistributedCollectionType type, String key)
+    Collection<? extends V> getDistributedCollection(@NotNull DistributedCollectionType type,
+                                                     @NotNull String key)
             throws ClassCastException, UnsupportedDistributionException;
 
     /**
@@ -107,7 +110,7 @@ public interface DistributedCache<K, V> extends Cache<K, V> {
      * @throws UnsupportedDistributionException if the underlying cache implementation could
      *                                          not support creating a distributed Map.
      */
-    <MapKeyType, MapValueType> Map<MapKeyType, MapValueType> getDistributedMap(String key)
+    <MapKeyType, MapValueType> Map<MapKeyType, MapValueType> getDistributedMap(@NotNull String key)
             throws UnsupportedDistributionException;
 
     /**
@@ -125,7 +128,7 @@ public interface DistributedCache<K, V> extends Cache<K, V> {
      *                                  registering a CacheListener (i.e. incorrect type
      *                                  for the underlying cache implementation).
      */
-    boolean addListenerFor(Object distributedObject, CacheListener<K, V> listener)
+    boolean addListenerFor(@NotNull Object distributedObject, @NotNull CacheListener<K, V> listener)
             throws IllegalArgumentException;
 
     /**
@@ -139,7 +142,7 @@ public interface DistributedCache<K, V> extends Cache<K, V> {
      *                                  removing a CacheListener (i.e. incorrect type for the
      *                                  underlying cache implementation).
      */
-    void removeListenerFor(Object distributedObject, String cacheListenerId)
+    void removeListenerFor(@NotNull Object distributedObject, @NotNull String cacheListenerId)
             throws IllegalArgumentException;
 
     /**
@@ -148,5 +151,5 @@ public interface DistributedCache<K, V> extends Cache<K, V> {
      * @param distributedObject The distributedObject whose CacheListener IDs we should retrieve.
      * @return The IDs of all CacheListener instances registered to the provided distributedObject.
      */
-    List<String> getListenersIDsFor(Object distributedObject);
+    List<String> getListenersIDsFor(@NotNull Object distributedObject);
 }

@@ -33,8 +33,8 @@ import se.jguru.nazgul.core.clustering.api.Clusterable;
 public interface LightweightTopicListener<M> extends Clusterable {
 
     /**
-     * Callback method invoked by the underlying LightweightTopic whenever a message is passed through
-     * the Topic(s) where this LightweightTopicListener is registered.
+     * Callback method invoked by the underlying LightweightTopic whenever a message
+     * is passed through the Topic(s) where this LightweightTopicListener is registered.
      *
      * @param message The message received.
      */

@@ -24,6 +24,7 @@ package se.jguru.nazgul.core.cache.api.distributed.async;
 
 import se.jguru.nazgul.core.cache.api.distributed.DistributedCache;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -36,13 +37,13 @@ import java.io.Serializable;
 public interface DestinationProvider<K, V> extends DistributedCache<K, V> {
 
     /**
-     * Retrieves a LightweightTopic with the provided topicId from
-     * the DestinationProvider. Depending on the capabilities of the underlying
-     * implementation, the topic can be dynamically
+     * Retrieves a LightweightTopic with the provided topicId from the DestinationProvider.
+     * Depending on the capabilities of the underlying implementation, the topic can be dynamically
+     * generated or a {@code null} value may be returned.
      *
      * @param <MessageType> The type of message transmitted by this LightweightTopic.
      * @param topicId       The ID of the LightweightTopic to retrieve.
      * @return The LightweightTopic with the provided topicId.
      */
-    <MessageType extends Serializable> LightweightTopic<MessageType> getTopic(String topicId);
+    <MessageType extends Serializable> LightweightTopic<MessageType> getTopic(@NotNull String topicId);
 }

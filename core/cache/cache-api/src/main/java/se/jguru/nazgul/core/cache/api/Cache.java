@@ -25,6 +25,7 @@ package se.jguru.nazgul.core.cache.api;
 import se.jguru.nazgul.core.cache.api.transaction.TransactedAction;
 import se.jguru.nazgul.core.clustering.api.Clusterable;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -45,7 +46,7 @@ public interface Cache<K, V> extends Clusterable, Iterable<K> {
      * @param key The key of the instance to retrieve.
      * @return The value corresponding to the provided key, or <code>null</code> if no object was found.
      */
-    V get(K key);
+    V get(@NotNull K key);
 
     /**
      * Stores the provided object in this Cache, associated with the provided key. Will overwrite existing objects with
@@ -55,7 +56,7 @@ public interface Cache<K, V> extends Clusterable, Iterable<K> {
      * @param value The value to cache.
      * @return The previous value associated with <code>key</code>, or <code>null</code> if no such object exists.
      */
-    V put(K key, V value);
+    V put(@NotNull K key, V value);
 
     /**
      * Removes the object with the given key from the underlying cache implementation, returning the value held before
@@ -64,7 +65,7 @@ public interface Cache<K, V> extends Clusterable, Iterable<K> {
      * @param key The cache key for which the value should be removed.
      * @return The object to remove.
      */
-    V remove(K key);
+    V remove(@NotNull K key);
 
     /**
      * Adds a listener to events on this cache. All listeners on the local cache node must have unique IDs; should a
@@ -75,7 +76,7 @@ public interface Cache<K, V> extends Clusterable, Iterable<K> {
      * @param listener The listener to add.
      * @return {@code true} if the CacheListener was properly added, and {@code false} otherwise.
      */
-    boolean addListener(CacheListener<K, V> listener);
+    boolean addListener(@NotNull CacheListener<K, V> listener);
 
     /**
      * Acquires the list of all active Listeners of this Cache instance. Note that this does not include CacheListener
@@ -86,6 +87,7 @@ public interface Cache<K, V> extends Clusterable, Iterable<K> {
      * include CacheListener instances wired to distributed objects, nor nor CacheListener instances wired to
      * other members within a distributed cache.
      */
+    @NotNull
     List<String> getListenerIds();
 
     /**
@@ -94,7 +96,7 @@ public interface Cache<K, V> extends Clusterable, Iterable<K> {
      *
      * @param key The unique identifier for the given CacheListener to remove from operating on this Cache.
      */
-    void removeListener(K key);
+    void removeListener(@NotNull K key);
 
     /**
      * Returns true if this cache contains a mapping for the specified key
@@ -102,7 +104,7 @@ public interface Cache<K, V> extends Clusterable, Iterable<K> {
      * @param key The <code>key</code> whose presence in this map is to be tested.
      * @return <code>true</code> if this map contains a mapping for the specified key.
      */
-    boolean containsKey(K key);
+    boolean containsKey(@NotNull K key);
 
     /**
      * Acquires a Transactional context from this Cache, and Executes the
@@ -112,6 +114,6 @@ public interface Cache<K, V> extends Clusterable, Iterable<K> {
      * @throws UnsupportedOperationException if the underlying Cache implementation does not
      *                                       support Transactions.
      */
-    void performTransactedAction(final TransactedAction action)
+    void performTransactedAction(@NotNull final TransactedAction action)
             throws UnsupportedOperationException;
 }
