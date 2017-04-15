@@ -1,4 +1,4 @@
-/*-
+/*
  * #%L
  * Nazgul Project: nazgul-core-algorithms-api
  * %%
@@ -7,17 +7,18 @@
  * Licensed under the jGuru Europe AB license (the "License"), based
  * on Apache License, Version 2.0; you may not use this file except
  * in compliance with the License.
- * 
+ *
  * You may obtain a copy of the License at
- * 
- *       http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
- * 
+ *
+ *      http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * #L%
+ *
  */
 package se.jguru.nazgul.core.algorithms.api;
 
@@ -42,6 +43,7 @@ import java.util.function.Predicate;
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
 @XmlTransient
+@SuppressWarnings("all")
 public final class NetworkAlgorithms {
 
     /**
@@ -63,7 +65,7 @@ public final class NetworkAlgorithms {
      * Predicate identifying non-null IPv4, non-loopback InetAddress objects.
      */
     public static final Predicate<InetAddress> NON_LOOPBACK_IPV4_FILTER = candidate ->
-            IPV4_FILTER.test(candidate) && !candidate.isLoopbackAddress();
+            IPV4_FILTER.test(candidate) && !LOOPBACK_FILTER.test(candidate);
 
     /**
      * Comparator for InetAddress objects; failsafe in the sense that it will convert null values

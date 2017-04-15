@@ -1,4 +1,4 @@
-/*-
+/*
  * #%L
  * Nazgul Project: nazgul-core-algorithms-api
  * %%
@@ -7,17 +7,18 @@
  * Licensed under the jGuru Europe AB license (the "License"), based
  * on Apache License, Version 2.0; you may not use this file except
  * in compliance with the License.
- * 
+ *
  * You may obtain a copy of the License at
- * 
- *       http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
- * 
+ *
+ *      http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * #L%
+ *
  */
 package se.jguru.nazgul.core.algorithms.api;
 
@@ -139,11 +140,11 @@ public class NetworkAlgorithmsTest {
         if (foundLocalIPv6Addresses) {
 
             // Assemble
-            final SortedSet<NetworkInterface> networkIFs = NetworkAlgorithms
-                    .getAllNetworkInterfaces(NetworkAlgorithms.NETWORK_INTERFACE_COMPARATOR);
+            final SortedSet<NetworkInterface> networkIFs = NetworkAlgorithms.getAllNetworkInterfaces(null);
 
             // Act
             final SortedSet<Inet6Address> ipV6Addresses = new TreeSet<>(NetworkAlgorithms.INETADDRESS_COMPARATOR);
+            
             networkIFs.stream()
                     .map(NetworkAlgorithms.GET_INETADDRESSES)
                     .forEach(ifs -> ifs.stream()
@@ -161,7 +162,7 @@ public class NetworkAlgorithmsTest {
             Assert.assertFalse(sortedIFs.isEmpty());
             validateAdresses(ipV6Addresses, false, true);
 
-            System.out.println("Got: " + sortedIFs);
+            // System.out.println("Got sorted IPv6 addresses: " + ipV6Addresses);
         }
     }
 
