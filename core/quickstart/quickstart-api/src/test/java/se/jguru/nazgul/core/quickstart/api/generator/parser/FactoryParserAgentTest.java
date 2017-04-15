@@ -74,7 +74,7 @@ public class FactoryParserAgentTest {
         Assert.assertEquals(expected, result);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void validateExceptionOnUnknownToken() {
 
         // Assemble

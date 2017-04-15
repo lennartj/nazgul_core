@@ -27,9 +27,12 @@ import org.junit.Assert;
 import org.junit.Test;
 import se.jguru.nazgul.core.algorithms.api.types.BarSubtype;
 import se.jguru.nazgul.core.algorithms.api.types.FooSupertype;
+import se.jguru.nazgul.core.algorithms.api.types.LocaleHolder;
+import se.jguru.nazgul.core.algorithms.api.types.TypeInformation;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.SortedMap;
 
 /**
@@ -139,5 +142,57 @@ public class TypeAlgorithmsTests {
                     FooSupertype.class,
                     declaringClass);
         });
+    }
+
+    @Test
+    public void validateJavaBeanPropertyExpressionProperty() {
+
+        // Assemble
+        final LocaleHolder localeHolder = new LocaleHolder(Locale.UK);
+        final String expectedCountry = localeHolder.getLocale().getCountry();
+
+        // Act
+        final Object result1 = TypeAlgorithms.getProperty(localeHolder, "locale.country");
+        final Object result2 = TypeAlgorithms.getProperty(localeHolder, " locale . country ");
+
+        // Assert
+        Assert.assertNotNull(result1);
+        Assert.assertNotNull(result2);
+        Assert.assertEquals(expectedCountry, result1);
+        Assert.assertEquals(expectedCountry, result2);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void validateExceptionOnNonexistentGetter() {
+
+        // Assemble
+        final LocaleHolder localeHolder = new LocaleHolder(Locale.UK);
+
+        // Act & Assert
+        try {
+            TypeAlgorithms.getProperty(localeHolder, "locale.foobar");
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void validateExceptionOnInternalSpaceInExpression() {
+
+        // Assemble
+        final LocaleHolder localeHolder = new LocaleHolder(Locale.UK);
+
+        // Act & Assert
+        TypeAlgorithms.getProperty(localeHolder, "lo    cale.country");
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void validateExceptionOnNullPropertyExpression() {
+
+        // Assemble
+        final LocaleHolder localeHolder = new LocaleHolder(Locale.UK);
+
+        // Act & Assert
+        TypeAlgorithms.getProperty(localeHolder, null);
     }
 }

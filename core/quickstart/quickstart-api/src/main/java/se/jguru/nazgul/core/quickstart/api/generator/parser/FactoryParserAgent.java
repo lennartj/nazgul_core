@@ -22,19 +22,13 @@
  */
 package se.jguru.nazgul.core.quickstart.api.generator.parser;
 
-import org.apache.commons.lang3.Validate;
 import se.jguru.nazgul.core.algorithms.api.TypeAlgorithms;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.parser.api.agent.AbstractParserAgent;
 import se.jguru.nazgul.core.quickstart.model.Project;
-import se.jguru.nazgul.core.quickstart.model.SimpleArtifact;
 
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Method;
+import javax.validation.constraints.NotNull;
 import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.TreeMap;
 
 /**
  * Parser agent which performs token substitutions using data within a Project.
@@ -52,18 +46,9 @@ public class FactoryParserAgent extends AbstractParserAgent {
      */
     public static final String PROJECT_PREFIX = "project:";
 
-    /**
-     * Delimiter between property names in expressions.
-     * For example, the property accessor <code>${project:reactorParent.groupId}</code> uses the separator (".")
-     * to indicate that the getGroupId() method should be called in the object returned by the getReactorParent()
-     * method in the Project class.
-     */
-    public static final String PROPERTY_DELIMITER = ".";
-
 
     // Internal state
     private Project project;
-    private Map<Class<?>, Map<String, Method>> typedPropertyReadMethods;
 
     /**
      * Convenience constructor creating a FactoryParserAgent wrapping the supplied project object,
@@ -72,7 +57,7 @@ public class FactoryParserAgent extends AbstractParserAgent {
      *
      * @param project The Project from which this FactoryParserAgent should read token data.
      */
-    public FactoryParserAgent(final Project project) {
+    public FactoryParserAgent(@NotNull final Project project) {
         this(project, null);
     }
 
@@ -84,18 +69,14 @@ public class FactoryParserAgent extends AbstractParserAgent {
      * @param project      The Project from which this FactoryParserAgent should read token data.
      * @param staticTokens An optional Map containing static tokens for substitution.
      */
-    public FactoryParserAgent(final Project project, final Map<String, String> staticTokens) {
+    public FactoryParserAgent(@NotNull final Project project,
+                              final Map<String, String> staticTokens) {
 
         // Check sanity
         Validate.notNull(project, "Cannot handle null project argument.");
 
         // Assign internal state
         this.project = project;
-        this.typedPropertyReadMethods = new TreeMap<>(TypeAlgorithms.CLASSNAME_COMPARATOR);
-
-        this.typedPropertyReadMethods = TypeAlgorithms.FIND_JAVABEAN_GETTERS.apply(Project.class);
-        mapJavaBeanPropertyGetters(typedPropertyReadMethods, Project.class);
-        mapJavaBeanPropertyGetters(typedPropertyReadMethods, SimpleArtifact.class);
 
         if (staticTokens != null) {
             for (Map.Entry<String, String> current : staticTokens.entrySet()) {
@@ -115,77 +96,15 @@ public class FactoryParserAgent extends AbstractParserAgent {
 
         // Is this a Project property?
         if (token.startsWith(PROJECT_PREFIX)) {
-            String key = token.substring(PROJECT_PREFIX.length());
-            return "" + getProjectData(key);
+
+            // Peel of the project prefix
+            final String key = token.substring(PROJECT_PREFIX.length());
+
+            // Delegate.
+            return "" + TypeAlgorithms.getProperty(project, key);
         }
 
         // Unknown token. Complain.
         throw new IllegalArgumentException("Cannot handle dynamic token [" + token + "].");
-    }
-
-    /**
-     * Adds an entry between the supplied Class and a Map relating readable JavaBean property names
-     * to their respective getter methods.
-     *
-     * @param toPopulate The structure to populate with the JavaBean name 2 getter methods for the supplied class.
-     * @param clazz      The class which should be introspected.
-     */
-    public static void mapJavaBeanPropertyGetters(final Map<Class<?>, Map<String, Method>> toPopulate,
-                                                  final Class<?> clazz) {
-
-        // Check sanity
-        Validate.notNull(clazz, "Cannot handle null clazz argument.");
-        Validate.notNull(toPopulate, "Cannot handle null toPopulate argument.");
-
-        // Map all JavaBean getter methods to their respective property names.
-        Map<String, Method> name2GetterMap = toPopulate.computeIfAbsent(clazz, k -> new TreeMap<>());
-
-        try {
-            for (PropertyDescriptor current : Introspector.getBeanInfo(clazz).getPropertyDescriptors()) {
-
-                String name = current.getName();
-                Method getter = current.getReadMethod();
-                if (getter != null && name != null) {
-                    name2GetterMap.put(name, getter);
-                }
-            }
-        } catch (IntrospectionException e) {
-            throw new IllegalArgumentException("Could not introspect class [" + clazz.getName() + "]", e);
-        }
-    }
-
-    //
-    // Private helpers
-    //
-
-    private Object getProjectData(final String propertyName) {
-
-        StringTokenizer tok = new StringTokenizer(propertyName, PROPERTY_DELIMITER, false);
-
-        Object currentResult = null;
-        for (Object current = this.project; tok.hasMoreTokens(); current = currentResult) {
-
-            final Class<?> currentClass = current.getClass();
-            final Map<String, Method> getterName2GetterMap = typedPropertyReadMethods.get(currentClass);
-            Validate.notNull(getterName2GetterMap, "Class [" + currentClass.getName()
-                    + "] was not mapped WRT JavaBean getter methods. Mapped classes: "
-                    + typedPropertyReadMethods.keySet());
-
-            final String readablePropertyName = tok.nextToken();
-            final Method getter = getterName2GetterMap.get(readablePropertyName);
-            Validate.notNull(getter, "Class [" + currentClass.getName() + "] has no readable property named ["
-                    + readablePropertyName + "]. Mapped property names are: " + getterName2GetterMap.keySet());
-
-            // Invoke the getter, note the result.
-            try {
-                currentResult = getter.invoke(current);
-            } catch (Exception e) {
-                throw new IllegalArgumentException("JavaBean property [" + readablePropertyName
-                        + "] getter method call failed in class [" + currentClass.getName() + "]", e);
-            }
-        }
-
-        // All done.
-        return currentResult;
     }
 }
