@@ -25,6 +25,8 @@ package se.jguru.nazgul.core.clustering.api;
 import se.jguru.nazgul.core.algorithms.api.Validate;
 
 import javax.persistence.MappedSuperclass;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
@@ -38,17 +40,23 @@ import java.util.UUID;
 @XmlType(namespace = "http://www.jguru.se/nazgul/core", propOrder = {"id"})
 @XmlAccessorType(XmlAccessType.FIELD)
 @MappedSuperclass
+@SuppressWarnings("ValidExternallyBoundObject")
 public abstract class AbstractClusterable implements Clusterable {
 
     // Internal state
-    private IdGenerator idGenerator;
     String id;
+
+    /**
+     * The IdGenerator of this AbstractClusterable. It may/should be null after providing an ID.
+     */
+    protected IdGenerator idGenerator;
 
     /**
      * Creates a new AbstractIdentifiable and assigns the internal ID state.
      *
-     * @param idGenerator The ID generator used to acquire a cluster-unique
-     *                    identifier for this AbstractClusterable instance.
+     * @param idGenerator The ID generator used to acquire a cluster-unique identifier for this AbstractClusterable
+     *                    instance. If a {@code null} IdGenerator is supplied, the ID will be calculated using a
+     *                    {@code UUID.randomUUID.toString()} call.
      */
     protected AbstractClusterable(final IdGenerator idGenerator) {
 
@@ -68,7 +76,7 @@ public abstract class AbstractClusterable implements Clusterable {
      *
      * @param clusterUniqueID A cluster-unique Identifier.
      */
-    protected AbstractClusterable(final String clusterUniqueID) {
+    protected AbstractClusterable(@NotNull @Size(min = 1) final String clusterUniqueID) {
 
         Validate.notEmpty(clusterUniqueID, "clusterUniqueID");
         this.id = clusterUniqueID;
@@ -77,29 +85,26 @@ public abstract class AbstractClusterable implements Clusterable {
     /**
      * {@inheritDoc}
      */
+    @NotNull
     @Override
     public String getClusterId() {
 
-        if (id == null && idGenerator != null && idGenerator.isIdentifierAvailable()) {
-            id = idGenerator.getIdentifier();
-        }
-
+        // Return fast if possible
         if (id != null) {
             return id;
         }
 
+        // Create the ID if not present
+        if (idGenerator != null && idGenerator.isIdentifierAvailable()) {
+            id = idGenerator.getIdentifier();
+
+            // No need for the IdGenerator anymore.
+            this.idGenerator = null;
+        }
+        
         // This should not happen.
         final String idGeneratorType = idGenerator == null ? "<none>" : idGenerator.getClass().getSimpleName();
         throw new IllegalStateException("Cannot acquire ID; idGenerator [" + idGeneratorType + "] cannot generate ID.");
-    }
-
-    /**
-     * Retrieves the assigned IdGenerator, or {@code null} if none is assigned.
-     *
-     * @return the assigned IdGenerator, or {@code null} if none is assigned.
-     */
-    protected final IdGenerator getIdGenerator() {
-        return idGenerator;
     }
 
     /**

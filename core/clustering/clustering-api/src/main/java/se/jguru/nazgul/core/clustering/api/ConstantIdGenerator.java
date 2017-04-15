@@ -25,12 +25,14 @@ package se.jguru.nazgul.core.clustering.api;
 import se.jguru.nazgul.core.algorithms.api.Validate;
 
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Trivial IdGenerator which always returns a constant string.
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
+@XmlTransient
 public final class ConstantIdGenerator implements IdGenerator {
 
     // Internal state

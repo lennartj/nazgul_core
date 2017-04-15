@@ -33,38 +33,31 @@ import org.junit.Test;
 public class T_AbstractClusterableTest {
 
     // Shared state
-    private final String prefix = "goo";
+    private static final String PREFIX = "goo";
     private MockIdGenerator idGenerator;
 
     @Before
     public void setupSharedState() {
 
-        this.idGenerator = new MockIdGenerator(prefix);
+        this.idGenerator = new MockIdGenerator(PREFIX);
         MockIdGenerator.counter.set(0);
     }
 
     @Test
-    public void validateDelegatedIdRetrieval() {
+    public void validateIdGeneratorIsNullAfterDeliveringID() {
 
         // Assemble
-        idGenerator.idAvailable = false;
-
         final TestAbstractSwiftClusterable unitUnderTest = new TestAbstractSwiftClusterable(idGenerator, "bar", 42);
 
         // Act
-        idGenerator.idAvailable = true;
+        final String clusterId = unitUnderTest.getClusterId();
+        final String clusterId2 = unitUnderTest.getClusterId();
 
         // Assert
-        String firstClusterId = null;
-        for (int i = 0; i < 10; i++) {
-            Assert.assertTrue(unitUnderTest.getClusterId().startsWith("goo_"));
-            if (firstClusterId == null) {
-                firstClusterId = unitUnderTest.getClusterId();
-            }
-
-            Assert.assertEquals(firstClusterId, unitUnderTest.getClusterId());
-        }
-        Assert.assertNotNull(unitUnderTest.getIdGenerator());
+        Assert.assertNotNull(clusterId);
+        Assert.assertNotNull(clusterId2);
+        Assert.assertEquals(clusterId, clusterId2);
+        Assert.assertNull(unitUnderTest.idGenerator);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -78,7 +71,7 @@ public class T_AbstractClusterableTest {
 
         // Act & Assert
         unitUnderTest.getClusterId();
-        Assert.assertNotNull(unitUnderTest.getIdGenerator());
+        Assert.assertNotNull(unitUnderTest.idGenerator);
     }
 
     @Test
@@ -88,7 +81,7 @@ public class T_AbstractClusterableTest {
         final TestAbstractSwiftClusterable unitUnderTest = new TestAbstractSwiftClusterable("constantId", "bar", 42);
 
         // Act
-        final IdGenerator result = unitUnderTest.getIdGenerator();
+        final IdGenerator result = unitUnderTest.idGenerator;
 
         // Assert
         Assert.assertNull(result);

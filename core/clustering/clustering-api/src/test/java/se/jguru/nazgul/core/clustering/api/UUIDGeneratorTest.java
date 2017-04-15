@@ -34,7 +34,7 @@ public class UUIDGeneratorTest {
     public void validateUniqueUUIDForEachCall() {
 
         // Assemble
-        final UUIDGenerator unitUnderTest = new UUIDGenerator();
+        final UUIDGenerator unitUnderTest = UUIDGenerator.getInstance();
 
         // Act
         final boolean hasResult = unitUnderTest.isIdentifierAvailable();

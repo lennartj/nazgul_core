@@ -22,6 +22,8 @@
  */
 package se.jguru.nazgul.core.clustering.api;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -45,7 +47,7 @@ public abstract class AbstractSwiftClusterable extends AbstractClusterable imple
     /**
      * {@inheritDoc}
      */
-    protected AbstractSwiftClusterable(final String clusterUniqueID) {
+    protected AbstractSwiftClusterable(@NotNull @Size(min = 1) final String clusterUniqueID) {
         super(clusterUniqueID);
     }
 
@@ -53,7 +55,7 @@ public abstract class AbstractSwiftClusterable extends AbstractClusterable imple
      * {@inheritDoc}
      */
     @Override
-    public final void writeExternal(final ObjectOutput out) throws IOException {
+    public final void writeExternal(@NotNull final ObjectOutput out) throws IOException {
 
         // Start with the ID.
         out.writeUTF(getClusterId());
@@ -66,7 +68,7 @@ public abstract class AbstractSwiftClusterable extends AbstractClusterable imple
      * {@inheritDoc}
      */
     @Override
-    public final void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+    public final void readExternal(@NotNull final ObjectInput in) throws IOException, ClassNotFoundException {
 
         // Read the ID.
         this.id = in.readUTF();
@@ -110,7 +112,7 @@ public abstract class AbstractSwiftClusterable extends AbstractClusterable imple
      * @param out the stream to write the object to
      * @throws java.io.IOException Includes any I/O exception that may occur
      */
-    protected abstract void performWriteExternal(final ObjectOutput out) throws IOException;
+    protected abstract void performWriteExternal(@NotNull final ObjectOutput out) throws IOException;
 
     /**
      * Externalizable read template delegation method, invoked from within writeExternal. You should read the internal
@@ -148,5 +150,5 @@ public abstract class AbstractSwiftClusterable extends AbstractClusterable imple
      * @throws java.io.IOException    if I/O errors occur
      * @throws ClassNotFoundException If the class for an object being restored cannot be found.
      */
-    protected abstract void performReadExternal(final ObjectInput in) throws IOException, ClassNotFoundException;
+    protected abstract void performReadExternal(@NotNull final ObjectInput in) throws IOException, ClassNotFoundException;
 }

@@ -22,6 +22,7 @@
  */
 package se.jguru.nazgul.core.clustering.api;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -34,5 +35,6 @@ public interface Clusterable extends Serializable {
     /**
      * @return an Identifier, unique within the cluster.
      */
+    @NotNull
     String getClusterId();
 }

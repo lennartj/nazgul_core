@@ -22,6 +22,7 @@
  */
 package se.jguru.nazgul.core.clustering.api;
 
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.UUID;
 
 /**
@@ -29,7 +30,18 @@ import java.util.UUID;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
+@XmlTransient
 public final class UUIDGenerator implements IdGenerator {
+
+    // Constants
+    private static final UUIDGenerator INSTANCE = new UUIDGenerator();
+
+    /*
+     * Hide constructor for utility classes.
+     */
+    private UUIDGenerator() {
+        // Do nothing
+    }
 
     /**
      * @return {@code UUID.randomUUID().toString()}, implying a new/unique UUID for each call
@@ -46,5 +58,14 @@ public final class UUIDGenerator implements IdGenerator {
     @Override
     public final boolean isIdentifierAvailable() {
         return true;
+    }
+
+    /**
+     * Retrieves the Singleton UUIDGenerator instance.
+     *
+     * @return the Singleton UUIDGenerator instance.
+     */
+    public static UUIDGenerator getInstance() {
+        return INSTANCE;
     }
 }
