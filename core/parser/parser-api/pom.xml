@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-
 <!--
   ~ #%L
   ~ Nazgul Project: nazgul-core-parser-api
@@ -51,12 +49,14 @@
     <!-- | Section 2:  Dependency (management) settings   -->
     <!-- +=============================================== -->
     <dependencies>
+        <!-- Internal Dependencies -->
+        <dependency>
+            <groupId>se.jguru.nazgul.core.algorithms.api</groupId>
+            <artifactId>nazgul-core-algorithms-api</artifactId>
+            <version>2.2.1-SNAPSHOT</version>
+        </dependency>
 
         <!-- External Dependencies -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>

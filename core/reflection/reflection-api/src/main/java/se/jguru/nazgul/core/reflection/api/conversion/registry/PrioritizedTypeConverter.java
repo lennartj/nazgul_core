@@ -2,28 +2,29 @@
  * #%L
  * Nazgul Project: nazgul-core-reflection-api
  * %%
- * Copyright (C) 2010 - 2015 jGuru Europe AB
+ * Copyright (C) 2010 - 2017 jGuru Europe AB
  * %%
  * Licensed under the jGuru Europe AB license (the "License"), based
  * on Apache License, Version 2.0; you may not use this file except
  * in compliance with the License.
- * 
+ *
  * You may obtain a copy of the License at
- * 
- *       http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
- * 
+ *
+ *      http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * #L%
+ *
  */
 package se.jguru.nazgul.core.reflection.api.conversion.registry;
 
-import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Transformer;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
@@ -31,6 +32,7 @@ import se.jguru.nazgul.core.reflection.api.TypeExtractor;
 import se.jguru.nazgul.core.reflection.api.conversion.Converter;
 import se.jguru.nazgul.core.reflection.api.conversion.TypeConverter;
 
+import javax.validation.constraints.NotNull;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -68,8 +70,8 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
      *
      * @param sourceType The class to convert from.
      */
-    public PrioritizedTypeConverter(final Class<From> sourceType) {
-        this(sourceType, null);
+    public PrioritizedTypeConverter(@NotNull final Class<From> sourceType) {
+        this(sourceType, new Object[0]);
     }
 
     /**
@@ -79,17 +81,17 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
      * @param sourceType The class to convert from.
      * @param converters The supplied converters are wrapped into TypeConverter instances, and mapped at the start.
      */
-    public PrioritizedTypeConverter(final Class<From> sourceType,
+    public PrioritizedTypeConverter(@NotNull final Class<From> sourceType,
                                     final Object... converters) {
 
         // Check sanity
-        Validate.notNull(sourceType, "Cannot handle null sourceType argument.");
+        Validate.notNull(sourceType, "sourceType");
 
         // Assign internal state
         this.prioritizedTypeConverterMap = Collections.synchronizedSortedMap(
                 new TreeMap<Integer, Map<Class<?>, TypeConverter<From, ?>>>());
         this.sourceType = sourceType;
-        if (converters != null) {
+        if (converters != null && converters.length > 0) {
             add(converters);
         }
     }
@@ -158,7 +160,7 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
     public void add(final Object... converters) {
 
         // Check sanity
-        Validate.notEmpty(converters, "Cannot handle null or empty converters argument.");
+        Validate.notEmpty(converters, "converters");
 
         final Map<Object, Tuple<List<Method>, List<Constructor<?>>>> validConverterMap =
                 new HashMap<Object, Tuple<List<Method>, List<Constructor<?>>>>();
@@ -253,10 +255,10 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
      * @return a prioritized list holding all known TypeConverters able to convert between the
      * sourceType to the targetType.
      */
-    public <To> List<TypeConverter<From, To>> getTypeConverters(final Class<To> targetType) {
+    public <To> List<TypeConverter<From, To>> getTypeConverters(@NotNull final Class<To> targetType) {
 
         // Check sanity
-        Validate.notNull(targetType, "Cannot handle null targetType argument.");
+        Validate.notNull(targetType, "targetType");
 
         final List<TypeConverter<From, To>> toReturn = new ArrayList<TypeConverter<From, To>>();
 
@@ -301,10 +303,11 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
      * @param <To>      The type to convert to.
      * @return {@code null} if toConvert could not be converted, and the resulting [converted] instance otherwise.
      */
-    public <To> To convert(final From toConvert, final Class<To> toType) {
+    public <To> To convert(@NotNull final From toConvert,
+                           @NotNull final Class<To> toType) {
 
         // Check sanity
-        Validate.notNull(toType, "Cannot handle null toType argument.");
+        Validate.notNull(toType, "toType");
 
         // Acquire all possible TypeConverters
         final List<TypeConverter<From, To>> typeConverters = getTypeConverters(toType);
@@ -380,10 +383,10 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
          *
          * @param toType The type to which this AbstractReflectiveTypeConverter should convert instances.
          */
-        protected AbstractReflectiveTypeConverter(final Class<To> toType) {
+        protected AbstractReflectiveTypeConverter(@NotNull final Class<To> toType) {
 
             // Check sanity
-            Validate.notNull(toType, "Cannot handle null toType argument.");
+            Validate.notNull(toType, "toType");
 
             // Assign internal state
             this.toType = toType;
@@ -507,13 +510,14 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
          * @param converter       The converter instance in which the converter method is invoked.
          * @param converterMethod The method invoked to convert the object.
          */
-        public MethodTypeConverter(final Object converter, final Method converterMethod) throws NoSuchMethodException {
+        public MethodTypeConverter(@NotNull final Object converter,
+                                   @NotNull final Method converterMethod) throws NoSuchMethodException {
 
             // Delegate
             super((Class<To>) converterMethod.getReturnType());
 
             // Check sanity
-            Validate.notNull(converter, "Cannot handle null converter argument.");
+            Validate.notNull(converter, "converter");
 
             // Assign internal state
             this.converterInstance = converter;

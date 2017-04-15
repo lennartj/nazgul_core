@@ -20,11 +20,6 @@
   limitations under the License.
   #L%
   -->
-
-
-
-
-
 <features name="nazgul-core" xmlns="http://karaf.apache.org/xmlns/features/v1.2.0">
 
     <feature name="nazgul-core-jmx-api"

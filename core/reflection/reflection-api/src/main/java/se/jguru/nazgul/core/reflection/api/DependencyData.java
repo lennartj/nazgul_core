@@ -2,28 +2,30 @@
  * #%L
  * Nazgul Project: nazgul-core-reflection-api
  * %%
- * Copyright (C) 2010 - 2015 jGuru Europe AB
+ * Copyright (C) 2010 - 2017 jGuru Europe AB
  * %%
  * Licensed under the jGuru Europe AB license (the "License"), based
  * on Apache License, Version 2.0; you may not use this file except
  * in compliance with the License.
- * 
+ *
  * You may obtain a copy of the License at
- * 
- *       http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
- * 
+ *
+ *      http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * #L%
+ *
  */
 
 package se.jguru.nazgul.core.reflection.api;
 
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 
+import javax.validation.constraints.NotNull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,12 +67,14 @@ public class DependencyData implements Serializable, Comparable<DependencyData> 
      * @param artifactId The artifactId of this DependencyData.
      * @param version    The version of this DependencyData.
      */
-    public DependencyData(final String groupId, final String artifactId, final String version) {
+    public DependencyData(@NotNull final String groupId,
+                          @NotNull final String artifactId,
+                          @NotNull final String version) {
 
         // Check sanity
-        Validate.notEmpty(groupId, "Cannot handle null or empty groupId argument.");
-        Validate.notEmpty(artifactId, "Cannot handle null or empty artifactId argument.");
-        Validate.notEmpty(version, "Cannot handle null or empty version argument.");
+        Validate.notEmpty(groupId, "groupId");
+        Validate.notEmpty(artifactId, "artifactId");
+        Validate.notEmpty(version, "version");
 
         // Assign internal state
         this.groupId = groupId;
@@ -94,9 +98,10 @@ public class DependencyData implements Serializable, Comparable<DependencyData> 
      * @throws java.lang.IllegalArgumentException if the scope value was not one of the permitted scopes.
      * @see <a href="http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#Dependency_Scope">The Maven Dependency Scopes</a>
      */
-    public void setScope(final String scope) throws IllegalArgumentException {
+    public void setScope(@NotNull final String scope) throws IllegalArgumentException {
 
-        Validate.notEmpty(scope, "Cannot handle null or empty scope argument.");
+        Validate.notEmpty(scope, "scope");
+        
         for (String current : VALID_SCOPES) {
             final String value = scope.toLowerCase().trim();
             if (value.equals(current)) {
@@ -123,7 +128,7 @@ public class DependencyData implements Serializable, Comparable<DependencyData> 
      */
     public void setType(final String type) {
 
-        Validate.notEmpty(type, "Cannot handle null or empty ");
+        Validate.notEmpty(type, "type");
         this.type = type;
     }
 
@@ -180,7 +185,7 @@ public class DependencyData implements Serializable, Comparable<DependencyData> 
     public int compareTo(final DependencyData that) {
 
         // Check sanity
-        Validate.notNull(that, "Cannot handle null DependencyData argument.");
+        Validate.notNull(that, "DependencyData");
 
         // Simply compare the string forms of the two DependencyData objects
         final String thisStringForm = toString();

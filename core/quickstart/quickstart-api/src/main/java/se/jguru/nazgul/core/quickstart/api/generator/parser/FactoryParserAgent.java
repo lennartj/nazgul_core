@@ -2,26 +2,28 @@
  * #%L
  * Nazgul Project: nazgul-core-quickstart-api
  * %%
- * Copyright (C) 2010 - 2015 jGuru Europe AB
+ * Copyright (C) 2010 - 2017 jGuru Europe AB
  * %%
  * Licensed under the jGuru Europe AB license (the "License"), based
  * on Apache License, Version 2.0; you may not use this file except
  * in compliance with the License.
- * 
+ *
  * You may obtain a copy of the License at
- * 
- *       http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
- * 
+ *
+ *      http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * #L%
+ *
  */
 package se.jguru.nazgul.core.quickstart.api.generator.parser;
 
 import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.TypeAlgorithms;
 import se.jguru.nazgul.core.parser.api.agent.AbstractParserAgent;
 import se.jguru.nazgul.core.quickstart.model.Project;
 import se.jguru.nazgul.core.quickstart.model.SimpleArtifact;
@@ -30,7 +32,6 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
-import java.util.Comparator;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
@@ -59,16 +60,6 @@ public class FactoryParserAgent extends AbstractParserAgent {
      */
     public static final String PROPERTY_DELIMITER = ".";
 
-    private static final Comparator<Class<?>> CLASSNAME_COMPARATOR = new Comparator<Class<?>>() {
-        @Override
-        public int compare(final Class<?> o1, final Class<?> o2) {
-
-            final String lhsName = o1 == null ? "" : o1.getName();
-            final String rhsName = o2 == null ? "" : o2.getName();
-
-            return lhsName.compareTo(rhsName);
-        }
-    };
 
     // Internal state
     private Project project;
@@ -100,8 +91,9 @@ public class FactoryParserAgent extends AbstractParserAgent {
 
         // Assign internal state
         this.project = project;
-        this.typedPropertyReadMethods = new TreeMap<>(CLASSNAME_COMPARATOR);
+        this.typedPropertyReadMethods = new TreeMap<>(TypeAlgorithms.CLASSNAME_COMPARATOR);
 
+        this.typedPropertyReadMethods = TypeAlgorithms.FIND_JAVABEAN_GETTERS.apply(Project.class);
         mapJavaBeanPropertyGetters(typedPropertyReadMethods, Project.class);
         mapJavaBeanPropertyGetters(typedPropertyReadMethods, SimpleArtifact.class);
 
@@ -146,11 +138,7 @@ public class FactoryParserAgent extends AbstractParserAgent {
         Validate.notNull(toPopulate, "Cannot handle null toPopulate argument.");
 
         // Map all JavaBean getter methods to their respective property names.
-        Map<String, Method> name2GetterMap = toPopulate.get(clazz);
-        if (name2GetterMap == null) {
-            name2GetterMap = new TreeMap<>();
-            toPopulate.put(clazz, name2GetterMap);
-        }
+        Map<String, Method> name2GetterMap = toPopulate.computeIfAbsent(clazz, k -> new TreeMap<>());
 
         try {
             for (PropertyDescriptor current : Introspector.getBeanInfo(clazz).getPropertyDescriptors()) {

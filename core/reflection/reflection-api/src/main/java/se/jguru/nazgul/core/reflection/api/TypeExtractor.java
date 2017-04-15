@@ -2,32 +2,34 @@
  * #%L
  * Nazgul Project: nazgul-core-reflection-api
  * %%
- * Copyright (C) 2010 - 2015 jGuru Europe AB
+ * Copyright (C) 2010 - 2017 jGuru Europe AB
  * %%
  * Licensed under the jGuru Europe AB license (the "License"), based
  * on Apache License, Version 2.0; you may not use this file except
  * in compliance with the License.
- * 
+ *
  * You may obtain a copy of the License at
- * 
- *       http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
- * 
+ *
+ *      http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * #L%
+ *
  */
 package se.jguru.nazgul.core.reflection.api;
 
 import org.apache.commons.lang3.ClassUtils;
-import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
 
+import javax.validation.constraints.NotNull;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -60,10 +62,12 @@ public final class TypeExtractor {
      * @return All interfaces implemented by the provided class, and which
      * matched the supplied selector's acceptance criteria.
      */
-    public static List<Class<?>> getInterfaces(final Class<?> clazz, final Filter<Class<?>> selector) {
+    public static List<Class<?>> getInterfaces(@NotNull final Class<?> clazz,
+                                               @NotNull final Filter<Class<?>> selector) {
 
         // Check sanity
-        Validate.notNull(clazz, "Cannot handle null clazz argument.");
+        Validate.notNull(clazz, "clazz");
+        Validate.notNull(selector, "selector");
 
         // Extract all interfaces
         @SuppressWarnings("unchecked")
@@ -81,10 +85,10 @@ public final class TypeExtractor {
      * @return All methods (including private ones) found by the provided class, and
      * which matched the supplied selector's acceptance criteria.
      */
-    public static List<Method> getMethods(final Class<?> clazz, final Filter<Method> selector) {
+    public static List<Method> getMethods(@NotNull final Class<?> clazz, final Filter<Method> selector) {
 
         // Check sanity
-        Validate.notNull(clazz, "Cannot handle null instance argument.");
+        Validate.notNull(clazz, "clazz");
 
         // Acquire all methods found within the class of the provided instance.
         final List<Method> methods = new ArrayList<Method>();
@@ -121,10 +125,10 @@ public final class TypeExtractor {
      * @return All fields (including private ones) within the provided instance
      * or its superclasses, and which matched the supplied selector's acceptance criteria.
      */
-    public static List<Field> getFields(final Class<?> clazz, final Filter<Field> selector) {
+    public static List<Field> getFields(@NotNull final Class<?> clazz, final Filter<Field> selector) {
 
         // Check sanity
-        Validate.notNull(clazz, "Cannot handle null class.");
+        Validate.notNull(clazz, "clazz");
 
         // Acquire all fields found within the class hierarcy of the provided instance.
         final List<Field> fields = new ArrayList<Field>();

@@ -2,28 +2,30 @@
  * #%L
  * Nazgul Project: nazgul-core-parser-api
  * %%
- * Copyright (C) 2010 - 2015 jGuru Europe AB
+ * Copyright (C) 2010 - 2017 jGuru Europe AB
  * %%
  * Licensed under the jGuru Europe AB license (the "License"), based
  * on Apache License, Version 2.0; you may not use this file except
  * in compliance with the License.
- * 
+ *
  * You may obtain a copy of the License at
- * 
- *       http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
- * 
+ *
+ *      http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * #L%
+ *
  */
 package se.jguru.nazgul.core.parser.api;
 
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.parser.api.agent.ParserAgent;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -45,10 +47,10 @@ public class DefaultTokenParser implements TokenParser {
      * {@inheritDoc}
      */
     @Override
-    public void initialize(final TokenDefinitions tokenDefinitions) throws IllegalStateException {
+    public void initialize(@NotNull final TokenDefinitions tokenDefinitions) throws IllegalStateException {
 
         // Check sanity
-        Validate.notNull(tokenDefinitions, "Cannot handle null tokenDefinitions argument.");
+        Validate.notNull(tokenDefinitions, "tokenDefinitions");
         if (!canBeInitialized) {
             throw new IllegalStateException("Cannot (re-)initialize a DefaultTokenParser after it has been used.");
         }
@@ -64,12 +66,11 @@ public class DefaultTokenParser implements TokenParser {
      * Adds a parserAgent to the list of known AbstractParserAgents.
      *
      * @param parserAgent the parserAgent to add.
-     * @throws IllegalArgumentException if the parserAgent argument was <code>null</code>.
      */
     @Override
-    public final void addAgent(final ParserAgent parserAgent) throws IllegalArgumentException {
+    public final void addAgent(@NotNull final ParserAgent parserAgent) {
 
-        Validate.notNull(parserAgent, "Cannot handle null parserAgent.");
+        Validate.notNull(parserAgent, "parserAgent");
 
         if (!parseAgents.contains(parserAgent)) {
             parseAgents.add(parserAgent);

@@ -2,37 +2,41 @@
  * #%L
  * Nazgul Project: nazgul-core-reflection-api
  * %%
- * Copyright (C) 2010 - 2015 jGuru Europe AB
+ * Copyright (C) 2010 - 2017 jGuru Europe AB
  * %%
  * Licensed under the jGuru Europe AB license (the "License"), based
  * on Apache License, Version 2.0; you may not use this file except
  * in compliance with the License.
- * 
+ *
  * You may obtain a copy of the License at
- * 
- *       http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
- * 
+ *
+ *      http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * #L%
+ *
  */
 package se.jguru.nazgul.core.reflection.api.conversion.registry;
 
-import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
 import se.jguru.nazgul.core.reflection.api.TypeExtractor;
 import se.jguru.nazgul.core.reflection.api.conversion.ConverterRegistry;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -53,27 +57,36 @@ public class DefaultConverterRegistry implements ConverterRegistry {
     // Our Log
     private static final Logger log = LoggerFactory.getLogger(DefaultConverterRegistry.class);
 
+    private static final Comparator<Class<?>> CLASS_COMPARATOR = (l, r) -> {
+
+        if (l != null) {
+            return r == null ? 1 : l.getName().compareTo(r.getName());
+        }
+
+        // Left class was null.
+        return r == null ? 0 : -1;
+    };
+
     // Internal state
-    private Map<Class<?>, PrioritizedTypeConverter> sourceTypeToTypeConvertersMap;
+    @NotNull
+    private SortedMap<Class<?>, PrioritizedTypeConverter> sourceTypeToTypeConvertersMap;
 
     /**
      * Default constructor, yielding an empty internal state - i.e. no default
      * converters added.
      */
     public DefaultConverterRegistry() {
-
-        // Create internal state
-        sourceTypeToTypeConvertersMap = new HashMap<Class<?>, PrioritizedTypeConverter>();
+        sourceTypeToTypeConvertersMap = new TreeMap<>(CLASS_COMPARATOR);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void add(final Object... converters) throws IllegalArgumentException {
+    public void add(@NotNull @Size(min = 1) final Object... converters) throws IllegalArgumentException {
 
         // Check sanity
-        Validate.notEmpty(converters, "Cannot handle null or empty converters argument.");
+        Validate.notEmpty(converters, "converters");
         final Map<Object, Tuple<List<Method>, List<Constructor<?>>>> validConverters =
                 new HashMap<Object, Tuple<List<Method>, List<Constructor<?>>>>();
 
@@ -186,7 +199,8 @@ public class DefaultConverterRegistry implements ConverterRegistry {
      * {@inheritDoc}
      */
     @Override
-    public <From> Set<Class<?>> getPossibleConversions(final Class<From> sourceType) throws IllegalArgumentException {
+    public <From> Set<Class<?>> getPossibleConversions(@NotNull final Class<From> sourceType)
+            throws IllegalArgumentException {
 
         // Check sanity
         Validate.notNull(sourceType, "Cannot handle null sourceType argument.");
@@ -245,7 +259,7 @@ public class DefaultConverterRegistry implements ConverterRegistry {
     // Private helpers
     //
 
-    private <From, To> Class<To> getOptimalToType(final PrioritizedTypeConverter<From> typeConverter,
+    private <From, To> Class<To> getOptimalToType(@NotNull final PrioritizedTypeConverter<From> typeConverter,
                                                   final Class<To> requestedToType) {
 
         // Get the available To/target types for the supplied typeConverter.

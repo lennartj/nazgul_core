@@ -2,27 +2,30 @@
  * #%L
  * Nazgul Project: nazgul-core-parser-api
  * %%
- * Copyright (C) 2010 - 2015 jGuru Europe AB
+ * Copyright (C) 2010 - 2017 jGuru Europe AB
  * %%
  * Licensed under the jGuru Europe AB license (the "License"), based
  * on Apache License, Version 2.0; you may not use this file except
  * in compliance with the License.
- * 
+ *
  * You may obtain a copy of the License at
- * 
- *       http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
- * 
+ *
+ *      http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * #L%
+ *
  */
 
 package se.jguru.nazgul.core.parser.api;
 
 import se.jguru.nazgul.core.parser.api.agent.ParserAgent;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Specification for a Parser that recognizes String tokens, and offers
@@ -43,15 +46,14 @@ public interface TokenParser {
      * @param tokenDefinitions a non-null TokenDefinitions object.
      * @throws java.lang.IllegalStateException if this TokenParser has already been initialized.
      */
-    void initialize(TokenDefinitions tokenDefinitions) throws IllegalStateException;
+    void initialize(@NotNull TokenDefinitions tokenDefinitions) throws IllegalStateException;
 
     /**
      * Adds a parserAgent to the list of known AbstractParserAgents.
      *
      * @param parserAgent the parserAgent to add.
-     * @throws IllegalArgumentException if the parserAgent argument was <code>null</code>.
      */
-    void addAgent(ParserAgent parserAgent) throws IllegalArgumentException;
+    void addAgent(@NotNull ParserAgent parserAgent);
 
     /**
      * Replaces the tokens found within the data.
