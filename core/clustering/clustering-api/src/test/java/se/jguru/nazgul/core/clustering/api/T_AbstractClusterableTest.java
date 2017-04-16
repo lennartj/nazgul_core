@@ -47,7 +47,10 @@ public class T_AbstractClusterableTest {
     public void validateIdGeneratorIsNullAfterDeliveringID() {
 
         // Assemble
-        final TestAbstractSwiftClusterable unitUnderTest = new TestAbstractSwiftClusterable(idGenerator, "bar", 42);
+        final TestAbstractSwiftClusterable unitUnderTest = new TestAbstractSwiftClusterable(idGenerator,
+                true,
+                "bar",
+                42);
 
         // Act
         final String clusterId = unitUnderTest.getClusterId();
@@ -67,7 +70,10 @@ public class T_AbstractClusterableTest {
         final MockIdGenerator idGenerator = new MockIdGenerator("goo");
         idGenerator.idAvailable = false;
 
-        final TestAbstractSwiftClusterable unitUnderTest = new TestAbstractSwiftClusterable(idGenerator, "bar", 42);
+        final TestAbstractSwiftClusterable unitUnderTest = new TestAbstractSwiftClusterable(idGenerator,
+                false,
+                "bar",
+                42);
 
         // Act & Assert
         unitUnderTest.getClusterId();
@@ -78,7 +84,10 @@ public class T_AbstractClusterableTest {
     public void validateNullIdGeneratorSetWhenSupplyingStringId() {
 
         // Assemble
-        final TestAbstractSwiftClusterable unitUnderTest = new TestAbstractSwiftClusterable("constantId", "bar", 42);
+        final TestAbstractSwiftClusterable unitUnderTest = new TestAbstractSwiftClusterable("constantId",
+                true,
+                "bar",
+                42);
 
         // Act
         final IdGenerator result = unitUnderTest.idGenerator;
@@ -91,8 +100,14 @@ public class T_AbstractClusterableTest {
     public void validateEquality() {
 
         // Assemble
-        final TestAbstractSwiftClusterable c1 = new TestAbstractSwiftClusterable("id1", "bar", 42);
-        final TestAbstractSwiftClusterable c2 = new TestAbstractSwiftClusterable("id2", "bar", 42);
+        final TestAbstractSwiftClusterable c1 = new TestAbstractSwiftClusterable("id1",
+                true,
+                "bar",
+                42);
+        final TestAbstractSwiftClusterable c2 = new TestAbstractSwiftClusterable("id2",
+                true,
+                "bar",
+                42);
 
         // Act
         final int c1HashCode = c1.hashCode();

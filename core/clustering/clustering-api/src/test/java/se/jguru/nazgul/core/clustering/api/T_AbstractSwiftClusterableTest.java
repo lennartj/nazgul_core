@@ -60,7 +60,10 @@ public class T_AbstractSwiftClusterableTest {
         // Assemble
 
         // Act
-        final TestAbstractSwiftClusterable unitUnderTest = new TestAbstractSwiftClusterable(id, name, age);
+        final TestAbstractSwiftClusterable unitUnderTest = new TestAbstractSwiftClusterable(id,
+                true,
+                name,
+                age);
 
         // Assert
         Assert.assertEquals(id, unitUnderTest.getClusterId());
@@ -73,7 +76,7 @@ public class T_AbstractSwiftClusterableTest {
         final String incorrectNullID = null;
 
         // Act & Assert
-        new TestAbstractSwiftClusterable(incorrectNullID, name, age);
+        new TestAbstractSwiftClusterable(incorrectNullID, true, name, age);
     }
 
     @Test
@@ -87,6 +90,7 @@ public class T_AbstractSwiftClusterableTest {
         // Act
         final TestAbstractSwiftClusterable unitUnderTest = new TestAbstractSwiftClusterable(
                 idGenerator,
+                true,
                 "testName",
                 42);
 
@@ -116,7 +120,10 @@ public class T_AbstractSwiftClusterableTest {
         final String id = "testID";
         final String name = "testName";
         final int age = 42;
-        final TestAbstractSwiftClusterable unitUnderTest = new TestAbstractSwiftClusterable(id, name, age);
+        final TestAbstractSwiftClusterable unitUnderTest = new TestAbstractSwiftClusterable(id,
+                false,
+                name,
+                age);
 
         final ByteArrayOutputStream transportChannelSimulator = new ByteArrayOutputStream();
         final ObjectOutputStream out = new ObjectOutputStream(transportChannelSimulator);

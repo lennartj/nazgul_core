@@ -44,6 +44,7 @@ import java.util.UUID;
 public abstract class AbstractClusterable implements Clusterable {
 
     // Internal state
+    boolean removeIdGeneratorAfterUsage;
     String id;
 
     /**
@@ -58,7 +59,8 @@ public abstract class AbstractClusterable implements Clusterable {
      *                    instance. If a {@code null} IdGenerator is supplied, the ID will be calculated using a
      *                    {@code UUID.randomUUID.toString()} call.
      */
-    protected AbstractClusterable(final IdGenerator idGenerator) {
+    protected AbstractClusterable(final IdGenerator idGenerator,
+                                  final boolean removeIdGeneratorAfterUsage) {
 
         // Check sanity and assign internal state
         if (idGenerator == null) {
@@ -68,18 +70,26 @@ public abstract class AbstractClusterable implements Clusterable {
         } else {
             this.idGenerator = idGenerator;
         }
+
+        this.removeIdGeneratorAfterUsage = removeIdGeneratorAfterUsage;
     }
 
     /**
      * Creates a new AbstractIdentifiable and assigns the provided
      * cluster-unique ID to this AbstractClusterable instance.
      *
-     * @param clusterUniqueID A cluster-unique Identifier.
+     * @param clusterUniqueID             A cluster-unique Identifier.
+     * @param removeIdGeneratorAfterUsage if true, the IdGenerator is removed after (first) use.
      */
-    protected AbstractClusterable(@NotNull @Size(min = 1) final String clusterUniqueID) {
+    protected AbstractClusterable(@NotNull @Size(min = 1) final String clusterUniqueID,
+                                  final boolean removeIdGeneratorAfterUsage) {
 
+        // Check sanity
         Validate.notEmpty(clusterUniqueID, "clusterUniqueID");
+
+        // Assign internal state
         this.id = clusterUniqueID;
+        this.removeIdGeneratorAfterUsage = removeIdGeneratorAfterUsage;
     }
 
     /**
@@ -98,10 +108,12 @@ public abstract class AbstractClusterable implements Clusterable {
         if (idGenerator != null && idGenerator.isIdentifierAvailable()) {
             id = idGenerator.getIdentifier();
 
-            // No need for the IdGenerator anymore.
-            this.idGenerator = null;
+            // Remove the IdGenerator if instructed to do so
+            if(removeIdGeneratorAfterUsage) {
+                this.idGenerator = null;
+            }
         }
-        
+
         // This should not happen.
         final String idGeneratorType = idGenerator == null ? "<none>" : idGenerator.getClass().getSimpleName();
         throw new IllegalStateException("Cannot acquire ID; idGenerator [" + idGeneratorType + "] cannot generate ID.");

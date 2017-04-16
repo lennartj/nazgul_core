@@ -43,8 +43,12 @@ public class TestAbstractSwiftClusterable extends AbstractSwiftClusterable {
      *
      * @param id The identifier of this CacheListenerAdapter.
      */
-    public TestAbstractSwiftClusterable(String id, String name, int age) {
-        super(id);
+    public TestAbstractSwiftClusterable(String id, boolean removeIdGeneratorAfterUsage, String name, int age) {
+
+        // Delegate
+        super(id, removeIdGeneratorAfterUsage);
+
+        // Assign internal state
         this.name = name;
         this.age = age;
     }
@@ -54,14 +58,18 @@ public class TestAbstractSwiftClusterable extends AbstractSwiftClusterable {
      * AbstractIdentifiable. <strong>This is for framework use only</strong>.
      */
     public TestAbstractSwiftClusterable() {
-        super((IdGenerator) null);
+        super((IdGenerator) null, false);
     }
 
     /**
      * {@inheritDoc}
      */
-    public TestAbstractSwiftClusterable(IdGenerator idGenerator, String name, int age) {
-        super(idGenerator);
+    public TestAbstractSwiftClusterable(IdGenerator idGenerator,
+                                        boolean removeIdGeneratorAfterUsage,
+                                        String name,
+                                        int age) {
+        super(idGenerator, removeIdGeneratorAfterUsage);
+        
         this.name = name;
         this.age = age;
     }

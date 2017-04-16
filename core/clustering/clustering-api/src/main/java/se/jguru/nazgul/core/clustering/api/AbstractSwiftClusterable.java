@@ -40,15 +40,17 @@ public abstract class AbstractSwiftClusterable extends AbstractClusterable imple
     /**
      * {@inheritDoc}
      */
-    protected AbstractSwiftClusterable(final IdGenerator idGenerator) {
-        super(idGenerator);
+    protected AbstractSwiftClusterable(final IdGenerator idGenerator,
+                                       final boolean removeIdGeneratorAfterUsage) {
+        super(idGenerator, removeIdGeneratorAfterUsage);
     }
 
     /**
      * {@inheritDoc}
      */
-    protected AbstractSwiftClusterable(@NotNull @Size(min = 1) final String clusterUniqueID) {
-        super(clusterUniqueID);
+    protected AbstractSwiftClusterable(@NotNull @Size(min = 1) final String clusterUniqueID,
+                                       final boolean removeIdGeneratorAfterUsage) {
+        super(clusterUniqueID, removeIdGeneratorAfterUsage);
     }
 
     /**
@@ -59,6 +61,7 @@ public abstract class AbstractSwiftClusterable extends AbstractClusterable imple
 
         // Start with the ID.
         out.writeUTF(getClusterId());
+        out.writeBoolean(this.removeIdGeneratorAfterUsage);
 
         // Delegate the rest.
         performWriteExternal(out);
@@ -72,6 +75,7 @@ public abstract class AbstractSwiftClusterable extends AbstractClusterable imple
 
         // Read the ID.
         this.id = in.readUTF();
+        this.removeIdGeneratorAfterUsage = in.readBoolean();
 
         // Delegate the rest
         performReadExternal(in);
