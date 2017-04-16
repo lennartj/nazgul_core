@@ -57,7 +57,7 @@ public class EventBusPublisher implements EventPublisher<Object, Object> {
      * @param eventBus The EventBus wrapped by this EventPublisher instance.
      */
     public EventBusPublisher(@NotNull final EventBus eventBus) {
-        this(new UUIDGenerator(), eventBus);
+        this(UUIDGenerator.getInstance(), eventBus);
     }
 
     /**

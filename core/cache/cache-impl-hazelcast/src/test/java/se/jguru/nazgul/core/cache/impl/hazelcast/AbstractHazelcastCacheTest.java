@@ -65,7 +65,7 @@ public abstract class AbstractHazelcastCacheTest {
     public void setupSharedState() {
 
         localHostNonLoopbackAddr = NetworkAlgorithms.getAllLocalNetworkAddresses(
-                NetworkAlgorithms.NON_LOOPBACK_IPV4_FILTER, null)
+                NetworkAlgorithms.PUBLIC_IPV4_FILTER, null)
                 .stream()
                 .findFirst().orElseThrow(() -> new RuntimeException("Cannot build the HazelcastCacheImplementation "
                         + "project without any active Inet4Address"));

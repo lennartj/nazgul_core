@@ -46,6 +46,7 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
+@SuppressWarnings("ValidExternallyBoundObject")
 @XmlType(namespace = "http://www.jguru.se/nazgul/core", propOrder = {"tClass", "consumers"})
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractEventProducer<T extends EventConsumer>
@@ -67,7 +68,7 @@ public abstract class AbstractEventProducer<T extends EventConsumer>
      * @param eventConsumerClass The type of EventConsumer handled by this AbstractEventProducer.
      */
     public AbstractEventProducer(final IdGenerator idGenerator, final Class<T> eventConsumerClass) {
-        super(idGenerator);
+        super(idGenerator, false);
 
         // Check sanity
         Validate.notNull(eventConsumerClass, "eventConsumerClass");

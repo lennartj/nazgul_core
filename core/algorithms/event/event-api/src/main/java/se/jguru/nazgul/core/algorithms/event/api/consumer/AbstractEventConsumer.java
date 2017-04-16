@@ -35,6 +35,7 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
+@SuppressWarnings("ValidExternallyBoundObject")
 @XmlType(namespace = "http://www.jguru.se/nazgul/core")
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractEventConsumer<E extends EventConsumer<E>>
@@ -51,6 +52,6 @@ public abstract class AbstractEventConsumer<E extends EventConsumer<E>>
      * {@inheritDoc}
      */
     protected AbstractEventConsumer(final IdGenerator idGenerator) {
-        super(idGenerator);
+        super(idGenerator, false);
     }
 }

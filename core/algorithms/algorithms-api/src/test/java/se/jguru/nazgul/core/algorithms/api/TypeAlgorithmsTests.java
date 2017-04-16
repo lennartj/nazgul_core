@@ -28,7 +28,6 @@ import org.junit.Test;
 import se.jguru.nazgul.core.algorithms.api.types.BarSubtype;
 import se.jguru.nazgul.core.algorithms.api.types.FooSupertype;
 import se.jguru.nazgul.core.algorithms.api.types.LocaleHolder;
-import se.jguru.nazgul.core.algorithms.api.types.TypeInformation;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -169,11 +168,7 @@ public class TypeAlgorithmsTests {
         final LocaleHolder localeHolder = new LocaleHolder(Locale.UK);
 
         // Act & Assert
-        try {
-            TypeAlgorithms.getProperty(localeHolder, "locale.foobar");
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        }
+        TypeAlgorithms.getProperty(localeHolder, "locale.foobar");
     }
 
     @Test(expected = IllegalArgumentException.class)

@@ -279,12 +279,9 @@ public class DebugCacheListener<T> extends AbstractCacheListener<String, T> {
         for (Map.Entry<Integer, EventInfo> current : eventId2EventInfoMap.entrySet()) {
             final EventInfo info = current.getValue();
 
-            SortedMap<Integer, EventInfo> innerMap = toReturn.get(info.threadName);
-            if (innerMap == null) {
-                innerMap = new TreeMap<Integer, EventInfo>();
-                toReturn.put(info.threadName, innerMap);
-            }
-
+            final SortedMap<Integer, EventInfo> innerMap = toReturn.computeIfAbsent(
+                    info.threadName,
+                    k -> new TreeMap<>());
             innerMap.put(current.getKey(), info);
         }
 

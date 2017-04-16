@@ -25,7 +25,6 @@ package se.jguru.nazgul.core.algorithms.api;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import se.jguru.nazgul.core.algorithms.api.NetworkAlgorithms;
 
 import java.net.Inet4Address;
 import java.net.Inet6Address;
@@ -89,7 +88,7 @@ public class NetworkAlgorithmsTest {
             networkIFs.stream()
                     .map(NetworkAlgorithms.GET_INETADDRESSES)
                     .forEach(ifs -> ifs.stream()
-                            .filter(NetworkAlgorithms.NON_LOOPBACK_IPV4_FILTER)
+                            .filter(NetworkAlgorithms.PUBLIC_IPV4_FILTER)
                             .map(ip -> (Inet4Address) ip)
                             .forEach(ipV4Addresses::add));
 
@@ -119,6 +118,7 @@ public class NetworkAlgorithmsTest {
                     .map(NetworkAlgorithms.GET_INETADDRESSES)
                     .forEach(ifs -> ifs.stream()
                             .filter(NetworkAlgorithms.LOOPBACK_FILTER)
+                            .filter(candidate -> !candidate.isLinkLocalAddress())
                             .filter(NetworkAlgorithms.IPV4_FILTER)
                             .map(ip -> (Inet4Address) ip)
                             .forEach(ipV4Addresses::add));

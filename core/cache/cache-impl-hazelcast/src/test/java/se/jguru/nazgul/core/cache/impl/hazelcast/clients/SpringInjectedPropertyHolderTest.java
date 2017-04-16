@@ -51,7 +51,7 @@ public class SpringInjectedPropertyHolderTest {
     private ApplicationContext context;
 
     private static final String localListeningIp = NetworkAlgorithms.getAllLocalNetworkAddresses(
-    NetworkAlgorithms.NON_LOOPBACK_IPV4_FILTER, null)
+    NetworkAlgorithms.PUBLIC_IPV4_FILTER, null)
             .stream()
             .findFirst()
             .orElseThrow(() -> new RuntimeException(

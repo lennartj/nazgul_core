@@ -25,6 +25,7 @@ package se.jguru.nazgul.core.cache.api;
 import se.jguru.nazgul.core.clustering.api.AbstractSwiftClusterable;
 import se.jguru.nazgul.core.clustering.api.IdGenerator;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.regex.Pattern;
 
@@ -49,9 +50,14 @@ public abstract class AbstractCacheListener<K extends Serializable, V>
      *                         The filter definition is a java regExp pattern matching all
      *                         cache keys for which this AbstractCacheListener should receive events.
      */
-    protected AbstractCacheListener(final String id, final String filterDefinition) {
+    protected AbstractCacheListener(@NotNull final String id,
+                                    final boolean removeIdGeneratorAfterUsage,
+                                    final String filterDefinition) {
 
-        super(id);
+        // Delegate
+        super(id, removeIdGeneratorAfterUsage);
+
+        // Assign the filter.
         setFilter(filterDefinition);
     }
 
@@ -61,7 +67,7 @@ public abstract class AbstractCacheListener<K extends Serializable, V>
      * @param id The identifier of this CacheListenerAdapter.
      */
     protected AbstractCacheListener(final String id) {
-        super(id);
+        super(id, false);
     }
 
     /**
@@ -69,7 +75,7 @@ public abstract class AbstractCacheListener<K extends Serializable, V>
      * AbstractCacheListener. <strong>This is for framework use only</strong>.
      */
     protected AbstractCacheListener() {
-        super((IdGenerator) null);
+        super((IdGenerator) null, false);
     }
 
     /**

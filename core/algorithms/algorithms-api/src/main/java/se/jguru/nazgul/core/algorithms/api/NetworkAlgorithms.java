@@ -62,10 +62,12 @@ public final class NetworkAlgorithms {
     public static final Predicate<InetAddress> LOOPBACK_FILTER = InetAddress::isLoopbackAddress;
 
     /**
-     * Predicate identifying non-null IPv4, non-loopback InetAddress objects.
+     * Predicate identifying non-null IPv4, non-loopback InetAddress objects that are not LinkLocal addresses.
      */
-    public static final Predicate<InetAddress> NON_LOOPBACK_IPV4_FILTER = candidate ->
-            IPV4_FILTER.test(candidate) && !LOOPBACK_FILTER.test(candidate);
+    public static final Predicate<InetAddress> PUBLIC_IPV4_FILTER = candidate ->
+            IPV4_FILTER.test(candidate)
+                    && !LOOPBACK_FILTER.test(candidate)
+                    && !candidate.isLinkLocalAddress();
 
     /**
      * Comparator for InetAddress objects; failsafe in the sense that it will convert null values

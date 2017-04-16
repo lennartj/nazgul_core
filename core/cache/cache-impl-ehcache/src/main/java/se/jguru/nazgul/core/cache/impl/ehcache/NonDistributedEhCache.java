@@ -76,12 +76,11 @@ public class NonDistributedEhCache extends AbstractClusterable implements Cache<
     public NonDistributedEhCache(final String classpathRelativeConfigurationFile) {
 
         // Initialize our ID.
-        super(new EhCacheClusterIdGenerator());
+        super(new EhCacheClusterIdGenerator(), false);
 
         // Acquire the cacheManager
         cacheManager = getCacheManager(classpathRelativeConfigurationFile);
-        final EhCacheClusterIdGenerator idGenerator = (EhCacheClusterIdGenerator) getIdGenerator();
-        idGenerator.setCacheManager(cacheManager);
+        ((EhCacheClusterIdGenerator) idGenerator).setCacheManager(cacheManager);
 
         // Perform common initialization.
         initialize();
@@ -95,15 +94,14 @@ public class NonDistributedEhCache extends AbstractClusterable implements Cache<
     public NonDistributedEhCache(final CacheManager manager) {
 
         // Initialize our ID.
-        super(new EhCacheClusterIdGenerator());
+        super(new EhCacheClusterIdGenerator(), false);
 
         // Check sanity
         Validate.notNull(manager, "Cannot handle null manager argument.");
 
         // Assign internal state
         cacheManager = manager;
-        final EhCacheClusterIdGenerator idGenerator = (EhCacheClusterIdGenerator) getIdGenerator();
-        idGenerator.setCacheManager(cacheManager);
+        ((EhCacheClusterIdGenerator) this.idGenerator).setCacheManager(cacheManager);
 
         // Perform common initialization.
         initialize();

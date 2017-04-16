@@ -31,7 +31,6 @@ import se.jguru.nazgul.core.algorithms.api.NetworkAlgorithms;
 import se.jguru.nazgul.core.cache.impl.hazelcast.clients.HazelcastCacheMember;
 
 import java.lang.reflect.Field;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,7 +42,7 @@ public class HazelcastCacheFactoryTest {
 
     // Shared config
     String ownIp = NetworkAlgorithms.getAllLocalNetworkAddresses(
-            NetworkAlgorithms.NON_LOOPBACK_IPV4_FILTER, null)
+            NetworkAlgorithms.PUBLIC_IPV4_FILTER, null)
             .stream()
             .findFirst().orElseThrow(() -> new RuntimeException("Cannot find a non-loopback IPv4 address."));
     int ownPort = 5701;

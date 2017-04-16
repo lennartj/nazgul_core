@@ -45,7 +45,7 @@ public class EventBusPublisherTest {
 
     @Before
     public void setupSharedState() {
-        this.idGenerator = new UUIDGenerator();
+        this.idGenerator = UUIDGenerator.getInstance();
     }
 
     @Test(expected = NullPointerException.class)
