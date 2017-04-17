@@ -60,9 +60,9 @@ public class EhCacheClusterIdGeneratorTest extends AbstractCacheTest {
         // Act
         Assert.assertTrue(unitUnderTest.isIdentifierAvailable());
         final String identifier = unitUnderTest.getIdentifier();
-
+        
         // Assert
         Assert.assertNotNull(identifier);
-        Assert.assertEquals(getCache().getClusterId(), identifier);
+        Assert.assertEquals("__DEFAULT__", identifier);
     }
 }

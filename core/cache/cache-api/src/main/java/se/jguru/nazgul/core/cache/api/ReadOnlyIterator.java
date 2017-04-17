@@ -31,7 +31,7 @@ import java.util.Iterator;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public final class ReadOnlyIterator<E> implements Iterator<E> {
+public final class  ReadOnlyIterator<E> implements Iterator<E> {
 
     // Internal state
     private Iterator<E> delegate;

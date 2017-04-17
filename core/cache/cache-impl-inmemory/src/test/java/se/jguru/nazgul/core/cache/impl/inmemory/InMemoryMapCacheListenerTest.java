@@ -28,7 +28,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import se.jguru.nazgul.core.cache.api.CacheListener;
-import se.jguru.nazgul.core.clustering.api.IdGenerator;
 import se.jguru.nazgul.core.clustering.api.UUIDGenerator;
 
 import java.io.Serializable;
@@ -43,17 +42,20 @@ public class InMemoryMapCacheListenerTest {
 
     // Shared state
     private InMemoryMapCache unitUnderTest;
-    private IdGenerator idGenerator;
     private ConcurrentMap<String, Serializable> cache;
     private ConcurrentMap<String, CacheListener<String, Serializable>> listeners;
 
     @Before
     public void setupSharedState() {
 
-        idGenerator = new UUIDGenerator();
         cache = new ConcurrentHashMap<String, Serializable>();
         listeners = new ConcurrentHashMap<String, CacheListener<String, Serializable>>();
-        unitUnderTest = new InMemoryMapCache(idGenerator, 2000L, cache, listeners, 10, true);
+        unitUnderTest = new InMemoryMapCache(UUIDGenerator.getInstance(),
+                2000L,
+                cache,
+                listeners,
+                10,
+                true);
     }
 
     @Test

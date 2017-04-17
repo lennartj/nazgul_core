@@ -69,7 +69,7 @@ public class InMemoryMapCache extends AbstractSwiftClusterable implements Cache<
      */
     public InMemoryMapCache() {
 
-        this(new UUIDGenerator(), 20 * 60 * 60L,
+        this(UUIDGenerator.getInstance(), 20 * 60 * 60L,
                 new ConcurrentHashMap<String, Serializable>(),
                 new ConcurrentHashMap<String, CacheListener<String, Serializable>>(),
                 15,
@@ -94,7 +94,7 @@ public class InMemoryMapCache extends AbstractSwiftClusterable implements Cache<
                             final ConcurrentMap<String, CacheListener<String, Serializable>> listeners,
                             final int numEventListenerThreads,
                             final boolean fakeTransactions) {
-        super(idGenerator);
+        super(idGenerator, false);
 
         // Check sanity
         Validate.isTrue(timeoutMillis > 0, "Cannot handle zero or negative milliseconds argument.");

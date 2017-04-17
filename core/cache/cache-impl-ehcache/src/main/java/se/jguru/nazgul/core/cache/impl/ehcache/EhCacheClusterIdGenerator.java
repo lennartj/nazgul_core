@@ -25,6 +25,7 @@ package se.jguru.nazgul.core.cache.impl.ehcache;
 
 import net.sf.ehcache.CacheManager;
 import se.jguru.nazgul.core.clustering.api.IdGenerator;
+import se.jguru.nazgul.core.clustering.api.UUIDGenerator;
 
 /**
  * An IdGenerator retrieving the clusterUUID or name from a wrapped

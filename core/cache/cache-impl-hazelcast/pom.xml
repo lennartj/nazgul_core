@@ -44,8 +44,7 @@
 
     <properties>
         <path.in.reactor>core/cache/cache-impl-hazelcast</path.in.reactor>
-        <!-- hazelcast.version>3.8.1</hazelcast.version -->
-        <hazelcast.version>3.8</hazelcast.version>
+        <hazelcast.version>3.8.1</hazelcast.version>
         <spring.version>4.3.7.RELEASE</spring.version>
     </properties>
 

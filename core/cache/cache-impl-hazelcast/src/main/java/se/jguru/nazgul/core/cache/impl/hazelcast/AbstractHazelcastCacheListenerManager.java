@@ -69,7 +69,7 @@ public abstract class AbstractHazelcastCacheListenerManager extends AbstractClus
      * @param id The identifier of this AbstractHazelcastCacheListenerManager.
      */
     protected AbstractHazelcastCacheListenerManager(final String id) {
-        super(id);
+        super(id, false);
     }
 
     /**

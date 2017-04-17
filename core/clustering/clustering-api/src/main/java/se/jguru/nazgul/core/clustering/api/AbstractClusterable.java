@@ -65,10 +65,15 @@ public abstract class AbstractClusterable implements Clusterable {
         // Check sanity and assign internal state
         if (idGenerator == null) {
             this.id = UUID.randomUUID().toString();
-        } else if (idGenerator.isIdentifierAvailable()) {
-            this.id = idGenerator.getIdentifier();
         } else {
+
+            // First, assign the idGenerator.
             this.idGenerator = idGenerator;
+
+            // Extract an identifier if possible.
+            if (idGenerator.isIdentifierAvailable()) {
+                this.id = idGenerator.getIdentifier();
+            }
         }
 
         this.removeIdGeneratorAfterUsage = removeIdGeneratorAfterUsage;
@@ -109,7 +114,7 @@ public abstract class AbstractClusterable implements Clusterable {
             id = idGenerator.getIdentifier();
 
             // Remove the IdGenerator if instructed to do so
-            if(removeIdGeneratorAfterUsage) {
+            if (removeIdGeneratorAfterUsage) {
                 this.idGenerator = null;
             }
         }
