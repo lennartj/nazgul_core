@@ -36,7 +36,6 @@ import javax.validation.constraints.NotNull;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -171,14 +170,14 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
         for (Object current : converters) {
 
             // Find any converter methods in the supplied converter
-            final List<Method> methods = TypeExtractor.getMethods(
+            final SortedSet<Method> methods = TypeExtractor.getMethods(
                     current.getClass(),
                     ReflectiveConverterFilter.CONVERSION_METHOD_FILTER);
 
             // Find any converter constructors in the supplied converter
-            final List<Constructor<?>> constructors = CollectionAlgorithms.filter(
-                    Arrays.asList(current.getClass().getConstructors()),
-                    ReflectiveConverterFilter.CONVERSION_CONSTRUCTOR_FILTER);
+            final SortedSet<Constructor<?>> constructors = TypeExtractor.getConstructors(
+                    current.getClass(),
+                    null);
 
             if (methods.size() == 0 && constructors.size() == 0) {
 

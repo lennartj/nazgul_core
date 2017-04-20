@@ -20,28 +20,21 @@
  * #L%
  *
  */
-
-
-package se.jguru.nazgul.core.xmlbinding.spi.jaxb.adapter;
+package se.jguru.nazgul.core.xmlbinding.api.adapter;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.Month;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class LocalDateTimeAdapterTest {
+public class LocalTimeAdapterTest {
 
-    private String transportForm = "2015-04-25T15:40:00";
-    private LocalDateTime objectForm = LocalDateTime.of(
-            LocalDate.of(2015, Month.APRIL, 25),
-            LocalTime.of(15, 40, 0));
-    private LocalDateTimeAdapter unitUnderTest = new LocalDateTimeAdapter();
+    private String transportForm = "13:24:33";
+    private LocalTime objectForm = LocalTime.of(13, 24, 33);
+    private LocalTimeAdapter unitUnderTest = new LocalTimeAdapter();
 
     @Test
     public void validateConvertingToTransportForm() throws Exception {
@@ -63,7 +56,7 @@ public class LocalDateTimeAdapterTest {
         // Assemble
 
         // Act
-        final LocalDateTime result = unitUnderTest.unmarshal(transportForm);
+        final LocalTime result = unitUnderTest.unmarshal(transportForm);
 
         // Assert
         Assert.assertNull(unitUnderTest.unmarshal(null));

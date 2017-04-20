@@ -29,7 +29,6 @@ import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
-import se.jguru.nazgul.core.algorithms.api.types.TypeInformation;
 import se.jguru.nazgul.core.reflection.api.TypeExtractor;
 import se.jguru.nazgul.core.reflection.api.conversion.ConverterRegistry;
 
@@ -44,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
 
 /**
@@ -78,18 +78,14 @@ public class DefaultConverterRegistry implements ConverterRegistry {
 
         // Check sanity
         Validate.notEmpty(converters, "converters");
-        final Map<Object, Tuple<List<Method>, List<Constructor<?>>>> validConverters =
-                new HashMap<Object, Tuple<List<Method>, List<Constructor<?>>>>();
+        final Map<Object, Tuple<SortedSet<Method>, SortedSet<Constructor<?>>>> validConverters = new HashMap<>();
 
         // All converters have annotations?
         for (Object current : converters) {
 
             // Find the TypeInformation for the current class.
-            final TypeInformation typeInfo = TypeAlgorithms.getAllTypesFor(current.getClass());
-
-
-            final Tuple<List<Method>, List<Constructor<?>>> methodsAndConstructors =
-                    ReflectiveConverterFilter.getConverterMethodsAndConstructors(current);
+            final Tuple<SortedSet<Method>, SortedSet<Constructor<?>>> methodsAndConstructors =
+                    ReflectiveConverterFilter.GET_CONVERTERS.apply(current.getClass());
 
             if (methodsAndConstructors == null) {
 
@@ -104,6 +100,26 @@ public class DefaultConverterRegistry implements ConverterRegistry {
 
         // Map the respective converters to the sourceTypes of their @Converters.
         final Map<Class<?>, Set<Object>> sourceTypeToConverterInstanceMap = new HashMap<Class<?>, Set<Object>>();
+        validConverters.forEach((key, converterTuple) -> {
+
+            final Object theObject = key;
+
+            converterTuple.getKey().forEach(currentMethod -> {
+
+                // Extract the type from the only argument of the current Method (i.e. the "From" type).
+                final Class<?> currentType = currentMethod.getParameterTypes()[0];
+                addCurrentConverter(sourceTypeToConverterInstanceMap, theObject, currentType);
+            });
+
+            converterTuple.getValue().forEach(currentConstructor -> {
+
+                // Extract the type from the only argument of the current Constructor (i.e. the "From" type).
+                final Class<?> currentType = currentConstructor.getParameterTypes()[0];
+                addCurrentConverter(sourceTypeToConverterInstanceMap, theObject, currentType);
+            });
+        });
+
+        /*
         for (Map.Entry<Object, Tuple<List<Method>, List<Constructor<?>>>> currentEntry : validConverters.entrySet()) {
 
             final Tuple<List<Method>, List<Constructor<?>>> methodsAndConstructors = currentEntry.getValue();
@@ -121,6 +137,7 @@ public class DefaultConverterRegistry implements ConverterRegistry {
                 addCurrentConverter(sourceTypeToConverterInstanceMap, currentEntry.getKey(), currentType);
             }
         }
+        */
 
         // Create PrioritizedTypeConverters for all source types.
         for (Map.Entry<Class<?>, Set<Object>> current : sourceTypeToConverterInstanceMap.entrySet()) {

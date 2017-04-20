@@ -20,7 +20,7 @@
  * #L%
  *
  */
-package se.jguru.nazgul.core.xmlbinding.spi.jaxb.adapter;
+package se.jguru.nazgul.core.xmlbinding.api.adapter;
 
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlAdapter;

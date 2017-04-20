@@ -23,24 +23,20 @@
 
 package se.jguru.nazgul.core.reflection.api.conversion.registry;
 
-import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
-import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
-import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
 import se.jguru.nazgul.core.reflection.api.conversion.Converter;
 import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.FakeConverter;
 import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.MultiConverter;
 import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.StringConstructorConverter;
 
-import java.beans.Introspector;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid, jGuru Europe AB</a>
@@ -48,22 +44,22 @@ import java.util.List;
 public class ReflectiveConverterFilterTest {
 
     // Shared state
-    private Filter<Method> conversionMethodFilter = ReflectiveConverterFilter.CONVERSION_METHOD_FILTER;
-    private Filter<Constructor<?>> conversionConstructorFilter =
+    private Predicate<Method> conversionMethodFilter = ReflectiveConverterFilter.CONVERSION_METHOD_FILTER;
+    private Predicate<Constructor<?>> conversionConstructorFilter =
             ReflectiveConverterFilter.CONVERSION_CONSTRUCTOR_FILTER;
 
     @Test(expected = NullPointerException.class)
     public void validateExceptionOnNullMethodArgument() {
 
         // Act & Assert
-        conversionMethodFilter.accept(null);
+        conversionMethodFilter.test(null);
     }
 
     @Test(expected = NullPointerException.class)
     public void validateExceptionOnNullConstructorArgument() {
 
         // Act & Assert
-        conversionMethodFilter.accept(null);
+        conversionMethodFilter.test(null);
     }
 
     @Test
@@ -73,7 +69,7 @@ public class ReflectiveConverterFilterTest {
         final Method convertToDateMethod = getClass().getDeclaredMethod("convertToDate", String.class);
 
         // Act
-        final boolean result = conversionMethodFilter.accept(convertToDateMethod);
+        final boolean result = conversionMethodFilter.test(convertToDateMethod);
 
         // Assert
         Assert.assertTrue(result);
@@ -86,7 +82,7 @@ public class ReflectiveConverterFilterTest {
         final Method stringBufferConverterMethod = getClass().getMethod("stringConverter", String.class);
 
         // Act
-        final boolean result = conversionMethodFilter.accept(stringBufferConverterMethod);
+        final boolean result = conversionMethodFilter.test(stringBufferConverterMethod);
 
         // Assert
         Assert.assertTrue(result);
@@ -99,7 +95,7 @@ public class ReflectiveConverterFilterTest {
         final Method voidMethod = getClass().getDeclaredMethod("voidMethod", String.class);
 
         // Act
-        final boolean result = conversionMethodFilter.accept(voidMethod);
+        final boolean result = conversionMethodFilter.test(voidMethod);
 
         // Assert
         Assert.assertFalse(result);
@@ -112,7 +108,7 @@ public class ReflectiveConverterFilterTest {
         final Method nonAnnotatedMethod = getClass().getMethod("nonAnnotatedMethod", Boolean.TYPE);
 
         // Act
-        final boolean result = conversionMethodFilter.accept(nonAnnotatedMethod);
+        final boolean result = conversionMethodFilter.test(nonAnnotatedMethod);
 
         // Assert
         Assert.assertFalse(result);
@@ -125,7 +121,7 @@ public class ReflectiveConverterFilterTest {
         final Method stringBufferConverterMethod = getClass().getMethod("stringConverter", Boolean.TYPE, String.class);
 
         // Act
-        final boolean result = conversionMethodFilter.accept(stringBufferConverterMethod);
+        final boolean result = conversionMethodFilter.test(stringBufferConverterMethod);
 
         // Assert
         Assert.assertFalse(result);
@@ -138,7 +134,7 @@ public class ReflectiveConverterFilterTest {
         final Method stringBufferConverterMethod = getClass().getMethod("tooFewArguments");
 
         // Act
-        final boolean result = conversionMethodFilter.accept(stringBufferConverterMethod);
+        final boolean result = conversionMethodFilter.test(stringBufferConverterMethod);
 
         // Assert
         Assert.assertFalse(result);
@@ -151,7 +147,7 @@ public class ReflectiveConverterFilterTest {
         final Method almostAConverterMethod = getClass().getMethod("almostAConverterMethod", String.class);
 
         // Act
-        final boolean result = conversionMethodFilter.accept(almostAConverterMethod);
+        final boolean result = conversionMethodFilter.test(almostAConverterMethod);
 
         // Assert
         Assert.assertFalse(result);
@@ -164,7 +160,7 @@ public class ReflectiveConverterFilterTest {
         final Constructor<?> okConstructor = StringConstructorConverter.class.getConstructor(String.class);
 
         // Act
-        final boolean result = conversionConstructorFilter.accept(okConstructor);
+        final boolean result = conversionConstructorFilter.test(okConstructor);
 
         // Assert
         Assert.assertTrue(result);
@@ -178,7 +174,7 @@ public class ReflectiveConverterFilterTest {
                 .getConstructor(String.class, Boolean.TYPE);
 
         // Act
-        final boolean result = conversionConstructorFilter.accept(incorrectConstructor);
+        final boolean result = conversionConstructorFilter.test(incorrectConstructor);
 
         // Assert
         Assert.assertFalse(result);
@@ -191,7 +187,7 @@ public class ReflectiveConverterFilterTest {
         final Constructor<?> nonAnnotatedConstructor = String.class.getConstructor(String.class);
 
         // Act
-        final boolean result = conversionConstructorFilter.accept(nonAnnotatedConstructor);
+        final boolean result = conversionConstructorFilter.test(nonAnnotatedConstructor);
 
         // Assert
         Assert.assertFalse(result);
@@ -249,6 +245,7 @@ public class ReflectiveConverterFilterTest {
         }
     }
 
+    /*
     @Test
     public void validateShortClassNameExtraction() {
 
@@ -280,6 +277,7 @@ public class ReflectiveConverterFilterTest {
             Assert.assertTrue(result.contains(current.getName()));
         }
     }
+    */
 
     //
     // Helpers

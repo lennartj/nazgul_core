@@ -57,6 +57,12 @@
             <artifactId>nazgul-core-reflection-api</artifactId>
             <version>2.2.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>se.jguru.nazgul.test.xmlbinding</groupId>
+            <artifactId>nazgul-core-xmlbinding-test</artifactId>
+            <version>2.2.1-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
 
         <!-- External dependencies -->
         <dependency>

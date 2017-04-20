@@ -42,7 +42,7 @@
         @XmlJavaTypeAdapter(type = ZonedDateTime.class, value = ZonedDateTimeAdapter.class),
         @XmlJavaTypeAdapter(type = TimeZone.class, value = TimeZoneAdapter.class)
 })
-package se.jguru.nazgul.core.xmlbinding.spi.jaxb.adapter;
+package se.jguru.nazgul.core.xmlbinding.api.adapter;
 
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 

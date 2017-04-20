@@ -22,14 +22,15 @@
  */
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport;
 
-import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.reflection.api.conversion.ConverterRegistry;
 import se.jguru.nazgul.core.reflection.api.conversion.registry.DefaultConverterRegistry;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.converter.StandardConverters;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedNull;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -78,10 +79,11 @@ public class DefaultJaxbConverterRegistry implements JaxbConverterRegistry {
      * {@inheritDoc}
      */
     @Override
-    public <TransportType, OriginalType> Class<TransportType> getTransportType(final Class<OriginalType> originalType) {
+    public <TransportType, OriginalType> Class<TransportType> getTransportType(
+            @NotNull final Class<OriginalType> originalType) {
 
         // Check sanity
-        Validate.notNull(originalType, "Cannot handle null originalType argument.");
+        Validate.notNull(originalType, "originalType");
 
         // If the OriginalType is annotated with @XmlType, simply return it.
         if (originalType.isAnnotationPresent(XmlType.class)) {
@@ -111,10 +113,10 @@ public class DefaultJaxbConverterRegistry implements JaxbConverterRegistry {
      */
     @Override
     public <OriginalType, TransportType> Class<OriginalType> getOriginalType(
-            final Class<TransportType> transportType) throws IllegalArgumentException {
+            @NotNull final Class<TransportType> transportType) throws IllegalArgumentException {
 
         // Check sanity
-        Validate.notNull(transportType, "Cannot handle null transportType argument.");
+        Validate.notNull(transportType, "transportType");
         Validate.isTrue(transportType != JaxbAnnotatedNull.class,
                 "Cannot acquire OriginalType for JaxbAnnotatedNull argument.");
 

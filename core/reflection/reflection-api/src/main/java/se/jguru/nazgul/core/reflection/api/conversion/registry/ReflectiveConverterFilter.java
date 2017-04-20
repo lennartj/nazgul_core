@@ -29,11 +29,13 @@ import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
 import se.jguru.nazgul.core.reflection.api.TypeExtractor;
 import se.jguru.nazgul.core.reflection.api.conversion.Converter;
 
+import javax.validation.constraints.NotNull;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -48,6 +50,7 @@ public final class ReflectiveConverterFilter {
     /**
      * ConversionMethodFilter Predicate instance.
      */
+    @SuppressWarnings("all")
     public static final Predicate<Method> CONVERSION_METHOD_FILTER = candidate -> {
 
         final Converter converter = candidate.getAnnotation(Converter.class);
@@ -96,30 +99,25 @@ public final class ReflectiveConverterFilter {
     public static final Predicate<Constructor<?>> CONVERSION_CONSTRUCTOR_FILTER = candidate ->
             candidate.getAnnotation(Converter.class) != null && candidate.getParameterTypes().length == 1;
 
-    public static Function<Object, Tuple<List<Method>, List<Constructor<?>>>> GET_CONVERTERS = anObject -> {
+    /**
+     * Function which extracts all methods and constructors able to convert types within a class.
+     * Should a null class be passed as argument, an empty Function.
+     */
+    @NotNull
+    public static Function<Class<?>, Tuple<SortedSet<Method>, SortedSet<Constructor<?>>>> GET_CONVERTERS = aClass -> {
 
-        // Create the return variable
-        Tuple<List<Method>, List<Constructor<?>>> toReturn = null;
-
-        if (anObject != null) {
-
-            // Find any converter methods in the supplied converter
-            final SortedSet<Method> methods = TypeExtractor.getMethods(
-                    anObject.getClass(), ReflectiveConverterFilter.CONVERSION_METHOD_FILTER);
-
-            // Find any converter constructors in the supplied converter
-            final List<Constructor<?>> constructors = CollectionAlgorithms.filter(
-                    Arrays.asList(anObject.getClass().getConstructors()),
-                    ReflectiveConverterFilter.CONVERSION_CONSTRUCTOR_FILTER);
-
-            // Only return a non-null value if we found some converter methods/constructors.
-            if (methods.size() != 0 || constructors.size() != 0) {
-                toReturn = new Tuple<List<Method>, List<Constructor<?>>>(methods, constructors);
-            }
+        // Fail fast
+        if (aClass == null) {
+            return new Tuple<>(new TreeSet<>(), new TreeSet<>());
         }
 
-        // All done.
-        return toReturn;
+        final SortedSet<Method> converterMethods = TypeExtractor.getMethods(aClass,
+                ReflectiveConverterFilter.CONVERSION_METHOD_FILTER);
+        final SortedSet<Constructor<?>> converterConstructors = TypeExtractor.getConstructors(aClass,
+                ReflectiveConverterFilter.CONVERSION_CONSTRUCTOR_FILTER);
+
+        // All Done.
+        return new Tuple<>(converterMethods, converterConstructors);
     };
 
     /**

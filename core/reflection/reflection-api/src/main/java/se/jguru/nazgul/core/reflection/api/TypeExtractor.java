@@ -28,6 +28,7 @@ import se.jguru.nazgul.core.algorithms.api.TypeAlgorithms;
 import se.jguru.nazgul.core.algorithms.api.Validate;
 
 import javax.validation.constraints.NotNull;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -75,10 +76,59 @@ public final class TypeExtractor {
         // Extract all interfaces
         final SortedSet<Class<?>> allInterfaces = TypeAlgorithms.getAllTypesFor(clazz).getAllInterfaces();
 
+        if (log.isDebugEnabled()) {
+            log.debug(clazz.getName() + " implements " + allInterfaces.size() + " interfaces: "
+                    + allInterfaces.stream()
+                    .map(Class::getName)
+                    .sorted()
+                    .reduce((l, r) -> l + ", " + r)
+                    .orElse("<none>"));
+        }
+
         // Delegate
         return selector == null
                 ? allInterfaces
                 : allInterfaces.stream().filter(selector).collect(Collectors.toSet());
+    }
+
+    /**
+     * Acquires all methods from the provided class which matches the provided selector.
+     *
+     * @param clazz    The class from which to retrieve all relevant methods.
+     * @param selector an optional (i.e. nullable) Predicate. If provided, the Predicate is used to
+     *                 filter all Methods found within the supplied Class.
+     * @return All methods (including private ones) found by the provided class, and
+     * which matched the supplied selector's acceptance criteria.
+     */
+    public static SortedSet<Constructor<?>> getConstructors(@NotNull final Class<?> clazz,
+                                                            final Predicate<Constructor<?>> selector) {
+
+        // Check sanity
+        Validate.notNull(clazz, "clazz");
+
+        // Acquire all methods found within the class of the provided instance.
+        final SortedSet<Constructor<?>> declaredConstructors = TypeAlgorithms
+                .getAllTypesFor(clazz)
+                .getConstructors(true);
+
+        if (log.isDebugEnabled()) {
+            log.debug(clazz.getName() + " has " + declaredConstructors.size() + " constructors: "
+                    + declaredConstructors.stream()
+                    .map(Constructor::toString)
+                    .sorted()
+                    .reduce((l, r) -> l + ", " + r)
+                    .orElse("<none>"));
+        }
+
+        // All Done.
+        if (selector == null) {
+            return declaredConstructors;
+        }
+
+        return declaredConstructors
+                .stream()
+                .filter(selector)
+                .collect(Collectors.toCollection(TypeAlgorithms.SORTED_CONSTRUCTOR_SUPPLIER));
     }
 
     /**
@@ -100,10 +150,10 @@ public final class TypeExtractor {
         final SortedSet<Method> declaredMethods = TypeAlgorithms.getAllTypesFor(clazz).getMethods(true);
 
         // All Done.
-        if(selector == null) {
+        if (selector == null) {
             return declaredMethods;
         }
-        
+
         return declaredMethods
                 .stream()
                 .filter(selector)
@@ -128,7 +178,7 @@ public final class TypeExtractor {
         final SortedSet<Field> declaredFields = TypeAlgorithms.getAllTypesFor(clazz).getFields(true);
 
         // All Done.
-        if(selector == null) {
+        if (selector == null) {
             return declaredFields;
         }
 

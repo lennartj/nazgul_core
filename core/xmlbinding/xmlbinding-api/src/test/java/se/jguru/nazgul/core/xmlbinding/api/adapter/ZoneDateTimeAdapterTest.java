@@ -22,22 +22,34 @@
  */
 
 
-package se.jguru.nazgul.core.xmlbinding.spi.jaxb.adapter;
+package se.jguru.nazgul.core.xmlbinding.api.adapter;
 
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.Month;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.TimeZone;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class LocalDateAdapterTest {
+public class ZoneDateTimeAdapterTest {
 
-    private String transportForm = "2015-04-25";
-    private LocalDate objectForm = LocalDate.of(2015, Month.APRIL, 25);
-    private LocalDateAdapter unitUnderTest = new LocalDateAdapter();
+    // Constants
+    // Constants
+    private static final TimeZone SWEDISH_TIMEZONE = TimeZone.getTimeZone("Europe/Stockholm");
+    private static final ZoneId SWEDISH_ZONE = SWEDISH_TIMEZONE.toZoneId();
+
+    private String transportForm = "2015-04-25T15:30:00+02:00[Europe/Stockholm]";
+    private ZonedDateTime objectForm = ZonedDateTime.of(
+            LocalDate.of(2015, Month.APRIL, 25),
+            LocalTime.of(15, 30, 0),
+            SWEDISH_ZONE);
+    private ZonedDateTimeAdapter unitUnderTest = new ZonedDateTimeAdapter();
 
     @Test
     public void validateConvertingToTransportForm() throws Exception {
@@ -59,7 +71,7 @@ public class LocalDateAdapterTest {
         // Assemble
 
         // Act
-        final LocalDate result = unitUnderTest.unmarshal(transportForm);
+        final ZonedDateTime result = unitUnderTest.unmarshal(transportForm);
 
         // Assert
         Assert.assertNull(unitUnderTest.unmarshal(null));

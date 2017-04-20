@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -111,7 +112,28 @@ public final class TypeAlgorithms {
     public static final Supplier<SortedSet<Member>> SORTED_MEMBER_SUPPLIER =
             () -> new TreeSet<>(TypeAlgorithms.MEMBER_COMPARATOR);
 
+    /**
+     * <p>Standard Supplied to create a SortedSet of Method using the {@link TypeAlgorithms#MEMBER_COMPARATOR}
+     * to determine order within the SortedSet yielded. The typical application of this Supplier is</p>
+     * <pre>
+     * <code>
+     *     [someStream].collect(Collectors.toCollection(TypeAlgorithms.SORTED_METHOD_SUPPLIER));
+     * </code>
+     * </pre>
+     */
     public static final Supplier<SortedSet<Method>> SORTED_METHOD_SUPPLIER =
+            () -> new TreeSet<>(TypeAlgorithms.MEMBER_COMPARATOR);
+
+    /**
+     * <p>Standard Supplied to create a SortedSet of Constructor using the {@link TypeAlgorithms#MEMBER_COMPARATOR}
+     * to determine order within the SortedSet yielded. The typical application of this Supplier is</p>
+     * <pre>
+     * <code>
+     *     [someStream].collect(Collectors.toCollection(TypeAlgorithms.SORTED_CONSTRUCTOR_SUPPLIER));
+     * </code>
+     * </pre>
+     */
+    public static final Supplier<SortedSet<Constructor<?>>> SORTED_CONSTRUCTOR_SUPPLIER =
             () -> new TreeSet<>(TypeAlgorithms.MEMBER_COMPARATOR);
 
     /**

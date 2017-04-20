@@ -1,30 +1,8 @@
-/*
- * #%L
- * Nazgul Project: nazgul-core-messaging-test
- * %%
- * Copyright (C) 2010 - 2017 jGuru Europe AB
- * %%
- * Licensed under the jGuru Europe AB license (the "License"), based
- * on Apache License, Version 2.0; you may not use this file except
- * in compliance with the License.
- *
- * You may obtain a copy of the License at
- *
- *      http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- *
- */
 package se.jguru.nazgul.test.messaging.activemq.example;
 
 import org.junit.Assert;
 import org.junit.Test;
-import se.jguru.nazgul.test.messaging.activemq.AbstractActiveMqTest;
+import se.jguru.nazgul.test.messaging.AbstractJmsTest;
 
 import javax.jms.Connection;
 import javax.jms.DeliveryMode;
@@ -43,11 +21,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Example JMS test example.
- *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class ActiveMqBrokerExampleTest extends AbstractActiveMqTest {
+public class AbstractJmsServiceTest extends AbstractJmsTest {
 
     public static final String SERVER_SIDE_INBOUND_REQUEST = "service.inbound.request";
     public static final String SERVER_SIDE_OUTBOUND_RESPONSE = "service.outbound.response";
@@ -55,14 +31,7 @@ public class ActiveMqBrokerExampleTest extends AbstractActiveMqTest {
     public static final String CLIENT_SIDE_INBOUND_RESPONSE = SERVER_SIDE_OUTBOUND_RESPONSE;
 
     // Shared state
-    private List<Message> serverSideReceivedMessages;
-
-    /**
-     * Use transacted operation.
-     */
-    public ActiveMqBrokerExampleTest() {
-        super(true);
-    }
+    protected List<Message> serverSideReceivedMessages;
 
     /**
      * {@inheritDoc}

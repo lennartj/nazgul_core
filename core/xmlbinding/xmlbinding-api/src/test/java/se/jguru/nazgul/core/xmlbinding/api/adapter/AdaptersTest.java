@@ -22,7 +22,7 @@
  */
 
 
-package se.jguru.nazgul.core.xmlbinding.spi.jaxb.adapter;
+package se.jguru.nazgul.core.xmlbinding.api.adapter;
 
 import org.junit.Assert;
 import org.junit.Before;

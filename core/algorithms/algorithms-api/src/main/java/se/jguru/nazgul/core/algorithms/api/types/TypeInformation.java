@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -38,12 +39,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 /**
  * Holder for type information, extracted from a source Class.
@@ -279,6 +278,32 @@ public class TypeInformation implements Serializable, Comparable<TypeInformation
 
         for (int i = 0, methodsLength = methods.length; i < methodsLength; i++) {
             toReturn.add(methods[i]);
+        }
+
+        // All Done.
+        return toReturn;
+    }
+
+    /**
+     * Retrieves all Constructors found within the {@link #getSource()} class.
+     *
+     * @param declaredConstructors if true, retrieves the {@link Class#getDeclaredConstructors()}
+     *                             and otherwise {@link Class#getConstructors()}.
+     * @return A SortedSet containing all methods from the {@link #getSource()} class, sorted
+     * according to the {@link TypeAlgorithms#MEMBER_COMPARATOR}.
+     * @see TypeAlgorithms#MEMBER_COMPARATOR
+     */
+    @NotNull
+    @SuppressWarnings("all")
+    public SortedSet<Constructor<?>> getConstructors(final boolean declaredConstructors) {
+
+        final SortedSet<Constructor<?>> toReturn = new TreeSet<>(TypeAlgorithms.MEMBER_COMPARATOR);
+        final Constructor<?>[] constructors = declaredConstructors
+                ? getSource().getDeclaredConstructors()
+                : getSource().getConstructors();
+
+        for (int i = 0, constructorsLength = constructors.length; i < constructorsLength; i++) {
+            toReturn.add(constructors[i]);
         }
 
         // All Done.

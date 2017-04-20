@@ -23,12 +23,13 @@
 
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport;
 
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.ClassInformationHolder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbUtils;
 import se.jguru.nazgul.tools.validation.api.Validatable;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -152,10 +153,10 @@ public class EntityTransporter<T> implements ClassInformationHolder, Serializabl
      * @param registry The TypeConverterRegistry instance to use.
      * @throws IllegalArgumentException if the registry parameter was null.
      */
-    public static void setTransportTypeConverterRegistry(final JaxbConverterRegistry registry)
+    public static void setTransportTypeConverterRegistry(@NotNull final JaxbConverterRegistry registry)
             throws IllegalArgumentException {
 
-        Validate.notNull(registry, "Cannot handle null registry argument.");
+        Validate.notNull(registry, "registry");
         typeConverterRegistry = registry;
     }
 }

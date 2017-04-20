@@ -36,7 +36,7 @@
         }
 )
 @XmlAccessorType(XmlAccessType.FIELD)
-package se.jguru.nazgul.core.xmlbinding.spi.jaxb.adapter;
+package se.jguru.nazgul.core.xmlbinding.api.adapter;
 
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 

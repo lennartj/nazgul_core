@@ -20,21 +20,28 @@
  * #L%
  *
  */
-package se.jguru.nazgul.core.xmlbinding.spi.jaxb.adapter;
+
+
+package se.jguru.nazgul.core.xmlbinding.api.adapter;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.TimeZone;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Month;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class TimeZoneAdapterTest {
+public class LocalDateTimeAdapterTest {
 
-    private String transportForm = "Europe/Stockholm";
-    private TimeZone objectForm = TimeZone.getTimeZone("Europe/Stockholm");
-    private TimeZoneAdapter unitUnderTest = new TimeZoneAdapter();
+    private String transportForm = "2015-04-25T15:40:00";
+    private LocalDateTime objectForm = LocalDateTime.of(
+            LocalDate.of(2015, Month.APRIL, 25),
+            LocalTime.of(15, 40, 0));
+    private LocalDateTimeAdapter unitUnderTest = new LocalDateTimeAdapter();
 
     @Test
     public void validateConvertingToTransportForm() throws Exception {
@@ -56,7 +63,7 @@ public class TimeZoneAdapterTest {
         // Assemble
 
         // Act
-        final TimeZone result = unitUnderTest.unmarshal(transportForm);
+        final LocalDateTime result = unitUnderTest.unmarshal(transportForm);
 
         // Assert
         Assert.assertNull(unitUnderTest.unmarshal(null));
