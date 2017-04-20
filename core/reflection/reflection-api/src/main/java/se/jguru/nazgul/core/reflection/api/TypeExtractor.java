@@ -22,23 +22,25 @@
  */
 package se.jguru.nazgul.core.reflection.api;
 
-import org.apache.commons.lang3.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.jguru.nazgul.core.algorithms.api.TypeAlgorithms;
 import se.jguru.nazgul.core.algorithms.api.Validate;
-import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
-import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
 
 import javax.validation.constraints.NotNull;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
- * Type filtering utility class.
+ * Utility methods to retrieve, filter and handle types.
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
@@ -51,70 +53,61 @@ public final class TypeExtractor {
      * Hidden utility class constructor.
      */
     private TypeExtractor() {
+        // Do nothing
     }
 
     /**
-     * Acquires all interfaces from the provided class which matches
-     * the provided selector's acceptance criteria.
+     * Acquires all interfaces from the provided class which matches the provided selector's acceptance criteria.
      *
      * @param clazz    The class from which to derive all appropriate interfaces.
-     * @param selector The selector defining which interfaces to filter out.
+     * @param selector an optional (i.e. nullable) Predicate. If provided, the Predicate is used to
+     *                 filter all interfaces implemented by the supplied Class.
      * @return All interfaces implemented by the provided class, and which
      * matched the supplied selector's acceptance criteria.
      */
-    public static List<Class<?>> getInterfaces(@NotNull final Class<?> clazz,
-                                               @NotNull final Filter<Class<?>> selector) {
+    @NotNull
+    public static Set<Class<?>> getInterfaces(@NotNull final Class<?> clazz,
+                                              final Predicate<Class<?>> selector) {
 
         // Check sanity
         Validate.notNull(clazz, "clazz");
-        Validate.notNull(selector, "selector");
 
         // Extract all interfaces
-        @SuppressWarnings("unchecked")
-        final List<Class<?>> allInterfaces = ClassUtils.getAllInterfaces(clazz);
+        final SortedSet<Class<?>> allInterfaces = TypeAlgorithms.getAllTypesFor(clazz).getAllInterfaces();
 
         // Delegate
-        return CollectionAlgorithms.filter(allInterfaces, selector);
+        return selector == null
+                ? allInterfaces
+                : allInterfaces.stream().filter(selector).collect(Collectors.toSet());
     }
 
     /**
      * Acquires all methods from the provided class which matches the provided selector.
      *
      * @param clazz    The class from which to retrieve all relevant methods.
-     * @param selector The selector defining which methods to filter out.
+     * @param selector an optional (i.e. nullable) Predicate. If provided, the Predicate is used to
+     *                 filter all Methods found within the supplied Class.
      * @return All methods (including private ones) found by the provided class, and
      * which matched the supplied selector's acceptance criteria.
      */
-    public static List<Method> getMethods(@NotNull final Class<?> clazz, final Filter<Method> selector) {
+    public static SortedSet<Method> getMethods(@NotNull final Class<?> clazz,
+                                               final Predicate<Method> selector) {
 
         // Check sanity
         Validate.notNull(clazz, "clazz");
 
         // Acquire all methods found within the class of the provided instance.
-        final List<Method> methods = new ArrayList<Method>();
-        methods.addAll(Arrays.asList(clazz.getDeclaredMethods()));
+        final SortedSet<Method> declaredMethods = TypeAlgorithms.getAllTypesFor(clazz).getMethods(true);
 
-        // Add Method definitions from all implemented interfaces
-        @SuppressWarnings("unchecked")
-        final List<Class<?>> allInterfaces = ClassUtils.getAllInterfaces(clazz);
-
-        for (Class<?> current : allInterfaces) {
-            for (Method currentMethod : Arrays.asList(current.getDeclaredMethods())) {
-                if (!methods.contains(currentMethod)) {
-
-                    // Method not already present. Re-add.
-                    methods.add(currentMethod);
-
-                } else {
-
-                    // Don't add a method twice.
-                    log.debug("Avoiding re-adding [" + currentMethod + "]");
-                }
-            }
+        // All Done.
+        if(selector == null) {
+            return declaredMethods;
         }
-
-        // Delegate
-        return CollectionAlgorithms.filter(methods, selector);
+        
+        return declaredMethods
+                .stream()
+                .filter(selector)
+                .collect(Collectors.toCollection(TypeAlgorithms.SORTED_METHOD_SUPPLIER));
     }
 
     /**
@@ -125,27 +118,24 @@ public final class TypeExtractor {
      * @return All fields (including private ones) within the provided instance
      * or its superclasses, and which matched the supplied selector's acceptance criteria.
      */
-    public static List<Field> getFields(@NotNull final Class<?> clazz, final Filter<Field> selector) {
+    public static SortedSet<Field> getFields(@NotNull final Class<?> clazz,
+                                             final Predicate<Field> selector) {
 
         // Check sanity
         Validate.notNull(clazz, "clazz");
 
-        // Acquire all fields found within the class hierarcy of the provided instance.
-        final List<Field> fields = new ArrayList<Field>();
-        fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
+        // Acquire all methods found within the class of the provided instance.
+        final SortedSet<Field> declaredFields = TypeAlgorithms.getAllTypesFor(clazz).getFields(true);
 
-        // Add Fields from all superclasses
-        @SuppressWarnings("unchecked")
-        final List<Class<?>> allInterfaces = ClassUtils.getAllInterfaces(clazz);
-
-        for (Class<?> current : allInterfaces) {
-            for (Field currentField : Arrays.asList(current.getDeclaredFields())) {
-                fields.add(currentField);
-            }
+        // All Done.
+        if(selector == null) {
+            return declaredFields;
         }
 
-        // Delegate
-        return CollectionAlgorithms.filter(fields, selector);
+        return declaredFields
+                .stream()
+                .filter(selector)
+                .collect(Collectors.toCollection(() -> new TreeSet<>(TypeAlgorithms.MEMBER_COMPARATOR)));
     }
 
     /**

@@ -22,6 +22,8 @@
  */
 package se.jguru.nazgul.core.reflection.api.conversion;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Set;
 
 /**
@@ -42,14 +44,14 @@ public interface ConverterRegistry {
      *                                  specification.
      * @see se.jguru.nazgul.core.reflection.api.conversion.Converter
      */
-    void add(Object... converters) throws IllegalArgumentException;
+    void add(@NotNull @Size(min = 1) Object... converters) throws IllegalArgumentException;
 
     /**
      * Removes the supplied converter instance from this ConverterRegistry.
      *
      * @param converter The converter to remove.
      */
-    void remove(Object converter);
+    void remove(@NotNull Object converter);
 
     /**
      * Converts the provided source object to the desired type.
@@ -61,7 +63,7 @@ public interface ConverterRegistry {
      * @return The converted object.
      * @throws IllegalArgumentException if the conversion failed.
      */
-    <From, To> To convert(From source, Class<To> desiredType) throws IllegalArgumentException;
+    <From, To> To convert(@NotNull From source, @NotNull Class<To> desiredType) throws IllegalArgumentException;
 
     /**
      * Retrieves the available targetTypes for the supplied sourceType, implying the closure of Classes
@@ -74,5 +76,5 @@ public interface ConverterRegistry {
      * {@code null} in case this TypeConverterRegistry could not convert the supplied sourceType.
      * @throws IllegalArgumentException if the calculation could not be performed.
      */
-    <From> Set<Class<?>> getPossibleConversions(Class<From> sourceType) throws IllegalArgumentException;
+    <From> Set<Class<?>> getPossibleConversions(@NotNull Class<From> sourceType) throws IllegalArgumentException;
 }

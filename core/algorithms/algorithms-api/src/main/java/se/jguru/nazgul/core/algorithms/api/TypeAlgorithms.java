@@ -32,12 +32,12 @@ import javax.xml.bind.annotation.XmlTransient;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.StringTokenizer;
@@ -45,6 +45,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Class- and Interface related algorithms.
@@ -73,8 +74,8 @@ public final class TypeAlgorithms {
      * Compares two classes by comparing their fully qualified ClassNames.
      * Any null argument is replaced with an empty string before comparing.
      */
-    public static final Comparator<Class<?>> CLASSNAME_COMPARATOR = (l, r) ->
-            (l == null ? "" : l.getName()).compareTo(r == null ? "" : r.getName());
+    public static final Comparator<Class<?>> CLASSNAME_COMPARATOR =
+            Comparator.comparing(aClass -> (aClass == null ? "" : aClass.getName()));
 
     /**
      * Compares two Annotations by comparing the fully qualified ClassNames of their annotation types.
@@ -82,23 +83,44 @@ public final class TypeAlgorithms {
      *
      * @see Annotation#annotationType()
      */
-    public static final Comparator<Annotation> ANNOTATION_COMPARATOR = (l, r) ->
-            (l == null ? "" : l.annotationType().getName()).compareTo(r == null ? "" : r.annotationType().getName());
+    public static final Comparator<Annotation> ANNOTATION_COMPARATOR =
+            Comparator.comparing(anAnnotation -> (anAnnotation == null ? "" : anAnnotation.annotationType().getName()));
 
     /**
-     * Compares two Methods by comparing their respective Names.
+     * Compares two Members by comparing their respective Declaring Class + toString value.
      * Any null argument is replaced with an empty string before comparing.
      */
-    public static final Comparator<Method> METHOD_COMPARATOR = (l, r) ->
-            (l == null ? "" : l.getName()).compareTo(r == null ? "" : r.getName());
+    public static final Comparator<Member> MEMBER_COMPARATOR = (l, r) -> {
+
+        final String leftSortKey = l == null ? "" : l.getDeclaringClass().getName() + l.toString();
+        final String rightSortKey = r == null ? "" : r.getDeclaringClass().getName() + r.toString();
+
+        // All Done.
+        return leftSortKey.compareTo(rightSortKey);
+    };
+
+    /**
+     * <p>Standard Supplied to create a SortedSet of Members using the {@link TypeAlgorithms#MEMBER_COMPARATOR}
+     * to determine order within the SortedSet yielded. The typical application of this Supplier is</p>
+     * <pre>
+     * <code>
+     *     [someStream].collect(Collectors.toCollection(() -> new TreeSet<>(TypeAlgorithms.MEMBER_COMPARATOR));
+     * </code>
+     * </pre>
+     */
+    public static final Supplier<SortedSet<Member>> SORTED_MEMBER_SUPPLIER =
+            () -> new TreeSet<>(TypeAlgorithms.MEMBER_COMPARATOR);
+
+    public static final Supplier<SortedSet<Method>> SORTED_METHOD_SUPPLIER =
+            () -> new TreeSet<>(TypeAlgorithms.MEMBER_COMPARATOR);
 
     /**
      * Function returning all public methods (including those inherited from superclasses) within a given class.
-     * The sort order of the returned SortedSet is given by {@link #METHOD_COMPARATOR}.
+     * The sort order of the returned SortedSet is given by {@link #MEMBER_COMPARATOR}.
      */
     public static final Function<Class<?>, SortedSet<Method>> FIND_PUBLIC_METHODS = c -> {
 
-        final SortedSet<Method> toReturn = new TreeSet<>(METHOD_COMPARATOR);
+        final SortedSet<Method> toReturn = new TreeSet<>(MEMBER_COMPARATOR);
         toReturn.addAll(Arrays.asList(c.getMethods()));
 
         // All Done.

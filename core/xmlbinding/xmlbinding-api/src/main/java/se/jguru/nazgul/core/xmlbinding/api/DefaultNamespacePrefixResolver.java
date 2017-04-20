@@ -22,8 +22,10 @@
  */
 package se.jguru.nazgul.core.xmlbinding.api;
 
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -56,21 +58,16 @@ public class DefaultNamespacePrefixResolver implements NamespacePrefixResolver {
     }
 
     /**
-     * Adds the provided mapping between a single xmlNamespaceUri and corresponding xmlPrefix.
-     *
-     * @param xmlNamespaceUri the unique URI of an XML namespace.
-     * @param xmlPrefix       the unique prefix of the provided XML namespace.
-     * @throws NullPointerException     if any argument was {@code null}.
-     * @throws IllegalArgumentException if the xmlNamespaceUri was already registered to another prefix, or
-     *                                  if any argument was empty.
+     * {@inheritDoc}
      */
     @Override
-    public final void put(final String xmlNamespaceUri, final String xmlPrefix)
+    public final void put(@NotNull @Size(min = 1) final String xmlNamespaceUri,
+                          @NotNull @Size(min = 1) final String xmlPrefix)
             throws NullPointerException, IllegalArgumentException {
 
         // Check sanity
-        Validate.notNull(xmlNamespaceUri, "Cannot handle null xmlNamespaceUri argument.");
-        Validate.notEmpty(xmlPrefix, "Cannot handle null or empty xmlPrefix argument.");
+        Validate.notNull(xmlNamespaceUri, "xmlNamespaceUri");
+        Validate.notEmpty(xmlPrefix, "xmlPrefix");
 
         synchronized (lock) {
             validateNotRegistered(xmlNamespaceUri, xmlPrefix);
@@ -80,18 +77,13 @@ public class DefaultNamespacePrefixResolver implements NamespacePrefixResolver {
     }
 
     /**
-     * Convenience method, adding all provided mappings between xmlNamespaceUris and corresponding xmlPrefixes.
-     *
-     * @param xmlUri2PrefixMap A non-null map relating XML namespace URIs to corresponding prefixes.
-     * @throws NullPointerException     if any argument or element was {@code null}.
-     * @throws IllegalArgumentException if any xmlNamespaceUri was already registered to another prefix, or
-     *                                  if any argument was empty.
+     * {@inheritDoc}
      */
     @Override
-    public final void putAll(final Map<String, String> xmlUri2PrefixMap)
+    public final void putAll(@NotNull final Map<String, String> xmlUri2PrefixMap)
             throws NullPointerException, IllegalArgumentException {
 
-        Validate.notNull(xmlUri2PrefixMap, "Cannot handle null uri2PrefixMap argument.");
+        Validate.notNull(xmlUri2PrefixMap, "uri2PrefixMap");
 
         synchronized (lock) {
 
@@ -99,8 +91,8 @@ public class DefaultNamespacePrefixResolver implements NamespacePrefixResolver {
             for (Map.Entry<String, String> current : xmlUri2PrefixMap.entrySet()) {
 
                 // Check sanity
-                Validate.notEmpty(current.getKey(), "Cannot handle null or empty xmlNamespaceUri.");
-                Validate.notEmpty(current.getValue(), "Cannot handle null or empty prefix.");
+                Validate.notEmpty(current.getKey(), "xmlNamespaceUri");
+                Validate.notEmpty(current.getValue(), "prefix");
 
                 validateNotRegistered(current.getKey(), current.getValue());
             }
@@ -113,30 +105,22 @@ public class DefaultNamespacePrefixResolver implements NamespacePrefixResolver {
     }
 
     /**
-     * Retrieves the XML namespace URI for the provided xmlPrefix, or {@code null} if none was found.
-     *
-     * @param xmlPrefix The XML prefix for which to obtain the corresponding XML namespace.
-     * @return the XML namespace URI for the provided xmlPrefix, or {@code null} if none was found.
-     * @throws NullPointerException if the xmlPrefix argument was {@code null}.
+     * {@inheritDoc}
      */
     @Override
-    public final String getNamespaceUri(final String xmlPrefix) throws NullPointerException {
+    public final String getNamespaceUri(@NotNull final String xmlPrefix) throws NullPointerException {
 
-        Validate.notNull(xmlPrefix, "Cannot handle null xmlPrefix argument.");
+        Validate.notNull(xmlPrefix, "xmlPrefix");
         return prefix2UrlMap.get(xmlPrefix);
     }
 
     /**
-     * Retrieves the XML prefix for the provided xmlNamespaceUri, or {@code null} if none was found.
-     *
-     * @param xmlNamespaceUri The XML namespace URI for which to obtain the corresponding XML prefix.
-     * @return the XML prefix for the provided xmlNamespaceUri, or {@code null} if none was found.
-     * @throws NullPointerException if the xmlPrefix argument was {@code null}.
+     * {@inheritDoc}
      */
     @Override
-    public final String getXmlPrefix(final String xmlNamespaceUri) throws NullPointerException {
+    public final String getXmlPrefix(@NotNull final String xmlNamespaceUri) throws NullPointerException {
 
-        Validate.notNull(xmlNamespaceUri, "Cannot handle null xmlNamespaceUri argument.");
+        Validate.notNull(xmlNamespaceUri, "xmlNamespaceUri");
         return url2PrefixMap.get(xmlNamespaceUri);
     }
 

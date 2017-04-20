@@ -31,16 +31,19 @@ import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 /**
  * Holder for type information, extracted from a source Class.
@@ -256,6 +259,54 @@ public class TypeInformation implements Serializable, Comparable<TypeInformation
     @NotNull
     public SortedMap<String, Method> getJavaBeanSetterMethods() {
         return TypeAlgorithms.FIND_JAVABEAN_SETTERS.apply(getSource());
+    }
+
+    /**
+     * Retrieves all Methods found within the {@link #getSource()} class.
+     *
+     * @param declaredMethods if true, retrieves the {@link Class#getDeclaredMethods()}
+     *                        and otherwise {@link Class#getMethods()}.
+     * @return A SortedSet containing all methods from the {@link #getSource()} class, sorted
+     * according to the {@link TypeAlgorithms#MEMBER_COMPARATOR}.
+     * @see TypeAlgorithms#MEMBER_COMPARATOR
+     */
+    @NotNull
+    @SuppressWarnings("all")
+    public SortedSet<Method> getMethods(final boolean declaredMethods) {
+
+        final SortedSet<Method> toReturn = new TreeSet<>(TypeAlgorithms.MEMBER_COMPARATOR);
+        final Method[] methods = declaredMethods ? getSource().getDeclaredMethods() : getSource().getMethods();
+
+        for (int i = 0, methodsLength = methods.length; i < methodsLength; i++) {
+            toReturn.add(methods[i]);
+        }
+
+        // All Done.
+        return toReturn;
+    }
+
+    /**
+     * Retrieves all Fields found within the {@link #getSource()} class.
+     *
+     * @param declaredFields if true, retrieves the {@link Class#getDeclaredFields()} ()}
+     *                       and otherwise {@link Class#getFields()} ()}.
+     * @return A SortedSet containing all fields from the {@link #getSource()} class, sorted
+     * according to the {@link TypeAlgorithms#MEMBER_COMPARATOR}.
+     * @see TypeAlgorithms#MEMBER_COMPARATOR
+     */
+    @NotNull
+    @SuppressWarnings("all")
+    public SortedSet<Field> getFields(final boolean declaredFields) {
+
+        final SortedSet<Field> toReturn = new TreeSet<>(TypeAlgorithms.MEMBER_COMPARATOR);
+        final Field[] fields = declaredFields ? getSource().getDeclaredFields() : getSource().getFields();
+
+        for (int i = 0, fieldsLength = fields.length; i < fieldsLength; i++) {
+            toReturn.add(fields[i]);
+        }
+
+        // All Done.
+        return toReturn;
     }
 
     /**

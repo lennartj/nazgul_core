@@ -24,10 +24,11 @@
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper;
 
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.xmlbinding.api.DefaultNamespacePrefixResolver;
 import se.jguru.nazgul.core.xmlbinding.api.NamespacePrefixResolver;
 
+import javax.validation.constraints.NotNull;
 import java.util.Map;
 import java.util.Set;
 
@@ -58,9 +59,9 @@ public class JaxbNamespacePrefixResolver extends NamespacePrefixMapper implement
      * @param namespacePrefixResolver The NamespacePrefixResolver delegate to which all NamespacePrefixResolver
      *                                calls are delegated internally.
      */
-    public JaxbNamespacePrefixResolver(final NamespacePrefixResolver namespacePrefixResolver) {
+    public JaxbNamespacePrefixResolver(@NotNull final NamespacePrefixResolver namespacePrefixResolver) {
 
-        Validate.notNull(namespacePrefixResolver, "Cannot handle null namespacePrefixResolver argument.");
+        Validate.notNull(namespacePrefixResolver, "namespacePrefixResolver");
         this.namespacePrefixResolver = namespacePrefixResolver;
     }
 

@@ -33,6 +33,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Filter utility implementations for use in discovering Converter implementations.
@@ -43,26 +46,81 @@ import java.util.List;
 public final class ReflectiveConverterFilter {
 
     /**
-     * Singleton instance of the ConversionMethodFilter class.
+     * ConversionMethodFilter Predicate instance.
      */
-    public static final Filter<Method> CONVERSION_METHOD_FILTER = new ConversionMethodFilter();
+    public static final Predicate<Method> CONVERSION_METHOD_FILTER = candidate -> {
+
+        final Converter converter = candidate.getAnnotation(Converter.class);
+        if (converter == null) {
+            return false;
+        }
+
+        // Check the converter method itself.
+        final Class<?>[] parameterTypes = candidate.getParameterTypes();
+        if (parameterTypes.length != 1 || candidate.getReturnType() == Void.TYPE) {
+
+            // This is not a proper converter method.
+            return false;
+        }
+
+        // If we have a conditionalConverterMethod defined, it must be on the form
+        //
+        // public boolean someMethodName(final FromType aFromType);
+        //
+        final String conditionalConverterMethod = converter.conditionalConversionMethod();
+        boolean hasConditionalConverterMethod = !conditionalConverterMethod.equals(Converter.NO_CONVERTER_METHOD);
+
+        if (hasConditionalConverterMethod) {
+
+            final Class<?> fromType = parameterTypes[0];
+            final ConditionalConverterMethodFilter filter = new ConditionalConverterMethodFilter(
+                    fromType,
+                    converter.conditionalConversionMethod());
+
+            // Acquire the potential conversionMethods
+            final SortedSet<Method> conversionMethods = TypeExtractor.getMethods(
+                    candidate.getDeclaringClass(),
+                    filter);
+
+            // All done.
+            return conversionMethods.size() > 0;
+        }
+
+        // No problems found.
+        return true;
+    };
 
     /**
      * Singleton instance of the ConversionConstructorFilter type.
      */
-    public static final Filter<Constructor<?>> CONVERSION_CONSTRUCTOR_FILTER = new ConversionConstructorFilter();
+    public static final Predicate<Constructor<?>> CONVERSION_CONSTRUCTOR_FILTER = candidate ->
+            candidate.getAnnotation(Converter.class) != null && candidate.getParameterTypes().length == 1;
 
-    /**
-     * Singleton instance of a Transformer yielding the {@code getShortName()} result for Classes.
-     */
-    public static final Transformer<Class<?>, String> SHORT_CLASSNAME_TRANSFORMER
-            = new ClassToClassNameTransformer(true);
+    public static Function<Object, Tuple<List<Method>, List<Constructor<?>>>> GET_CONVERTERS = anObject -> {
 
-    /**
-     * Singleton instance of a Transformer yielding the {@code getName()} result for Classes.
-     */
-    public static final Transformer<Class<?>, String> FULL_CLASSNAME_TRANSFORMER
-            = new ClassToClassNameTransformer(false);
+        // Create the return variable
+        Tuple<List<Method>, List<Constructor<?>>> toReturn = null;
+
+        if (anObject != null) {
+
+            // Find any converter methods in the supplied converter
+            final SortedSet<Method> methods = TypeExtractor.getMethods(
+                    anObject.getClass(), ReflectiveConverterFilter.CONVERSION_METHOD_FILTER);
+
+            // Find any converter constructors in the supplied converter
+            final List<Constructor<?>> constructors = CollectionAlgorithms.filter(
+                    Arrays.asList(anObject.getClass().getConstructors()),
+                    ReflectiveConverterFilter.CONVERSION_CONSTRUCTOR_FILTER);
+
+            // Only return a non-null value if we found some converter methods/constructors.
+            if (methods.size() != 0 || constructors.size() != 0) {
+                toReturn = new Tuple<List<Method>, List<Constructor<?>>>(methods, constructors);
+            }
+        }
+
+        // All done.
+        return toReturn;
+    };
 
     /**
      * Helper method to extract a Tuple of converter methods and constructors, as found within the supplied
@@ -81,7 +139,7 @@ public final class ReflectiveConverterFilter {
         if (object != null) {
 
             // Find any converter methods in the supplied converter
-            final List<Method> methods = TypeExtractor.getMethods(
+            final SortedSet<Method> methods = TypeExtractor.getMethods(
                     object.getClass(), ReflectiveConverterFilter.CONVERSION_METHOD_FILTER);
 
             // Find any converter constructors in the supplied converter
@@ -105,55 +163,6 @@ public final class ReflectiveConverterFilter {
     private ReflectiveConverterFilter() {
     }
 
-    /**
-     * Filter implementation detecting properly annotated Converter methods.
-     */
-    private static final class ConversionMethodFilter implements Filter<Method> {
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean accept(final Method candidate) {
-
-            final Converter converter = candidate.getAnnotation(Converter.class);
-            if (converter == null) {
-                return false;
-            }
-
-            // Check the converter method itself.
-            final Class<?>[] parameterTypes = candidate.getParameterTypes();
-            if (parameterTypes.length != 1 || candidate.getReturnType() == Void.TYPE) {
-
-                // This is not a proper converter method.
-                return false;
-            }
-
-            // If we have a conditionalConverterMethod defined, it must be on the form
-            //
-            // public boolean someMethodName(final FromType aFromType);
-            //
-            final String conditionalConverterMethod = converter.conditionalConversionMethod();
-            boolean hasConditionalConverterMethod = !conditionalConverterMethod.equals(Converter.NO_CONVERTER_METHOD);
-
-            if (hasConditionalConverterMethod) {
-
-                final Class<?> fromType = parameterTypes[0];
-                final ConditionalConverterMethodFilter filter = new ConditionalConverterMethodFilter(
-                        fromType,
-                        converter.conditionalConversionMethod());
-
-                // Acquire the potential conversionMethods
-                final List<Method> conversionMethods = TypeExtractor.getMethods(candidate.getDeclaringClass(), filter);
-
-                // All done.
-                return conversionMethods.size() > 0;
-            }
-
-            // No problems found.
-            return true;
-        }
-    }
 
     /**
      * Filter implementation detecting properly annotated Converter constructors.
@@ -173,7 +182,7 @@ public final class ReflectiveConverterFilter {
     /**
      * Filter implementation detecting proper conditional converter methods.
      */
-    private static final class ConditionalConverterMethodFilter implements Filter<Method> {
+    private static final class ConditionalConverterMethodFilter implements Predicate<Method> {
 
         // Internal state
         private Class<?> requiredArgumentType;
@@ -188,7 +197,7 @@ public final class ReflectiveConverterFilter {
          * {@inheritDoc}
          */
         @Override
-        public boolean accept(final Method candidate) {
+        public boolean test(final Method candidate) {
 
             // Check return type
             boolean booleanReturnType = candidate.getReturnType() == Boolean.TYPE

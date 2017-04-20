@@ -257,7 +257,7 @@ public class ReflectiveConverterFilterTest {
 
         // Act
         final Collection<String> result = CollectionAlgorithms.transform(classes,
-                ReflectiveConverterFilter.SHORT_CLASSNAME_TRANSFORMER);
+                ReflectiveConverterFilter.TO_SHORT_CLASSNAME);
 
         // Assert
         for (Class<?> current : classes) {

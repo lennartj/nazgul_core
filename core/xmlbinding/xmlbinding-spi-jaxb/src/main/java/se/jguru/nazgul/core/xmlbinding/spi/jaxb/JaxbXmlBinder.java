@@ -23,8 +23,8 @@
 
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb;
 
-import org.apache.commons.lang3.Validate;
 import org.w3c.dom.ls.LSResourceResolver;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
 import se.jguru.nazgul.core.xmlbinding.api.NamespacePrefixResolver;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
@@ -77,7 +77,7 @@ public class JaxbXmlBinder implements XmlBinder<Object> {
      */
     public JaxbXmlBinder(final JaxbNamespacePrefixResolver namespacePrefixResolver) {
 
-        Validate.notNull(namespacePrefixResolver, "Cannot handle null namespacePrefixResolver argument.");
+        Validate.notNull(namespacePrefixResolver, "namespacePrefixResolver");
 
         this.namespacePrefixResolver = namespacePrefixResolver;
 
@@ -152,7 +152,7 @@ public class JaxbXmlBinder implements XmlBinder<Object> {
     public List<Object> unmarshal(final Reader transportReader)
             throws IllegalArgumentException, InternalStateValidationException {
 
-        Validate.notNull(transportReader, "Cannot handle null transportReader argument.");
+        Validate.notNull(transportReader, "transportReader");
 
         // Read the stream content.
         final String content = readFully(transportReader);

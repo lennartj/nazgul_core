@@ -24,10 +24,12 @@ package se.jguru.nazgul.core.reflection.api.conversion.registry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.jguru.nazgul.core.algorithms.api.TypeAlgorithms;
 import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
+import se.jguru.nazgul.core.algorithms.api.types.TypeInformation;
 import se.jguru.nazgul.core.reflection.api.TypeExtractor;
 import se.jguru.nazgul.core.reflection.api.conversion.ConverterRegistry;
 
@@ -36,7 +38,6 @@ import javax.validation.constraints.Size;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -57,16 +58,6 @@ public class DefaultConverterRegistry implements ConverterRegistry {
     // Our Log
     private static final Logger log = LoggerFactory.getLogger(DefaultConverterRegistry.class);
 
-    private static final Comparator<Class<?>> CLASS_COMPARATOR = (l, r) -> {
-
-        if (l != null) {
-            return r == null ? 1 : l.getName().compareTo(r.getName());
-        }
-
-        // Left class was null.
-        return r == null ? 0 : -1;
-    };
-
     // Internal state
     @NotNull
     private SortedMap<Class<?>, PrioritizedTypeConverter> sourceTypeToTypeConvertersMap;
@@ -76,7 +67,7 @@ public class DefaultConverterRegistry implements ConverterRegistry {
      * converters added.
      */
     public DefaultConverterRegistry() {
-        sourceTypeToTypeConvertersMap = new TreeMap<>(CLASS_COMPARATOR);
+        sourceTypeToTypeConvertersMap = new TreeMap<>(TypeAlgorithms.CLASSNAME_COMPARATOR);
     }
 
     /**
@@ -92,6 +83,10 @@ public class DefaultConverterRegistry implements ConverterRegistry {
 
         // All converters have annotations?
         for (Object current : converters) {
+
+            // Find the TypeInformation for the current class.
+            final TypeInformation typeInfo = TypeAlgorithms.getAllTypesFor(current.getClass());
+
 
             final Tuple<List<Method>, List<Constructor<?>>> methodsAndConstructors =
                     ReflectiveConverterFilter.getConverterMethodsAndConstructors(current);
@@ -439,13 +434,9 @@ public class DefaultConverterRegistry implements ConverterRegistry {
                         ? -1
                         : TypeExtractor.getRelationDifference(current, requestedToType);
 
-                List<Class<?>> currentPriorityTypes = prioritizedTypes.get(priority);
-                if (currentPriorityTypes == null) {
-                    currentPriorityTypes = new ArrayList<Class<?>>();
-                    prioritizedTypes.put(priority, currentPriorityTypes);
-                }
-
                 // ... and add the current type.
+                final List<Class<?>> currentPriorityTypes = prioritizedTypes.computeIfAbsent(
+                        priority, k -> new ArrayList<>());
                 currentPriorityTypes.add(current);
 
             } catch (IllegalArgumentException e) {

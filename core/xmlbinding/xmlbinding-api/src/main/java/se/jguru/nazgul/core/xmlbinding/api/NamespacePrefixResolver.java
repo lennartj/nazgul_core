@@ -22,6 +22,8 @@
  */
 package se.jguru.nazgul.core.xmlbinding.api;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Map;
 import java.util.Set;
 
@@ -77,7 +79,8 @@ public interface NamespacePrefixResolver {
      * @throws IllegalArgumentException if the xmlNamespaceUri was already registered to another prefix, or
      *                                  if any argument was empty.
      */
-    void put(String xmlNamespaceUri, String xmlPrefix) throws NullPointerException, IllegalArgumentException;
+    void put(@NotNull @Size(min = 1) String xmlNamespaceUri,
+             @NotNull @Size(min = 1) String xmlPrefix) throws NullPointerException, IllegalArgumentException;
 
     /**
      * Convenience method, adding all provided mappings between xmlNamespaceUris and corresponding xmlPrefixes.
@@ -87,7 +90,7 @@ public interface NamespacePrefixResolver {
      * @throws IllegalArgumentException if any xmlNamespaceUri was already registered to another prefix, or
      *                                  if any argument was empty.
      */
-    void putAll(Map<String, String> xmlUri2PrefixMap) throws NullPointerException, IllegalArgumentException;
+    void putAll(@NotNull Map<String, String> xmlUri2PrefixMap) throws NullPointerException, IllegalArgumentException;
 
     /**
      * Retrieves the XML namespace URI for the provided xmlPrefix, or {@code null} if none was found.
@@ -96,7 +99,7 @@ public interface NamespacePrefixResolver {
      * @return the XML namespace URI for the provided xmlPrefix, or {@code null} if none was found.
      * @throws NullPointerException if the xmlPrefix argument was {@code null}.
      */
-    String getNamespaceUri(String xmlPrefix) throws NullPointerException;
+    String getNamespaceUri(@NotNull String xmlPrefix) throws NullPointerException;
 
     /**
      * Retrieves the XML prefix for the provided xmlNamespaceUri, or {@code null} if none was found.
@@ -105,7 +108,7 @@ public interface NamespacePrefixResolver {
      * @return the XML prefix for the provided xmlNamespaceUri, or {@code null} if none was found.
      * @throws NullPointerException if the xmlPrefix argument was {@code null}.
      */
-    String getXmlPrefix(String xmlNamespaceUri) throws NullPointerException;
+    String getXmlPrefix(@NotNull String xmlNamespaceUri) throws NullPointerException;
 
     /**
      * @return A non-modifiable List holding all currently registered XML namespaceURIs.

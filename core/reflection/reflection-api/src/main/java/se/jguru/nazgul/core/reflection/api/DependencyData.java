@@ -26,6 +26,7 @@ package se.jguru.nazgul.core.reflection.api;
 import se.jguru.nazgul.core.algorithms.api.Validate;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -67,9 +68,9 @@ public class DependencyData implements Serializable, Comparable<DependencyData> 
      * @param artifactId The artifactId of this DependencyData.
      * @param version    The version of this DependencyData.
      */
-    public DependencyData(@NotNull final String groupId,
-                          @NotNull final String artifactId,
-                          @NotNull final String version) {
+    public DependencyData(@NotNull @Size(min = 1) final String groupId,
+                          @NotNull @Size(min = 1) final String artifactId,
+                          @NotNull @Size(min = 1) final String version) {
 
         // Check sanity
         Validate.notEmpty(groupId, "groupId");

@@ -22,6 +22,9 @@
  */
 package se.jguru.nazgul.core.xmlbinding.api;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 /**
  * Convenience enum holding a set of well-known XML binding namespaces
  * and corresponding URLs.
@@ -63,6 +66,8 @@ public enum WellKnownNamespace {
     /**
      * @return The URL corresponding to this well-known namespace.
      */
+    @Size(min = 1)
+    @NotNull
     public String getNameSpaceUrl() {
         return nameSpaceUrl;
     }
@@ -70,6 +75,8 @@ public enum WellKnownNamespace {
     /**
      * @return The prefix to be used within XSDs for the provided namespace.
      */
+    @Size(min = 1)
+    @NotNull
     public String getXsdPrefix() {
         return xsdPrefix;
     }
