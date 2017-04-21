@@ -85,7 +85,6 @@ public class T_AbstractClusterableTest {
 
         // Assemble
         final TestAbstractSwiftClusterable unitUnderTest = new TestAbstractSwiftClusterable("constantId",
-                true,
                 "bar",
                 42);
 
@@ -101,11 +100,9 @@ public class T_AbstractClusterableTest {
 
         // Assemble
         final TestAbstractSwiftClusterable c1 = new TestAbstractSwiftClusterable("id1",
-                true,
                 "bar",
                 42);
         final TestAbstractSwiftClusterable c2 = new TestAbstractSwiftClusterable("id2",
-                true,
                 "bar",
                 42);
 

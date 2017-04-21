@@ -61,7 +61,6 @@ public class T_AbstractSwiftClusterableTest {
 
         // Act
         final TestAbstractSwiftClusterable unitUnderTest = new TestAbstractSwiftClusterable(id,
-                true,
                 name,
                 age);
 
@@ -76,7 +75,7 @@ public class T_AbstractSwiftClusterableTest {
         final String incorrectNullID = null;
 
         // Act & Assert
-        new TestAbstractSwiftClusterable(incorrectNullID, true, name, age);
+        new TestAbstractSwiftClusterable(incorrectNullID, name, age);
     }
 
     @Test
@@ -121,7 +120,6 @@ public class T_AbstractSwiftClusterableTest {
         final String name = "testName";
         final int age = 42;
         final TestAbstractSwiftClusterable unitUnderTest = new TestAbstractSwiftClusterable(id,
-                false,
                 name,
                 age);
 

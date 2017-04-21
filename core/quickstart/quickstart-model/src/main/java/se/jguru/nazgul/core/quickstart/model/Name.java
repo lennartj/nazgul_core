@@ -20,12 +20,9 @@
  * #L%
  *
  */
-
-
-
 package se.jguru.nazgul.core.quickstart.model;
 
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.persistence.model.NazgulEntity;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException;
@@ -35,6 +32,8 @@ import javax.persistence.AccessType;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -270,11 +269,12 @@ public class Name extends NazgulEntity implements Comparable<Name> {
      * @param separator A non-empty separator used to separate the parts of the toParse String.
      * @return A Name created from the parts of the toParse string.
      */
-    public static Name parse(final String toParse, final String separator) {
+    public static Name parse(@NotNull @Size(min = 1) final String toParse,
+                             @NotNull @Size(min = 1) final String separator) {
 
         // Check sanity
-        Validate.notEmpty(toParse, "Cannot handle null or empty toParse argument.");
-        Validate.notEmpty(separator, "Cannot handle null or empty separator argument.");
+        Validate.notEmpty(toParse, "toParse");
+        Validate.notEmpty(separator, "separator");
 
         // The name should be on the form [prefix][separator][name][separator][type],
         // where the [prefix][separator] part is optional.

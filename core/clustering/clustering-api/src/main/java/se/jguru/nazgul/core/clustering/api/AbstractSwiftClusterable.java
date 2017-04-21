@@ -48,9 +48,8 @@ public abstract class AbstractSwiftClusterable extends AbstractClusterable imple
     /**
      * {@inheritDoc}
      */
-    protected AbstractSwiftClusterable(@NotNull @Size(min = 1) final String clusterUniqueID,
-                                       final boolean removeIdGeneratorAfterUsage) {
-        super(clusterUniqueID, removeIdGeneratorAfterUsage);
+    protected AbstractSwiftClusterable(@NotNull @Size(min = 1) final String clusterUniqueID) {
+        super(clusterUniqueID);
     }
 
     /**

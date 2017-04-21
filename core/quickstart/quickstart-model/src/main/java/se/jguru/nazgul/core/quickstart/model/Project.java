@@ -22,7 +22,6 @@
  */
 package se.jguru.nazgul.core.quickstart.model;
 
-import org.apache.commons.lang3.Validate;
 import se.jguru.nazgul.core.persistence.model.NazgulEntity;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException;
@@ -182,7 +181,6 @@ public class Project extends NazgulEntity implements Comparable<Project> {
      */
     @Override
     public boolean equals(final Object obj) {
-        Validate.notNull(obj, "Cannot handle null obj argument.");
         return obj instanceof Project && hashCode() == obj.hashCode();
     }
 
@@ -192,9 +190,10 @@ public class Project extends NazgulEntity implements Comparable<Project> {
     @Override
     public int compareTo(final Project project) {
 
-        // Check sanity
-        Validate.notNull(project, "Cannot handle null project argument.");
-        if (project == this) {
+        // Fail fast
+        if (project == null) {
+            return -1;
+        } else if (project == this) {
             return 0;
         }
 

@@ -22,7 +22,7 @@
  */
 package se.jguru.nazgul.core.configuration.model;
 
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.persistence.model.NazgulEntity;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException;
@@ -30,6 +30,8 @@ import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationExc
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -72,10 +74,10 @@ public abstract class AbstractProperty<K extends Serializable & Comparable<K>,
      * @param valueTypeClass The class (V) of values held by this AbstractProperty.
      *                       The valueTypeClass argument cannot be {@code null}.
      */
-    public AbstractProperty(final Class<V> valueTypeClass) {
+    public AbstractProperty(@NotNull final Class<V> valueTypeClass) {
 
         // Check sanity
-        Validate.notNull(valueTypeClass, "Cannot handle null valueTypeClass argument.");
+        Validate.notNull(valueTypeClass, "valueTypeClass");
 
         // Assign internal state
         this.valueTypeClass = valueTypeClass;
@@ -107,10 +109,10 @@ public abstract class AbstractProperty<K extends Serializable & Comparable<K>,
      * @param valueTypeClassName The fully qualified name of the ValueType class.
      * @return The valueTypeClass.
      */
-    protected Class<V> loadValueTypeClass(final String valueTypeClassName) {
+    protected Class<V> loadValueTypeClass(@NotNull @Size(min = 1) final String valueTypeClassName) {
 
         // Check sanity
-        Validate.notEmpty(valueTypeClassName, "Cannot handle null or empty valueTypeClassName argument.");
+        Validate.notEmpty(valueTypeClassName, "valueTypeClassName ");
 
         final V value = getValue();
         if (value != null) {
@@ -135,8 +137,10 @@ public abstract class AbstractProperty<K extends Serializable & Comparable<K>,
         }
 
         // Check more sanity
-        Validate.notNull(valueTypeClass, "ValueType class could not be loaded for valueTypeClassName ["
-                + valueTypeClassName + "]. Tried both ThreadContext and class-level ClassLoaders.");
+        if(valueTypeClass == null) {
+            throw new NullPointerException("ValueType class could not be loaded for valueTypeClassName ["
+                    + valueTypeClassName + "]. Tried both ThreadContext and class-level ClassLoaders.");
+        }
 
         // All done.
         return valueTypeClass;

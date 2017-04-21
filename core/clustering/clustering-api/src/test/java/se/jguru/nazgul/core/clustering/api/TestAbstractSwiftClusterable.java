@@ -43,10 +43,10 @@ public class TestAbstractSwiftClusterable extends AbstractSwiftClusterable {
      *
      * @param id The identifier of this CacheListenerAdapter.
      */
-    public TestAbstractSwiftClusterable(String id, boolean removeIdGeneratorAfterUsage, String name, int age) {
+    public TestAbstractSwiftClusterable(String id, String name, int age) {
 
         // Delegate
-        super(id, removeIdGeneratorAfterUsage);
+        super(id);
 
         // Assign internal state
         this.name = name;

@@ -23,7 +23,7 @@
 
 package se.jguru.nazgul.core.algorithms.tree.api.common;
 
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.algorithms.api.trees.MutableTree;
 import se.jguru.nazgul.core.algorithms.api.trees.node.MutableNode;
 import se.jguru.nazgul.core.algorithms.api.trees.node.Node;
@@ -54,10 +54,10 @@ public class SimpleTree<KeyType extends Serializable & Comparable<KeyType>, Valu
      *
      * @param root The root node within the tree.
      */
-    public SimpleTree(final MutableNode<KeyType, ValueType> root) {
+    public SimpleTree(@NotNull final MutableNode<KeyType, ValueType> root) {
 
         // Check sanity
-        Validate.notNull(root, "Cannot handle null root argument.");
+        Validate.notNull(root, "root");
 
         // Assign internal state
         this.root = root;
@@ -71,7 +71,7 @@ public class SimpleTree<KeyType extends Serializable & Comparable<KeyType>, Valu
             throws IllegalArgumentException {
 
         // Check sanity
-        Validate.notNull(root, "Cannot handle null root argument.");
+        Validate.notNull(root, "root");
 
         // Assign internal state
         MutableNode<KeyType, ValueType> oldRoot = this.root;
@@ -121,7 +121,7 @@ public class SimpleTree<KeyType extends Serializable & Comparable<KeyType>, Valu
     public <X extends Node<KeyType, ValueType>> X get(@NotNull final Path<KeyType> path) {
 
         // Check sanity
-        Validate.notNull(path, "Cannot handle null path argument.");
+        Validate.notNull(path, "path");
         Validate.isTrue(path.size() > 0, "Cannot handle empty path argument.");
         if (!path.get(0).equals(getRoot().getKey())) {
             return null;

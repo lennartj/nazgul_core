@@ -22,7 +22,6 @@
  */
 package se.jguru.nazgul.core.quickstart.model;
 
-import org.apache.commons.lang3.Validate;
 import se.jguru.nazgul.core.persistence.model.NazgulEntity;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException;
@@ -117,9 +116,10 @@ public class SimpleArtifact extends NazgulEntity implements Comparable<SimpleArt
     @Override
     public int compareTo(final SimpleArtifact art) {
 
-        // Check sanity
-        Validate.notNull(art, "Cannot handle null art argument.");
-        if (this == art) {
+        // Fail fast
+        if (art == null) {
+            return -1;
+        } else if (this == art) {
             return 0;
         }
 
@@ -159,7 +159,7 @@ public class SimpleArtifact extends NazgulEntity implements Comparable<SimpleArt
      */
     @Override
     public boolean equals(final Object obj) {
-        Validate.notNull(obj, "Cannot handle null obj argument.");
+
         if (obj instanceof SimpleArtifact) {
 
             final SimpleArtifact that = (SimpleArtifact) obj;

@@ -83,18 +83,15 @@ public abstract class AbstractClusterable implements Clusterable {
      * Creates a new AbstractIdentifiable and assigns the provided
      * cluster-unique ID to this AbstractClusterable instance.
      *
-     * @param clusterUniqueID             A cluster-unique Identifier.
-     * @param removeIdGeneratorAfterUsage if true, the IdGenerator is removed after (first) use.
+     * @param clusterUniqueID A cluster-unique Identifier.
      */
-    protected AbstractClusterable(@NotNull @Size(min = 1) final String clusterUniqueID,
-                                  final boolean removeIdGeneratorAfterUsage) {
+    protected AbstractClusterable(@NotNull @Size(min = 1) final String clusterUniqueID) {
 
         // Check sanity
         Validate.notEmpty(clusterUniqueID, "clusterUniqueID");
 
         // Assign internal state
         this.id = clusterUniqueID;
-        this.removeIdGeneratorAfterUsage = removeIdGeneratorAfterUsage;
     }
 
     /**
@@ -106,6 +103,13 @@ public abstract class AbstractClusterable implements Clusterable {
 
         // Return fast if possible
         if (id != null) {
+
+            // Remove the idGenerator?
+            if(removeIdGeneratorAfterUsage && idGenerator != null) {
+                idGenerator = null;
+            }
+
+            // All Done.
             return id;
         }
 

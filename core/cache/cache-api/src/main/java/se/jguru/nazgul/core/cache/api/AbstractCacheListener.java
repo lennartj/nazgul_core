@@ -51,11 +51,10 @@ public abstract class AbstractCacheListener<K extends Serializable, V>
      *                         cache keys for which this AbstractCacheListener should receive events.
      */
     protected AbstractCacheListener(@NotNull final String id,
-                                    final boolean removeIdGeneratorAfterUsage,
                                     final String filterDefinition) {
 
         // Delegate
-        super(id, removeIdGeneratorAfterUsage);
+        super(id);
 
         // Assign the filter.
         setFilter(filterDefinition);
@@ -67,7 +66,7 @@ public abstract class AbstractCacheListener<K extends Serializable, V>
      * @param id The identifier of this CacheListenerAdapter.
      */
     protected AbstractCacheListener(final String id) {
-        super(id, false);
+        super(id);
     }
 
     /**
