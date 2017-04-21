@@ -25,8 +25,6 @@ package se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
-import se.jguru.nazgul.core.algorithms.api.collections.predicate.Transformer;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.marshal.ClassWithPrimitivesAndCollections;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.marshal.XmlTransientClass;
 
@@ -36,21 +34,17 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public class XmlMarshallableFieldFilterTest {
+public class XmlMarshallableFieldPredicateTest {
 
     // Shared state
-    public static final Transformer<Field, String> FIELDNAME_TRANSFORMER = new Transformer<Field, String>() {
-        @Override
-        public String transform(final Field input) {
-            return input.getName();
-        }
-    };
-
     private ClassWithPrimitivesAndCollections primitivesAndCollections;
     private List<String> data = Arrays.asList("one", "two", "threeee");
     private Map<String, Object> mapData;
@@ -75,25 +69,26 @@ public class XmlMarshallableFieldFilterTest {
     public void validateExceptionOnNullObject() {
 
         // Act & Assert
-        XmlMarshallableFieldFilter.getMarshallableFields(null);
+        XmlMarshallableFieldPredicate.getMarshallableFields(null);
     }
 
     @Test
     public void validateMarshallableFields() throws Exception {
 
         // Assemble
-        final List<String> expected = Arrays.asList("aNonAnnotatedMap");
-        final List<Field> potentiallyXmlMarshallableFields =
-                XmlMarshallableFieldFilter.getMarshallableFields(primitivesAndCollections);
+        final SortedSet<String> expected = new TreeSet<>(Collections.singletonList("aNonAnnotatedMap"));
+        final SortedSet<Field> potentiallyXmlMarshallableFields =
+                XmlMarshallableFieldPredicate.getMarshallableFields(primitivesAndCollections);
 
         // Act
-        final List<String> marshallableFieldNames = CollectionAlgorithms.transform(
-                potentiallyXmlMarshallableFields, FIELDNAME_TRANSFORMER);
-        Collections.sort(marshallableFieldNames);
+        final SortedSet<String> marshallableFieldNames = potentiallyXmlMarshallableFields
+                .stream()
+                .map(Field::getName)
+                .collect(Collectors.toCollection(TreeSet::new));
 
         // Assert
         Assert.assertEquals(expected, marshallableFieldNames);
-        Field mapField = potentiallyXmlMarshallableFields.get(0);
+        Field mapField = potentiallyXmlMarshallableFields.first();
         mapField.setAccessible(true);
         Assert.assertSame(mapData, mapField.get(primitivesAndCollections));
     }
@@ -103,13 +98,14 @@ public class XmlMarshallableFieldFilterTest {
 
         // Assemble
         final XmlTransientClass shouldNotBeMapped = new XmlTransientClass(data);
-        final List<Field> potentiallyXmlMarshallableFields =
-                XmlMarshallableFieldFilter.getMarshallableFields(shouldNotBeMapped);
+        final SortedSet<Field> potentiallyXmlMarshallableFields =
+                XmlMarshallableFieldPredicate.getMarshallableFields(shouldNotBeMapped);
 
         // Act
-        final List<String> marshallableFieldNames = CollectionAlgorithms.transform(
-                potentiallyXmlMarshallableFields, FIELDNAME_TRANSFORMER);
-        Collections.sort(marshallableFieldNames);
+        final SortedSet<String> marshallableFieldNames = potentiallyXmlMarshallableFields
+                .stream()
+                .map(Field::getName)
+                .collect(Collectors.toCollection(TreeSet::new));
 
         // Assert
         Assert.assertTrue(marshallableFieldNames.isEmpty());

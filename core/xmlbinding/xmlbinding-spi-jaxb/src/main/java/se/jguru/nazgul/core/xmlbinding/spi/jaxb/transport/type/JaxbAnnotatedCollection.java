@@ -22,11 +22,12 @@
  */
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type;
 
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbUtils;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -77,10 +78,10 @@ public class JaxbAnnotatedCollection<T extends Collection> extends AbstractJaxbA
      *
      * @param value The Collection value to convert to a JaxbAnnotatedCollection instance.
      */
-    public JaxbAnnotatedCollection(final T value) {
+    public JaxbAnnotatedCollection(@NotNull final T value) {
 
         // Check sanity
-        Validate.notNull(value, "Cannot handle null value argument.");
+        Validate.notNull(value, "value");
 
         // Assign the type name of the outermost Collection
         originalCollectionType = value.getClass().getName();

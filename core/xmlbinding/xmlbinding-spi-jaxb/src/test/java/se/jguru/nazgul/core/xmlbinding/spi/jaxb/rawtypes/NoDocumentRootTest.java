@@ -25,7 +25,6 @@ package se.jguru.nazgul.core.xmlbinding.spi.jaxb.rawtypes;
 import org.custommonkey.xmlunit.Diff;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.JaxbNamespacePrefixResolver;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper.types.Beverage;
@@ -93,7 +92,6 @@ public class NoDocumentRootTest {
                 + XmlTestUtils.getXPathLocationToDifferenceMap(diff), diff.identical());
     }
 
-    @Ignore("Not yet operational.")
     @Test
     public void validateMarshallingArbitrarySequenceUsingJaxbElements() throws Exception {
 
@@ -123,7 +121,7 @@ public class NoDocumentRootTest {
         marshaller.marshal(rootElement, resultWriter);
 
         // Assert
-        System.out.println("Got: \n\n\n" + resultWriter.toString());
+        // System.out.println("Got: \n\n\n" + resultWriter.toString());
         Assert.assertTrue(
                 XmlTestUtils.compareXmlIgnoringWhitespace(
                         resultWriter.toString(),

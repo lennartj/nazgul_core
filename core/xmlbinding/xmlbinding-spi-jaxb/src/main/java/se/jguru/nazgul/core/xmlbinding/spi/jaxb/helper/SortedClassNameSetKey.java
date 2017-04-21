@@ -23,8 +23,9 @@
 
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper;
 
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -44,9 +45,9 @@ class SortedClassNameSetKey implements Comparable<SortedClassNameSetKey> {
      *
      * @param classNames A set of class names.
      */
-    public SortedClassNameSetKey(final SortedSet<String> classNames) {
+    public SortedClassNameSetKey(@NotNull final SortedSet<String> classNames) {
 
-        Validate.notNull(classNames, "Cannot handle null classNames argument.");
+        Validate.notNull(classNames, "classNames");
         this.classNames = classNames;
 
         syntheticKey = classNames.toString();

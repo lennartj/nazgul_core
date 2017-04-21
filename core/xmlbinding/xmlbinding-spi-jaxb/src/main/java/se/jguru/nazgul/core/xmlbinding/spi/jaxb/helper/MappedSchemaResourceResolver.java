@@ -22,10 +22,12 @@
  */
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper;
 
-import org.apache.commons.lang3.Validate;
 import org.w3c.dom.ls.LSInput;
 import org.w3c.dom.ls.LSResourceResolver;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.SortedMap;
@@ -49,14 +51,18 @@ public class MappedSchemaResourceResolver implements LSResourceResolver {
      * @param namespace        The non-null namespace which should be mapped.
      * @param xmlSchemaSnippet The non-empty xml Schema snippet which should be mapped.
      */
-    public void addNamespace2SchemaEntry(final String namespace, final String xmlSchemaSnippet) {
+    public void addNamespace2SchemaEntry(@NotNull final String namespace,
+                                         @NotNull @Size(min = 1) final String xmlSchemaSnippet) {
 
         // Check sanity
-        Validate.notNull(namespace, "Cannot handle null namespace.");
-        Validate.notEmpty(xmlSchemaSnippet, "Cannot handle null or empty xmlSchemaSnippet argument.");
+        Validate.notNull(namespace, "namespace");
+        Validate.notEmpty(xmlSchemaSnippet, "xmlSchemaSnippet");
         Validate.isTrue(!namespace2SchemaSnippetMap.containsKey(namespace),
                 "Cannot overwrite namespace [" + namespace + "]. Known namespaces: "
-                        + namespace2SchemaSnippetMap.keySet());
+                        + namespace2SchemaSnippetMap.keySet()
+                        .stream()
+                        .reduce((l, r) -> l + ", " + r)
+                        .orElse("<none>"));
 
         // Add the mapping.
         namespace2SchemaSnippetMap.put(namespace, xmlSchemaSnippet);

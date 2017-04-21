@@ -24,11 +24,11 @@
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.helper;
 
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
-import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.ls.LSResourceResolver;
 import org.xml.sax.SAXException;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.common.ClassnameToClassTransformer;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.ClassInformationHolder;
@@ -36,6 +36,7 @@ import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.JaxbConverterRegistry;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type.JaxbAnnotatedNull;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -118,12 +119,13 @@ public abstract class JaxbUtils {
      * @return A standard JAXB Marshaller for human-readable (as opposed to extreme compactness) XML marshalling.
      * @throws NullPointerException if the {@code namespacePrefixMapper} was {@code null}.
      */
-    public static Marshaller getHumanReadableStandardMarshaller(final JAXBContext ctx,
-                                                                final NamespacePrefixMapper namespacePrefixMapper,
-                                                                final boolean validate)
-            throws NullPointerException {
+    public static Marshaller getHumanReadableStandardMarshaller(
+            @NotNull final JAXBContext ctx,
+            @NotNull final NamespacePrefixMapper namespacePrefixMapper,
+            final boolean validate) throws NullPointerException {
 
-        Validate.notNull(namespacePrefixMapper, "Cannot handle null namespacePrefixMapper argument.");
+        // Check sanity
+        Validate.notNull(namespacePrefixMapper, "namespacePrefixMapper");
 
         try {
 
@@ -155,12 +157,12 @@ public abstract class JaxbUtils {
      * @throws NullPointerException if the transporter argument was {@code null}.
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public static JAXBContext getJaxbContext(final EntityTransporter transporter,
+    public static JAXBContext getJaxbContext(@NotNull final EntityTransporter transporter,
                                              final boolean isMarshalling)
             throws NullPointerException {
 
         // Check sanity
-        Validate.notNull(transporter, "Cannot handle null transporter argument.");
+        Validate.notNull(transporter, "transporter");
 
         // Does a cached JAXBContext exist?
         final Tuple<SortedClassNameSetKey, JAXBContext> cachedContext
@@ -208,11 +210,11 @@ public abstract class JaxbUtils {
      * @throws NullPointerException     if ctx was {@code null}.
      * @throws IllegalArgumentException if a JAXB-related exception occurred while extracting the schema.
      */
-    public static Tuple<Schema, LSResourceResolver> generateTransientXSD(final JAXBContext ctx)
+    public static Tuple<Schema, LSResourceResolver> generateTransientXSD(@NotNull final JAXBContext ctx)
             throws NullPointerException, IllegalArgumentException {
 
         // Check sanity
-        Validate.notNull(ctx, "Cannot handle null ctx argument.");
+        Validate.notNull(ctx, "ctx");
 
         final SortedMap<String, ByteArrayOutputStream> namespace2SchemaMap
                 = new TreeMap<String, ByteArrayOutputStream>();
@@ -299,14 +301,14 @@ public abstract class JaxbUtils {
      *                                      transport types.
      */
     public static void extractJaxbTransportData(final Object toWrapAndPackageForTransport,
-                                                final JaxbConverterRegistry registry,
-                                                final List<Object> resultingTransportableObjects,
-                                                final SortedSet<String> resultingTransportTypes) {
+                                                @NotNull final JaxbConverterRegistry registry,
+                                                @NotNull final List<Object> resultingTransportableObjects,
+                                                @NotNull final SortedSet<String> resultingTransportTypes) {
 
         // Check sanity
-        Validate.notNull(registry, "Cannot handle null TransportTypeConverterRegistry argument.");
-        Validate.notNull(resultingTransportableObjects, "Cannot handle null resultingTransportableObjects argument.");
-        Validate.notNull(resultingTransportTypes, "Cannot handle null resultingTransportTypes argument.");
+        Validate.notNull(registry, "registry");
+        Validate.notNull(resultingTransportableObjects, "resultingTransportableObjects");
+        Validate.notNull(resultingTransportTypes, "resultingTransportTypes");
 
         // ### 1) Convert the current type if required.
         Object added = toWrapAndPackageForTransport;
@@ -400,7 +402,7 @@ public abstract class JaxbUtils {
             return;
         }
 
-        for (Field current : XmlMarshallableFieldFilter.getMarshallableFields(toReflect)) {
+        for (Field current : XmlMarshallableFieldPredicate.getMarshallableFields(toReflect)) {
 
             // Get the type of the object stored within the current field
             Object currentValue = get(current, toReflect);

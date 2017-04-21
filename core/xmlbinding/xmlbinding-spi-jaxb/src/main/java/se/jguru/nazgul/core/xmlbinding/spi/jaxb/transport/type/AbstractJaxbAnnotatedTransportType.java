@@ -24,13 +24,15 @@
 package se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.type;
 
 import com.google.common.reflect.TypeToken;
-import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.ClassInformationHolder;
 import se.jguru.nazgul.core.xmlbinding.spi.jaxb.transport.EntityTransporter;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -106,11 +108,11 @@ public abstract class AbstractJaxbAnnotatedTransportType<T>
      *
      * @param value The original type value to wrap.
      */
-    public AbstractJaxbAnnotatedTransportType(final T value) {
+    public AbstractJaxbAnnotatedTransportType(@NotNull final T value) {
         this();
 
         // Check sanity
-        Validate.notNull(value, "Cannot handle null value argument.");
+        Validate.notNull(value, "value");
 
         // Assign internal state
         this.value = value;
@@ -149,10 +151,10 @@ public abstract class AbstractJaxbAnnotatedTransportType<T>
      *                         be strings received by calls to {@code Class.getName()} for each
      *                         transport-wrapped class.
      */
-    protected final void setClassInformation(final SortedSet<String> classInformation) {
+    protected final void setClassInformation(@NotNull @Size(min = 1) final SortedSet<String> classInformation) {
 
         // Check sanity
-        Validate.notEmpty(classInformation, "Cannot handle null or empty classInformation argument.");
+        Validate.notEmpty(classInformation, "classInformation");
 
         SortedSet<String> classinfo = new TreeSet<String>();
         for (String current : classInformation) {
