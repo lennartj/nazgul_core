@@ -24,13 +24,13 @@
 
 package se.jguru.nazgul.test.persistence;
 
-import org.apache.commons.lang3.Validate;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
 import org.dbunit.ext.h2.H2DataTypeFactory;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
 import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
 import org.junit.Assert;
 import org.junit.Test;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 
 import java.io.File;
 import java.net.URL;

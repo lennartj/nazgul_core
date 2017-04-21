@@ -22,10 +22,12 @@
  */
 package se.jguru.nazgul.test.persistence.classloader;
 
-import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
@@ -64,12 +66,12 @@ public final class PersistenceRedirectionClassLoader extends ClassLoader {
      * @param persistenceXmlRedirection The location to use when loading "META-INF/persistence.xml".
      *                                  An example would be "META-INF/dbprimer_persistence.xml"
      */
-    public PersistenceRedirectionClassLoader(final ClassLoader parent, final String persistenceXmlRedirection) {
+    public PersistenceRedirectionClassLoader(@NotNull final ClassLoader parent,
+                                             @NotNull @Size(min = 1) final String persistenceXmlRedirection) {
 
         // Check sanity
-        Validate.notNull(parent, "Cannot handle null parent argument.");
-        Validate.notEmpty(persistenceXmlRedirection,
-                "Cannot handle null or empty persistenceXmlRedirection argument.");
+        Validate.notNull(parent, "parent");
+        Validate.notEmpty(persistenceXmlRedirection,"persistenceXmlRedirection");
 
         // Assign internal state
         this.parent = parent;

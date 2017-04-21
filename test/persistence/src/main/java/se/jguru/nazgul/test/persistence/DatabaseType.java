@@ -24,12 +24,13 @@ package se.jguru.nazgul.test.persistence;
 
 import liquibase.database.jvm.HsqlConnection;
 import liquibase.database.jvm.JdbcConnection;
-import org.apache.commons.lang3.Validate;
 import org.dbunit.dataset.datatype.IDataTypeFactory;
 import org.dbunit.ext.h2.H2DataTypeFactory;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
 import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 
+import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.sql.Connection;
@@ -233,10 +234,10 @@ public enum DatabaseType {
      * @param <T> The concrete type of JdbcConnection
      * @return the class name for the Liquibase concrete JdbcConnection subclass corresponding to this DatabaseType.
      */
-    public <T extends JdbcConnection> T getJdbcConnection(final Connection dbConnection) {
+    public <T extends JdbcConnection> T getJdbcConnection(@NotNull final Connection dbConnection) {
 
         // Check sanity
-        Validate.notNull(dbConnection, "Cannot handle null dbConnection argument.");
+        Validate.notNull(dbConnection, "dbConnection");
 
         try {
             // Load the Liquibase JdbcConnection class.
@@ -246,8 +247,7 @@ public enum DatabaseType {
 
             // Find the correct constructor
             final Constructor<? extends JdbcConnection> constructor = connClass.getDeclaredConstructor(Connection.class);
-            Validate.notNull(constructor, "Class [" + liquibaseDatabaseConnectionClass
-                    + "] did not contain a constructor with a single java.sql.Connection argument.");
+            Validate.notNull(constructor, "constructor");
             final Object[] arguments = new Object[] {dbConnection};
 
             // All done.

@@ -22,13 +22,13 @@
  */
 package se.jguru.nazgul.test.persistence;
 
-import org.apache.commons.lang3.Validate;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.test.persistence.pets.Bird;
 
 import javax.persistence.EntityTransaction;

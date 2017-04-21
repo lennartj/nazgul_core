@@ -22,11 +22,13 @@
  */
 package se.jguru.nazgul.test.persistence;
 
-import org.apache.commons.lang3.Validate;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.operation.DatabaseOperation;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.test.persistence.jpa.PersistenceProviderType;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -248,10 +250,10 @@ public abstract class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
      * @param testMethodName The name of the active test method, such as {@code validateFoo}.
      * @see #setupDatabaseState(boolean, String)
      */
-    protected final void setupDatabaseState(final String testMethodName) {
+    protected final void setupDatabaseState(@NotNull @Size(min = 1) final String testMethodName) {
 
         // Check sanity
-        Validate.notEmpty("Cannot handle null or empty testMethodName argument.");
+        Validate.notEmpty(testMethodName, "testMethodName");
 
         // Delegate
         setupDatabaseState(true, "testdata/" + getClass().getSimpleName() + "/setup_" + testMethodName + ".xml");
@@ -265,10 +267,10 @@ public abstract class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
      * @param setupDataSetLocation The resource path to the FlatXMLDataSet used to setup database data.
      */
     protected final void setupDatabaseState(final boolean cleanBeforeInsert,
-                                            final String setupDataSetLocation) {
+                                            @NotNull @Size(min = 1) final String setupDataSetLocation) {
 
         // Check sanity
-        Validate.notEmpty("Cannot handle null or empty setupDataSetLocation argument.");
+        Validate.notEmpty(setupDataSetLocation, "setupDataSetLocation");
 
         // Get the appropriate DatabaseOperation from dbUnit.
         final DatabaseOperation dbOp = cleanBeforeInsert ? DatabaseOperation.CLEAN_INSERT : DatabaseOperation.INSERT;
@@ -294,10 +296,10 @@ public abstract class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
      * @param testMethodName The name of the active test method, such as {@code validateFoo}.
      * @return An IDataSet holding the DataSet with expected data.
      */
-    protected final IDataSet getExpectedDatabaseState(final String testMethodName) {
+    protected final IDataSet getExpectedDatabaseState(@NotNull @Size(min = 1) final String testMethodName) {
 
         // Check sanity
-        Validate.notEmpty(testMethodName, "Cannot handle null or empty testMethodName argument.");
+        Validate.notEmpty(testMethodName, "testMethodName");
 
         final String resourcePath = "testdata/" + getClass().getSimpleName() + "/expected_" + testMethodName + ".xml";
 
@@ -317,10 +319,10 @@ public abstract class StandardPersistenceTest extends AbstractDbUnitAndJpaTest {
      * @param testMethodName The name of the testMethod, such as {@code validateCreatePersonEntity}.
      * @return the IDataSet pointing to the expected state following the test.
      */
-    protected final IDataSet performStandardTestDbSetup(final String testMethodName) {
+    protected final IDataSet performStandardTestDbSetup(@NotNull @Size(min = 1) final String testMethodName) {
 
         // Check sanity
-        Validate.notEmpty(testMethodName, "Cannot handle null or empty testMethodName argument.");
+        Validate.notEmpty(testMethodName, "testMethodName");
 
         // Perform standard setup
         setupDatabaseState(testMethodName);

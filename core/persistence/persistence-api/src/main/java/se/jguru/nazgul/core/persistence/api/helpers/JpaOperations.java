@@ -22,7 +22,7 @@
  */
 package se.jguru.nazgul.core.persistence.api.helpers;
 
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.persistence.api.PersistenceOperationException;
 import se.jguru.nazgul.tools.validation.api.Validatable;
 import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException;
@@ -30,6 +30,7 @@ import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationExc
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
+import javax.validation.constraints.NotNull;
 
 /**
  * Utility methods to simplify JPA usage and increase its usability.
@@ -54,12 +55,13 @@ public final class JpaOperations {
      * @throws PersistenceOperationException if the entity could not be created.
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public static <T> void create(final T entity, final EntityManager entityManager)
+    public static <T> void create(@NotNull final T entity,
+                                  @NotNull final EntityManager entityManager)
             throws PersistenceOperationException {
 
         // Check sanity
-        Validate.notNull(entity, "Cannot handle null entity argument.");
-        Validate.notNull(entityManager, "Cannot handle null entityManager argument.");
+        Validate.notNull(entity, "entity");
+        Validate.notNull(entityManager, "entityManager");
 
         // Persist the entity
         try {
@@ -81,12 +83,13 @@ public final class JpaOperations {
      * @throws PersistenceOperationException if the entity could not be updated.
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public static <T> T update(final T entity, final EntityManager entityManager)
+    public static <T> T update(@NotNull final T entity,
+                               @NotNull final EntityManager entityManager)
             throws PersistenceOperationException {
 
         // Check sanity
-        Validate.notNull(entity, "Cannot handle null entity argument.");
-        Validate.notNull(entityManager, "Cannot handle null entityManager argument.");
+        Validate.notNull(entity, "entity");
+        Validate.notNull(entityManager, "entityManager");
 
         try {
 
@@ -115,12 +118,13 @@ public final class JpaOperations {
      * @throws PersistenceOperationException if the entity could not be refreshed.
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public static <T> void refresh(final T entity, final EntityManager entityManager)
+    public static <T> void refresh(@NotNull final T entity,
+                                   @NotNull final EntityManager entityManager)
             throws PersistenceOperationException {
 
         // Check sanity
-        Validate.notNull(entity, "Cannot handle null entity argument.");
-        Validate.notNull(entityManager, "Cannot handle null entityManager argument.");
+        Validate.notNull(entity, "entity");
+        Validate.notNull(entityManager, "entityManager");
 
         try {
 
@@ -147,12 +151,13 @@ public final class JpaOperations {
      * @throws PersistenceOperationException if the entity could not be deleted.
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public static <T> void delete(final T entity, final EntityManager entityManager)
+    public static <T> void delete(@NotNull final T entity,
+                                  @NotNull final EntityManager entityManager)
             throws PersistenceOperationException {
 
         // Check sanity
-        Validate.notNull(entity, "Cannot handle null entity argument.");
-        Validate.notNull(entityManager, "Cannot handle null entityManager argument.");
+        Validate.notNull(entity, "entity");
+        Validate.notNull(entityManager, "entityManager");
 
         try {
             // Remove the instance

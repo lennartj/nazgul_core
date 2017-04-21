@@ -22,14 +22,15 @@
  */
 package se.jguru.nazgul.core.persistence.model.converter;
 
-import org.apache.commons.lang3.Validate;
 import org.joda.time.Chronology;
 import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.xmlbinding.api.XmlBinder;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.sql.Timestamp;
@@ -57,10 +58,10 @@ public class DateTimeTimestampConverter implements AttributeConverter<DateTime, 
      * @param chronology A non-null {@link Chronology} instance used to convert {@link Timestamp} instances to
      *                   {@link DateTime}.
      */
-    public static void setChronology(final Chronology chronology) {
+    public static void setChronology(@NotNull final Chronology chronology) {
 
         // Check sanity
-        Validate.notNull(chronology, "Cannot handle null 'chronology' argument.");
+        Validate.notNull(chronology, "chronology");
 
         // Re-assign the chronology.
         jodaCronology = chronology;
@@ -71,6 +72,7 @@ public class DateTimeTimestampConverter implements AttributeConverter<DateTime, 
      *
      * @return the currently set Chronology, used to convert to joda-time Instants.
      */
+    @NotNull
     public static Chronology getJodaCronology() {
         return jodaCronology;
     }

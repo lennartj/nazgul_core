@@ -22,8 +22,9 @@
  */
 package se.jguru.nazgul.core.persistence.api.helpers;
 
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,7 +58,7 @@ public final class ParameterMapBuilder {
     private ParameterMapBuilder(final String name, final Object value) {
 
         // Assign internal state
-        namedJpaQueryParameters = new HashMap<String, Object>();
+        namedJpaQueryParameters = new HashMap<>();
         namedJpaQueryParameters.put(name, value);
     }
 
@@ -78,11 +79,11 @@ public final class ParameterMapBuilder {
      * @param value The value of the first parameter.
      * @return The ParameterMapBuilder instance used to construct the Parameter map.
      */
-    public static ParameterMapBuilder with(final String name, final Object value) {
+    public static ParameterMapBuilder with(@NotNull final String name, final Object value) {
 
         // Check sanity
-        Validate.notNull(name, "Cannot handle null name argument.");
-        Validate.notEmpty(name.trim(), "Cannot handle empty or whitespace name argument.");
+        Validate.notNull(name, "name");
+        Validate.notEmpty(name.trim(), "name");
 
         // All done.
         return new ParameterMapBuilder(name, value);
@@ -105,11 +106,11 @@ public final class ParameterMapBuilder {
      * @param value The value of the parameter to add.
      * @return This ParameterMapBuilder.
      */
-    public ParameterMapBuilder and(final String name, final Object value) {
+    public ParameterMapBuilder and(@NotNull final String name, final Object value) {
 
         // Check sanity
-        Validate.notNull(name, "Cannot handle null name argument.");
-        Validate.notEmpty(name.trim(), "Cannot handle empty or whitespace name argument.");
+        Validate.notNull(name, "name");
+        Validate.notEmpty(name.trim(), "name");
 
         // All done
         this.namedJpaQueryParameters.put(name, value);

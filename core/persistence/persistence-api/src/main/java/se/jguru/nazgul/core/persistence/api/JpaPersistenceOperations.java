@@ -23,12 +23,13 @@
 
 package se.jguru.nazgul.core.persistence.api;
 
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.persistence.api.helpers.JpaOperations;
 import se.jguru.nazgul.core.persistence.api.helpers.QueryOperations;
 import se.jguru.nazgul.core.persistence.model.NazgulEntity;
 
 import javax.persistence.EntityManager;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 
@@ -50,9 +51,9 @@ public class JpaPersistenceOperations implements PersistenceOperations {
      * @param entityManager The entity manager which should be used to carry out
      *                      all Jpa Persistence operations.
      */
-    public JpaPersistenceOperations(final EntityManager entityManager) {
+    public JpaPersistenceOperations(@NotNull final EntityManager entityManager) {
 
-        Validate.notNull(entityManager, "Cannot handle null entityManager instance.");
+        Validate.notNull(entityManager, "entityManager");
         this.entityManager = entityManager;
     }
 

@@ -22,13 +22,15 @@
  */
 package se.jguru.nazgul.core.persistence.api.helpers;
 
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.persistence.api.PersistenceOperationException;
 import se.jguru.nazgul.core.persistence.model.NazgulEntity;
 import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Map;
 
@@ -194,11 +196,13 @@ public final class QueryOperations {
      *                      value should not be set.
      * @return The JPA NamedQuery with the supplied name.
      */
-    private static Query getQuery(final String query, final EntityManager entityManager, final int maxResults) {
+    private static Query getQuery(@NotNull @Size(min = 1) final String query,
+                                  @NotNull final EntityManager entityManager,
+                                  final int maxResults) {
 
         // Check sanity
-        Validate.notEmpty(query, "Cannot handle null or empty query argument.");
-        Validate.notNull(entityManager, "Cannot handle null entityManager argument.");
+        Validate.notEmpty(query, "query");
+        Validate.notNull(entityManager, "entityManager");
 
         // Create the query, and handle the amount of results returned.
         Query namedQuery = entityManager.createNamedQuery(query);

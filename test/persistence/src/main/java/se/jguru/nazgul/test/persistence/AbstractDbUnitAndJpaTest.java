@@ -22,7 +22,6 @@
  */
 package se.jguru.nazgul.test.persistence;
 
-import org.apache.commons.lang3.Validate;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
@@ -34,7 +33,10 @@ import org.dbunit.operation.DatabaseOperation;
 import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.File;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -158,7 +160,10 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
         final URL location = getClass().getProtectionDomain().getCodeSource().getLocation();
 
         // Check sanity
-        Validate.notNull(location, "CodeSource location not found for class [" + getClass().getSimpleName() + "]");
+        if (location == null) {
+            throw new NullPointerException("CodeSource location not found for class ["
+                    + getClass().getSimpleName() + "]");
+        }
 
         // All done.
         return new File(location.getPath()).getParentFile();
@@ -171,17 +176,19 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
      * @return an IDataSet instance of the entities loaded from xml.
      * @throws DataSetException if an error occurred while reading XML definition.
      */
-    protected IDataSet getDataSet(final String filename) throws DataSetException {
+    protected IDataSet getDataSet(@NotNull @Size(min = 1) final String filename) throws DataSetException {
 
         // Check sanity
-        Validate.notEmpty(filename, "Cannot handle null or empty filename argument.");
+        Validate.notEmpty(filename, "filename");
 
         final FlatXmlDataSetBuilder flatXmlDataSetBuilder = new FlatXmlDataSetBuilder();
         flatXmlDataSetBuilder.setColumnSensing(true);
 
         final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         final InputStream flatXmlFile = contextClassLoader.getResourceAsStream(filename);
-        Validate.notNull(flatXmlFile, "Could not find a file from filename [" + filename + "]");
+        if (flatXmlFile == null) {
+            throw new NullPointerException("Could not find a file from filename [" + filename + "]");
+        }
 
         // All done.
         return flatXmlDataSetBuilder.build(flatXmlFile);
@@ -193,10 +200,10 @@ public abstract class AbstractDbUnitAndJpaTest extends AbstractJpaTest {
      * @param dataSet The IDataSet to convert.
      * @return The string representation of the supplied IDataSet.
      */
-    protected final String extractFlatXmlDataSet(final IDataSet dataSet) {
+    protected final String extractFlatXmlDataSet(@NotNull final IDataSet dataSet) {
 
         // Check sanity
-        Validate.notNull(dataSet, "Cannot handle null dataset argument.");
+        Validate.notNull(dataSet, "dataset");
 
         // Convert and return.
         final StringWriter out = new StringWriter();

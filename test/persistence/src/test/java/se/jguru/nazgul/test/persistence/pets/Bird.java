@@ -22,7 +22,7 @@
  */
 package se.jguru.nazgul.test.persistence.pets;
 
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.persistence.model.NazgulEntity;
 import se.jguru.nazgul.tools.validation.api.exception.InternalStateValidationException;
 
@@ -76,7 +76,7 @@ public class Bird extends NazgulEntity {
 
     public void setName(final String newName) {
 
-        Validate.notEmpty(newName, "Cannot handle null or empty newName argument.");
+        Validate.notEmpty(newName, "newName");
         this.name = newName;
     }
 
