@@ -34,7 +34,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Predicate;
@@ -67,7 +66,7 @@ public final class TypeExtractor {
      * matched the supplied selector's acceptance criteria.
      */
     @NotNull
-    public static Set<Class<?>> getInterfaces(@NotNull final Class<?> clazz,
+    public static SortedSet<Class<?>> getInterfaces(@NotNull final Class<?> clazz,
                                               final Predicate<Class<?>> selector) {
 
         // Check sanity
@@ -88,7 +87,7 @@ public final class TypeExtractor {
         // Delegate
         return selector == null
                 ? allInterfaces
-                : allInterfaces.stream().filter(selector).collect(Collectors.toSet());
+                : allInterfaces.stream().filter(selector).collect(TypeAlgorithms.SORTED_CLASSNAME_COLLECTOR);
     }
 
     /**
@@ -100,11 +99,14 @@ public final class TypeExtractor {
      * @return All methods (including private ones) found by the provided class, and
      * which matched the supplied selector's acceptance criteria.
      */
+    @NotNull
     public static SortedSet<Constructor<?>> getConstructors(@NotNull final Class<?> clazz,
                                                             final Predicate<Constructor<?>> selector) {
 
         // Check sanity
         Validate.notNull(clazz, "clazz");
+
+        final SortedSet<Constructor<?>> toReturn = new TreeSet<>(TypeAlgorithms.MEMBER_COMPARATOR);
 
         // Acquire all methods found within the class of the provided instance.
         final SortedSet<Constructor<?>> declaredConstructors = TypeAlgorithms
@@ -120,15 +122,18 @@ public final class TypeExtractor {
                     .orElse("<none>"));
         }
 
-        // All Done.
+        // Add all matching constructors to the return SortedSet
         if (selector == null) {
-            return declaredConstructors;
+            toReturn.addAll(declaredConstructors);
+        } else {
+            declaredConstructors
+                    .stream()
+                    .filter(selector)
+                    .forEach(toReturn::add);
         }
 
-        return declaredConstructors
-                .stream()
-                .filter(selector)
-                .collect(Collectors.toCollection(TypeAlgorithms.SORTED_CONSTRUCTOR_SUPPLIER));
+        // All Done.
+        return toReturn;
     }
 
     /**

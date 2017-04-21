@@ -166,18 +166,17 @@ public class PrioritizedTypeConverter<From> implements Comparable<PrioritizedTyp
 
         // Validate that all converters are OK before modifying the internal state
         // of this PrioritizedTypeConverter instance.
-        outer:
         for (Object current : converters) {
 
             // Find any converter methods in the supplied converter
             final SortedSet<Method> methods = TypeExtractor.getMethods(
                     current.getClass(),
-                    ReflectiveConverterFilter.CONVERSION_METHOD_FILTER);
+                    Converters.CONVERSION_METHOD_FILTER);
 
             // Find any converter constructors in the supplied converter
             final SortedSet<Constructor<?>> constructors = TypeExtractor.getConstructors(
                     current.getClass(),
-                    null);
+                    Converters.CONVERSION_CONSTRUCTOR_FILTER);
 
             if (methods.size() == 0 && constructors.size() == 0) {
 

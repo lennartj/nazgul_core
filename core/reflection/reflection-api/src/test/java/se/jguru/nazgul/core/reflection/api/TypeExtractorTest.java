@@ -43,6 +43,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.function.Predicate;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
@@ -53,15 +55,15 @@ public class TypeExtractorTest {
     public void validateExceptionOnNullInstance() {
 
         // Assemble
-        final Filter<Class<?>> typeAnnotationFilter =
+        final Predicate<Class<?>> typeAnnotationFilter =
                 candidate -> candidate.isAnnotationPresent(TestTypeMarkerAnnotation.class);
 
         // Act & Assert
         TypeExtractor.getInterfaces(null, typeAnnotationFilter);
     }
 
-    @Test(expected = NullPointerException.class)
-    public void validateExceptionOnNullFilter() {
+    @Test
+    public void validateNoExceptionOnNullFilter() {
 
         // Act & Assert
         TypeExtractor.getInterfaces(AnnotatedImplementation.class, null);
@@ -71,58 +73,55 @@ public class TypeExtractorTest {
     public void validateInterfaceFilteringOnClassWithSeveralImplementedInterfaces() {
 
         // Assemble
-        final Filter<Class<?>> typeAnnotationFilter =
+        final Predicate<Class<?>> typeAnnotationFilter =
                 candidate -> candidate.isAnnotationPresent(TestTypeMarkerAnnotation.class);
 
         // Act
-        final List<Class<?>> ifs = TypeExtractor.getInterfaces(AnnotatedImplementation.class, typeAnnotationFilter);
+        final SortedSet<Class<?>> ifs = TypeExtractor.getInterfaces(AnnotatedImplementation.class,
+                typeAnnotationFilter);
 
         // Assert
         Assert.assertNotNull(ifs);
         Assert.assertEquals(1, ifs.size());
-        Assert.assertEquals(AnnotatedSpecification.class, ifs.get(0));
+        Assert.assertEquals(AnnotatedSpecification.class, ifs.first());
     }
 
     @Test
     public void validateMethodFiltering() throws Exception {
 
         // Assemble
-        final Method expected = AnnotatedImplementation.class.getMethod("getValue", null);
-        final Filter<Method> publicMethodMarkerAnnotationFilter = new Filter<Method>() {
-            @Override
-            public boolean accept(final Method candidate) {
-                return Modifier.isPublic(candidate.getModifiers())
+        final Method expected = AnnotatedImplementation.class.getMethod("getValue", (java.lang.Class<?>[]) null);
+        final Predicate<Method> publicMethodMarkerAnnotationFilter = candidate ->
+                Modifier.isPublic(candidate.getModifiers())
                         && candidate.isAnnotationPresent(TestMethodMarkerAnnotation.class);
-            }
-        };
 
         // Act
-        final List<Method> methods = TypeExtractor.getMethods(AnnotatedImplementation.class,
+        final SortedSet<Method> methods = TypeExtractor.getMethods(AnnotatedImplementation.class,
                 publicMethodMarkerAnnotationFilter);
 
         // Assert
         Assert.assertNotNull(methods);
         Assert.assertEquals(1, methods.size());
-        Assert.assertEquals(expected, methods.get(0));
+        Assert.assertEquals(expected, methods.first());
     }
 
     @Test
     public void validateMethodFilteringWithCompoundClassHierarchy() throws Exception {
 
         // Assemble
-        final Method getValueMethod = AnnotatedImplementation.class.getMethod("getValue", null);
-        final Method getValueInSubclassMethod = AnnotatedImplementationSubclass.class.getMethod("getValueInSubclass", null);
+        final Method getValueMethod = AnnotatedImplementation.class.getMethod(
+                "getValue",
+                (java.lang.Class<?>[]) null);
 
-        final Filter<Method> publicMethodMarkerAnnotationFilter = new Filter<Method>() {
-            @Override
-            public boolean accept(final Method candidate) {
-                return Modifier.isPublic(candidate.getModifiers())
+        final Method getValueInSubclassMethod = AnnotatedImplementationSubclass.class.getMethod(
+                "getValueInSubclass",
+                (java.lang.Class<?>[]) null);
+
+        final Predicate<Method> publicMethodMarkerAnnotationFilter = candidate ->
+                Modifier.isPublic(candidate.getModifiers())
                         && candidate.isAnnotationPresent(TestMethodMarkerAnnotation.class);
-            }
-        };
-
         // Act
-        final List<Method> methods = TypeExtractor.getMethods(
+        final SortedSet<Method> methods = TypeExtractor.getMethods(
                 AnnotatedImplementationSubclass.class,
                 publicMethodMarkerAnnotationFilter);
 
@@ -138,21 +137,18 @@ public class TypeExtractorTest {
 
         // Assemble
         final Field expected = AnnotatedImplementationSubclass.class.getDeclaredField("aPrivateMarkedValue");
-        final Filter<Field> annotatedMemberFilter = new Filter<Field>() {
-            @Override
-            public boolean accept(final Field candidate) {
-                return candidate.isAnnotationPresent(TestFieldMarkerAnnotation.class)
+        final Predicate<Field> annotatedMemberFilter = candidate ->
+                candidate.isAnnotationPresent(TestFieldMarkerAnnotation.class)
                         && candidate.getAnnotation(TestFieldMarkerAnnotation.class).permit();
-            }
-        };
 
         // Act
-        final List<Field> fields = TypeExtractor.getFields(AnnotatedImplementationSubclass.class, annotatedMemberFilter);
+        final SortedSet<Field> fields = TypeExtractor.getFields(
+                AnnotatedImplementationSubclass.class, annotatedMemberFilter);
 
         // Assert
         Assert.assertNotNull(fields);
         Assert.assertEquals(1, fields.size());
-        Assert.assertEquals(expected, fields.get(0));
+        Assert.assertEquals(expected, fields.first());
     }
 
     @Test(expected = IllegalArgumentException.class)

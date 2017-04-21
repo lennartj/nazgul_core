@@ -25,28 +25,23 @@ package se.jguru.nazgul.core.reflection.api.conversion.registry;
 
 import org.junit.Assert;
 import org.junit.Test;
-import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
 import se.jguru.nazgul.core.reflection.api.conversion.Converter;
-import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.FakeConverter;
-import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.MultiConverter;
 import se.jguru.nazgul.core.reflection.api.conversion.registry.helpers.StringConstructorConverter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.function.Predicate;
 
 /**
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid, jGuru Europe AB</a>
  */
-public class ReflectiveConverterFilterTest {
+public class ConvertersTest {
 
     // Shared state
-    private Predicate<Method> conversionMethodFilter = ReflectiveConverterFilter.CONVERSION_METHOD_FILTER;
+    private Predicate<Method> conversionMethodFilter = Converters.CONVERSION_METHOD_FILTER;
     private Predicate<Constructor<?>> conversionConstructorFilter =
-            ReflectiveConverterFilter.CONVERSION_CONSTRUCTOR_FILTER;
+            Converters.CONVERSION_CONSTRUCTOR_FILTER;
 
     @Test(expected = NullPointerException.class)
     public void validateExceptionOnNullMethodArgument() {
@@ -193,6 +188,7 @@ public class ReflectiveConverterFilterTest {
         Assert.assertFalse(result);
     }
 
+    /*
     @Test
     public void validateNullReturnedForNoConvertersFound() {
 
@@ -244,6 +240,7 @@ public class ReflectiveConverterFilterTest {
             Assert.assertTrue(expectedMethodNames.contains(current.getName()));
         }
     }
+    */
 
     /*
     @Test

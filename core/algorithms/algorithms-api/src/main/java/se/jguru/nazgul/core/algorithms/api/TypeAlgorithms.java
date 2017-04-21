@@ -47,6 +47,8 @@ import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * Class- and Interface related algorithms.
@@ -99,6 +101,42 @@ public final class TypeAlgorithms {
         // All Done.
         return leftSortKey.compareTo(rightSortKey);
     };
+
+    /**
+     * <p>Standard Supplied to create a SortedSet of Class'es using the {@link TypeAlgorithms#CLASSNAME_COMPARATOR}
+     * to determine order within the SortedSet yielded. The typical application of this Supplier is</p>
+     * <pre>
+     * <code>
+     *     [someStream].collect(Collectors.toCollection(TypeAlgorithms.SORTED_CLASS_SUPPLIER));
+     * </code>
+     * </pre>
+     */
+    public static final Supplier<SortedSet<Class<?>>> SORTED_CLASS_SUPPLIER =
+            () -> new TreeSet<>(TypeAlgorithms.CLASSNAME_COMPARATOR);
+
+    /**
+     * <p>Standard Collector to create a SortedSet of Class'es using the {@link TypeAlgorithms#SORTED_CLASS_SUPPLIER}
+     * supplied. Typically used as follows:</p>
+     * <pre>
+     * <code>
+     *     [someStream].collect(TypeAlgorithms.SORTED_CLASSNAME_COLLECTOR));
+     * </code>
+     * </pre>
+     */
+    public static final Collector<Class<?>, ?, SortedSet<Class<?>>> SORTED_CLASSNAME_COLLECTOR =
+            Collectors.toCollection(TypeAlgorithms.SORTED_CLASS_SUPPLIER);
+
+    /**
+     * <p>Standard Collector to create a SortedSet of Constructors using the
+     * {@link TypeAlgorithms#SORTED_CONSTRUCTOR_SUPPLIER}. Typically used as follows:</p>
+     * <pre>
+     * <code>
+     *     [someStream].collect(TypeAlgorithms.SORTED_CONSTRUCTOR_COLLECTOR));
+     * </code>
+     * </pre>
+     */
+    public static final Collector<Constructor<?>, ?, SortedSet<Constructor<?>>> SORTED_CONSTRUCTOR_COLLECTOR =
+            Collectors.toCollection(TypeAlgorithms.SORTED_CONSTRUCTOR_SUPPLIER);
 
     /**
      * <p>Standard Supplied to create a SortedSet of Members using the {@link TypeAlgorithms#MEMBER_COMPARATOR}

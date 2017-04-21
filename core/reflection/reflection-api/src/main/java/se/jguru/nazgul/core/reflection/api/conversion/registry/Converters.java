@@ -22,7 +22,8 @@
  */
 package se.jguru.nazgul.core.reflection.api.conversion.registry;
 
-import se.jguru.nazgul.core.algorithms.api.collections.CollectionAlgorithms;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Transformer;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
@@ -32,8 +33,7 @@ import se.jguru.nazgul.core.reflection.api.conversion.Converter;
 import javax.validation.constraints.NotNull;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
+import java.lang.reflect.Modifier;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Function;
@@ -45,38 +45,85 @@ import java.util.function.Predicate;
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  * @see Converter
  */
-public final class ReflectiveConverterFilter {
+@SuppressWarnings("all")
+public final class Converters {
+
+    // Our Log
+    private static final Logger log = LoggerFactory.getLogger(Converters.class);
 
     /**
-     * ConversionMethodFilter Predicate instance.
+     * <p>Predicate finding Methods with the following properties:</p>
+     * <ol>
+     * <li>Annotated with @Converter</li>
+     * <li>Being public</li>
+     * <li>Not returning {@code void} or {@code Void}</li>
+     * <li>Having exactly one argument</li>
+     * </ol>
      */
     @SuppressWarnings("all")
     public static final Predicate<Method> CONVERSION_METHOD_FILTER = candidate -> {
 
+        // #1) Is the candidate Method annotated with @Converter?
         final Converter converter = candidate.getAnnotation(Converter.class);
         if (converter == null) {
+
+            if (log.isDebugEnabled()) {
+                log.debug("Method [" + candidate + "] is not annotated with @Converter.");
+            }
+
+            // All Done.
             return false;
         }
 
-        // Check the converter method itself.
+        // #2) Is the candidate Method public?
+        final boolean isPublic = Modifier.isPublic(candidate.getModifiers());
+        if (!isPublic) {
+
+            if (log.isDebugEnabled()) {
+                log.debug("Method [" + candidate + "] is not public.");
+            }
+
+            // All Done.
+            return false;
+        }
+
+        // #3) Does the method return Void or void?
+        final Class<?> returnType = candidate.getReturnType();
+        final boolean incorrectReturnType = returnType == Void.TYPE || returnType == Void.class;
+        if (incorrectReturnType) {
+
+            if (log.isDebugEnabled()) {
+                log.debug("Method [" + candidate + "] returns void or Void.");
+            }
+
+            // All Done.
+            return false;
+        }
+
+        // #4) Not a single parameter?
         final Class<?>[] parameterTypes = candidate.getParameterTypes();
-        if (parameterTypes.length != 1 || candidate.getReturnType() == Void.TYPE) {
+        if (parameterTypes.length != 1) {
 
-            // This is not a proper converter method.
+            if (log.isDebugEnabled()) {
+                log.debug("Method [" + candidate + "] does not have a single parameter.");
+            }
+
+            // All Done.
             return false;
         }
 
-        // If we have a conditionalConverterMethod defined, it must be on the form
+        // #5) If we have a conditionalConverterMethod defined, it must be on the form
         //
         // public boolean someMethodName(final FromType aFromType);
         //
         final String conditionalConverterMethod = converter.conditionalConversionMethod();
-        boolean hasConditionalConverterMethod = !conditionalConverterMethod.equals(Converter.NO_CONVERTER_METHOD);
+        final boolean hasConditionalConverterMethod = !conditionalConverterMethod.equals(Converter.NO_CONVERTER_METHOD);
 
         if (hasConditionalConverterMethod) {
 
+            // Create the
             final Class<?> fromType = parameterTypes[0];
-            final ConditionalConverterMethodFilter filter = new ConditionalConverterMethodFilter(
+            final ConditionalConverterMethodPredicate filter = new ConditionalConverterMethodPredicate(
                     fromType,
                     converter.conditionalConversionMethod());
 
@@ -96,8 +143,18 @@ public final class ReflectiveConverterFilter {
     /**
      * Singleton instance of the ConversionConstructorFilter type.
      */
-    public static final Predicate<Constructor<?>> CONVERSION_CONSTRUCTOR_FILTER = candidate ->
-            candidate.getAnnotation(Converter.class) != null && candidate.getParameterTypes().length == 1;
+    public static final Predicate<Constructor<?>> CONVERSION_CONSTRUCTOR_FILTER = candidate -> {
+
+        final Class<?>[] parameterTypes = candidate.getParameterTypes();
+        if(candidate.getAnnotation(Converter.class) != null && parameterTypes.length == 1) {
+
+            // The only argument should not be Void (which would be funky...).
+            return (parameterTypes[0] != Void.class && parameterTypes[0] != Void.TYPE);
+        }
+
+        // Nopes
+        return false;
+    };
 
     /**
      * Function which extracts all methods and constructors able to convert types within a class.
@@ -112,22 +169,22 @@ public final class ReflectiveConverterFilter {
         }
 
         final SortedSet<Method> converterMethods = TypeExtractor.getMethods(aClass,
-                ReflectiveConverterFilter.CONVERSION_METHOD_FILTER);
+                Converters.CONVERSION_METHOD_FILTER);
         final SortedSet<Constructor<?>> converterConstructors = TypeExtractor.getConstructors(aClass,
-                ReflectiveConverterFilter.CONVERSION_CONSTRUCTOR_FILTER);
+                Converters.CONVERSION_CONSTRUCTOR_FILTER);
 
         // All Done.
         return new Tuple<>(converterMethods, converterConstructors);
     };
 
-    /**
+    /*
      * Helper method to extract a Tuple of converter methods and constructors, as found within the supplied
      * object instance.
      *
      * @param object The object which should be inspected for
      * @return {@code null} if the object was {@code null} or no converter methods and constructors
      * were found within the supplied object. Otherwise returns a populated Tuple.
-     */
+
     public static Tuple<List<Method>, List<Constructor<?>>> getConverterMethodsAndConstructors(
             final Object object) {
 
@@ -154,13 +211,13 @@ public final class ReflectiveConverterFilter {
         // All done.
         return toReturn;
     }
+    */
 
     /**
      * Hidden constructor.
      */
-    private ReflectiveConverterFilter() {
+    private Converters() {
     }
-
 
     /**
      * Filter implementation detecting properly annotated Converter constructors.
@@ -178,15 +235,22 @@ public final class ReflectiveConverterFilter {
     }
 
     /**
-     * Filter implementation detecting proper conditional converter methods.
+     * <p>Filter implementation detecting proper conditional converter methods. Converter methods must:</p>
+     * <ol>
+     * <li>Be public</li>
+     * <li>Return boolean</li>
+     * <li>Have a given method name</li>
+     * <li>Have a single argument with a given type</li>
+     * </ol>
      */
-    private static final class ConditionalConverterMethodFilter implements Predicate<Method> {
+    @SuppressWarnings("all")
+    private static final class ConditionalConverterMethodPredicate implements Predicate<Method> {
 
         // Internal state
         private Class<?> requiredArgumentType;
         private String methodName;
 
-        private ConditionalConverterMethodFilter(final Class<?> fromType, final String methodName) {
+        private ConditionalConverterMethodPredicate(final Class<?> fromType, final String methodName) {
             this.requiredArgumentType = fromType;
             this.methodName = methodName;
         }
@@ -197,20 +261,31 @@ public final class ReflectiveConverterFilter {
         @Override
         public boolean test(final Method candidate) {
 
-            // Check return type
-            boolean booleanReturnType = candidate.getReturnType() == Boolean.TYPE
-                    || candidate.getReturnType() == Boolean.class;
+            // #1) Is the method public?
+            if (!Modifier.isPublic(candidate.getModifiers())) {
+                return false;
+            }
 
-            // Method should have 1 single argument of the correct type.
-            boolean correctArgumentType = candidate.getParameterTypes().length == 1
-                    && candidate.getParameterTypes()[0].isAssignableFrom(requiredArgumentType);
+            // #2) Does the method return boolean or Boolean?
+            final Class<?> returnType = candidate.getReturnType();
+            if (!(returnType == Boolean.TYPE || returnType == Boolean.class)) {
+                return false;
+            }
 
-            // Check name
-            boolean matchingName = !methodName.equals(Converter.NO_CONVERTER_METHOD)
-                    && candidate.getName().equals(methodName);
+            // #3) Does the method have 1 single argument of the correct type?
+            final Class<?>[] parameterTypes = candidate.getParameterTypes();
+            if (parameterTypes.length != 1 || !parameterTypes[0].isAssignableFrom(requiredArgumentType)) {
+                return false;
+            }
+
+            // #4) Does the method name match the supplied requirement?
+            //     ... which must not be the default value...
+            if (methodName.equals(Converter.NO_CONVERTER_METHOD) || !candidate.getName().equals(methodName)) {
+                return false;
+            }
 
             // All done.
-            return matchingName && booleanReturnType && correctArgumentType;
+            return true;
         }
     }
 

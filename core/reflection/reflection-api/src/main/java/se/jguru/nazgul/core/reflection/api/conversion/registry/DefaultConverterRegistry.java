@@ -85,9 +85,10 @@ public class DefaultConverterRegistry implements ConverterRegistry {
 
             // Find the TypeInformation for the current class.
             final Tuple<SortedSet<Method>, SortedSet<Constructor<?>>> methodsAndConstructors =
-                    ReflectiveConverterFilter.GET_CONVERTERS.apply(current.getClass());
+                    Converters.GET_CONVERTERS.apply(current.getClass());
 
-            if (methodsAndConstructors == null) {
+            if (methodsAndConstructors == null
+                    || (methodsAndConstructors.getKey().isEmpty() && methodsAndConstructors.getValue().isEmpty())) {
 
                 // No converters methods or constructors found within the supplied converter. Complain.
                 throw new IllegalArgumentException("Found no @Converter-annotated methods within class ["
