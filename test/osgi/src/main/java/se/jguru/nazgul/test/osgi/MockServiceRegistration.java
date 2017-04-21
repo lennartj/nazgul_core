@@ -23,13 +23,14 @@
 
 package se.jguru.nazgul.test.osgi;
 
-import org.apache.commons.lang3.Validate;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.algorithms.event.api.producer.EventConsumerCallback;
 import se.jguru.nazgul.test.osgi.event.ServiceListenerAdapter;
 
+import javax.validation.constraints.NotNull;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -54,14 +55,14 @@ public class MockServiceRegistration<S> implements ServiceRegistration<S> {
      * @param bundleContext          The BundleContext to wrap.
      * @param registrationProperties The OSGi service registration properties.
      */
-    public MockServiceRegistration(final MockServiceReference serviceReference,
-                                   final MockBundleContext bundleContext,
-                                   final Dictionary registrationProperties) {
+    public MockServiceRegistration(@NotNull final MockServiceReference serviceReference,
+                                   @NotNull final MockBundleContext bundleContext,
+                                   @NotNull final Dictionary registrationProperties) {
 
         // Check sanity
-        Validate.notNull(serviceReference, "Cannot handle null serviceReference argument.");
-        Validate.notNull(bundleContext, "Cannot handle null bundleContext argument.");
-        Validate.notNull(registrationProperties, "Cannot handle null registrationProperties argument.");
+        Validate.notNull(serviceReference, "serviceReference");
+        Validate.notNull(bundleContext, "bundleContext");
+        Validate.notNull(registrationProperties, "registrationProperties");
 
         // Assign internal state
         this.serviceReference = serviceReference;
@@ -76,8 +77,8 @@ public class MockServiceRegistration<S> implements ServiceRegistration<S> {
      * @param serviceReference The ServiceReference to wrap.
      * @param bundleContext    The BundleContext to wrap.
      */
-    public MockServiceRegistration(final MockServiceReference serviceReference,
-                                   final MockBundleContext bundleContext) {
+    public MockServiceRegistration(@NotNull final MockServiceReference serviceReference,
+                                   @NotNull final MockBundleContext bundleContext) {
         this(serviceReference, bundleContext, new Properties());
     }
 
@@ -93,6 +94,7 @@ public class MockServiceRegistration<S> implements ServiceRegistration<S> {
      *                               unregistered.
      */
     @Override
+    @NotNull
     public ServiceReference<S> getReference() {
         return serviceReference;
     }
@@ -125,12 +127,13 @@ public class MockServiceRegistration<S> implements ServiceRegistration<S> {
         }
 
         // Fire the modified event
-        bundleContext.fireServiceEvent(new EventConsumerCallback<ServiceListenerAdapter>() {
-            @Override
-            public void onEvent(final ServiceListenerAdapter eventConsumer) {
-                eventConsumer.serviceChanged(new ServiceEvent(ServiceEvent.MODIFIED, serviceReference));
-            }
-        });
+        final ServiceEvent serviceEvent = new ServiceEvent(ServiceEvent.MODIFIED, serviceReference);
+        final EventConsumerCallback<ServiceListenerAdapter> consumerCallback =
+                (EventConsumerCallback<ServiceListenerAdapter>) eventConsumer
+                        -> eventConsumer.serviceChanged(serviceEvent);
+
+        // Fire the modified event.
+        bundleContext.fireServiceEvent(consumerCallback);
     }
 
     /**

@@ -35,10 +35,12 @@ import org.apache.activemq.artemis.jms.server.config.impl.JMSConfigurationImpl;
 import org.apache.activemq.artemis.jms.server.config.impl.JMSQueueConfigurationImpl;
 import org.apache.activemq.artemis.jms.server.embedded.EmbeddedJMS;
 import org.apache.activemq.artemis.spi.core.naming.BindingRegistry;
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.test.messaging.MessageBroker;
 
 import javax.jms.ConnectionFactory;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.File;
 import java.net.URL;
 import java.util.HashSet;
@@ -103,11 +105,12 @@ public class ArtemisBroker implements MessageBroker {
      *                               files (named as per above) reside.
      */
     @SuppressWarnings("PMD")
-    public ArtemisBroker(final String brokerName, final String configurationDirectory) {
+    public ArtemisBroker(@NotNull @Size(min = 1) final String brokerName,
+                         @NotNull @Size(min = 1) final String configurationDirectory) {
 
         // Check sanity
-        Validate.notEmpty(brokerName, "Cannot handle null or empty brokerName argument.");
-        Validate.notEmpty(configurationDirectory, "Cannot handle null or empty configurationDirectory argument.");
+        Validate.notEmpty(brokerName, "brokerName");
+        Validate.notEmpty(configurationDirectory, "configurationDirectory");
 
         // a) Create the Artemis configuration
         this.registry = new MapBindingRegistry();
@@ -225,7 +228,10 @@ public class ArtemisBroker implements MessageBroker {
         final URL location = getClass().getProtectionDomain().getCodeSource().getLocation();
 
         // Check sanity
-        Validate.notNull(location, "CodeSource location not found for class [" + getClass().getSimpleName() + "]");
+        if(location == null) {
+            throw new NullPointerException("CodeSource location not found for class ["
+                    + getClass().getSimpleName() + "]");
+        }
 
         // All done.
         return new File(location.getPath()).getParentFile();

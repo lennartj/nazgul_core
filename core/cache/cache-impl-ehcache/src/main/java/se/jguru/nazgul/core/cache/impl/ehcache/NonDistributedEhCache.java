@@ -28,9 +28,9 @@ import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.TransactionController;
 import net.sf.ehcache.transaction.manager.TransactionManagerLookup;
-import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.cache.api.Cache;
 import se.jguru.nazgul.core.cache.api.CacheListener;
 import se.jguru.nazgul.core.cache.api.ReadOnlyIterator;
@@ -40,6 +40,7 @@ import se.jguru.nazgul.core.clustering.api.AbstractClusterable;
 
 import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
@@ -91,13 +92,13 @@ public class NonDistributedEhCache extends AbstractClusterable implements Cache<
      *
      * @param manager The Manager used to create the LocalEhCache instance.
      */
-    public NonDistributedEhCache(final CacheManager manager) {
+    public NonDistributedEhCache(@NotNull final CacheManager manager) {
 
         // Initialize our ID.
         super(new EhCacheClusterIdGenerator(), false);
 
         // Check sanity
-        Validate.notNull(manager, "Cannot handle null manager argument.");
+        Validate.notNull(manager, "manager");
 
         // Assign internal state
         cacheManager = manager;

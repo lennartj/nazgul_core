@@ -23,7 +23,6 @@
 
 package se.jguru.nazgul.core.osgi.launcher.api.event.blueprint;
 
-import org.apache.commons.lang3.Validate;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -34,10 +33,13 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
 import se.jguru.nazgul.core.algorithms.event.api.consumer.AbstractEventConsumer;
 import se.jguru.nazgul.core.algorithms.event.api.consumer.EventConsumer;
 import se.jguru.nazgul.core.osgi.launcher.api.event.BundleContextHolder;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Adapter class, converting OSGI BlueprintContainer Service events to Nazgul BlueprintServiceListener events.
@@ -71,12 +73,11 @@ public class BlueprintServiceEventAdapter extends AbstractEventConsumer<Blueprin
      *                               relayed to the given delegate. If {@code null}, all events will be
      *                               relayed.
      */
-    public BlueprintServiceEventAdapter(final BlueprintServiceListener delegate,
+    public BlueprintServiceEventAdapter(@NotNull final BlueprintServiceListener delegate,
                                         final Filter<ServiceReference> serviceReferenceFilter) {
-        super(delegate.getClusterId());
 
-        // Check sanity
-        Validate.notNull(delegate, "Cannot handle null delegate argument.");
+        // Delegate
+        super(Validate.notNull(delegate, "delegate").getClusterId());
 
         // Assign internal state
         this.delegate = delegate;

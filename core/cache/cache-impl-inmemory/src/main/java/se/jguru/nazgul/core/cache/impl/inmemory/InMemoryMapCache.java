@@ -22,7 +22,7 @@
  */
 package se.jguru.nazgul.core.cache.impl.inmemory;
 
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.cache.api.Cache;
 import se.jguru.nazgul.core.cache.api.CacheListener;
 import se.jguru.nazgul.core.cache.api.transaction.TransactedAction;
@@ -30,6 +30,9 @@ import se.jguru.nazgul.core.clustering.api.AbstractSwiftClusterable;
 import se.jguru.nazgul.core.clustering.api.IdGenerator;
 import se.jguru.nazgul.core.clustering.api.UUIDGenerator;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -89,17 +92,17 @@ public class InMemoryMapCache extends AbstractSwiftClusterable implements Cache<
      *                         when requested to perform transacted actions.
      */
     public InMemoryMapCache(final IdGenerator idGenerator,
-                            final long timeoutMillis,
-                            final ConcurrentMap<String, Serializable> cache,
-                            final ConcurrentMap<String, CacheListener<String, Serializable>> listeners,
+                            @Min(value = 1) final long timeoutMillis,
+                            @NotNull final ConcurrentMap<String, Serializable> cache,
+                            @NotNull final ConcurrentMap<String, CacheListener<String, Serializable>> listeners,
                             final int numEventListenerThreads,
                             final boolean fakeTransactions) {
         super(idGenerator, false);
 
         // Check sanity
         Validate.isTrue(timeoutMillis > 0, "Cannot handle zero or negative milliseconds argument.");
-        Validate.notNull(cache, "Cannot handle null cache argument.");
-        Validate.notNull(listeners, "Cannot handle null listeners argument.");
+        Validate.notNull(cache, "cache");
+        Validate.notNull(listeners, "listeners");
 
         // Assign internal state
         this.timeoutMillis = timeoutMillis;
@@ -288,17 +291,19 @@ public class InMemoryMapCache extends AbstractSwiftClusterable implements Cache<
          * @param oldValue  The old value of the cache entry.
          * @param newValue  The new value of the cache entry.
          */
-        CacheListenerNotificationWorker(final Set<CacheListener<String, Serializable>> listeners,
-                                        final CacheEventType event,
-                                        final String key,
-                                        final Serializable oldValue,
-                                        final Serializable newValue) {
+        CacheListenerNotificationWorker(
+                @NotNull @Size(min = 1) final Set<CacheListener<String, Serializable>> listeners,
+                @NotNull final CacheEventType event,
+                @NotNull final String key,
+                final Serializable oldValue,
+                final Serializable newValue) {
+
             super();
 
             // Check sanity
-            Validate.notNull(event, "Cannot handle null CacheEventType argument.");
-            Validate.notEmpty(listeners, "Cannot handle null or empty listeners argument.");
-            Validate.notEmpty(key, "Cannot handle null or empty key argument.");
+            Validate.notNull(event, "event");
+            Validate.notEmpty(listeners, "listeners");
+            Validate.notEmpty(key, "key");
 
             // Assign internal state
             this.listeners = listeners;

@@ -23,11 +23,13 @@
 
 package se.jguru.nazgul.core.osgi.launcher.api.event.blueprint;
 
-import org.apache.commons.lang3.Validate;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.blueprint.container.BlueprintContainer;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Filter implementation accepting OSGI BlueprintService instances.
@@ -59,10 +61,10 @@ public class BlueprintServiceFilter implements Filter<ServiceReference> {
      * @return The BlueprintContainer name, should the provided serviceReference be a BlueprintContainer,
      * or {@code null} should the given ServiceReference not be a BlueprintContainer.
      */
-    public static String getBlueprintName(final ServiceReference serviceReference) {
+    public static String getBlueprintName(@NotNull final ServiceReference serviceReference) {
 
         // Check sanity
-        Validate.notNull(serviceReference, "Cannot handle null serviceReference argument.");
+        Validate.notNull(serviceReference, "serviceReference");
 
         // All done.
         return (String) serviceReference.getProperty(BLUEPRINT_NAME_KEY);

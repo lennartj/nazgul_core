@@ -23,7 +23,6 @@
 
 package se.jguru.nazgul.test.osgi;
 
-import org.apache.commons.lang3.Validate;
 import org.apache.felix.framework.FilterImpl;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -40,12 +39,15 @@ import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceObjects;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.algorithms.event.api.producer.AbstractEventProducer;
 import se.jguru.nazgul.core.algorithms.event.api.producer.EventConsumerCallback;
 import se.jguru.nazgul.core.algorithms.event.api.producer.EventProducer;
 import se.jguru.nazgul.test.osgi.event.BundleListenerAdapter;
 import se.jguru.nazgul.test.osgi.event.ServiceListenerAdapter;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -172,16 +174,15 @@ public class MockBundleContext implements BundleContext {
      *                 stream must always be closed when this method completes, even if
      *                 an exception is thrown.
      * @return The {@code Bundle} object of the installed bundle.
-     * @throws org.osgi.framework.BundleException
-     *                               If the installation failed. BundleException types
-     *                               thrown by this method include: {@link org.osgi.framework.BundleException#READ_ERROR}
-     *                               , {@link org.osgi.framework.BundleException#DUPLICATE_BUNDLE_ERROR},
-     *                               {@link org.osgi.framework.BundleException#MANIFEST_ERROR}, and
-     *                               {@link org.osgi.framework.BundleException#REJECTED_BY_HOOK}.
-     * @throws SecurityException     If the caller does not have the appropriate
-     *                               {@code AdminPermission[installed bundle,LIFECYCLE]}, and the Java
-     *                               Runtime Environment supports permissions.
-     * @throws IllegalStateException If this BundleContext is no longer valid.
+     * @throws org.osgi.framework.BundleException If the installation failed. BundleException types
+     *                                            thrown by this method include: {@link org.osgi.framework.BundleException#READ_ERROR}
+     *                                            , {@link org.osgi.framework.BundleException#DUPLICATE_BUNDLE_ERROR},
+     *                                            {@link org.osgi.framework.BundleException#MANIFEST_ERROR}, and
+     *                                            {@link org.osgi.framework.BundleException#REJECTED_BY_HOOK}.
+     * @throws SecurityException                  If the caller does not have the appropriate
+     *                                            {@code AdminPermission[installed bundle,LIFECYCLE]}, and the Java
+     *                                            Runtime Environment supports permissions.
+     * @throws IllegalStateException              If this BundleContext is no longer valid.
      */
     @Override
     public Bundle installBundle(final String location, final InputStream input) throws BundleException {
@@ -196,16 +197,15 @@ public class MockBundleContext implements BundleContext {
      *
      * @param location The location identifier of the bundle to install.
      * @return The {@code Bundle} object of the installed bundle.
-     * @throws org.osgi.framework.BundleException
-     *                               If the installation failed. BundleException types
-     *                               thrown by this method include: {@link org.osgi.framework.BundleException#READ_ERROR}
-     *                               , {@link org.osgi.framework.BundleException#DUPLICATE_BUNDLE_ERROR},
-     *                               {@link org.osgi.framework.BundleException#MANIFEST_ERROR}, and
-     *                               {@link org.osgi.framework.BundleException#REJECTED_BY_HOOK}.
-     * @throws SecurityException     If the caller does not have the appropriate
-     *                               {@code AdminPermission[installed bundle,LIFECYCLE]}, and the Java
-     *                               Runtime Environment supports permissions.
-     * @throws IllegalStateException If this BundleContext is no longer valid.
+     * @throws org.osgi.framework.BundleException If the installation failed. BundleException types
+     *                                            thrown by this method include: {@link org.osgi.framework.BundleException#READ_ERROR}
+     *                                            , {@link org.osgi.framework.BundleException#DUPLICATE_BUNDLE_ERROR},
+     *                                            {@link org.osgi.framework.BundleException#MANIFEST_ERROR}, and
+     *                                            {@link org.osgi.framework.BundleException#REJECTED_BY_HOOK}.
+     * @throws SecurityException                  If the caller does not have the appropriate
+     *                                            {@code AdminPermission[installed bundle,LIFECYCLE]}, and the Java
+     *                                            Runtime Environment supports permissions.
+     * @throws IllegalStateException              If this BundleContext is no longer valid.
      * @see #installBundle(String, java.io.InputStream)
      */
     @Override
@@ -244,7 +244,7 @@ public class MockBundleContext implements BundleContext {
      *
      * @param id The identifier of the bundle to retrieve.
      * @return A {@code Bundle} object or {@code null} if the identifier does
-     *         not match any installed bundle.
+     * not match any installed bundle.
      */
     @Override
     public Bundle getBundle(final long id) {
@@ -259,7 +259,7 @@ public class MockBundleContext implements BundleContext {
      * uninstalled at anytime.
      *
      * @return An array of {@code Bundle} objects, one object per installed
-     *         bundle.
+     * bundle.
      */
     @Override
     public Bundle[] getBundles() {
@@ -298,10 +298,9 @@ public class MockBundleContext implements BundleContext {
      *
      * @param listener The {@code ServiceListener} object to be added.
      * @param filter   The filter criteria.
-     * @throws org.osgi.framework.InvalidSyntaxException
-     *                               If {@code filter} contains an invalid
-     *                               filter string that cannot be parsed.
-     * @throws IllegalStateException If this BundleContext is no longer valid.
+     * @throws org.osgi.framework.InvalidSyntaxException If {@code filter} contains an invalid
+     *                                                   filter string that cannot be parsed.
+     * @throws IllegalStateException                     If this BundleContext is no longer valid.
      * @see org.osgi.framework.ServiceEvent
      * @see org.osgi.framework.ServiceListener
      * @see org.osgi.framework.ServicePermission
@@ -316,7 +315,7 @@ public class MockBundleContext implements BundleContext {
      * list of listeners.
      * This method is the same as calling
      * {@code BundleContext.addServiceListener(ServiceListener listener,
-     *String filter)} with {@code filter} set to {@code null}.
+     * String filter)} with {@code filter} set to {@code null}.
      *
      * @param listener The {@code ServiceListener} object to be added.
      * @throws IllegalStateException If this BundleContext is no longer valid.
@@ -482,8 +481,8 @@ public class MockBundleContext implements BundleContext {
      *                   The set of properties may be {@code null} if the service has no
      *                   properties.
      * @return A {@code ServiceRegistration} object for use by the bundle
-     *         registering the service to update the service's properties or to
-     *         unregister the service.
+     * registering the service to update the service's properties or to
+     * unregister the service.
      * @throws IllegalArgumentException If one of the following is true:
      *                                  <ul>
      *                                  <li>{@code service} is {@code null}. <li>{@code service} is not a
@@ -500,14 +499,14 @@ public class MockBundleContext implements BundleContext {
      * @see org.osgi.framework.ServiceFactory
      */
     @Override
-    public ServiceRegistration registerService(final String[] classes,
+    public ServiceRegistration registerService(@NotNull @Size(min = 1) final String[] classes,
                                                final Object service,
                                                final Dictionary properties) {
 
         // Check sanity
-        Validate.notEmpty(classes, "Can not handle null or empty classes argument.");
-        Validate.notNull(service, "Can not handle null service argument.");
-        Validate.notNull(properties, "Can not handle null properties argument.");
+        Validate.notEmpty(classes, "classes");
+        Validate.notNull(service, "service");
+        Validate.notNull(properties, "properties");
 
         properties.put(Constants.OBJECTCLASS, classes);
 
@@ -580,8 +579,8 @@ public class MockBundleContext implements BundleContext {
      * @param service    The service object or a {@code ServiceFactory} object.
      * @param properties The properties for this service.
      * @return A {@code ServiceRegistration} object for use by the bundle
-     *         registering the service to update the service's properties or to
-     *         unregister the service.
+     * registering the service to update the service's properties or to
+     * unregister the service.
      * @throws IllegalStateException If this BundleContext is no longer valid.
      * @see #registerService(String[], Object, java.util.Dictionary)
      */
@@ -607,8 +606,8 @@ public class MockBundleContext implements BundleContext {
      * @param service    The service object or a {@code ServiceFactory} object.
      * @param properties The properties for this service.
      * @return A {@code ServiceRegistration} object for use by the bundle
-     *         registering the service to update the service's properties or to
-     *         unregister the service.
+     * registering the service to update the service's properties or to
+     * unregister the service.
      * @throws IllegalStateException If this BundleContext is no longer valid.
      * @see #registerService(String[], Object, java.util.Dictionary)
      * @since 1.6
@@ -661,18 +660,18 @@ public class MockBundleContext implements BundleContext {
      *               {@code null} for all services.
      * @param filter The filter expression or {@code null} for all services.
      * @return An array of {@code ServiceReference} objects or {@code null} if
-     *         no services are registered which satisfy the search.
-     * @throws org.osgi.framework.InvalidSyntaxException
-     *                               If the specified {@code filter} contains
-     *                               an invalid filter expression that cannot be parsed.
-     * @throws IllegalStateException If this BundleContext is no longer valid.
+     * no services are registered which satisfy the search.
+     * @throws org.osgi.framework.InvalidSyntaxException If the specified {@code filter} contains
+     *                                                   an invalid filter expression that cannot be parsed.
+     * @throws IllegalStateException                     If this BundleContext is no longer valid.
      */
     @Override
     public ServiceReference<?>[] getServiceReferences(final String clazz,
                                                       final String filter)
             throws InvalidSyntaxException {
 
-        Validate.isTrue(filter == null, "Filtering not implemented in MockBundleContext::getServiceReferences.");
+        Validate.isTrue(filter == null,
+                "Filtering not implemented in MockBundleContext::getServiceReferences.");
 
 
         final List<ServiceReference<?>> tmp = new ArrayList<ServiceReference<?>>();
@@ -731,11 +730,10 @@ public class MockBundleContext implements BundleContext {
      *               {@code null} for all services.
      * @param filter The filter expression or {@code null} for all services.
      * @return An array of {@code ServiceReference} objects or {@code null} if
-     *         no services are registered which satisfy the search.
-     * @throws org.osgi.framework.InvalidSyntaxException
-     *                               If the specified {@code filter} contains
-     *                               an invalid filter expression that cannot be parsed.
-     * @throws IllegalStateException If this BundleContext is no longer valid.
+     * no services are registered which satisfy the search.
+     * @throws org.osgi.framework.InvalidSyntaxException If the specified {@code filter} contains
+     *                                                   an invalid filter expression that cannot be parsed.
+     * @throws IllegalStateException                     If this BundleContext is no longer valid.
      * @since 1.3
      */
     @Override
@@ -766,7 +764,7 @@ public class MockBundleContext implements BundleContext {
      *
      * @param clazz The class name with which the service was registered.
      * @return A {@code ServiceReference} object, or {@code null} if no services
-     *         are registered which implement the named class.
+     * are registered which implement the named class.
      * @throws IllegalStateException If this BundleContext is no longer valid.
      * @see #getServiceReferences(String, String)
      */
@@ -794,7 +792,7 @@ public class MockBundleContext implements BundleContext {
      * @param <S>   Type of Service.
      * @param clazz The class name with which the service was registered.
      * @return A {@code ServiceReference} object, or {@code null} if no services
-     *         are registered which implement the named class.
+     * are registered which implement the named class.
      * @throws IllegalStateException If this BundleContext is no longer valid.
      * @see #getServiceReferences(Class, String)
      * @since 1.6
@@ -846,11 +844,10 @@ public class MockBundleContext implements BundleContext {
      *               not be {@code null}.
      * @param filter The filter expression or {@code null} for all services.
      * @return A collection of {@code ServiceReference} objects. May be empty if
-     *         no services are registered which satisfy the search.
-     * @throws org.osgi.framework.InvalidSyntaxException
-     *                               If the specified {@code filter} contains
-     *                               an invalid filter expression that cannot be parsed.
-     * @throws IllegalStateException If this BundleContext is no longer valid.
+     * no services are registered which satisfy the search.
+     * @throws org.osgi.framework.InvalidSyntaxException If the specified {@code filter} contains
+     *                                                   an invalid filter expression that cannot be parsed.
+     * @throws IllegalStateException                     If this BundleContext is no longer valid.
      * @since 1.6
      */
     @Override
@@ -898,11 +895,11 @@ public class MockBundleContext implements BundleContext {
      * @param <S>       Type of Service.
      * @param reference A reference to the service.
      * @return A service object for the service associated with
-     *         {@code reference} or {@code null} if the service is not
-     *         registered, the service object returned by a
-     *         {@code ServiceFactory} does not implement the classes under which
-     *         it was registered or the {@code ServiceFactory} threw an
-     *         exception.
+     * {@code reference} or {@code null} if the service is not
+     * registered, the service object returned by a
+     * {@code ServiceFactory} does not implement the classes under which
+     * it was registered or the {@code ServiceFactory} threw an
+     * exception.
      * @throws SecurityException        If the caller does not have the
      *                                  {@code ServicePermission} to get the service using at least one
      *                                  of the named classes the service was registered under and the
@@ -942,8 +939,8 @@ public class MockBundleContext implements BundleContext {
      *
      * @param reference A reference to the service to be released.
      * @return {@code false} if the context bundle's use count for the service
-     *         is zero or if the service has been unregistered; {@code true}
-     *         otherwise.
+     * is zero or if the service has been unregistered; {@code true}
+     * otherwise.
      * @throws IllegalStateException    If this BundleContext is no longer valid.
      * @throws IllegalArgumentException If the specified
      *                                  {@code ServiceReference} was not created by the same framework
@@ -971,7 +968,7 @@ public class MockBundleContext implements BundleContext {
      *
      * @param filename A relative name to the file to be accessed.
      * @return A {@code File} object that represents the requested file or
-     *         {@code null} if the platform does not have file system support.
+     * {@code null} if the platform does not have file system support.
      * @throws IllegalStateException If this BundleContext is no longer valid.
      */
     @Override
@@ -988,11 +985,10 @@ public class MockBundleContext implements BundleContext {
      *
      * @param filter The filter string.
      * @return A {@code Filter} object encapsulating the filter string.
-     * @throws org.osgi.framework.InvalidSyntaxException
-     *                               If {@code filter} contains an invalid
-     *                               filter string that cannot be parsed.
-     * @throws NullPointerException  If {@code filter} is null.
-     * @throws IllegalStateException If this BundleContext is no longer valid.
+     * @throws org.osgi.framework.InvalidSyntaxException If {@code filter} contains an invalid
+     *                                                   filter string that cannot be parsed.
+     * @throws NullPointerException                      If {@code filter} is null.
+     * @throws IllegalStateException                     If this BundleContext is no longer valid.
      * @see "Framework specification for a description of the filter string syntax."
      * @see org.osgi.framework.FrameworkUtil#createFilter(String)
      * @since 1.1
@@ -1007,7 +1003,7 @@ public class MockBundleContext implements BundleContext {
      *
      * @param location The location of the bundle to retrieve.
      * @return A {@code Bundle} object or {@code null} if the location does not
-     *         match any installed bundle.
+     * match any installed bundle.
      * @since 1.6
      */
     @Override
@@ -1018,7 +1014,7 @@ public class MockBundleContext implements BundleContext {
     /**
      * Registers the specified service factory object with the specified
      * properties under the name of the specified class with the Framework.
-     *
+     * <p>
      * <p>
      * This method is otherwise identical to
      * {@link #registerService(Class, Object, Dictionary)} and is provided to
@@ -1043,12 +1039,12 @@ public class MockBundleContext implements BundleContext {
     /**
      * Returns the {@link ServiceObjects} object for the service referenced by
      * the specified {@code ServiceReference} object.
-     *
+     * <p>
      * <p>
      * The {@link ServiceObjects} object can be used to obtain multiple service
      * objects for services with {@link Constants#SCOPE_PROTOTYPE prototype}
      * scope.
-     *
+     * <p>
      * <p>
      * For services with {@link Constants#SCOPE_SINGLETON singleton} or
      * {@link Constants#SCOPE_BUNDLE bundle} scope, the
@@ -1058,7 +1054,7 @@ public class MockBundleContext implements BundleContext {
      * the {@link #ungetService(ServiceReference)} method. That is, only one,
      * use-counted service object is available from the {@link ServiceObjects}
      * object.
-     *
+     * <p>
      * <p>
      * This method will always return {@code null} when the service associated
      * with the specified {@code reference} has been unregistered.

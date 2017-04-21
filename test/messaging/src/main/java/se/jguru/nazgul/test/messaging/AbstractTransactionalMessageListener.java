@@ -22,7 +22,7 @@
  */
 package se.jguru.nazgul.test.messaging;
 
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -30,6 +30,7 @@ import javax.jms.MessageListener;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -55,14 +56,14 @@ public abstract class AbstractTransactionalMessageListener implements MessageLis
      * @param responseMessageProducer    The non-null MessageProducer, created from the supplied
      *                                   serverSideResponseSession, used to send response messages from the
      */
-    public AbstractTransactionalMessageListener(final List<Message> serverSideReceivedMessages,
-                                                final Session serverSideResponseSession,
-                                                final MessageProducer responseMessageProducer) {
+    public AbstractTransactionalMessageListener(@NotNull final List<Message> serverSideReceivedMessages,
+                                                @NotNull final Session serverSideResponseSession,
+                                                @NotNull final MessageProducer responseMessageProducer) {
 
         // Check sanity
-        Validate.notNull(serverSideReceivedMessages, "Cannot handle null serverSideReceivedMessages argument.");
-        Validate.notNull(serverSideResponseSession, "Cannot handle null serverSideResponseSession argument.");
-        Validate.notNull(responseMessageProducer, "Cannot handle null responseMessageProducer argument.");
+        Validate.notNull(serverSideReceivedMessages, "serverSideReceivedMessages");
+        Validate.notNull(serverSideResponseSession, "serverSideResponseSession");
+        Validate.notNull(responseMessageProducer, "responseMessageProducer");
 
         // Assign internal state
         this.serverSideReceivedMessages = serverSideReceivedMessages;

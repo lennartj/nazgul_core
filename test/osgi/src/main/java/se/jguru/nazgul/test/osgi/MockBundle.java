@@ -23,7 +23,6 @@
 
 package se.jguru.nazgul.test.osgi;
 
-import org.apache.commons.lang3.Validate;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
@@ -31,9 +30,12 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.algorithms.event.api.producer.EventConsumerCallback;
 import se.jguru.nazgul.test.osgi.event.BundleListenerAdapter;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,10 +67,10 @@ public class MockBundle implements Bundle, Serializable {
      *
      * @param osgiStringVersion The OSGI-formatted string version.
      */
-    public MockBundle(final String osgiStringVersion) {
+    public MockBundle(@NotNull @Size(min = 1) final String osgiStringVersion) {
 
         // Check sanity
-        Validate.notEmpty(osgiStringVersion, "Cannot handle null or empty osgiStringVersion argument.");
+        Validate.notEmpty(osgiStringVersion, "osgiStringVersion");
 
         // Assign internal state
         headers = getStandardHeaders(osgiStringVersion);

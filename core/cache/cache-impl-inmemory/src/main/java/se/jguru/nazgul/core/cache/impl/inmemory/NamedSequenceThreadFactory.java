@@ -22,8 +22,11 @@
  */
 package se.jguru.nazgul.core.cache.impl.inmemory;
 
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -55,10 +58,10 @@ public class NamedSequenceThreadFactory implements ThreadFactory {
      * @param threadNamePrefix  A string prepended to the name of any Thread created by this NamedSequenceThreadFactory.
      * @param maxSequenceNumber The maximum sequence number for this ThreadFactory.
      */
-    public NamedSequenceThreadFactory(final String threadNamePrefix,
-                                      final int maxSequenceNumber) {
+    public NamedSequenceThreadFactory(@NotNull @Size(min = 1) final String threadNamePrefix,
+                                      @Min(1) final int maxSequenceNumber) {
         // Check sanity
-        Validate.notEmpty(threadNamePrefix, "Cannot handle null or empty threadNamePrefix argument.");
+        Validate.notEmpty(threadNamePrefix, "threadNamePrefix");
         Validate.isTrue(maxSequenceNumber > 0, "Cannot handle zero or negative maxSequenceNumber argument.");
 
         // Assign internal state
@@ -71,13 +74,16 @@ public class NamedSequenceThreadFactory implements ThreadFactory {
      * {@code threadNamePrefix-nn}, where {@code nn} is the sequence number of the
      * retrieved Thread.
      *
-     * @param r a runnable to be executed by new thread instance.
+     * @param runnable a runnable to be executed by new thread instance.
      * @return constructed thread, or {@code null} if the request to
      * create a thread is rejected
      */
     @Override
     @SuppressWarnings("all")
-    public Thread newThread(final Runnable r) {
+    public Thread newThread(@NotNull final Runnable runnable) {
+
+        // Check sanity
+        Validate.notNull(runnable, "runnable");
 
         synchronized (lock) {
             if (sequenceCounter.get() == maxSequenceNumber) {
@@ -86,6 +92,6 @@ public class NamedSequenceThreadFactory implements ThreadFactory {
         }
 
         // All done.
-        return new Thread(r, threadNamePrefix + "-" + sequenceCounter.getAndIncrement());
+        return new Thread(runnable, threadNamePrefix + "-" + sequenceCounter.getAndIncrement());
     }
 }

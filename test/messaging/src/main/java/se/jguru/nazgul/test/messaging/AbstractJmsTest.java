@@ -23,16 +23,17 @@
 
 package se.jguru.nazgul.test.messaging;
 
-import org.apache.commons.lang3.Validate;
 import org.junit.After;
 import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.Session;
+import javax.validation.constraints.NotNull;
 
 /**
  * Abstract superclass for JMS-related tests, wrapping a MessageBroker
@@ -56,10 +57,11 @@ public abstract class AbstractJmsTest {
      *
      * @param transactedOperation if {@code true}, all retrieved sessions will be transacted by default.
      */
-    protected AbstractJmsTest(final boolean transactedOperation, final MessageBroker broker) {
+    protected AbstractJmsTest(final boolean transactedOperation,
+                              @NotNull final MessageBroker broker) {
 
         // Check sanity
-        Validate.notNull(broker, "Cannot handle null broker argument.");
+        Validate.notNull(broker, "broker");
 
         // Assign internal state
         this.transactedOperation = transactedOperation;

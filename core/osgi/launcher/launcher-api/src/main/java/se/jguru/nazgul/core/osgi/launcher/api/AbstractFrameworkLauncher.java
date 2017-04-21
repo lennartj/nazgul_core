@@ -23,18 +23,19 @@
 
 package se.jguru.nazgul.core.osgi.launcher.api;
 
-import org.apache.commons.lang3.Validate;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.algorithms.event.api.producer.AbstractEventProducer;
 import se.jguru.nazgul.core.clustering.api.ConstantIdGenerator;
 import se.jguru.nazgul.core.clustering.api.IdGenerator;
 import se.jguru.nazgul.core.osgi.launcher.api.event.BundleContextHolder;
 import se.jguru.nazgul.core.osgi.launcher.api.event.OsgiFrameworkListener;
 
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -87,10 +88,10 @@ public abstract class AbstractFrameworkLauncher<T extends OsgiFrameworkListener>
      * {@inheritDoc}
      */
     @Override
-    public void initialize(final Map<String, String> configuration) throws IllegalStateException {
+    public void initialize(@NotNull final Map<String, String> configuration) throws IllegalStateException {
 
         // Check sanity
-        Validate.notNull(configuration, "Cannot handle null configuration Map.");
+        Validate.notNull(configuration, "configuration");
 
         // Create the Framework, and register ourselves as a FrameworkListener
         framework = createFramework(configuration);

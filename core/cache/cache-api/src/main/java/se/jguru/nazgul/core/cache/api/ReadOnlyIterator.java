@@ -22,8 +22,9 @@
  */
 package se.jguru.nazgul.core.cache.api;
 
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 
+import javax.validation.constraints.NotNull;
 import java.util.Iterator;
 
 /**
@@ -41,10 +42,10 @@ public final class  ReadOnlyIterator<E> implements Iterator<E> {
      *
      * @param delegate The iterator made readonly by this ReadOnlyIterator wrapper.
      */
-    public ReadOnlyIterator(final Iterator<E> delegate) {
+    public ReadOnlyIterator(@NotNull final Iterator<E> delegate) {
 
         // Check sanity
-        Validate.notNull(delegate, "Cannot handle null delegate argument.");
+        Validate.notNull(delegate, "delegate");
 
         // Assign internal state
         this.delegate = delegate;

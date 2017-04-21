@@ -23,11 +23,13 @@
 
 package se.jguru.nazgul.test.osgi;
 
-import org.apache.commons.lang3.Validate;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Dictionary;
@@ -55,7 +57,7 @@ public class MockServiceReference implements ServiceReference {
      */
     public MockServiceReference(final Bundle bundle, final String className) {
         this(bundle,
-                Arrays.asList(className),
+                Collections.singletonList(className),
                 new Properties(),
                 bundle.getSymbolicName(),
                 0);
@@ -103,10 +105,10 @@ public class MockServiceReference implements ServiceReference {
      *
      * @param serviceID the serviceID to assign.
      */
-    public final void setServiceID(final String serviceID) {
+    public final void setServiceID(@NotNull @Size(min = 1) final String serviceID) {
 
         // Check sanity
-        Validate.notEmpty(serviceID, "Cannot handle null or empty serviceID property.");
+        Validate.notEmpty(serviceID, "serviceID");
 
         // Assign internal state.
         registrationProperties.put(Constants.SERVICE_ID, serviceID);

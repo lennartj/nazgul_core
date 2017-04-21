@@ -23,11 +23,13 @@
 
 package se.jguru.nazgul.test.osgi.event;
 
-import org.apache.commons.lang3.Validate;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.algorithms.event.api.consumer.EventConsumer;
 import se.jguru.nazgul.core.algorithms.event.api.producer.AbstractEventProducer;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Simple delegating BundleListener, delegating all received events to a
@@ -51,10 +53,10 @@ public class BundleListenerAdapter<T extends EventConsumer<T>>
      */
     public BundleListenerAdapter(final String clusterUniqueID,
                                  final Class<T> eventConsumerType,
-                                 final BundleListener delegate) {
+                                 @NotNull final BundleListener delegate) {
         super(clusterUniqueID, eventConsumerType);
 
-        Validate.notNull(delegate, "Cannot handle null delegate argument.");
+        Validate.notNull(delegate, "delegate");
         this.delegate = delegate;
     }
 

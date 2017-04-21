@@ -25,10 +25,12 @@ package se.jguru.nazgul.test.messaging.activemq;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
-import org.apache.commons.lang3.Validate;
+import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.test.messaging.MessageBroker;
 
 import javax.jms.ConnectionFactory;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * MessageBroker implementation for ActiveMQ.
@@ -65,11 +67,12 @@ public class ActiveMQBroker implements MessageBroker {
      * @param brokerServiceName The name of the ActiveMQ BrokerService.
      * @param messageServiceURI The URI used to connect to the ActiveMQ broker.
      */
-    public ActiveMQBroker(final String brokerServiceName, final String messageServiceURI) {
+    public ActiveMQBroker(@NotNull @Size(min = 1) final String brokerServiceName,
+                          @NotNull @Size(min = 1) final String messageServiceURI) {
 
         // Check sanity
-        Validate.notEmpty(brokerServiceName, "Cannot handle null or empty brokerServiceName argument.");
-        Validate.notEmpty(messageServiceURI, "Cannot handle null or empty messageServiceURI argument.");
+        Validate.notEmpty(brokerServiceName, "brokerServiceName");
+        Validate.notEmpty(messageServiceURI, "messageServiceURI");
 
         // Assign internal state
         this.messageServiceURI = messageServiceURI;
@@ -79,7 +82,7 @@ public class ActiveMQBroker implements MessageBroker {
 
     /**
      * @return a broker connection URI, suited for unit tests.
-     *         Override it to
+     * Override it to
      */
     @Override
     public final String getMessageServerURI() {
