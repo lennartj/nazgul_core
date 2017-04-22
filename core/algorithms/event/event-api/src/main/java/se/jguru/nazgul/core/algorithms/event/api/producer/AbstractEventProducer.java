@@ -68,6 +68,8 @@ public abstract class AbstractEventProducer<T extends EventConsumer>
      * @param eventConsumerClass The type of EventConsumer handled by this AbstractEventProducer.
      */
     public AbstractEventProducer(final IdGenerator idGenerator, final Class<T> eventConsumerClass) {
+
+        // Delegate
         super(idGenerator, false);
 
         // Check sanity

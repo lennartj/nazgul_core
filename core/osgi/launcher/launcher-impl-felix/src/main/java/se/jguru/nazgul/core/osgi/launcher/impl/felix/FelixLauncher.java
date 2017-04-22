@@ -23,9 +23,9 @@
 
 package se.jguru.nazgul.core.osgi.launcher.impl.felix;
 
+import org.apache.felix.framework.Felix;
 import org.apache.felix.main.AutoProcessor;
 import org.osgi.framework.launch.Framework;
-import org.osgi.framework.launch.FrameworkFactory;
 import se.jguru.nazgul.core.clustering.api.IdGenerator;
 import se.jguru.nazgul.core.osgi.launcher.api.AbstractFrameworkLauncher;
 import se.jguru.nazgul.core.osgi.launcher.api.event.BundleContextHolder;
@@ -62,8 +62,14 @@ public class FelixLauncher extends AbstractFrameworkLauncher<BlueprintServiceLis
      */
     @Override
     protected Framework createFramework(final Map<String, String> configuration) throws IllegalArgumentException {
+
+        /*
         final FrameworkFactory factory = new org.apache.felix.framework.FrameworkFactory();
         return factory.newFramework(configuration);
+        */
+
+        // All Done.
+        return new Felix(configuration);
     }
 
     /**

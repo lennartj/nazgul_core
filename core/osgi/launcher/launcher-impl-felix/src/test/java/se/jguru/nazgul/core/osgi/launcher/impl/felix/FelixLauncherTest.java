@@ -23,10 +23,12 @@
 
 package se.jguru.nazgul.core.osgi.launcher.impl.felix;
 
+import org.apache.felix.framework.util.FelixConstants;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,8 +75,8 @@ public class FelixLauncherTest {
         unitUnderTest = new FelixLauncher("testID");
 
         // Create base configuration properties
-        configuration = new TreeMap<String, String>();
-        configuration.put("felix.log.level", "3");
+        configuration = new TreeMap<>();
+        configuration.put(FelixConstants.LOG_LEVEL_PROP, "" + org.apache.felix.framework.Logger.LOG_DEBUG);
         configuration.put("felix.cache.rootdir", new File(targetDirectory, "felix-cache").getAbsolutePath());
 
         // Create the ServiceEventAdapter
@@ -84,14 +86,20 @@ public class FelixLauncherTest {
     @After
     public void shutdownFelix() throws Exception {
 
-        if (stopFramework) {
-            unitUnderTest.stop();
-            unitUnderTest.getFramework().waitForStop(0);
+        try {
+            if (stopFramework) {
+                unitUnderTest.stop();
+                unitUnderTest.getFramework().waitForStop(0);
+            }
+        } catch (Exception e) {
+
+            // Just swallow this; can happen for a pure Maven launcher during release.
+            e.printStackTrace();
         }
     }
 
     @Test
-    public void validateLaunchAndFramework() throws Exception {
+    public void validateLaunchAndFrameworkAccess() throws Exception {
 
         // Assemble
         unitUnderTest.addConsumer(listener);

@@ -36,8 +36,9 @@ import se.jguru.nazgul.core.osgi.launcher.api.event.BundleContextHolder;
 import se.jguru.nazgul.core.osgi.launcher.api.event.OsgiFrameworkListener;
 
 import javax.validation.constraints.NotNull;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Abstract implementation of the FrameworkLauncher interface, which caters
@@ -46,20 +47,21 @@ import java.util.Map;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-public abstract class AbstractFrameworkLauncher<T extends OsgiFrameworkListener> extends AbstractEventProducer<T>
-        implements FrameworkLauncher {
+public abstract class AbstractFrameworkLauncher<T extends OsgiFrameworkListener>
+        extends AbstractEventProducer<T> implements FrameworkLauncher {
 
     // Our log
     private static final Logger log = LoggerFactory.getLogger(AbstractFrameworkLauncher.class);
 
-    // Internal state
     /**
      * The OSGi Framework reference.
      */
     protected Framework framework;
+
+    // Internal state
     private final Object[] lock = new Object[0];
-    private Map<String, BundleContextHolder> toRegister = new HashMap<String, BundleContextHolder>();
-    private Map<String, BundleContextHolder> toDeregister = new HashMap<String, BundleContextHolder>();
+    private ConcurrentMap<String, BundleContextHolder> toRegister;
+    private ConcurrentMap<String, BundleContextHolder> toDeregister;
 
     /**
      * Creates a new AbstractFrameworkLauncher with the provided IdGenerator.
@@ -70,7 +72,13 @@ public abstract class AbstractFrameworkLauncher<T extends OsgiFrameworkListener>
      * @see AbstractEventProducer#AbstractEventProducer(IdGenerator, Class)
      */
     protected AbstractFrameworkLauncher(final IdGenerator idGenerator, final Class<T> eventConsumerClass) {
+
+        // Delegate
         super(idGenerator, eventConsumerClass);
+
+        // Assign internal state
+        this.toRegister = new ConcurrentHashMap<>();
+        this.toDeregister = new ConcurrentHashMap<>();
     }
 
     /**
@@ -81,7 +89,13 @@ public abstract class AbstractFrameworkLauncher<T extends OsgiFrameworkListener>
      * @param eventConsumerClass The type of eventConsumer which should be used by this AbstractFrameworkLauncher.
      */
     protected AbstractFrameworkLauncher(final String clusterUniqueID, final Class<T> eventConsumerClass) {
+
+        // Delegate
         this(new ConstantIdGenerator(clusterUniqueID), eventConsumerClass);
+
+        // Assign internal state
+        this.toRegister = new ConcurrentHashMap<>();
+        this.toDeregister = new ConcurrentHashMap<>();
     }
 
     /**
@@ -303,7 +317,7 @@ public abstract class AbstractFrameworkLauncher<T extends OsgiFrameworkListener>
             if (ctx != null) {
 
                 // All seems OK. Proceed with registering.
-                this.toRegister = new HashMap<String, BundleContextHolder>();
+                this.toRegister = new ConcurrentHashMap<>();
 
                 for (Map.Entry<String, BundleContextHolder> current : containerEventListeners.entrySet()) {
 
@@ -346,8 +360,9 @@ public abstract class AbstractFrameworkLauncher<T extends OsgiFrameworkListener>
             final BundleContext ctx = getFramework().getBundleContext();
             if (ctx != null) {
 
-                // All seems OK. Proceed with deregistering.
-                this.toDeregister = new HashMap<String, BundleContextHolder>();
+                // Proceed with deregistering.
+                // First, create a new
+                this.toDeregister = new ConcurrentHashMap<>();
 
                 for (Map.Entry<String, BundleContextHolder> current : containerEventListeners.entrySet()) {
 
