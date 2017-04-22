@@ -33,7 +33,7 @@
     <parent>
         <groupId>se.jguru.nazgul.core.osgi</groupId>
         <artifactId>nazgul-core-osgi-reactor</artifactId>
-        <version>3.0.0</version>
+        <version>3.0.1-SNAPSHOT</version>
     </parent>
 
     <groupId>se.jguru.nazgul.core.osgi.launcher</groupId>
@@ -77,6 +77,6 @@
         <connection>${scm.connection.url}</connection>
         <developerConnection>${scm.devConnection.url}</developerConnection>
         <url>${scm.url}</url>
-        <tag>nazgul-core-3.0.0</tag>
+        <tag>HEAD</tag>
     </scm>
 </project>

@@ -33,7 +33,7 @@
     <parent>
         <groupId>se.jguru.nazgul.core.poms.core-parent</groupId>
         <artifactId>nazgul-core-parent</artifactId>
-        <version>3.0.0</version>
+        <version>3.0.1-SNAPSHOT</version>
         <relativePath>../../../poms/core-parent</relativePath>
     </parent>
 
@@ -55,12 +55,12 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.osgi.launcher.api</groupId>
             <artifactId>nazgul-core-osgi-launcher-api</artifactId>
-            <version>3.0.0</version>
+            <version>3.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.test.osgi</groupId>
             <artifactId>nazgul-core-osgi-test</artifactId>
-            <version>3.0.0</version>
+            <version>3.0.1-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -341,6 +341,6 @@
         <connection>${scm.connection.url}</connection>
         <developerConnection>${scm.devConnection.url}</developerConnection>
         <url>${scm.url}</url>
-        <tag>nazgul-core-3.0.0</tag>
+        <tag>HEAD</tag>
     </scm>
 </project>

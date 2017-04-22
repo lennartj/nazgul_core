@@ -32,7 +32,7 @@
     <parent>
         <groupId>se.jguru.nazgul.core</groupId>
         <artifactId>nazgul-core-core-reactor</artifactId>
-        <version>3.0.0</version>
+        <version>3.0.1-SNAPSHOT</version>
     </parent>
 
     <groupId>se.jguru.nazgul.core.jmx</groupId>
@@ -76,6 +76,6 @@
         <connection>${scm.connection.url}</connection>
         <developerConnection>${scm.devConnection.url}</developerConnection>
         <url>${scm.url}</url>
-        <tag>nazgul-core-3.0.0</tag>
+        <tag>HEAD</tag>
     </scm>
 </project>
