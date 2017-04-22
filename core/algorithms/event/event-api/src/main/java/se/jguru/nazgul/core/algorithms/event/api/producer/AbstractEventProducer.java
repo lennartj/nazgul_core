@@ -75,7 +75,7 @@ public abstract class AbstractEventProducer<T extends EventConsumer>
 
         // Assign internal state
         this.tClass = eventConsumerClass;
-        this.consumers = new ConcurrentHashMap<String, T>();
+        this.consumers = new ConcurrentHashMap<>();
     }
 
     /**
@@ -141,7 +141,7 @@ public abstract class AbstractEventProducer<T extends EventConsumer>
      */
     @Override
     public final List<String> getConsumerIDs() throws UnsupportedOperationException {
-        return Collections.unmodifiableList(new ArrayList<String>(consumers.keySet()));
+        return Collections.unmodifiableList(new ArrayList<>(consumers.keySet()));
     }
 
     /**

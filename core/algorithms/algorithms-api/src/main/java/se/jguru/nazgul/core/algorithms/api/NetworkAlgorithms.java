@@ -38,9 +38,28 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * Network-related algorithms.
+ * <p>Collection of network-related algorithms. The address definitions are :</p>
+ * <table style="text-align: left; border: 1px solid black; border-collapse: collapse;background: #f0f0f0;">
+ * <tr>
+ * <th>IP Protocol</th>
+ * <th>Link-Local address range</th>
+ * <th>Loopback addresses</th>
+ * </tr>
+ * <tr>
+ * <td>IPv4</td>
+ * <td><tt>169.254.0.1 -- 169.254.255.254</tt></td>
+ * <td><tt>127.0.0.0/8</tt>, typically <tt>127.0.0.1</tt></td>
+ * </tr>
+ * <tr>
+ * <td>IPv6</td>
+ * <td><tt>fe80::/10</tt>, but for compliance reasons <tt>fe80::/64</tt></td>
+ * <td><tt>::1</tt></td>
+ * </tr>
+ * </table>
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
+ * @see <a href="https://en.wikipedia.org/wiki/Link-local_address">Wikipedia: Link-local address definition</a>
+ * @see <a href="https://en.wikipedia.org/wiki/Loopback">Wikipedia: Loopback address definition</a>
  */
 @XmlTransient
 @SuppressWarnings("all")
@@ -62,7 +81,7 @@ public final class NetworkAlgorithms {
     public static final Predicate<InetAddress> LOOPBACK_FILTER = InetAddress::isLoopbackAddress;
 
     /**
-     * Predicate identifying non-null IPv4, non-loopback InetAddress objects that are not LinkLocal addresses.
+     * <p>Predicate identifying non-null IPv4 InetAddress objects that are neither LinkLocal nor Loopback addresses.</p>
      */
     public static final Predicate<InetAddress> PUBLIC_IPV4_FILTER = candidate ->
             IPV4_FILTER.test(candidate)
@@ -203,6 +222,34 @@ public final class NetworkAlgorithms {
                     .map(mapper)
                     .forEach(toReturn::addAll);
         });
+
+        // All Done.
+        return toReturn;
+    }
+
+    /**
+     * Convenience method to find all public (i.e. non-loopback, non-linklocal) IPv4 addresses.
+     *
+     * @return A sorted set holding all Inet4Address objects which are neither loopback nor link-local
+     * for all network interfaces on the local computer.
+     * @see #INETADDRESS_COMPARATOR
+     * @see #GET_INETADDRESSES
+     * @see #PUBLIC_IPV4_FILTER
+     */
+    @NotNull
+    public static SortedSet<Inet4Address> getPublicIPv4Addresses() {
+
+        // Create the return value with the
+        final SortedSet<Inet4Address> toReturn = new TreeSet<>(INETADDRESS_COMPARATOR);
+
+        // Use the PUBLIC_IPV4_FILTER to
+        NetworkAlgorithms.getAllNetworkInterfaces(null)
+                .stream()
+                .map(NetworkAlgorithms.GET_INETADDRESSES)
+                .forEach(c -> c.stream()
+                        .filter(NetworkAlgorithms.PUBLIC_IPV4_FILTER)
+                        .map(addr -> (Inet4Address) addr)
+                        .forEach(toReturn::add));
 
         // All Done.
         return toReturn;

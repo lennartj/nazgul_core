@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.algorithms.api.TypeAlgorithms;
 import se.jguru.nazgul.core.algorithms.api.Validate;
+import se.jguru.nazgul.core.algorithms.api.types.TypeInformation;
 
 import javax.validation.constraints.NotNull;
 import java.lang.reflect.Constructor;
@@ -67,13 +68,14 @@ public final class TypeExtractor {
      */
     @NotNull
     public static SortedSet<Class<?>> getInterfaces(@NotNull final Class<?> clazz,
-                                              final Predicate<Class<?>> selector) {
+                                                    final Predicate<Class<?>> selector) {
 
         // Check sanity
         Validate.notNull(clazz, "clazz");
 
         // Extract all interfaces
-        final SortedSet<Class<?>> allInterfaces = TypeAlgorithms.getAllTypesFor(clazz).getAllInterfaces();
+        final TypeInformation typeInfo = new TypeInformation(clazz);
+        final SortedSet<Class<?>> allInterfaces = typeInfo.getAllInterfaces();
 
         if (log.isDebugEnabled()) {
             log.debug(clazz.getName() + " implements " + allInterfaces.size() + " interfaces: "

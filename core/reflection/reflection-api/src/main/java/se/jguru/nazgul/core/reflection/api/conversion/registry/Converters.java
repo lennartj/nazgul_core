@@ -24,8 +24,6 @@ package se.jguru.nazgul.core.reflection.api.conversion.registry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.jguru.nazgul.core.algorithms.api.collections.predicate.Filter;
-import se.jguru.nazgul.core.algorithms.api.collections.predicate.Transformer;
 import se.jguru.nazgul.core.algorithms.api.collections.predicate.Tuple;
 import se.jguru.nazgul.core.reflection.api.TypeExtractor;
 import se.jguru.nazgul.core.reflection.api.conversion.Converter;
@@ -146,7 +144,7 @@ public final class Converters {
     public static final Predicate<Constructor<?>> CONVERSION_CONSTRUCTOR_FILTER = candidate -> {
 
         final Class<?>[] parameterTypes = candidate.getParameterTypes();
-        if(candidate.getAnnotation(Converter.class) != null && parameterTypes.length == 1) {
+        if (candidate.getAnnotation(Converter.class) != null && parameterTypes.length == 1) {
 
             // The only argument should not be Void (which would be funky...).
             return (parameterTypes[0] != Void.class && parameterTypes[0] != Void.TYPE);
@@ -220,21 +218,6 @@ public final class Converters {
     }
 
     /**
-     * Filter implementation detecting properly annotated Converter constructors.
-     */
-    private static final class ConversionConstructorFilter implements Filter<Constructor<?>> {
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean accept(final Constructor<?> candidate) {
-            return candidate.getAnnotation(Converter.class) != null
-                    && candidate.getParameterTypes().length == 1;
-        }
-    }
-
-    /**
      * <p>Filter implementation detecting proper conditional converter methods. Converter methods must:</p>
      * <ol>
      * <li>Be public</li>
@@ -286,27 +269,6 @@ public final class Converters {
 
             // All done.
             return true;
-        }
-    }
-
-    /**
-     * Transformer implementation acquiring class names from class instances.
-     */
-    private static final class ClassToClassNameTransformer implements Transformer<Class<?>, String> {
-
-        // Internal state
-        private boolean shortForm;
-
-        private ClassToClassNameTransformer(final boolean shortForm) {
-            this.shortForm = shortForm;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String transform(final Class<?> input) {
-            return shortForm ? input.getSimpleName() : input.getName();
         }
     }
 }
