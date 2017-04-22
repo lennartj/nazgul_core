@@ -8,6 +8,8 @@ projects quickly and scale them considerably without having to change the develo
 Moreover, the Nazgul Framework strives to increase code quality, maintainability and usability for the developers
 and architects working on a project, as well as reduce complexity/tanglement and increase productivity.
 
+[![Build Status](https://travis-ci.org/lennartj/nazgul_core.svg?branch=master)](https://travis-ci.org/lennartj/nazgul-core)
+
 The Nazgul Framework consists of software components split between two reactors:
 
 1. **[Nazgul Framework: Tools](https://github.com/lennartj/nazgul_tools)**. The Nazgul Tools project (another reactor)
