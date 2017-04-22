@@ -21,8 +21,7 @@
   ~ #L%
   ~
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <!-- +=============================================== -->
@@ -31,7 +30,7 @@
     <parent>
         <groupId>se.jguru.nazgul.core.poms.core-api-parent</groupId>
         <artifactId>nazgul-core-api-parent</artifactId>
-        <version>2.2.1-SNAPSHOT</version>
+        <version>3.0.0</version>
         <relativePath>../../poms/core-api-parent</relativePath>
     </parent>
 
@@ -53,12 +52,12 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.xmlbinding.api</groupId>
             <artifactId>nazgul-core-xmlbinding-api</artifactId>
-            <version>2.2.1-SNAPSHOT</version>
+            <version>3.0.0</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.test.xmlbinding</groupId>
             <artifactId>nazgul-core-xmlbinding-test</artifactId>
-            <version>2.2.1-SNAPSHOT</version>
+            <version>3.0.0</version>
             <scope>test</scope>
         </dependency>
 
@@ -196,13 +195,12 @@
                                 <requireJavaVersion>
                                     <version>${jdk.version}</version>
                                 </requireJavaVersion>
-                                <requireUpperBoundDeps/>
+                                <requireUpperBoundDeps />
 
                                 <!--
                                     We need to import the xml binding implementation.
                                 -->
-                                <restrictImplDependencies
-                                        implementation="se.jguru.nazgul.tools.codestyle.enforcer.rules.RestrictImplDependencies">
+                                <restrictImplDependencies implementation="se.jguru.nazgul.tools.codestyle.enforcer.rules.RestrictImplDependencies">
                                     <includedGroupIdPatterns>^se\\.jguru\\.nazgul\\..*</includedGroupIdPatterns>
                                     <excludedGroupIdPatterns>
                                         ^se\\.jguru\\.nazgul\\..*\\.generated\\..*,^se\\.jguru\\.nazgul\\.tools\\.codestyle\\..*,^com\\.sun\\.xml\\.bind\\..*
@@ -246,6 +244,6 @@
         <connection>${scm.connection.url}</connection>
         <developerConnection>${scm.devConnection.url}</developerConnection>
         <url>${scm.url}</url>
-        <tag>HEAD</tag>
+        <tag>nazgul-core-3.0.0</tag>
     </scm>
 </project>

@@ -31,7 +31,7 @@
     <parent>
         <groupId>se.jguru.nazgul.core.poms.core-api-parent</groupId>
         <artifactId>nazgul-core-api-parent</artifactId>
-        <version>2.2.1-SNAPSHOT</version>
+        <version>3.0.0</version>
         <relativePath>../../poms/core-api-parent</relativePath>
     </parent>
 
@@ -63,17 +63,17 @@
         <dependency>
             <groupId>se.jguru.nazgul.core.quickstart.model</groupId>
             <artifactId>nazgul-core-quickstart-model</artifactId>
-            <version>2.2.1-SNAPSHOT</version>
+            <version>3.0.0</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.parser.api</groupId>
             <artifactId>nazgul-core-parser-api</artifactId>
-            <version>2.2.1-SNAPSHOT</version>
+            <version>3.0.0</version>
         </dependency>
         <dependency>
             <groupId>se.jguru.nazgul.core.resource.api</groupId>
             <artifactId>nazgul-core-resource-api</artifactId>
-            <version>2.2.1-SNAPSHOT</version>
+            <version>3.0.0</version>
         </dependency>
 
         <!-- External dependencies -->
@@ -204,6 +204,6 @@
         <connection>${scm.connection.url}</connection>
         <developerConnection>${scm.devConnection.url}</developerConnection>
         <url>${scm.url}</url>
-        <tag>HEAD</tag>
+        <tag>nazgul-core-3.0.0</tag>
     </scm>
 </project>
