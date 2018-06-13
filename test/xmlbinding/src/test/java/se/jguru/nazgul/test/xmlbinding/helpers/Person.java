@@ -73,12 +73,14 @@ public class Person {
     @Override
     public boolean equals(final Object obj) {
 
-        if (obj != null && obj instanceof Person) {
-            Person that = (Person) obj;
+        if (obj instanceof Person) {
 
-            return this.name.equals(that.name) && this.age == that.age;
+            final Person that = (Person) obj;
+            return this.name.equals(that.name)
+                    && this.age == that.age;
         }
 
+        // Nah
         return false;
     }
 }
