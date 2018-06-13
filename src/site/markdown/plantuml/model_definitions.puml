@@ -1,0 +1,34 @@
+@startuml
+
+    node "NodeJS" as nodejs {
+
+        component "Integration Module" <<JavaScript>> as im
+    }
+
+    node "Tomcat" {
+
+        component "Ancillary Service" <<JaxRS>> as ancillary
+        component "Ancillary" <<Transport Model>> as ancillaryModel
+
+        interface "SomeAPI" <<Domain API>> as domainAPI
+        component "EntityImpl" <<Domain Impl>> as domainImpl
+
+        ' Relations
+        '
+        im -down-> ancillary
+        ancillary .left.> ancillaryModel
+        im .down.> ancillaryModel
+
+        domainAPI <-up- ancillary
+        domainImpl .up.> domainAPI
+    }
+
+    database "AncillaryDB" as adb {
+
+        component "Ancillary Schema" <<Schema>> as schema
+
+        ' Relations
+        '
+        schema <-up- domainImpl
+    }
+@enduml

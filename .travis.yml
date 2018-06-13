@@ -1,6 +1,6 @@
 language: java
 env:
-  - MAVEN_VERSION=3.3.9
+  - MAVEN_VERSION=3.5.0
 jdk:
   - oraclejdk8
 addons:

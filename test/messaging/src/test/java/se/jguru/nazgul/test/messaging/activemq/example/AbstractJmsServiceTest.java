@@ -2,7 +2,7 @@
  * #%L
  * Nazgul Project: nazgul-core-messaging-test
  * %%
- * Copyright (C) 2010 - 2017 jGuru Europe AB
+ * Copyright (C) 2010 - 2018 jGuru Europe AB
  * %%
  * Licensed under the jGuru Europe AB license (the "License"), based
  * on Apache License, Version 2.0; you may not use this file except
@@ -19,6 +19,7 @@
  * limitations under the License.
  * #L%
  */
+
 package se.jguru.nazgul.test.messaging.activemq.example;
 
 import org.junit.Assert;

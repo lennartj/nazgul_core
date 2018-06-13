@@ -1,6 +1,4 @@
 <?xml version='1.0' encoding='UTF-8'?>
-
-
 <!--
   ~ #%L
   ~ Nazgul Project: nazgul-core-core-reactor
@@ -53,7 +51,6 @@
         <module>poms</module>
         <module>jmx</module>
         <module>algorithms</module>
-        <module>configuration</module>
         <module>quickstart</module>
         <module>reflection</module>
         <module>resource</module>

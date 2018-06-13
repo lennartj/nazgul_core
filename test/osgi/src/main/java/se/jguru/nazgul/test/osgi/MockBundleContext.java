@@ -1,25 +1,25 @@
-/*
+/*-
  * #%L
  * Nazgul Project: nazgul-core-osgi-test
  * %%
- * Copyright (C) 2010 - 2017 jGuru Europe AB
+ * Copyright (C) 2010 - 2018 jGuru Europe AB
  * %%
  * Licensed under the jGuru Europe AB license (the "License"), based
  * on Apache License, Version 2.0; you may not use this file except
  * in compliance with the License.
- *
+ * 
  * You may obtain a copy of the License at
- *
- *      http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
- *
+ * 
+ *       http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * #L%
- *
  */
+
 
 package se.jguru.nazgul.test.osgi;
 
@@ -57,7 +57,7 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
+import java.util.TreeMap;
 
 /**
  * A mock implementation of an OSGi BundleContext, to be used in unit tests only.
@@ -81,14 +81,14 @@ public class MockBundleContext implements BundleContext {
             };
 
     private final Bundle bundle;
-    private Properties properties;
+    private Map<String, String> properties;
 
     public MockBundleContext(final Bundle bundle) {
 
         // Assign internal state
         this.bundle = bundle;
         this.bundles.put(bundle.getBundleId(), bundle);
-        this.properties = new Properties();
+        this.properties = new TreeMap<>();
         properties.put(Constants.FRAMEWORK_VERSION, bundle.getVersion().toString());
     }
 
@@ -105,7 +105,7 @@ public class MockBundleContext implements BundleContext {
 
     /**
      * Fires an OSGi ServiceEvent to all registered bundleListeners, with the
-     * given visitor pattern ConsumerEventCallback implementatino to define what
+     * given visitor pattern ConsumerEventCallback implementation to define what
      * happens within the event.
      *
      * @param consumerCallback The callback definition for each registered ServiceListenerAdapter.
@@ -119,7 +119,7 @@ public class MockBundleContext implements BundleContext {
      */
     @Override
     public String getProperty(final String key) {
-        return properties.getProperty(key);
+        return properties.get(key);
     }
 
     /**

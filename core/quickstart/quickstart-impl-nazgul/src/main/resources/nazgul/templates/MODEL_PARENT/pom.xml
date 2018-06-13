@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ #%L
+  #%L
   Nazgul Project: nazgul-core-quickstart-impl-nazgul
   %%
-  Copyright (C) 2010 - 2017 jGuru Europe AB
-  ~
+  Copyright (C) 2010 - 2018 jGuru Europe AB
   %%
   Licensed under the jGuru Europe AB license (the "License"), based
   on Apache License, Version 2.0; you may not use this file except
@@ -20,8 +19,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   #L%
-  ~
   -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>

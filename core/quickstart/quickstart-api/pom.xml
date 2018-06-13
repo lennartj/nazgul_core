@@ -43,6 +43,7 @@
 
     <properties>
         <path.in.reactor>core/quickstart/quickstart-api</path.in.reactor>
+        <maven.core.version>3.0</maven.core.version>
     </properties>
 
     <!-- +=============================================== -->
@@ -89,12 +90,12 @@
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-artifact</artifactId>
-            <version>2.2.1</version>
+            <version>${maven.core.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-model</artifactId>
-            <version>2.2.1</version>
+            <version>${maven.core.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

@@ -1,9 +1,8 @@
 <!--
-  ~ #%L
+  #%L
   Nazgul Project: nazgul-core-persistence-test
   %%
-  Copyright (C) 2010 - 2017 jGuru Europe AB
-  ~
+  Copyright (C) 2010 - 2018 jGuru Europe AB
   %%
   Licensed under the jGuru Europe AB license (the "License"), based
   on Apache License, Version 2.0; you may not use this file except
@@ -19,8 +18,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   #L%
-  ~
   -->
+
 <dataset>
     <BIRD ID="1" CATEGORY="cool birds" NAME="birdName" VERSION="1"/>
     <SEED/>
