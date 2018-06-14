@@ -56,6 +56,7 @@ public class EventBusPublisher implements EventPublisher<Object, Object> {
      *
      * @param eventBus The EventBus wrapped by this EventPublisher instance.
      */
+    @SuppressWarnings("WeakerAccess")
     public EventBusPublisher(@NotNull final EventBus eventBus) {
         this(UUIDGenerator.getInstance(), eventBus);
     }
@@ -66,6 +67,7 @@ public class EventBusPublisher implements EventPublisher<Object, Object> {
      * @param idGenerator The IdGenerator used to generate cluster-unique IDs for each added consumer.
      * @param eventBus    The EventBus wrapped by this EventPublisher instance.
      */
+    @SuppressWarnings("WeakerAccess")
     public EventBusPublisher(@NotNull final IdGenerator idGenerator,
                              @NotNull final EventBus eventBus) {
 
@@ -185,6 +187,7 @@ public class EventBusPublisher implements EventPublisher<Object, Object> {
      * @return The extracted ConsumerID.
      * @see Clusterable
      */
+    @SuppressWarnings("WeakerAccess")
     protected String extractConsumerID(@NotNull final Object consumer) {
 
         // Check sanity

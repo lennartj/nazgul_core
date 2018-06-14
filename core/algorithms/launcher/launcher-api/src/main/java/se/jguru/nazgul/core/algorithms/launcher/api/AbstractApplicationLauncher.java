@@ -51,7 +51,7 @@ import java.util.regex.Pattern;
  *
  * @author <a href="mailto:lj@jguru.se">Lennart J&ouml;relid</a>, jGuru Europe AB
  */
-@SuppressWarnings("PMD.ConstructorCallsOverridableMethod")
+@SuppressWarnings({"PMD.ConstructorCallsOverridableMethod", "WeakerAccess"})
 public abstract class AbstractApplicationLauncher implements StandardLifecycle {
 
     // Our logger

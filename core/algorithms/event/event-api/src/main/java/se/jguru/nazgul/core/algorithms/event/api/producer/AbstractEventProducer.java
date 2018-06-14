@@ -221,6 +221,7 @@ public abstract class AbstractEventProducer<T extends EventConsumer>
      * @param senderID The ID of this AbstractEventProducer.
      * @param consumer The newly registered EventConsumer.
      */
+    @SuppressWarnings("WeakerAccess")
     protected void onConsumerRegistered(final String senderID, final T consumer) {
         // Do nothing.
     }
@@ -251,6 +252,7 @@ public abstract class AbstractEventProducer<T extends EventConsumer>
      * @return {@code true} if the EventConsumer with the given ID was removed, and
      * {@code false} otherwise.
      */
+    @SuppressWarnings("WeakerAccess")
     protected boolean onRemoveNonRegisteredConsumer(final String senderID, final String eventConsumerID) {
         // Do nothing
         return false;
@@ -262,6 +264,7 @@ public abstract class AbstractEventProducer<T extends EventConsumer>
      * @param eventConsumer the listener that the exception occurred in.
      * @param exception     the exception that occurred.
      */
+    @SuppressWarnings("WeakerAccess")
     protected void onExceptionDuringConsumerNotification(final T eventConsumer, final Exception exception) {
         log.error("Unable to notify EventConsumer '" + eventConsumer.getClusterId() + "'", exception);
     }

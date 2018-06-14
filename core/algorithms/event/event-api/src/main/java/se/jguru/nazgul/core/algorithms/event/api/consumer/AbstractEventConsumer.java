@@ -51,6 +51,7 @@ public abstract class AbstractEventConsumer<E extends EventConsumer<E>>
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("WeakerAccess")
     protected AbstractEventConsumer(final IdGenerator idGenerator) {
         super(idGenerator, false);
     }
