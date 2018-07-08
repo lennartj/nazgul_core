@@ -23,6 +23,7 @@
 
 package se.jguru.nazgul.core.algorithms.event.api.producer;
 
+import se.jguru.nazgul.core.algorithms.event.api.consumer.EventConsumerCallback;
 import se.jguru.nazgul.core.algorithms.event.api.consumer.MockEvent;
 import se.jguru.nazgul.core.algorithms.event.api.consumer.MockEventConsumer;
 

@@ -27,7 +27,7 @@ import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import se.jguru.nazgul.core.algorithms.api.Validate;
-import se.jguru.nazgul.core.algorithms.event.api.producer.EventConsumerCallback;
+import se.jguru.nazgul.core.algorithms.event.api.consumer.EventConsumerCallback;
 import se.jguru.nazgul.test.osgi.event.ServiceListenerAdapter;
 
 import javax.validation.constraints.NotNull;

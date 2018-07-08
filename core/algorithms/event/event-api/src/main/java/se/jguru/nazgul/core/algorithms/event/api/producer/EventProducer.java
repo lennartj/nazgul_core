@@ -24,6 +24,7 @@ package se.jguru.nazgul.core.algorithms.event.api.producer;
 
 import se.jguru.nazgul.core.algorithms.event.api.EventConsumerWrapper;
 import se.jguru.nazgul.core.algorithms.event.api.consumer.EventConsumer;
+import se.jguru.nazgul.core.algorithms.event.api.consumer.EventConsumerCallback;
 import se.jguru.nazgul.core.clustering.api.Clusterable;
 
 /**

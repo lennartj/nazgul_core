@@ -31,7 +31,7 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
 import se.jguru.nazgul.core.algorithms.api.Validate;
-import se.jguru.nazgul.core.algorithms.event.api.producer.EventConsumerCallback;
+import se.jguru.nazgul.core.algorithms.event.api.consumer.EventConsumerCallback;
 import se.jguru.nazgul.test.osgi.event.BundleListenerAdapter;
 
 import javax.validation.constraints.NotNull;

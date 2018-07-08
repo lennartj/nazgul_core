@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.jguru.nazgul.core.algorithms.api.Validate;
 import se.jguru.nazgul.core.algorithms.event.api.consumer.EventConsumer;
+import se.jguru.nazgul.core.algorithms.event.api.consumer.EventConsumerCallback;
 import se.jguru.nazgul.core.clustering.api.AbstractClusterable;
 import se.jguru.nazgul.core.clustering.api.ConstantIdGenerator;
 import se.jguru.nazgul.core.clustering.api.IdGenerator;

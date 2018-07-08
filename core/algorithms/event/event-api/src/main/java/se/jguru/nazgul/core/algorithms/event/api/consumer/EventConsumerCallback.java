@@ -20,7 +20,7 @@
  * #L%
  */
 
-package se.jguru.nazgul.core.algorithms.event.api.producer;
+package se.jguru.nazgul.core.algorithms.event.api.consumer;
 
 import se.jguru.nazgul.core.algorithms.event.api.consumer.EventConsumer;
 
