@@ -1,8 +1,8 @@
 language: java
 env:
-  - MAVEN_VERSION=3.5.2
+  - MAVEN_VERSION=3.5.4
 jdk:
-  - oraclejdk8
+  - openjdk8
 addons:
   apt:
     packages:
@@ -11,11 +11,11 @@ install:
   - "mvn -N io.takari:maven:wrapper -Dmaven=${MAVEN_VERSION}"
 script: "./mvnw --show-version --errors --batch-mode clean install site"
 cache:
-    directories:
+  directories:
     - $HOME/.m2
 branches:
-    except:
-        - gh-pages
+  except:
+    - gh-pages
 notifications:
-    email:
-        - lennart.jorelid@gmail.com
+  email:
+    - lennart.jorelid@gmail.com
